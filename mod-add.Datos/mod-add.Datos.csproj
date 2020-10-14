@@ -52,6 +52,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Contexto\ApplicationDbContext.cs" />
+    <Compile Include="Implementaciones\BitacoraServicio.cs" />
     <Compile Include="Implementaciones\ConfiguracionServicio.cs" />
     <Compile Include="Implementaciones\ProductoEliminarServicio.cs" />
     <Compile Include="Implementaciones\ProductoReemplazoServicio.cs" />
@@ -61,6 +62,7 @@
     <Compile Include="Infraestructura\IServiceBase.cs" />
     <Compile Include="Infraestructura\Page.cs" />
     <Compile Include="Infraestructura\ServiceBase.cs" />
+    <Compile Include="Interfaces\IBitacoraServicio.cs" />
     <Compile Include="Interfaces\IConfiguracionServicio.cs" />
     <Compile Include="Interfaces\IProductoEliminarServicio.cs" />
     <Compile Include="Interfaces\IProductoReemplazoServicio.cs" />

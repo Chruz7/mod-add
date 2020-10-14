@@ -4,9 +4,289 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:mod_add.Componentes"
+             xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"  
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
+             d:DesignHeight="500"
+             d:DesignWidth="920">
+    <Grid
+        Background="#FFFFFF">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="90"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="75"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid
+            Grid.Row="2"
+            Grid.Column="0"
+            Grid.ColumnSpan="7">
+            <DataGrid
+                Name="DetallesCheque"
+                Margin="5"
+                ItemsSource="{Binding DetallesCheque}"
+                Style="{DynamicResource DataGridStyle1}">
+                <DataGrid.Columns>
+                    <DataGridTextColumn
+                        Width="*"
+                        Header="Folio&#xa;cuenta"
+                        Binding="{Binding FolioCuenta}"/>
+                    <DataGridTextColumn
+                        Width="*"
+                        Header="Folio nota&#xa;consumo"
+                        Binding="{Binding FolioNotaConsumo}"/>
+                    <DataGridTextColumn
+                        Width="*"
+                        Header="Fecha"
+                        Binding="{Binding Fecha}"/>
+                    <DataGridTextColumn
+                        Width="*"
+                        Header="Cancelado"
+                        Binding="{Binding Cancelado}"/>
+                    <DataGridTextColumn
+                        Width="*"
+                        Header="Faturado"
+                        Binding="{Binding Facturado}"/>
+                    <DataGridTextColumn
+                        Width="*"
+                        Header="Descuento&#xa;%"
+                        Binding="{Binding Descuento}"/>
+                    <DataGridTextColumn
+                        Width="*"
+                        Header="Total&#xa;original"
+                        Binding="{Binding TotalOriginal}"/>
+                    <DataGridTextColumn
+                        Width="*"
+                        Header="Productos&#xa;eliminados"
+                        Binding="{Binding ProductosEliminados}"/>
+                    <DataGridTextColumn
+                        Width="*"
+                        Header="Total con&#xa;descuento"
+                        Binding="{Binding TotalConDescuento}"/>
+                    <DataGridTextColumn
+                        Width="*"
+                        Header="Efectivo"
+                        Binding="{Binding Efectivo}"/>
+                    <DataGridTextColumn
+                        Width="*"
+                        Header="Tarjeta"
+                        Binding="{Binding Tarjeta}"/>
+                    <DataGridTextColumn
+                        Width="*"
+                        Header="Otros"
+                        Binding="{Binding Otros}"/>
+                    <DataGridTextColumn
+                        Width="*"
+                        Header="Modificar">
+
+                    </DataGridTextColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Grid>
+
+        <Grid
+            Grid.Row="3"
+            Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="25"/>
+                <RowDefinition Height="25"/>
+                <RowDefinition Height="25"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="180"/>
+                <ColumnDefinition Width="50"/>
+                <ColumnDefinition Width="100"/>
+                <ColumnDefinition Width="90"/>
+                <ColumnDefinition Width="50"/>
+                <ColumnDefinition Width="15"/>
+                <ColumnDefinition Width="100"/>
+                <ColumnDefinition Width="90"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="110"/>
+                <ColumnDefinition Width="110"/>
+            </Grid.ColumnDefinitions>
             
+            <Label
+                Grid.Row="0"
+                Grid.Column="0"
+                VerticalAlignment="Center"
+                Content="Número de cuentas total:"/>
+            <TextBox
+                Grid.Row="0"
+                Grid.Column="1"
+                VerticalAlignment="Center"
+                Margin="5,0,5,0"
+                IsReadOnly="True"
+                Text="{Binding NumeroTotalCuentas}"/>
+
+            <Label
+                Grid.Row="1"
+                Grid.Column="0"
+                VerticalAlignment="Center"
+                Content="Número de cuentas a modificar:"/>
+            <TextBox
+                Grid.Row="1"
+                Grid.Column="1"
+                VerticalAlignment="Center"
+                Margin="5,0,5,0"
+                IsReadOnly="True"
+                Text="{Binding NumeroTotalCuentasModificadas}"/>
+
+            <Label
+                Grid.Row="0"
+                Grid.Column="2"
+                VerticalAlignment="Center"
+                Content="Importe anterior:"/>
+            <TextBox
+                Grid.Row="0"
+                Grid.Column="3"
+                VerticalAlignment="Center"
+                Margin="5,0,5,0"
+                IsReadOnly="True"
+                Text="{Binding ImporteAnterior}"/>
+
+            <Label
+                Grid.Row="1"
+                Grid.Column="2"
+                VerticalAlignment="Center"
+                Content="Importe nuevo:"/>
+            <TextBox
+                Grid.Row="1"
+                Grid.Column="3"
+                VerticalAlignment="Center"
+                Margin="5,0,5,0"
+                IsReadOnly="True"
+                Text="{Binding ImporteNuevo}"/>
+
+            <Label
+                Grid.Row="2"
+                Grid.Column="2"
+                VerticalAlignment="Center"
+                Content="Diferencia:"/>
+            <TextBox
+                Grid.Row="2"
+                Grid.Column="3"
+                VerticalAlignment="Center"
+                Margin="5,0,5,0"
+                IsReadOnly="True"
+                Text="{Binding Diferencia}"/>
+
+            <TextBox
+                Grid.Row="2"
+                Grid.Column="4"
+                VerticalAlignment="Center"
+                Margin="5,0,5,0"
+                IsReadOnly="True"
+                Text="{Binding PorcentajeDiferencia}"/>
+            <Label
+                Grid.Row="2"
+                Grid.Column="5"
+                VerticalAlignment="Center"
+                HorizontalContentAlignment="Center"
+                Margin="0"
+                Padding="0"
+                Content="%"/>
+
+            <Label
+                Grid.Row="0"
+                Grid.Column="6"
+                VerticalAlignment="Center"
+                Content="Efectivo anterior:"/>
+            <TextBox
+                Grid.Row="0"
+                Grid.Column="7"
+                VerticalAlignment="Center"
+                Margin="5,0,5,0"
+                IsReadOnly="True"
+                Text="{Binding EfectivoAnterior}"/>
+
+            <Label
+                Grid.Row="1"
+                Grid.Column="6"
+                VerticalAlignment="Center"
+                Content="Efectivo nuevo:"/>
+            <TextBox
+                Grid.Row="1"
+                Grid.Column="7"
+                VerticalAlignment="Center"
+                Margin="5,0,5,0"
+                IsReadOnly="True"
+                Text="{Binding EfectivoNuevo}"/>
+
+            <Label
+                Grid.Row="2"
+                Grid.Column="6"
+                VerticalAlignment="Center"
+                Content="Efectivo en caja:"/>
+            <TextBox
+                Grid.Row="2"
+                Grid.Column="7"
+                VerticalAlignment="Center"
+                Margin="5,0,5,0"
+                IsReadOnly="True"
+                Text="{Binding EfectivoCaja}"/>
+
+            <Button
+                Grid.Row="0"
+                Grid.RowSpan="3"
+                Grid.Column="9"
+                VerticalAlignment="Center"
+                HorizontalAlignment="Center"
+                Height="35"
+                x:Name="Cancelar"
+                Click="Cancelar_Click"
+                Style="{DynamicResource ButtonBorderRoundStyle}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="30*"/>
+                        <ColumnDefinition Width="70*"/>
+                    </Grid.ColumnDefinitions>
+                    <Image
+                        Grid.Column="0"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
+                        Source="/mod-add;component/Recursos/cuenta.png"/>
+                    <TextBlock
+                        Grid.Column="1"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
+                        FontWeight="Bold"
+                        Text="CANCELAR"/>
+                </Grid>
+            </Button>
+            
+            <Button
+                Grid.Row="0"
+                Grid.RowSpan="3"
+                Grid.Column="10"
+                VerticalAlignment="Center"
+                HorizontalAlignment="Center"
+                Height="35"
+                x:Name="Aplicar"
+                Click="Aplicar_Click"
+                Style="{DynamicResource ButtonBorderRoundStyle}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="30*"/>
+                        <ColumnDefinition Width="70*"/>
+                    </Grid.ColumnDefinitions>
+                    <Image
+                        Grid.Column="0"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
+                        Source="/mod-add;component/Recursos/cuenta.png"/>
+                    <TextBlock
+                        Grid.Column="1"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
+                        FontWeight="Bold"
+                        Text="APLICAR"/>
+                </Grid>
+            </Button>
+        </Grid>
     </Grid>
 </UserControl>
+

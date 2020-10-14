@@ -1,9 +1,8 @@
 ﻿using mod_add.Selectores;
+using SRLibrary.SR_Context;
+using SRLibrary.SR_DTO;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace mod_add.ViewModels
 {
@@ -25,15 +24,31 @@ namespace mod_add.ViewModels
                 }
             };
 
-            Folio = "ddedd";
+            Folio = "";
             Fecha = DateTime.Now;
-            Personas = 3;
-            Cliente = "Pedro";
+            Personas = 0;
+            Cliente = "";
             CambiarPrecio = false;
-            Descuento = 5;
-            Propina = string.Format("{0:C}", 10);
-            Subtotal = string.Format("{0:C}", 30);
-            Total = string.Format("{0:C}", 20);
+            Descuento = 0;
+            Propina = string.Format("{0:C}", 0);
+            Subtotal = string.Format("{0:C}", 0);
+            Total = string.Format("{0:C}", 0);
+        }
+
+        public void ObtenerCheque(string folio)
+        {
+            using (SoftRestaurantDBContext context = new SoftRestaurantDBContext())
+            {
+                
+            }
+        }
+
+        public void ObtenerDetallesCheque(string follio)
+        {
+            using (SoftRestaurantDBContext context = new SoftRestaurantDBContext())
+            {
+
+            }
         }
 
         public int Guardar()

@@ -18,14 +18,17 @@
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="40*"/>
-            <ColumnDefinition Width="130"/>
-            <ColumnDefinition Width="130"/>
+            <ColumnDefinition Width="110"/>
+            <ColumnDefinition Width="110"/>
         </Grid.ColumnDefinitions>
 
         <Button
             Grid.Row="0"
-            Grid.Column="5"
-            Margin="5"
+            Grid.Column="1"
+            Grid.ColumnSpan="2"
+            HorizontalAlignment="Right"
+            Margin="0,0,5,0"
+            Height="40"
             x:Name="SeleccionarGrupo"
             Click="SeleccionarGrupo_Click"
             Style="{DynamicResource ButtonBorderRoundStyle}">
@@ -89,6 +92,7 @@
             Grid.Column="1"
             VerticalAlignment="Center"
             HorizontalAlignment="Center"
+            Height="35"
             x:Name="Cancelar"
             Click="Cancelar_Click"
             Style="{DynamicResource ButtonBorderRoundStyle}">
@@ -101,13 +105,11 @@
                     Grid.Column="0"
                     VerticalAlignment="Center"
                     HorizontalAlignment="Center"
-                    Height="40"
                     Source="/mod-add;component/Recursos/cuenta.png"/>
                 <TextBlock
                     Grid.Column="1"
                     VerticalAlignment="Center"
                     HorizontalAlignment="Center"
-                    Padding="10,0,10,0"
                     FontWeight="Bold"
                     Text="CANCELAR"/>
             </Grid>
@@ -118,6 +120,7 @@
             Grid.Column="2"
             VerticalAlignment="Center"
             HorizontalAlignment="Center"
+            Height="35"
             x:Name="Aceptar"
             Click="Aceptar_Click"
             Style="{DynamicResource ButtonBorderRoundStyle}">
@@ -130,13 +133,11 @@
                     Grid.Column="0"
                     VerticalAlignment="Center"
                     HorizontalAlignment="Center"
-                    Height="40"
                     Source="/mod-add;component/Recursos/cuenta.png"/>
                 <TextBlock
                     Grid.Column="1"
                     VerticalAlignment="Center"
                     HorizontalAlignment="Center"
-                    Padding="10,0,10,0"
                     FontWeight="Bold"
                     Text="ACEPTAR"/>
             </Grid>

@@ -24,5 +24,15 @@ namespace mod_add.Componentes
         {
             InitializeComponent();
         }
+
+        private void Aplicar_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Cancelar_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

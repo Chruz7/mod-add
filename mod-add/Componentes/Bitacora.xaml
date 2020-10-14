@@ -60,28 +60,36 @@
                 Style="{DynamicResource DataGridStyle1}">
                 <DataGrid.Columns>
                     <DataGridTextColumn
-                        Header="Fecha de proceso"
+                        Width="*"
+                        Header="Fecha de&#xa;proceso"
                         Binding="{Binding FechaProceso}"/>
                     <DataGridTextColumn
-                        Header="Fecha inicial (venta)"
+                        Width="*"
+                        Header="Fecha inicial&#xa;(venta)"
                         Binding="{Binding FechaInicialVenta}"/>
                     <DataGridTextColumn
-                        Header="Fecha final (venta)"
+                        Width="*"
+                        Header="Fecha final&#xa;(venta)"
                         Binding="{Binding FechaFinalVenta}"/>
                     <DataGridTextColumn
-                        Header="Total cuentas"
+                        Width="*"
+                        Header="Total&#xa;cuentas"
                         Binding="{Binding TotalCuentas}"/>
                     <DataGridTextColumn
-                        Header="Cuentas modificadas"
+                        Width="*"
+                        Header="Cuentas&#xa;modificadas"
                         Binding="{Binding CuentasModificadas}"/>
                     <DataGridTextColumn
-                        Header="Importe anterior"
+                        Width="*"
+                        Header="Importe&#xa;anterior"
                         Binding="{Binding ImporteAnterior}"/>
                     <DataGridTextColumn
-                        Header="Importe nuevo"
+                        Width="*"
+                        Header="Importe&#xa;nuevo"
                         Binding="{Binding ImporteNuevo}"/>
                     <DataGridTextColumn
-                        Header="Diferencia %"
+                        Width="*"
+                        Header="Diferencia&#xa;%"
                         Binding="{Binding Diferencia}"/>
                 </DataGrid.Columns>
             </DataGrid>

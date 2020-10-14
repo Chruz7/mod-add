@@ -1,19 +1,9 @@
 ﻿using mod_add.Selectores;
 using mod_add.ViewModels;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace mod_add.Componentes
 {
@@ -32,6 +22,11 @@ namespace mod_add.Componentes
             DataContext = ViewModel;
 
             CambiarPrecios.SelectedItem = ViewModel.Condicionales.Where(x => x.Valor == ViewModel.CambiarPrecio).FirstOrDefault();
+        }
+
+        private void Aniadir_Click(object sender, RoutedEventArgs e)
+        {
+            
         }
 
         private void Eliminar_Click(object sender, RoutedEventArgs e)
@@ -56,6 +51,14 @@ namespace mod_add.Componentes
             if (!(comboBox.SelectedItem is Condicional condicional)) return;
 
             ViewModel.CambiarPrecio = condicional.Valor;
+        }
+
+        private void Folio_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                ViewModel.ObtenerCheque(Folio.Text);
+            }
         }
     }
 }
