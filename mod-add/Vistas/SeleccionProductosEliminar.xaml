@@ -6,8 +6,8 @@
         xmlns:local="clr-namespace:mod_add.Vistas"
         mc:Ignorable="d"
         Title="Productos a Eliminar"
-        ResizeMode="CanMinimize"
         WindowStartupLocation="CenterScreen"
+        ResizeMode="CanMinimize"
         Height="600"
         Width="450">
     <Grid>
@@ -59,18 +59,25 @@
                 Name="ProductosEliminar"
                 Margin="5"
                 ItemsSource="{Binding ProductosEliminar}"
-                Style="{DynamicResource DataGridStyle1}">
+                Style="{DynamicResource DataGridStyle2}">
                 <DataGrid.Columns>
                     <DataGridTextColumn
+                        Width="15*"
                         Header="Clave"
+                        IsReadOnly="True"
                         Binding="{Binding Clave}"/>
                     <DataGridTextColumn
+                        Width="15*"
                         Header="Grupo"
+                        IsReadOnly="True"
                         Binding="{Binding Grupo}"/>
                     <DataGridTextColumn
-                        Header="Descripcion"
+                        Width="50*"
+                        Header="Descripción"
+                        IsReadOnly="True"
                         Binding="{Binding Descripcion}"/>
                     <DataGridCheckBoxColumn
+                        Width="20*"
                         Header="Eliminar"
                         Binding="{Binding Eliminar}"/>
                 </DataGrid.Columns>

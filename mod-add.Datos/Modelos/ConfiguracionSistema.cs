@@ -6,5 +6,7 @@
         public bool ModificarVentasReales { get; set; }
         public int MinProductosCuenta { get; set; }
         public bool EliminarProductosSeleccionados { get; set; }
+        public string Contrasena { get; set; }
+        public string ContrasenaAdmin { get; set; }
     }
 }

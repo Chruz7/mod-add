@@ -353,6 +353,178 @@
                 Text="{Binding P3_Precio}"/>
         </Grid>
 
+        <Grid
+            Grid.Row="5"
+            Grid.Column="4">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="10*"/>
+                <ColumnDefinition Width="40*"/>
+                <ColumnDefinition Width="20*"/>
+                <ColumnDefinition Width="25*"/>
+                <ColumnDefinition Width="5*"/>
+            </Grid.ColumnDefinitions>
+
+            <CheckBox
+                Grid.Row="0"
+                Grid.Column="0"
+                VerticalAlignment="Center"
+                HorizontalAlignment="Center"
+                Tag="P4"
+                x:Name="P4_Reemplazar"
+                IsChecked="{Binding P4_Reemplazar}"
+                Checked="Reemplazar_Checked"
+                Unchecked="Reemplazar_Unchecked"/>
+
+            <TextBox
+                Grid.Row="0"
+                Grid.Column="1"
+                VerticalAlignment="Center"
+                Margin="5,0,5,0"
+                x:Name="P4_Clave"
+                IsReadOnly="True"
+                Text="{Binding P4_Clave}"/>
+
+            <Button
+                Grid.Row="0"
+                Grid.Column="2"
+                VerticalAlignment="Center"
+                Margin="5,0,5,0"
+                Content="Buscar"
+                Tag="P4"
+                x:Name="P4_Buscar"
+                Click="BuscarProducto_Click"/>
+
+            <xctk:IntegerUpDown
+                Grid.Row="0"
+                Grid.Column="3"
+                VerticalAlignment="Center"
+                Margin="5,0,5,0"
+                Tag="P4"
+                x:Name="P4_Porcentaje"
+                Maximum="100"
+                Minimum="0"
+                Value="{Binding P4_Porcentaje}"/>
+
+            <Label
+                Grid.Row="0"
+                Grid.Column="4"
+                VerticalAlignment="Center"
+                HorizontalAlignment="Center"
+                Margin="0,0,5,0"
+                Padding="0"
+                Content="%"/>
+
+            <TextBox
+                Grid.Row="1"
+                Grid.Column="1"
+                Grid.ColumnSpan="2"
+                VerticalAlignment="Center"
+                Margin="5,0,5,0"
+                x:Name="P4_Nombre"
+                IsReadOnly="True"
+                Text="{Binding P4_Nombre}"/>
+
+            <TextBox
+                Grid.Row="1"
+                Grid.Column="3"
+                Grid.ColumnSpan="2"
+                VerticalAlignment="Center"
+                Margin="5,0,5,0"
+                x:Name="P4_Precio"
+                IsReadOnly="True"
+                Text="{Binding P4_Precio}"/>
+        </Grid>
+
+        <Grid
+            Grid.Row="6"
+            Grid.Column="4">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="10*"/>
+                <ColumnDefinition Width="40*"/>
+                <ColumnDefinition Width="20*"/>
+                <ColumnDefinition Width="25*"/>
+                <ColumnDefinition Width="5*"/>
+            </Grid.ColumnDefinitions>
+
+            <CheckBox
+                Grid.Row="0"
+                Grid.Column="0"
+                VerticalAlignment="Center"
+                HorizontalAlignment="Center"
+                Tag="P5"
+                x:Name="P5_Reemplazar"
+                IsChecked="{Binding P5_Reemplazar}"
+                Checked="Reemplazar_Checked"
+                Unchecked="Reemplazar_Unchecked"/>
+
+            <TextBox
+                Grid.Row="0"
+                Grid.Column="1"
+                VerticalAlignment="Center"
+                Margin="5,0,5,0"
+                x:Name="P5_Clave"
+                IsReadOnly="True"
+                Text="{Binding P5_Clave}"/>
+
+            <Button
+                Grid.Row="0"
+                Grid.Column="2"
+                VerticalAlignment="Center"
+                Margin="5,0,5,0"
+                Content="Buscar"
+                Tag="P5"
+                x:Name="P5_Buscar"
+                Click="BuscarProducto_Click"/>
+
+            <xctk:IntegerUpDown
+                Grid.Row="0"
+                Grid.Column="3"
+                VerticalAlignment="Center"
+                Margin="5,0,5,0"
+                Tag="P5"
+                x:Name="P5_Porcentaje"
+                Maximum="100"
+                Minimum="0"
+                Value="{Binding P5_Porcentaje}"/>
+
+            <Label
+                Grid.Row="0"
+                Grid.Column="4"
+                VerticalAlignment="Center"
+                HorizontalAlignment="Center"
+                Margin="0,0,5,0"
+                Padding="0"
+                Content="%"/>
+
+            <TextBox
+                Grid.Row="1"
+                Grid.Column="1"
+                Grid.ColumnSpan="2"
+                VerticalAlignment="Center"
+                Margin="5,0,5,0"
+                x:Name="P5_Nombre"
+                IsReadOnly="True"
+                Text="{Binding P5_Nombre}"/>
+
+            <TextBox
+                Grid.Row="1"
+                Grid.Column="3"
+                Grid.ColumnSpan="2"
+                VerticalAlignment="Center"
+                Margin="5,0,5,0"
+                x:Name="P5_Precio"
+                IsReadOnly="True"
+                Text="{Binding P5_Precio}"/>
+        </Grid>
+
         <Button
             Grid.Column="4"
             Grid.Row="8"

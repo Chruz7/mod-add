@@ -1,0 +1,96 @@
+﻿<Window x:Class="mod_add.Vistas.SeleccionGrupo"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:mod_add.Vistas"
+        mc:Ignorable="d"
+        Title="Grupos"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="CanMinimize"
+        Height="400"
+        Width="450">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="20"/>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="50"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="60"/>
+            <ColumnDefinition Width="200"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="130"/>
+        </Grid.ColumnDefinitions>
+
+        <Label
+            Grid.Row="1"
+            Grid.Column="0"
+            VerticalAlignment="Center"
+            Content="Grupo:"/>
+        <TextBox
+            Grid.Row="1"
+            Grid.Column="1"
+            VerticalAlignment="Center"
+            MaxLength="80"
+            Margin="5,0,5,0"
+            x:Name="Buscador"
+            Text="{Binding Buscador}"
+            CharacterCasing="Upper"
+            KeyUp="Buscador_KeyUp"/>
+
+        <Grid
+            Grid.Row="2"
+            Grid.Column="0"
+            Grid.ColumnSpan="7">
+            <DataGrid
+                Name="Grupos"
+                Margin="5"
+                ItemsSource="{Binding Grupos}"
+                Style="{DynamicResource DataGridStyle1}"
+                MouseDoubleClick="Grupos_MouseDoubleClick">
+                <DataGrid.Columns>
+                    <DataGridTextColumn
+                        ElementStyle="{DynamicResource CenterCell}"
+                        Width="15*"
+                        Header="Clave"
+                        Binding="{Binding idgrupo}"/>
+                    <DataGridTextColumn
+                        Width="85*"
+                        Header="Descripcion"
+                        Binding="{Binding descripcion}"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Grid>
+
+        <Button
+            Grid.Row="3"
+            Grid.Column="3"
+            VerticalAlignment="Center"
+            HorizontalAlignment="Center"
+            x:Name="Cancelar"
+            Click="Cancelar_Click"
+            Style="{DynamicResource ButtonBorderRoundStyle}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="30*"/>
+                    <ColumnDefinition Width="70*"/>
+                </Grid.ColumnDefinitions>
+                <Image
+                    Grid.Column="0"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Center"
+                    Height="40"
+                    Source="/mod-add;component/Recursos/cuenta.png"/>
+                <TextBlock
+                    Grid.Column="1"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Center"
+                    Padding="10,0,10,0"
+                    FontWeight="Bold"
+                    Text="CANCELAR"/>
+            </Grid>
+        </Button>
+    </Grid>
+</Window>

@@ -1,4 +1,7 @@
-﻿using mod_add.Vistas;
+﻿using mod_add.Datos.Contexto;
+using mod_add.Datos.Infraestructura;
+using mod_add.Datos.Modelos;
+using mod_add.Vistas;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -18,6 +21,38 @@ namespace mod_add
         {
             //Autenticacion autenticacion = new Autenticacion();
             //autenticacion.ShowDialog();
+
+            using (ApplicationDbContext context = new ApplicationDbContext())
+            {
+                if (context.ConfiguracionSistema.Count() == 0)
+                {
+                    context.ConfiguracionSistema.Add(new ConfiguracionSistema
+                    {
+                        ModificarVentasReales = true,
+                        MinProductosCuenta = 1,
+                        EliminarProductosSeleccionados = false,
+                        Contrasena = "",
+                        ContrasenaAdmin = ""
+                    });
+
+                    List<ProductoReemplazo> productosReemplazo = new List<ProductoReemplazo>();
+
+                    for (int i = 0; i < 5; i++)
+                    {
+                        productosReemplazo.Add(new ProductoReemplazo
+                        {
+                            Reemplazar = false,
+                            Clave = "",
+                            Porcentaje = 0
+                        });
+                    }
+
+                    context.ProductosReemplazo.AddRange(productosReemplazo);
+
+                    context.SaveChanges();
+                }
+
+            }
 
             IrPrincipal();
         }

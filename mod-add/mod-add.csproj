@@ -44,7 +44,8 @@
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.4.4\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
-    <Reference Include="SRLibrary">
+    <Reference Include="SRLibrary, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\SRLibrary\SRLibrary\bin\Debug\SRLibrary.dll</HintPath>
     </Reference>
     <Reference Include="System" />
@@ -101,6 +102,7 @@
     <Compile Include="ViewModels\BitacoraViewModel.cs" />
     <Compile Include="ViewModels\ConfiguracionViewModel.cs" />
     <Compile Include="ViewModels\EliminarProductosViewModel.cs" />
+    <Compile Include="ViewModels\SeleccionGrupoViewModel.cs" />
     <Compile Include="ViewModels\SeleccionProductoViewModel.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />
     <Compile Include="Vistas\Autenticacion.xaml.cs">
@@ -108,6 +110,9 @@
     </Compile>
     <Compile Include="Vistas\Principal.xaml.cs">
       <DependentUpon>Principal.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Vistas\SeleccionGrupo.xaml.cs">
+      <DependentUpon>SeleccionGrupo.xaml</DependentUpon>
     </Compile>
     <Compile Include="Vistas\SeleccionProducto.xaml.cs">
       <DependentUpon>SeleccionProducto.xaml</DependentUpon>
@@ -148,6 +153,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Vistas\Principal.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Vistas\SeleccionGrupo.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

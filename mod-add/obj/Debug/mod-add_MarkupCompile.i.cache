@@ -10,11 +10,11 @@ none
 false
 DEBUG;TRACE
 C:\Users\Alber\source\repos\mod-add\mod-add\App.xaml
-9-394963489
+10-656757631
 
-22232957050
+24-1063084152
 23840959316
-Componentes\AjusteMasivo.xaml;Componentes\AjusteUnico.xaml;Componentes\Bitacora.xaml;Componentes\Configuracion.xaml;MainWindow.xaml;Vistas\Autenticacion.xaml;Vistas\Principal.xaml;Vistas\SeleccionProducto.xaml;Vistas\SeleccionProductosEliminar.xaml;
+Componentes\AjusteMasivo.xaml;Componentes\AjusteUnico.xaml;Componentes\Bitacora.xaml;Componentes\Configuracion.xaml;MainWindow.xaml;Vistas\Autenticacion.xaml;Vistas\Principal.xaml;Vistas\SeleccionGrupo.xaml;Vistas\SeleccionProducto.xaml;Vistas\SeleccionProductosEliminar.xaml;
 
-True
+False
 

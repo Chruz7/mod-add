@@ -35,6 +35,8 @@
             MaxLength="80"
             Margin="5,0,5,0"
             x:Name="Buscador"
+            Text="{Binding Buscador}"
+            CharacterCasing="Upper"
             KeyUp="Buscador_KeyUp"/>
 
         <Grid
@@ -45,20 +47,28 @@
                 Name="Productos"
                 Margin="5"
                 ItemsSource="{Binding Productos}"
-                Style="{DynamicResource DataGridStyle1}">
+                Style="{DynamicResource DataGridStyle1}"
+                MouseDoubleClick="Productos_MouseDoubleClick">
                 <DataGrid.Columns>
                     <DataGridTextColumn
+                        ElementStyle="{DynamicResource CenterCell}"
+                        Width="15*"
                         Header="Clave"
-                        Binding="{Binding idproducto}"/>
+                        Binding="{Binding Clave}"/>
                     <DataGridTextColumn
+                        ElementStyle="{DynamicResource CenterCell}"
+                        Width="15*"
                         Header="Grupo"
-                        Binding="{Binding idgrupo}"/>
+                        Binding="{Binding Grupo}"/>
                     <DataGridTextColumn
+                        Width="50*"
                         Header="Descripcion"
-                        Binding="{Binding descripcion}"/>
+                        Binding="{Binding Descripcion}"/>
                     <DataGridTextColumn
+                        ElementStyle="{DynamicResource RightCell}"
+                        Width="20*"
                         Header="Precio"
-                        Binding="{Binding precio}"/>
+                        Binding="{Binding Display_Precio}"/>
                 </DataGrid.Columns>
             </DataGrid>
         </Grid>

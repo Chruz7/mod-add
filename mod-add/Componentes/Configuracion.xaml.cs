@@ -1,4 +1,5 @@
-﻿using mod_add.Helpers;
+﻿using mod_add.Datos.ModelosPersonalizados;
+using mod_add.Helpers;
 using mod_add.Selectores;
 using mod_add.ViewModels;
 using mod_add.Vistas;
@@ -30,11 +31,14 @@ namespace mod_add.Componentes
         public Configuracion()
         {
             InitializeComponent();
-
-            ViewModel = new ConfiguracionViewModel();
+            AbrirSeleccionProductos.IsEnabled = false;
             Habilitar("P1", false);
             Habilitar("P2", false);
             Habilitar("P3", false);
+            Habilitar("P4", false);
+            Habilitar("P5", false);
+
+            ViewModel = new ConfiguracionViewModel();
 
             DataContext = ViewModel;
 
@@ -72,38 +76,50 @@ namespace mod_add.Componentes
 
             TagSeleccionado = button.Tag.ToString();
 
-            Messenger.Default.Register<dynamic>(this, ProductoSeleccionado);
+            Messenger.Default.Register<ProductoSeleccion>(this, ProductoSeleccionado);
 
             SeleccionProducto window = new SeleccionProducto();
             window.ShowDialog();
-
-            
         }
 
-        public void ProductoSeleccionado(dynamic producto)
+        public void ProductoSeleccionado(ProductoSeleccion producto)
         {
             switch (TagSeleccionado)
             {
                 case "P1":
-                    ViewModel.P1_Clave = producto.idproducto;
-                    ViewModel.P1_Nombre = "prod1";
-                    ViewModel.P1_Precio = string.Format("{0:C}", 10);
+                    ViewModel.P1_Clave = producto.Clave;
+                    ViewModel.P1_Nombre = producto.Descripcion;
+                    ViewModel.P1_Precio = producto.Display_Precio;
                     break;
 
                 case "P2":
-                    ViewModel.P2_Clave = producto.idproducto;
-                    ViewModel.P2_Nombre = "prod2";
-                    ViewModel.P2_Precio = string.Format("{0:C}", 20);
+                    ViewModel.P2_Clave = producto.Clave;
+                    ViewModel.P2_Nombre = producto.Descripcion;
+                    ViewModel.P2_Precio = producto.Display_Precio;
                     break;
 
                 case "P3":
-                    ViewModel.P3_Clave = producto.idproducto;
-                    ViewModel.P3_Nombre = "prod3";
-                    ViewModel.P3_Precio = string.Format("{0:C}", 30);
+                    ViewModel.P3_Clave = producto.Clave;
+                    ViewModel.P3_Nombre = producto.Descripcion;
+                    ViewModel.P3_Precio = producto.Display_Precio;
+                    break;
+
+                case "P4":
+                    ViewModel.P4_Clave = producto.Clave;
+                    ViewModel.P4_Nombre = producto.Descripcion;
+                    ViewModel.P4_Precio = producto.Display_Precio;
+                    break;
+
+                case "P5":
+                    ViewModel.P5_Clave = producto.Clave;
+                    ViewModel.P5_Nombre = producto.Descripcion;
+                    ViewModel.P5_Precio = producto.Display_Precio;
                     break;
                 default:
                     break;
             }
+
+            Messenger.Default.Unregister(this);
         }
 
         private void Reemplazar_Checked(object sender, RoutedEventArgs e)
@@ -130,11 +146,6 @@ namespace mod_add.Componentes
                     P1_Porcentaje.IsEnabled = habilitar;
                     P1_Nombre.IsEnabled = habilitar;
                     P1_Precio.IsEnabled = habilitar;
-
-                    ViewModel.P1_Clave = "";
-                    ViewModel.P1_Porcentaje = 0;
-                    ViewModel.P1_Precio = "";
-                    ViewModel.P1_Nombre = "";
                     break;
 
                 case "P2":
@@ -143,11 +154,6 @@ namespace mod_add.Componentes
                     P2_Porcentaje.IsEnabled = habilitar;
                     P2_Nombre.IsEnabled = habilitar;
                     P2_Precio.IsEnabled = habilitar;
-
-                    ViewModel.P2_Clave = "";
-                    ViewModel.P2_Porcentaje = 0;
-                    ViewModel.P2_Precio = "";
-                    ViewModel.P2_Nombre = "";
                     break;
 
                 case "P3":
@@ -156,11 +162,22 @@ namespace mod_add.Componentes
                     P3_Porcentaje.IsEnabled = habilitar;
                     P3_Nombre.IsEnabled = habilitar;
                     P3_Precio.IsEnabled = habilitar;
+                    break;
 
-                    ViewModel.P3_Clave = "";
-                    ViewModel.P3_Porcentaje = 0;
-                    ViewModel.P3_Precio = "";
-                    ViewModel.P3_Nombre = "";
+                case "P4":
+                    P4_Clave.IsEnabled = habilitar;
+                    P4_Buscar.IsEnabled = habilitar;
+                    P4_Porcentaje.IsEnabled = habilitar;
+                    P4_Nombre.IsEnabled = habilitar;
+                    P4_Precio.IsEnabled = habilitar;
+                    break;
+
+                case "P5":
+                    P5_Clave.IsEnabled = habilitar;
+                    P5_Buscar.IsEnabled = habilitar;
+                    P5_Porcentaje.IsEnabled = habilitar;
+                    P5_Nombre.IsEnabled = habilitar;
+                    P5_Precio.IsEnabled = habilitar;
                     break;
 
                 default:
@@ -188,6 +205,20 @@ namespace mod_add.Componentes
                 return false;
             }
 
+            if (ViewModel.P4_Reemplazar && string.IsNullOrEmpty(ViewModel.P4_Clave))
+            {
+                MessageBox.Show("Por favor, seleccione el 4to producto a reemplazar", "Producto reemplazo", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return false;
+            }
+
+            if (ViewModel.P5_Reemplazar && string.IsNullOrEmpty(ViewModel.P5_Clave))
+            {
+                MessageBox.Show("Por favor, seleccione el 5to producto a reemplazar", "Producto reemplazo", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return false;
+            }
+
+
+
             if (ViewModel.P1_Reemplazar && ViewModel.P1_Porcentaje == 0)
             {
                 MessageBox.Show("Por favor, ingrese el porcentaje del 1er producto a reemplazar", "Producto reemplazo", MessageBoxButton.OK, MessageBoxImage.Warning);
@@ -205,6 +236,20 @@ namespace mod_add.Componentes
                 MessageBox.Show("Por favor, ingrese el porcentaje del 3er producto a reemplazar", "Producto reemplazo", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return false;
             }
+
+            if (ViewModel.P4_Reemplazar && ViewModel.P4_Porcentaje == 0)
+            {
+                MessageBox.Show("Por favor, ingrese el porcentaje del 4to producto a reemplazar", "Producto reemplazo", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return false;
+            }
+
+            if (ViewModel.P5_Reemplazar && ViewModel.P5_Porcentaje == 0)
+            {
+                MessageBox.Show("Por favor, ingrese el porcentaje del 5to producto a reemplazar", "Producto reemplazo", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return false;
+            }
+
+
 
             int porcentajeTotal = 0;
             bool reemplazar = false;
@@ -224,6 +269,18 @@ namespace mod_add.Componentes
             if (ViewModel.P3_Reemplazar)
             {
                 porcentajeTotal += ViewModel.P3_Porcentaje;
+                reemplazar = true;
+            }
+
+            if (ViewModel.P4_Reemplazar)
+            {
+                porcentajeTotal += ViewModel.P4_Porcentaje;
+                reemplazar = true;
+            }
+
+            if (ViewModel.P5_Reemplazar)
+            {
+                porcentajeTotal += ViewModel.P5_Porcentaje;
                 reemplazar = true;
             }
 

@@ -1,17 +1,9 @@
-﻿using mod_add.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using mod_add.Datos.ModelosPersonalizados;
+using mod_add.Helpers;
+using mod_add.ViewModels;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace mod_add.Vistas
 {
@@ -31,20 +23,26 @@ namespace mod_add.Vistas
 
         private void Cancelar_Click(object sender, RoutedEventArgs e)
         {
-
+            Close();
         }
 
         private void Buscador_KeyUp(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
             {
-                Filtar(Buscador.Text);
+                ViewModel.Filtrar(Buscador.Text);
             }
         }
 
-        public void Filtar(string texto)
+        private void Productos_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
+            if (!(sender is DataGrid dataGrid)) return;
 
+            if (!(dataGrid.CurrentItem is ProductoSeleccion productoSeleccion)) return;
+
+            Messenger.Default.Send(productoSeleccion);
+
+            Close();
         }
     }
 }
