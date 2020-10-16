@@ -3,6 +3,7 @@ using mod_add.Helpers;
 using mod_add.Selectores;
 using mod_add.ViewModels;
 using mod_add.Vistas;
+using SRLibrary.SR_DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -76,44 +77,44 @@ namespace mod_add.Componentes
 
             TagSeleccionado = button.Tag.ToString();
 
-            Messenger.Default.Register<ProductoSeleccion>(this, ProductoSeleccionado);
+            Messenger.Default.Register<SR_productos>(this, ProductoSeleccionado);
 
             SeleccionProducto window = new SeleccionProducto();
             window.ShowDialog();
         }
 
-        public void ProductoSeleccionado(ProductoSeleccion producto)
+        public void ProductoSeleccionado(SR_productos producto)
         {
             switch (TagSeleccionado)
             {
                 case "P1":
-                    ViewModel.P1_Clave = producto.Clave;
-                    ViewModel.P1_Nombre = producto.Descripcion;
-                    ViewModel.P1_Precio = producto.Display_Precio;
+                    ViewModel.P1_Clave = producto.idproducto;
+                    ViewModel.P1_Nombre = producto.descripcion;
+                    ViewModel.P1_Precio = producto.Detalle.Display_precio;
                     break;
 
                 case "P2":
-                    ViewModel.P2_Clave = producto.Clave;
-                    ViewModel.P2_Nombre = producto.Descripcion;
-                    ViewModel.P2_Precio = producto.Display_Precio;
+                    ViewModel.P2_Clave = producto.idproducto;
+                    ViewModel.P2_Nombre = producto.descripcion;
+                    ViewModel.P2_Precio = producto.Detalle.Display_precio;
                     break;
 
                 case "P3":
-                    ViewModel.P3_Clave = producto.Clave;
-                    ViewModel.P3_Nombre = producto.Descripcion;
-                    ViewModel.P3_Precio = producto.Display_Precio;
+                    ViewModel.P3_Clave = producto.idproducto;
+                    ViewModel.P3_Nombre = producto.descripcion;
+                    ViewModel.P3_Precio = producto.Detalle.Display_precio;
                     break;
 
                 case "P4":
-                    ViewModel.P4_Clave = producto.Clave;
-                    ViewModel.P4_Nombre = producto.Descripcion;
-                    ViewModel.P4_Precio = producto.Display_Precio;
+                    ViewModel.P4_Clave = producto.idproducto;
+                    ViewModel.P4_Nombre = producto.descripcion;
+                    ViewModel.P4_Precio = producto.Detalle.Display_precio;
                     break;
 
                 case "P5":
-                    ViewModel.P5_Clave = producto.Clave;
-                    ViewModel.P5_Nombre = producto.Descripcion;
-                    ViewModel.P5_Precio = producto.Display_Precio;
+                    ViewModel.P5_Clave = producto.idproducto;
+                    ViewModel.P5_Nombre = producto.descripcion;
+                    ViewModel.P5_Precio = producto.Detalle.Display_precio;
                     break;
                 default:
                     break;

@@ -1,9 +1,8 @@
-﻿using mod_add.Datos.ModelosPersonalizados;
-using SRLibrary.Models;
-using SRLibrary.SR_Context;
+﻿using SRLibrary.SR_Context;
 using SRLibrary.SR_DAO;
+using SRLibrary.SR_DTO;
+using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace mod_add.ViewModels
@@ -12,52 +11,62 @@ namespace mod_add.ViewModels
     {
         public SeleccionProductoViewModel()
         {
-            ProductosAlmacen = new List<ProductoSeleccion>();
-            Productos = new ObservableCollection<ProductoSeleccion>();
+            Grupos = new List<SR_grupos>();
+            ProductosAlmacen = new List<SR_productos>();
+            Productos = new List<SR_productos>();
             Buscador = "";
 
+            ObtenerGruposSR();
+        }
+
+        public void ObtenerGruposSR()
+        {
             using (SoftRestaurantDBContext context = new SoftRestaurantDBContext())
             {
-                SR_productos_DAO productos_DAO = new SR_productos_DAO(context);
+                SR_grupos_DAO grupos_DAO = new SR_grupos_DAO(context);
 
-                List<Joins> joins = new List<Joins>
-                {
-                    new Joins()
-                    {
-                        Modelo = "SR_productosdetalle",
-                        KeyPrimary = "idproducto",
-                        KeyForeing = "idproducto"
-                    }
-                };
-
-                var productos = productos_DAO.join(joins, new object[] { });
-
-                foreach (var producto in productos)
-                {
-                    ProductosAlmacen.Add(new ProductoSeleccion
-                    {
-                        Clave = producto.idproducto,
-                        Grupo = producto.idgrupo,
-                        Descripcion = producto.descripcion,
-                        Precio = producto.productosdetalle_precio
-                    });
-                }
-
-                ProductosAlmacen = ProductosAlmacen.OrderBy(x => x.Precio).ToList();
-
-                Filtrar("");
+                Grupos = grupos_DAO.GetAll();
             }
+        }
+
+        public void ObtenerProductosSR(List<SR_productos> productos)
+        {
+            try
+            {
+                ProductosAlmacen = productos;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
+            //ProductosAlmacen = ProductosAlmacen.OrderBy(x => x.Detalle.precio).ToList();
+            Productos = ProductosAlmacen;
+
+            //Filtrar("");
         }
 
         public void Filtrar(string Buscador)
         {
-            Productos = new ObservableCollection<ProductoSeleccion>(ProductosAlmacen.Where(x => x.Descripcion.Contains(Buscador) || x.Clave.Contains(Buscador) || x.Display_Precio.Contains(Buscador)).ToList());
+            //Productos = ProductosAlmacen.Where(x => x.descripcion.Contains(Buscador) || x.idproducto.Contains(Buscador) || x.Detalle.Display_precio.Contains(Buscador)).ToList();
+            Productos = ProductosAlmacen.Where(x => x.descripcion.Contains(Buscador) || x.idproducto.Contains(Buscador)).ToList();
         }
 
-        public List<ProductoSeleccion> ProductosAlmacen { get; set; }
+        private List<SR_grupos> _Grupos;
+        public List<SR_grupos> Grupos
+        {
+            get { return _Grupos; }
+            set
+            {
+                _Grupos = value;
+                OnPropertyChanged(nameof(Grupos));
+            }
+        }
 
-        private ObservableCollection<ProductoSeleccion> _Productos;
-        public ObservableCollection<ProductoSeleccion> Productos
+        public List<SR_productos> ProductosAlmacen { get; set; }
+
+        private List<SR_productos> _Productos;
+        public List<SR_productos> Productos
         {
             get { return _Productos; }
             set

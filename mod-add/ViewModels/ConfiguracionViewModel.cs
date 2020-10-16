@@ -7,6 +7,7 @@ using mod_add.Selectores;
 using SRLibrary.Models;
 using SRLibrary.SR_Context;
 using SRLibrary.SR_DAO;
+using SRLibrary.SR_DTO;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -69,7 +70,7 @@ namespace mod_add.ViewModels
                 var productoSR = ObtenerProductoSR(Producto1.Clave);
 
                 P1_Nombre = productoSR.descripcion;
-                P1_Precio = string.Format("{0:C}", productoSR.productosdetalle_precio);
+                P1_Precio = string.Format("{0:C}", productoSR.Detalle.precio);
             }
             else
             {
@@ -88,7 +89,7 @@ namespace mod_add.ViewModels
                 var productoSR = ObtenerProductoSR(Producto2.Clave);
 
                 P2_Nombre = productoSR.descripcion;
-                P2_Precio = string.Format("{0:C}", productoSR.productosdetalle_precio);
+                P2_Precio = string.Format("{0:C}", productoSR.Detalle.precio);
             }
             else
             {
@@ -107,7 +108,7 @@ namespace mod_add.ViewModels
                 var productoSR = ObtenerProductoSR(Producto3.Clave);
 
                 P3_Nombre = productoSR.descripcion;
-                P3_Precio = string.Format("{0:C}", productoSR.productosdetalle_precio);
+                P3_Precio = string.Format("{0:C}", productoSR.Detalle.precio);
             }
             else
             {
@@ -126,7 +127,7 @@ namespace mod_add.ViewModels
                 var productoSR = ObtenerProductoSR(Producto4.Clave);
 
                 P4_Nombre = productoSR.descripcion;
-                P4_Precio = string.Format("{0:C}", productoSR.productosdetalle_precio);
+                P4_Precio = string.Format("{0:C}", productoSR.Detalle.precio);
             }
             else
             {
@@ -145,7 +146,7 @@ namespace mod_add.ViewModels
                 var productoSR = ObtenerProductoSR(Producto5.Clave);
 
                 P5_Nombre = productoSR.descripcion;
-                P5_Precio = string.Format("{0:C}", productoSR.productosdetalle_precio);
+                P5_Precio = string.Format("{0:C}", productoSR.Detalle.precio);
             }
             else
             {
@@ -154,31 +155,14 @@ namespace mod_add.ViewModels
             }
         }
 
-        public dynamic ObtenerProductoSR(string idproducto)
+        public SR_productos ObtenerProductoSR(string idproducto)
         {
             using (SoftRestaurantDBContext context = new SoftRestaurantDBContext())
             {
                 SR_productos_DAO productos_DAO = new SR_productos_DAO(context);
 
-                List<Joins> joins = new List<Joins>
-                {
-                    new Joins()
-                    {
-                        Modelo = "SR_productosdetalle",
-                        KeyPrimary = "idproducto",
-                        KeyForeing = "idproducto"
-                    }
-                };
-
-                var productosSR = productos_DAO.join($"productos.idproducto = {idproducto}", joins, new object[] { });
-
-                foreach (var productoSR in productosSR)
-                {
-                    return productoSR;
-                }
+                return productos_DAO.Find(idproducto);
             }
-
-            return null;
         }
 
         public int Guardar()

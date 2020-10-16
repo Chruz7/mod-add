@@ -13,23 +13,39 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="20"/>
             <RowDefinition Height="40"/>
+            <RowDefinition Height="40"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="50"/>
+            <RowDefinition Height="40"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="60"/>
             <ColumnDefinition Width="200"/>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="130"/>
+            <ColumnDefinition Width="110"/>
         </Grid.ColumnDefinitions>
 
         <Label
             Grid.Row="1"
             Grid.Column="0"
             VerticalAlignment="Center"
+            Content="Grupos:"/>
+        <ComboBox
+            Grid.Row="1"
+            Grid.Column="1"
+            VerticalAlignment="Center"
+            Margin="5,0,5,0"
+            DisplayMemberPath="descripcion"
+            x:Name="Grupos"
+            ItemsSource="{Binding Grupos}" 
+            SelectionChanged="Grupos_SelectionChanged"/>
+
+        <Label
+            Grid.Row="2"
+            Grid.Column="0"
+            VerticalAlignment="Center"
             Content="Producto:"/>
         <TextBox
-            Grid.Row="1"
+            Grid.Row="2"
             Grid.Column="1"
             VerticalAlignment="Center"
             MaxLength="80"
@@ -40,7 +56,7 @@
             KeyUp="Buscador_KeyUp"/>
 
         <Grid
-            Grid.Row="2"
+            Grid.Row="3"
             Grid.Column="0"
             Grid.ColumnSpan="7">
             <DataGrid
@@ -54,30 +70,31 @@
                         ElementStyle="{DynamicResource CenterCell}"
                         Width="15*"
                         Header="Clave"
-                        Binding="{Binding Clave}"/>
+                        Binding="{Binding idproducto}"/>
                     <DataGridTextColumn
                         ElementStyle="{DynamicResource CenterCell}"
                         Width="15*"
                         Header="Grupo"
-                        Binding="{Binding Grupo}"/>
+                        Binding="{Binding idgrupo}"/>
                     <DataGridTextColumn
                         Width="50*"
-                        Header="Descripcion"
-                        Binding="{Binding Descripcion}"/>
+                        Header="Descripción"
+                        Binding="{Binding descripcion}"/>
                     <DataGridTextColumn
                         ElementStyle="{DynamicResource RightCell}"
                         Width="20*"
                         Header="Precio"
-                        Binding="{Binding Display_Precio}"/>
+                        Binding="{Binding Detalle.precio}"/>
                 </DataGrid.Columns>
             </DataGrid>
         </Grid>
 
         <Button
-            Grid.Row="3"
+            Grid.Row="4"
             Grid.Column="3"
             VerticalAlignment="Center"
             HorizontalAlignment="Center"
+            Height="30"
             x:Name="Cancelar"
             Click="Cancelar_Click"
             Style="{DynamicResource ButtonBorderRoundStyle}">
@@ -90,13 +107,11 @@
                     Grid.Column="0"
                     VerticalAlignment="Center"
                     HorizontalAlignment="Center"
-                    Height="40"
                     Source="/mod-add;component/Recursos/cuenta.png"/>
                 <TextBlock
                     Grid.Column="1"
                     VerticalAlignment="Center"
                     HorizontalAlignment="Center"
-                    Padding="10,0,10,0"
                     FontWeight="Bold"
                     Text="CANCELAR"/>
             </Grid>
