@@ -1,4 +1,5 @@
 ﻿using mod_add.Datos.ModelosPersonalizados;
+using mod_add.Enums;
 using mod_add.Helpers;
 using mod_add.Selectores;
 using mod_add.ViewModels;
@@ -27,6 +28,8 @@ namespace mod_add.Componentes
             DataContext = ViewModel;
 
             CambiarPrecios.SelectedItem = ViewModel.Condicionales.Where(x => x.Valor == ViewModel.CambiarPrecio).FirstOrDefault();
+
+            HabilitarComponentes(false);
         }
 
         private void Aniadir_Click(object sender, RoutedEventArgs e)
@@ -57,12 +60,23 @@ namespace mod_add.Componentes
 
         private void Aceptar_Click(object sender, RoutedEventArgs e)
         {
-
+            if (ViewModel.Guardar() == 1)
+            {
+                MessageBox.Show("El ajuste se realizó con exito.", "Listo", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            else
+            {
+                MessageBox.Show("Ocurrió un error al internar realizar el ajuste, por favor intente de nuevo.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void Cancelar_Click(object sender, RoutedEventArgs e)
         {
+            ViewModel.Inicializar();
 
+            CambiarPrecios.SelectedItem = ViewModel.Condicionales.Where(x => x.Valor == ViewModel.CambiarPrecio).FirstOrDefault();
+
+            HabilitarComponentes(false);
         }
 
         private void CambiarPrecios_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -78,7 +92,11 @@ namespace mod_add.Componentes
         {
             if (e.Key == Key.Enter && !string.IsNullOrEmpty(Folio.Text))
             {
-                if (ViewModel.ObtenerCheque(long.Parse(Folio.Text)) == 0)
+                if (ViewModel.ObtenerCheque(long.Parse(Folio.Text)) == Respuesta.HECHO)
+                {
+                    HabilitarComponentes();
+                }
+                else
                 {
                     MessageBox.Show("No se encontró el cheque", "Busqueda", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
@@ -119,10 +137,7 @@ namespace mod_add.Componentes
                 e.Handled = true;
         }
 
-        private void DetallesCheque_CurrentCellChanged(object sender, System.EventArgs e)
-        {
-            
-        }
+        
 
         public void ProductoCambio(SR_productos producto)
         {
@@ -140,6 +155,11 @@ namespace mod_add.Componentes
             
         }
 
+        private void DetallesCheque_CurrentCellChanged(object sender, System.EventArgs e)
+        {
+
+        }
+
         private void DetallesCheque_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             string header = DetallesCheque.CurrentColumn.Header.ToString();
@@ -150,6 +170,28 @@ namespace mod_add.Componentes
                 SeleccionProducto window = new SeleccionProducto();
                 window.ShowDialog();
             }
+        }
+
+        private void HabilitarComponentes(bool habilitar = true)
+        {
+            Aniadir.IsEnabled = habilitar;
+            Eliminar.IsEnabled = habilitar;
+            Aceptar.IsEnabled = habilitar;
+            Cancelar.IsEnabled = habilitar;
+
+            CambiarPrecios.IsEnabled = habilitar;
+            Fecha.IsEnabled = habilitar;
+            Personas.IsEnabled = habilitar;
+            Cliente.IsEnabled = habilitar;
+            Descuento.IsEnabled = habilitar;
+            Propina.IsEnabled = habilitar;
+            Subtotal.IsEnabled = habilitar;
+            Total.IsEnabled = habilitar;
+        }
+
+        private void DetallesCheque_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
+        {
+            ViewModel.AjustarCheque();
         }
     }
 }

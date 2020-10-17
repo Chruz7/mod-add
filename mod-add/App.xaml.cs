@@ -17,8 +17,10 @@ namespace mod_add
     /// </summary>
     public partial class App : Application
     {
+        public static MidpointRounding MidpointRounding { get; set; }
         private void Application_Startup(object sender, StartupEventArgs e)
         {
+            MidpointRounding = MidpointRounding.AwayFromZero;
             //Autenticacion autenticacion = new Autenticacion();
             //autenticacion.ShowDialog();
 

@@ -96,6 +96,8 @@
     <Compile Include="Componentes\Configuracion.xaml.cs">
       <DependentUpon>Configuracion.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Enums\Respuesta.cs" />
+    <Compile Include="Enums\RespuestaCheque.cs" />
     <Compile Include="Helpers\Messenger.cs" />
     <Compile Include="Selectores\Condicional.cs" />
     <Compile Include="ViewModels\AjusteMasivoViewModel.cs" />

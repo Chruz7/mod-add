@@ -262,7 +262,7 @@
                 HorizontalContentAlignment="Right"
                 Content="Descuento Gral:"
                 Target="{Binding ElementName=Descuento}"/>
-            <xctk:IntegerUpDown
+            <xctk:DecimalUpDown
                 Grid.Row="0"
                 Grid.Column="4"
                 VerticalAlignment="Bottom"
@@ -338,7 +338,8 @@
                 Margin="5"
                 ItemsSource="{Binding DetallesCheque}"
                 Style="{DynamicResource DataGridStyle2}"
-                CurrentCellChanged="DetallesCheque_CurrentCellChanged" SelectedCellsChanged="DetallesCheque_SelectedCellsChanged" MouseDoubleClick="DetallesCheque_MouseDoubleClick">
+                CurrentCellChanged="DetallesCheque_CurrentCellChanged" SelectedCellsChanged="DetallesCheque_SelectedCellsChanged" MouseDoubleClick="DetallesCheque_MouseDoubleClick"
+                CellEditEnding="DetallesCheque_CellEditEnding">
                 <DataGrid.Columns>
                     <DataGridTextColumn
                         IsReadOnly="True"
