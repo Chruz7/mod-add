@@ -248,7 +248,7 @@
                         Grid.Column="0"
                         VerticalAlignment="Center"
                         HorizontalAlignment="Center"
-                        Source="/mod-add;component/Recursos/cuenta.png"/>
+                        Source="/mod-add;component/Recursos/Iconos/cancelar.png"/>
                     <TextBlock
                         Grid.Column="1"
                         VerticalAlignment="Center"
@@ -277,7 +277,7 @@
                         Grid.Column="0"
                         VerticalAlignment="Center"
                         HorizontalAlignment="Center"
-                        Source="/mod-add;component/Recursos/cuenta.png"/>
+                        Source="/mod-add;component/Recursos/Iconos/aceptar.png"/>
                     <TextBlock
                         Grid.Column="1"
                         VerticalAlignment="Center"

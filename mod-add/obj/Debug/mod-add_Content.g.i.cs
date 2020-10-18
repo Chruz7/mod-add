@@ -8,6 +8,6 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("recursos/icons8-cuenta-64.png")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("recursos/iconos/seleccion-grupo.png")]
 
 

@@ -111,6 +111,9 @@
     <Compile Include="Vistas\Autenticacion.xaml.cs">
       <DependentUpon>Autenticacion.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Vistas\CambiarContrasena.xaml.cs">
+      <DependentUpon>CambiarContrasena.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Vistas\Principal.xaml.cs">
       <DependentUpon>Principal.xaml</DependentUpon>
     </Compile>
@@ -152,6 +155,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Vistas\Autenticacion.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Vistas\CambiarContrasena.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -200,9 +207,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Recursos\cuenta.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Folder Include="Utils\" />
   </ItemGroup>
   <ItemGroup>
@@ -210,6 +214,45 @@
       <Project>{95445c47-c528-43a6-9379-000fb06a6b20}</Project>
       <Name>mod-add.Datos</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Recursos\Iconos\aceptar.png" />
+    <Resource Include="Recursos\Iconos\cancelar.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Recursos\Iconos\configuracion.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Recursos\Iconos\bitacora.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Recursos\Iconos\añadir.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Recursos\Iconos\eliminar.png" />
+    <Resource Include="Recursos\Iconos\salir.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Recursos\Iconos\ajuste-masivo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Recursos\Iconos\ajuste-unico.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Recursos\Iconos\excel.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Recursos\Iconos\caja.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Recursos\Iconos\imprimir.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Recursos\Iconos\contraseña.png" />
+    <Resource Include="Recursos\Iconos\licencia.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Recursos\Iconos\seleccion-grupo.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

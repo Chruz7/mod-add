@@ -112,3 +112,5 @@ C:\Users\Alber\source\repos\mod-add\mod-add\obj\Debug\mod-add.csproj.CoreCompile
 C:\Users\Alber\source\repos\mod-add\mod-add\obj\Debug\mod-add.csproj.CopyComplete
 C:\Users\Alber\source\repos\mod-add\mod-add\obj\Debug\mod-add.exe
 C:\Users\Alber\source\repos\mod-add\mod-add\obj\Debug\mod-add.pdb
+C:\Users\Alber\source\repos\mod-add\mod-add\obj\Debug\Vistas\CambiarContrasena.g.cs
+C:\Users\Alber\source\repos\mod-add\mod-add\obj\Debug\Vistas\CambiarContrasena.baml

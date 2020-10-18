@@ -25,10 +25,11 @@
         <Button
             Grid.Row="0"
             Grid.Column="5"
-            Margin="5"
+            VerticalAlignment="Center"
+            HorizontalAlignment="Center"
+            Width="100"
             x:Name="Exportar"
-            Click="Exportar_Click"
-            Style="{DynamicResource ButtonBorderRoundStyle}">
+            Click="Exportar_Click">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="30*"/>
@@ -38,7 +39,7 @@
                     Grid.Column="0"
                     VerticalAlignment="Center"
                     HorizontalAlignment="Center"
-                    Source="/mod-add;component/Recursos/cuenta.png"/>
+                    Source="/mod-add;component/Recursos/Iconos/excel.png"/>
                 <TextBlock
                     Grid.Column="1"
                     VerticalAlignment="Center"

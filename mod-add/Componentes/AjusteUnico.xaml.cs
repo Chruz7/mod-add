@@ -1,15 +1,16 @@
-﻿using mod_add.Datos.ModelosPersonalizados;
-using mod_add.Enums;
+﻿using mod_add.Enums;
 using mod_add.Helpers;
 using mod_add.Selectores;
 using mod_add.ViewModels;
 using mod_add.Vistas;
 using SR.Datos;
 using SRLibrary.SR_DTO;
+using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Threading;
 
 namespace mod_add.Componentes
 {
@@ -92,13 +93,23 @@ namespace mod_add.Componentes
         {
             if (e.Key == Key.Enter && !string.IsNullOrEmpty(Folio.Text))
             {
-                if (ViewModel.ObtenerCheque(long.Parse(Folio.Text)) == Respuesta.HECHO)
+                var respuesta = ViewModel.ObtenerCheque(long.Parse(Folio.Text));
+
+                if (respuesta == Respuesta.HECHO)
                 {
                     HabilitarComponentes();
                 }
+                else if (respuesta == Respuesta.CHEQUE_NO_ENCONTRADO)
+                {
+                    MessageBox.Show("No se encontró el cheque.", "Busqueda", MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
+                else if (respuesta == Respuesta.MAS_DE_UNA_FORMA_PAGO)
+                {
+                    MessageBox.Show("No se puede procesar el cheque por que tiene más de una forma de pago.", "Busqueda", MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
                 else
                 {
-                    MessageBox.Show("No se encontró el cheque", "Busqueda", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    MessageBox.Show("Error al intentar buscar el cheque.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
             }
         }
@@ -150,16 +161,6 @@ namespace mod_add.Componentes
             Messenger.Default.Unregister(this);
         }
 
-        private void DetallesCheque_SelectedCellsChanged(object sender, SelectedCellsChangedEventArgs e)
-        {
-            
-        }
-
-        private void DetallesCheque_CurrentCellChanged(object sender, System.EventArgs e)
-        {
-
-        }
-
         private void DetallesCheque_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             string header = DetallesCheque.CurrentColumn.Header.ToString();
@@ -191,7 +192,13 @@ namespace mod_add.Componentes
 
         private void DetallesCheque_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
         {
+            DetallesCheque.Dispatcher.BeginInvoke(new Action(() => RefrescarControles()), DispatcherPriority.Background);
+        }
+
+        public void RefrescarControles()
+        {
             ViewModel.AjustarCheque();
+            DetallesCheque.Items.Refresh();
         }
     }
 }

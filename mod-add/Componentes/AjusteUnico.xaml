@@ -29,10 +29,11 @@
         <Button
             Grid.Row="0"
             Grid.Column="3"
-            Margin="5"
+            VerticalAlignment="Center"
+            HorizontalAlignment="Center"
+            Width="100"
             x:Name="Aniadir"
-            Click="Aniadir_Click"
-            Style="{DynamicResource ButtonBorderRoundStyle}">
+            Click="Aniadir_Click">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="30*"/>
@@ -42,12 +43,11 @@
                     Grid.Column="0"
                     VerticalAlignment="Center"
                     HorizontalAlignment="Center"
-                    Source="/mod-add;component/Recursos/cuenta.png"/>
+                    Source="/mod-add;component/Recursos/Iconos/añadir.png"/>
                 <TextBlock
                     Grid.Column="1"
                     VerticalAlignment="Center"
                     HorizontalAlignment="Center"
-                    Padding="5,0,5,0"
                     FontWeight="Bold"
                     Text="AÑADIR"/>
             </Grid>
@@ -56,10 +56,11 @@
         <Button
             Grid.Row="0"
             Grid.Column="4"
-            Margin="5"
+            VerticalAlignment="Center"
+            HorizontalAlignment="Center"
+            Width="100"
             x:Name="Eliminar"
-            Click="Eliminar_Click"
-            Style="{DynamicResource ButtonBorderRoundStyle}">
+            Click="Eliminar_Click">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="30*"/>
@@ -69,12 +70,11 @@
                     Grid.Column="0"
                     VerticalAlignment="Center"
                     HorizontalAlignment="Center"
-                    Source="/mod-add;component/Recursos/cuenta.png"/>
+                    Source="/mod-add;component/Recursos/Iconos/eliminar.png"/>
                 <TextBlock
                     Grid.Column="1"
                     VerticalAlignment="Center"
                     HorizontalAlignment="Center"
-                    Padding="5,0,5,0"
                     FontWeight="Bold"
                     Text="ELIMINAR"/>
             </Grid>
@@ -83,10 +83,11 @@
         <Button
             Grid.Row="0"
             Grid.Column="5"
-            Margin="5"
+            VerticalAlignment="Center"
+            HorizontalAlignment="Center"
+            Width="100"
             x:Name="Aceptar"
-            Click="Aceptar_Click"
-            Style="{DynamicResource ButtonBorderRoundStyle}">
+            Click="Aceptar_Click">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="30*"/>
@@ -96,12 +97,11 @@
                     Grid.Column="0"
                     VerticalAlignment="Center"
                     HorizontalAlignment="Center"
-                    Source="/mod-add;component/Recursos/cuenta.png"/>
+                    Source="/mod-add;component/Recursos/Iconos/aceptar.png"/>
                 <TextBlock
                     Grid.Column="1"
                     VerticalAlignment="Center"
                     HorizontalAlignment="Center"
-                    Padding="5,0,5,0"
                     FontWeight="Bold"
                     Text="ACEPTAR"/>
             </Grid>
@@ -110,10 +110,11 @@
         <Button
             Grid.Row="0"
             Grid.Column="6"
-            Margin="5"
+            VerticalAlignment="Center"
+            HorizontalAlignment="Center"
+            Width="100"
             x:Name="Cancelar"
-            Click="Cancelar_Click"
-            Style="{DynamicResource ButtonBorderRoundStyle}">
+            Click="Cancelar_Click">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="30*"/>
@@ -123,12 +124,11 @@
                     Grid.Column="0"
                     VerticalAlignment="Center"
                     HorizontalAlignment="Center"
-                    Source="/mod-add;component/Recursos/cuenta.png"/>
+                    Source="/mod-add;component/Recursos/Iconos/cancelar.png"/>
                 <TextBlock
                     Grid.Column="1"
                     VerticalAlignment="Center"
                     HorizontalAlignment="Center"
-                    Padding="5,0,5,0"
                     FontWeight="Bold"
                     Text="CANCELAR"/>
             </Grid>
@@ -336,9 +336,9 @@
             <DataGrid
                 Name="DetallesCheque"
                 Margin="5"
-                ItemsSource="{Binding DetallesCheque}"
+                ItemsSource="{Binding DetallesCheque, UpdateSourceTrigger=LostFocus}"
                 Style="{DynamicResource DataGridStyle2}"
-                CurrentCellChanged="DetallesCheque_CurrentCellChanged" SelectedCellsChanged="DetallesCheque_SelectedCellsChanged" MouseDoubleClick="DetallesCheque_MouseDoubleClick"
+                MouseDoubleClick="DetallesCheque_MouseDoubleClick"
                 CellEditEnding="DetallesCheque_CellEditEnding">
                 <DataGrid.Columns>
                     <DataGridTextColumn
@@ -347,6 +347,7 @@
                         Header="Mov."
                         Binding="{Binding movimiento}"/>
                     <DataGridTextColumn
+                        IsReadOnly="True"
                         Width="15*"
                         Header="Comanda"
                         Binding="{Binding comanda}"/>
@@ -360,6 +361,7 @@
                         Header="Clave"
                         Binding="{Binding idproducto}"/>
                     <DataGridTextColumn
+                        IsReadOnly="True"
                         Width="30*"
                         Header="Descripción"
                         Binding="{Binding Producto.descripcion}"/>

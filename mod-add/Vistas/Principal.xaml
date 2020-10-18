@@ -41,7 +41,7 @@
                 </Grid.RowDefinitions>
                 <Image
                     Grid.Row="0"
-                    Source="/mod-add;component/Recursos/cuenta.png"/>
+                    Source="/mod-add;component/Recursos/Iconos/ajuste-unico.png"/>
                 <TextBlock
                     Grid.Row="1"
                     TextWrapping="Wrap"
@@ -63,7 +63,7 @@
                 </Grid.RowDefinitions>
                 <Image
                     Grid.Row="0"
-                    Source="/mod-add;component/Recursos/cuenta.png"/>
+                    Source="/mod-add;component/Recursos/Iconos/ajuste-masivo.png"/>
                 <TextBlock
                     Grid.Row="1"
                     TextWrapping="Wrap"
@@ -85,7 +85,8 @@
                 </Grid.RowDefinitions>
                 <Image
                     Grid.Row="0"
-                    Source="/mod-add;component/Recursos/cuenta.png"/>
+                    Source="/mod-add;component/Recursos/Iconos/bitacora.png"
+                    VerticalAlignment="Bottom"/>
                 <TextBlock
                     Grid.Row="1"
                     TextWrapping="Wrap"
@@ -107,7 +108,7 @@
                 </Grid.RowDefinitions>
                 <Image
                     Grid.Row="0"
-                    Source="/mod-add;component/Recursos/cuenta.png"/>
+                    Source="/mod-add;component/Recursos/Iconos/configuracion.png"/>
                 <TextBlock
                     Grid.Row="1"
                     TextWrapping="Wrap"
@@ -129,7 +130,7 @@
                 </Grid.RowDefinitions>
                 <Image
                     Grid.Row="0"
-                    Source="/mod-add;component/Recursos/cuenta.png"/>
+                    Source="/mod-add;component/Recursos/Iconos/salir.png"/>
                 <TextBlock
                     Grid.Row="1"
                     TextWrapping="Wrap"

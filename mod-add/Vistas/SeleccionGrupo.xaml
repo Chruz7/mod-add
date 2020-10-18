@@ -69,10 +69,9 @@
             Grid.Column="3"
             VerticalAlignment="Center"
             HorizontalAlignment="Center"
-            Height="35"
+            Width="100"
             x:Name="Cancelar"
-            Click="Cancelar_Click"
-            Style="{DynamicResource ButtonBorderRoundStyle}">
+            Click="Cancelar_Click">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="30*"/>
@@ -82,7 +81,7 @@
                     Grid.Column="0"
                     VerticalAlignment="Center"
                     HorizontalAlignment="Center"
-                    Source="/mod-add;component/Recursos/cuenta.png"/>
+                    Source="/mod-add;component/Recursos/Iconos/cancelar.png"/>
                 <TextBlock
                     Grid.Column="1"
                     VerticalAlignment="Center"

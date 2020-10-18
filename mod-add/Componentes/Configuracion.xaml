@@ -530,10 +530,9 @@
             Grid.Row="8"
             VerticalAlignment="Center"
             HorizontalAlignment="Left"
-            Height="35"
+            Width="100"
             x:Name="Cancelar"
-            Click="Cancelar_Click"
-            Style="{DynamicResource ButtonBorderRoundStyle}">
+            Click="Cancelar_Click">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="30*"/>
@@ -543,7 +542,7 @@
                     Grid.Column="0"
                     VerticalAlignment="Center"
                     HorizontalAlignment="Center"
-                    Source="/mod-add;component/Recursos/cuenta.png"/>
+                    Source="/mod-add;component/Recursos/Iconos/cancelar.png"/>
                 <TextBlock
                     Grid.Column="1"
                     VerticalAlignment="Center"
@@ -558,10 +557,9 @@
             Grid.Row="8"
             VerticalAlignment="Center"
             HorizontalAlignment="Right"
-            Height="35"
+            Width="100"
             x:Name="Aceptar"
-            Click="Aceptar_Click"
-            Style="{DynamicResource ButtonBorderRoundStyle}">
+            Click="Aceptar_Click">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="30*"/>
@@ -571,7 +569,7 @@
                     Grid.Column="0"
                     VerticalAlignment="Center"
                     HorizontalAlignment="Center"
-                    Source="/mod-add;component/Recursos/cuenta.png"/>
+                    Source="/mod-add;component/Recursos/Iconos/aceptar.png"/>
                 <TextBlock
                     Grid.Column="1"
                     VerticalAlignment="Center"

@@ -50,6 +50,7 @@ namespace mod_add.ViewModels
 
         public int Guardar()
         {
+            var dc = DetallesCheque;
             using (SoftRestaurantDBContext context = new SoftRestaurantDBContext())
             {
                 try
