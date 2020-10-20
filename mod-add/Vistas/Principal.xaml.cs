@@ -54,7 +54,7 @@ namespace mod_add.Vistas
         private void AbrirConfiguracion_Click(object sender, RoutedEventArgs e)
         {
             if (Configuracion == null) Configuracion = new Configuracion();
-
+            Configuracion.Refrescar();
             CargarComponente(Configuracion);
         }
 
@@ -75,6 +75,12 @@ namespace mod_add.Vistas
         {
             Contenido.Children.Clear();
             Contenido.Children.Add(userControl);
+        }
+
+        private void AbrirCambioContrasena_Click(object sender, RoutedEventArgs e)
+        {
+            CambiarContrasena window = new CambiarContrasena();
+            window.ShowDialog();
         }
     }
 }

@@ -19,11 +19,11 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="110"/>
+            <ColumnDefinition Width="110"/>
+            <ColumnDefinition Width="110"/>
+            <ColumnDefinition Width="110"/>
+            <ColumnDefinition Width="110"/>
         </Grid.ColumnDefinitions>
 
         <Button
@@ -33,6 +33,7 @@
             HorizontalAlignment="Center"
             Width="100"
             x:Name="Aniadir"
+            IsEnabledChanged="Button_IsEnabledChanged"
             Click="Aniadir_Click">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -60,6 +61,7 @@
             HorizontalAlignment="Center"
             Width="100"
             x:Name="Eliminar"
+            IsEnabledChanged="Button_IsEnabledChanged"
             Click="Eliminar_Click">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -87,6 +89,7 @@
             HorizontalAlignment="Center"
             Width="100"
             x:Name="Aceptar"
+            IsEnabledChanged="Button_IsEnabledChanged"
             Click="Aceptar_Click">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -114,6 +117,7 @@
             HorizontalAlignment="Center"
             Width="100"
             x:Name="Cancelar"
+            IsEnabledChanged="Button_IsEnabledChanged"
             Click="Cancelar_Click">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -145,10 +149,11 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="100"/>
                 <ColumnDefinition Width="200"/>
+                <ColumnDefinition Width="100"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="100"/>
+                <ColumnDefinition Width="100"/>
                 <ColumnDefinition Width="200"/>
-                <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
             <Label
@@ -164,7 +169,7 @@
                 Margin="5,0,5,0"
                 x:Name="Folio"
                 MaxLength="19"
-                Text="{Binding Folio}"
+                Text="{Binding Folio, UpdateSourceTrigger=PropertyChanged}"
                 KeyDown="Folio_KeyDown"
                 KeyUp="Folio_KeyUp"/>
 
@@ -190,13 +195,13 @@
 
             <Label
                 Grid.Row="0"
-                Grid.Column="3"
+                Grid.Column="4"
                 VerticalAlignment="Bottom"
                 Content="Personas:"
                 Target="{Binding ElementName=Personas}"/>
             <xctk:IntegerUpDown
                 Grid.Row="1"
-                Grid.Column="3"
+                Grid.Column="4"
                 VerticalAlignment="Center"
                 Margin="5,0,5,0"
                 x:Name="Personas"
@@ -206,18 +211,26 @@
 
             <Label
                 Grid.Row="0"
-                Grid.Column="4"
+                Grid.Column="5"
                 VerticalAlignment="Bottom"
                 Content="Cliente:"
                 Target="{Binding ElementName=Cliente}"/>
             <TextBox
                 Grid.Row="1"
-                Grid.Column="4"
+                Grid.Column="5"
                 VerticalAlignment="Center"
                 MaxLength="15"
                 Margin="5,0,5,0"
+                IsReadOnly="True"
                 x:Name="Cliente"
                 Text="{Binding Cliente}"/>
+            <TextBox
+                Grid.Row="1"
+                Grid.Column="6"
+                VerticalAlignment="Center"
+                Margin="5,0,5,0"
+                IsReadOnly="True"
+                Text="{Binding NombreCliente}"/>
         </Grid>
         <Grid
             Grid.Row="2"
@@ -229,8 +242,7 @@
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="220"/>
-                <ColumnDefinition Width="14*"/>
-                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="100"/>
                 <ColumnDefinition Width="80"/>
                 <ColumnDefinition Width="20"/>
@@ -249,7 +261,7 @@
                 Grid.Row="1"
                 Grid.Column="0"
                 VerticalAlignment="Center"
-                Margin="5,1,5,2"
+                Margin="5,0,5,0"
                 ItemsSource="{Binding Condicionales}"
                 DisplayMemberPath="Titulo"
                 x:Name="CambiarPrecios"
@@ -257,74 +269,74 @@
 
             <Label
                 Grid.Row="0"
-                Grid.Column="3"
+                Grid.Column="2"
                 VerticalAlignment="Center"
                 HorizontalContentAlignment="Right"
                 Content="Descuento Gral:"
                 Target="{Binding ElementName=Descuento}"/>
             <xctk:DecimalUpDown
                 Grid.Row="0"
-                Grid.Column="4"
-                VerticalAlignment="Bottom"
-                Margin="5,0,0,3"
+                Grid.Column="3"
+                VerticalAlignment="Center"
+                Margin="5,0,0,0"
                 x:Name="Descuento"
                 Maximum="100"
                 Minimum="0"
                 Value="{Binding Descuento}"/>
             <Label
                 Grid.Row="0"
-                Grid.Column="5"
+                Grid.Column="4"
                 VerticalAlignment="Center"
                 HorizontalAlignment="Center"
                 Padding="0"
-                Content="%" Margin="5,4,5,5"/>
+                Content="%"/>
 
             <Label
                 Grid.Row="1"
-                Grid.Column="3"
+                Grid.Column="2"
                 VerticalAlignment="Center"
                 HorizontalContentAlignment="Right"
                 Content="Propina:"
                 Target="{Binding ElementName=Propina}"/>
             <TextBox
                 Grid.Row="1"
-                Grid.Column="4"
+                Grid.Column="3"
                 Grid.ColumnSpan="2"
                 VerticalAlignment="Center"
                 HorizontalContentAlignment="Right"
-                Margin="5,4,5,3"
+                Margin="5,0,5,0"
                 x:Name="Propina"
                 KeyDown="Propina_KeyDown"
                 Text="{Binding Propina}"/>
 
             <Label
                 Grid.Row="0"
-                Grid.Column="6"
+                Grid.Column="5"
                 VerticalAlignment="Center"
                 HorizontalContentAlignment="Right"
                 Content="Subtotal:"
                 Target="{Binding ElementName=Subtotal}"/>
             <TextBox
                 Grid.Row="0"
-                Grid.Column="7"
+                Grid.Column="6"
                 VerticalAlignment="Center"
-                Margin="5,4,5,3"
+                Margin="5,0,5,0"
                 x:Name="Subtotal"
                 IsReadOnly="True"
                 Text="{Binding Subtotal}"/>
 
             <Label
                 Grid.Row="1"
-                Grid.Column="6"
+                Grid.Column="5"
                 VerticalAlignment="Center"
                 HorizontalContentAlignment="Right"
                 Content="Total:"
                 Target="{Binding ElementName=Total}"/>
             <TextBox
                 Grid.Row="1"
-                Grid.Column="7"
+                Grid.Column="6"
                 VerticalAlignment="Center"
-                Margin="5,4,5,3"
+                Margin="5,0,5,0"
                 x:Name="Total"
                 IsReadOnly="True"
                 Text="{Binding Total}"/>
@@ -336,7 +348,7 @@
             <DataGrid
                 Name="DetallesCheque"
                 Margin="5"
-                ItemsSource="{Binding DetallesCheque, UpdateSourceTrigger=LostFocus}"
+                ItemsSource="{Binding DetallesCheque}"
                 Style="{DynamicResource DataGridStyle2}"
                 MouseDoubleClick="DetallesCheque_MouseDoubleClick"
                 CellEditEnding="DetallesCheque_CellEditEnding">
@@ -348,7 +360,7 @@
                         Binding="{Binding movimiento}"/>
                     <DataGridTextColumn
                         IsReadOnly="True"
-                        Width="15*"
+                        Width="10*"
                         Header="Comanda"
                         Binding="{Binding comanda}"/>
                     <DataGridTextColumn
@@ -362,7 +374,7 @@
                         Binding="{Binding idproducto}"/>
                     <DataGridTextColumn
                         IsReadOnly="True"
-                        Width="30*"
+                        Width="35*"
                         Header="Descripción"
                         Binding="{Binding Producto.descripcion}"/>
                     <DataGridTextColumn

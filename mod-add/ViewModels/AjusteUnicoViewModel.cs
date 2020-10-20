@@ -35,7 +35,7 @@ namespace mod_add.ViewModels
 
         public void Inicializar()
         {
-            Folio = "";
+            Folio = 0;
             Fecha = new DateTime(2000, 1, 1);
             Personas = 0;
             Cliente = "";
@@ -50,16 +50,15 @@ namespace mod_add.ViewModels
 
         public int Guardar()
         {
-            var dc = DetallesCheque;
             using (SoftRestaurantDBContext context = new SoftRestaurantDBContext())
             {
                 try
                 {
-                    SR_cheques_DAO cheques_DAO = new SR_cheques_DAO(context);
+                    SR_cheques_DAO cheques_DAO = new SR_cheques_DAO(context, !App.ConfiguracionSistema.ModificarVentasReales);
 
                     cheques_DAO.Update(Cheque);
 
-                    SR_cheqdet_DAO cheqdet_DAO = new SR_cheqdet_DAO(context);
+                    SR_cheqdet_DAO cheqdet_DAO = new SR_cheqdet_DAO(context, !App.ConfiguracionSistema.ModificarVentasReales);
 
                     cheqdet_DAO.Delete(Cheque.folio);
                     cheqdet_DAO.Create(DetallesCheque.ToList());
@@ -181,6 +180,7 @@ namespace mod_add.ViewModels
 
         public void AjustarCheque()
         {
+            Cheque.nopersonas = Personas;
             Cheque.propina = Propina;
             Cheque.descuento = Descuento;
             Cheque.totalarticulos = DetallesCheque.Count;
@@ -247,24 +247,23 @@ namespace mod_add.ViewModels
             Cheque.cambiorepartidor = 0;
 
 
-            //if (FormaPago.tipo == 1)
-            //{
-            //    Cheque.efectivo = Cheque.total;
-            //}
-            //else if (FormaPago.tipo == 2)
-            //{
-            //    Cheque.tarjeta = Cheque.total;
-
-            //    Cheque.propinatarjeta = Cheque.propina;
-            //}
-            //else if (FormaPago.tipo == 3)
-            //{
-            //    Cheque.vales = Cheque.total;
-            //}
-            //else if (FormaPago.tipo == 4)
-            //{
-            //    Cheque.otros = Cheque.total;
-            //}
+            if (FormaPago.tipo == (int)TipoPago.EFECTIVO)
+            {
+                Cheque.efectivo = Cheque.total;
+            }
+            else if (FormaPago.tipo == (int)TipoPago.TARJETA)
+            {
+                Cheque.tarjeta = Cheque.total;
+                Cheque.propinatarjeta = Cheque.propina;
+            }
+            else if (FormaPago.tipo == (int)TipoPago.VALES)
+            {
+                Cheque.vales = Cheque.total;
+            }
+            else if (FormaPago.tipo == (int)TipoPago.OTROS)
+            {
+                Cheque.otros = Cheque.total;
+            }
 
             Descuento = Cheque.descuento ?? 0;
             Propina = Cheque.propina ?? 0;
@@ -283,34 +282,37 @@ namespace mod_add.ViewModels
             }
         }
 
-        public Respuesta ObtenerCheque(long folio)
+        public Respuesta ObtenerCheque()
         {
             using (SoftRestaurantDBContext context = new SoftRestaurantDBContext())
             {
                 try
                 {
-                    SR_cheques_DAO cheques_DAO = new SR_cheques_DAO(context);
+                    SR_cheques_DAO cheques_DAO = new SR_cheques_DAO(context, !App.ConfiguracionSistema.ModificarVentasReales);
 
-                    Cheque = cheques_DAO.Get("folio", folio).FirstOrDefault();
+                    Cheque = cheques_DAO.Find(Folio);
 
                     if (Cheque != null)
                     {
-                        //var chequespagos = Cheque.Chequespagos;
+                        if (Cheque.cancelado.Value) return Respuesta.CHEQUE_CANCELADO;
 
-                        //if (chequespagos.Count != 1)
-                        //{
-                        //    return Respuesta.MAS_DE_UNA_FORMA_PAGO;
-                        //}
+                        var chequespagos = Cheque.Chequespagos;
 
-                        //FormaPago = chequespagos[0].Formasdepago;
+                        if (chequespagos.Count != 1)
+                        {
+                            return Respuesta.CHEQUE_CON_MULTIPLE_FORMA_PAGO;
+                        }
+
+                        FormaPago = chequespagos[0].Formasdepago;
 
                         DetallesCheque = new ObservableCollection<SR_cheqdet>(Cheque.Detalles);
+                        DetallesCheque = new ObservableCollection<SR_cheqdet>(DetallesCheque.OrderBy(x => x.movimiento).ToList());
 
                         UltimoCheqDet = DetallesCheque.OrderByDescending(x => x.movimiento).FirstOrDefault();
 
 
                         if (Cheque.fecha.HasValue) Fecha = Cheque.fecha.Value;
-                        Personas = (int)Cheque.nopersonas;
+                        Personas = (int)Cheque.Nopersonas;
                         Cliente = Cheque.idcliente;
                         Descuento = Cheque.descuento ?? 0;
                         Propina = Cheque.propina ?? 0;
@@ -328,7 +330,7 @@ namespace mod_add.ViewModels
                 }
                 catch (Exception ex)
                 {
-                    //MessageBox.Show(ex.ToString());
+                    MessageBox.Show(ex.ToString());
                     return Respuesta.ERROR;
                 }
             }
@@ -363,8 +365,8 @@ namespace mod_add.ViewModels
 
         public bool CambiarPrecio { get; set; }
 
-        private string _Folio;
-        public string Folio
+        private long _Folio;
+        public long Folio
         {
             get { return _Folio; }
             set

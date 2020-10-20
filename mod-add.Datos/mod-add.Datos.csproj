@@ -74,6 +74,7 @@
     <Compile Include="ModelosPersonalizados\GrupoSeleccion.cs" />
     <Compile Include="ModelosPersonalizados\ProductoSeleccion.cs" />
     <Compile Include="Modelos\ConfiguracionSistema.cs" />
+    <Compile Include="Modelos\DetalleModificacionCheque.cs" />
     <Compile Include="Modelos\ProductoEliminar.cs" />
     <Compile Include="Modelos\ProductoReemplazo.cs" />
     <Compile Include="Modelos\RegistroBitacora.cs" />

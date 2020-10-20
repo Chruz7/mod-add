@@ -42,6 +42,9 @@ namespace mod_add.ViewModels
                         context.ProductosEliminar.AddOrUpdate(productoEliminar);
                         context.SaveChanges();
                     }
+
+                    App.ProductosEliminar = context.ProductosEliminar.ToList();
+
                     return 1;
                 }
                 catch

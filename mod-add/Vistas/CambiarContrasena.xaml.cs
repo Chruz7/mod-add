@@ -23,5 +23,15 @@ namespace mod_add.Vistas
         {
             InitializeComponent();
         }
+
+        private void Aceptar_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Cancelar_Click(object sender, RoutedEventArgs e)
+        {
+            Close();
+        }
     }
 }

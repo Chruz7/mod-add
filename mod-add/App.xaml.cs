@@ -1,13 +1,9 @@
 ﻿using mod_add.Datos.Contexto;
-using mod_add.Datos.Infraestructura;
 using mod_add.Datos.Modelos;
 using mod_add.Vistas;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace mod_add
@@ -17,6 +13,9 @@ namespace mod_add
     /// </summary>
     public partial class App : Application
     {
+        public static ConfiguracionSistema ConfiguracionSistema { get; set; }
+        public static List<ProductoReemplazo> ProductosReemplazo { get; set; }
+        public static List<ProductoEliminar> ProductosEliminar { get; set; }
         public static MidpointRounding MidpointRounding { get; set; }
         private void Application_Startup(object sender, StartupEventArgs e)
         {
@@ -54,6 +53,10 @@ namespace mod_add
                     context.SaveChanges();
                 }
 
+
+                ConfiguracionSistema = context.ConfiguracionSistema.FirstOrDefault();
+                ProductosReemplazo = context.ProductosReemplazo.ToList();
+                ProductosEliminar = context.ProductosEliminar.ToList();
             }
 
             IrPrincipal();

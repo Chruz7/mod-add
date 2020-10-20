@@ -11,85 +11,385 @@
     <Grid
         Background="#FFFFFF">
         <Grid.RowDefinitions>
-            <RowDefinition Height="30"/>
-            <RowDefinition Height="90"/>
+            <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="75"/>
+            <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="320"/>
+            <ColumnDefinition Width="auto"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
+
+        <Grid
+            Grid.Row="0"
+            Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            
+            <Button
+                Grid.Row="0"
+                Padding="6"
+                Content="Nueva busqueda"
+                x:Name="Busqueda"
+                Click="Busqueda_Click"/>
+
+            <GroupBox
+                Grid.Row="1"
+                Header="Fechas de cuentas a aplicar:">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="14*"/>
+                        <ColumnDefinition Width="36*"/>
+                        <ColumnDefinition Width="14*"/>
+                        <ColumnDefinition Width="36*"/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <RadioButton
+                        Grid.Row="0"
+                        Grid.Column="0"
+                        Grid.ColumnSpan="2"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
+                        Content="Turno"
+                        x:Name="Turno"
+                        GroupName="TipoBusqueda"
+                        IsChecked="{Binding Turno}"
+                        Checked="Turno_Checked"
+                        Unchecked="Turno_Unchecked"/>
+
+                    <RadioButton
+                        Grid.Row="0"
+                        Grid.Column="2"
+                        Grid.ColumnSpan="2"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
+                        Content="Periodo"
+                        x:Name="Periodo"
+                        GroupName="TipoBusqueda"
+                        IsChecked="{Binding Periodo}"/>
+
+                    <Label
+                        Grid.Row="1"
+                        Grid.Column="0"
+                        Content="Del:"
+                        x:Name="Lbl_FechaInicio"
+                        Target="{Binding ElementName=FechaInicio}"/>
+                    <DatePicker
+                        Grid.Row="1"
+                        Grid.Column="1"
+                        VerticalAlignment="Center"
+                        Margin="5,0,5,0"
+                        x:Name="FechaInicio"
+                        DisplayDateStart="1901,1,1"
+                        SelectedDateChanged="FechaInicio_SelectedDateChanged"
+                        SelectedDate="{Binding FechaInicio}">
+                        <DatePicker.Resources>
+                            <Style TargetType="{x:Type DatePickerTextBox}">
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate>
+                                            <TextBox
+                                                IsReadOnly="True"
+                                                x:Name="PART_TextBox"
+                                                Text="{Binding Path=SelectedDate,StringFormat='dd/MM/yyyy',RelativeSource={RelativeSource AncestorType={x:Type DatePicker}}}" />
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </DatePicker.Resources>
+                    </DatePicker>
+
+                    <Label
+                        Grid.Row="1"
+                        Grid.Column="2"
+                        Content="Hasta:"
+                        x:Name="Lbl_FechaCierre"
+                        Target="{Binding ElementName=FechaCierre}"/>
+                    <DatePicker
+                        Grid.Row="1"
+                        Grid.Column="3"
+                        VerticalAlignment="Center"
+                        Margin="5,0,5,0"
+                        x:Name="FechaCierre"
+                        DisplayDateStart="1901,1,1"
+                        SelectedDateChanged="FechaCierre_SelectedDateChanged"
+                        SelectedDate="{Binding FechaCierre}">
+                        <DatePicker.Resources>
+                            <Style TargetType="{x:Type DatePickerTextBox}">
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate>
+                                            <TextBox
+                                                IsReadOnly="True"
+                                                x:Name="PART_TextBox"
+                                                Text="{Binding Path=SelectedDate,StringFormat='dd/MM/yyyy',RelativeSource={RelativeSource AncestorType={x:Type DatePicker}}}" />
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </DatePicker.Resources>
+                    </DatePicker>
+
+                    <TextBlock
+                        Grid.Row="2"
+                        Grid.Column="1"
+                        Grid.ColumnSpan="2"
+                        x:Name="HorarioTurno"
+                        Text="{Binding HorarioTurno}"/>
+                </Grid>
+            </GroupBox>
+        </Grid>
+
+        <Grid
+            Grid.Row="0"
+            Grid.Column="1">
+            <GroupBox
+                Header="Filtros para cuentas:">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="220"/>
+                        <ColumnDefinition Width="240"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Grid
+                        Grid.Column="0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="25"/>
+                            <RowDefinition Height="25"/>
+                            <RowDefinition Height="25"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="120"/>
+                            <ColumnDefinition Width="80"/>
+                            <ColumnDefinition Width="20"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Label
+                            Grid.Row="0"
+                            Grid.Column="0"
+                            VerticalAlignment="Center"
+                            HorizontalContentAlignment="Right"
+                            Content="Cuentas mayores a:"
+                            Target="{Binding ElementName=ImporteAjuste}"/>
+                        <TextBox
+                            Grid.Row="0"
+                            Grid.Column="1"
+                            Grid.ColumnSpan="2"
+                            VerticalAlignment="Center"
+                            Margin="5,0,5,0"
+                            x:Name="ImporteAjuste"
+                            Text="{Binding ImporteAjuste, UpdateSourceTrigger=PropertyChanged}"
+                            KeyDown="TextBlock_KeyDown"/>
+
+                        <Label
+                            Grid.Row="1"
+                            Grid.Column="0"
+                            VerticalAlignment="Center"
+                            HorizontalContentAlignment="Right"
+                            Content="Porcentaje objetivo:"
+                            Target="{Binding ElementName=PorcentajeObjetivo}"/>
+                        <xctk:IntegerUpDown
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            VerticalAlignment="Center"
+                            Margin="5,0,0,0"
+                            x:Name="PorcentajeObjetivo"
+                            Maximum="100"
+                            Minimum="1"
+                            Value="{Binding PorcentajeObjetivo}"/>
+                        <Label
+                            Grid.Row="1"
+                            Grid.Column="2"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Center"
+                            Padding="0"
+                            Content="%"/>
+
+                        <Label
+                            Grid.Row="2"
+                            Grid.Column="0"
+                            VerticalAlignment="Center"
+                            HorizontalContentAlignment="Right"
+                            Content="Importe objetivo:"
+                            Target="{Binding ElementName=ImporteObjetivo}"/>
+                        <TextBox
+                            Grid.Row="2"
+                            Grid.Column="1"
+                            Grid.ColumnSpan="2"
+                            VerticalAlignment="Center"
+                            Margin="5,0,5,0"
+                            x:Name="ImporteObjetivo"
+                            IsReadOnly="True"
+                            Text="{Binding ImporteObjetivo}"/>
+                    </Grid>
+                    
+                    <Grid
+                        Grid.Column="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="15"/>
+                            <RowDefinition Height="15"/>
+                            <RowDefinition Height="15"/>
+                            <RowDefinition Height="15"/>
+                            <RowDefinition Height="15"/>
+                            <RowDefinition Height="5"/>
+                            <RowDefinition Height="15"/>
+                            <RowDefinition Height="15"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <CheckBox
+                            Grid.Row="0"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Left"
+                            Content="Incluir cuentas pagadas con tarjeta"
+                            x:Name="CuentaPagadaTarjerta"
+                            IsChecked="{Binding IncluirCuentaPagadaTarjeta}"/>
+
+                        <CheckBox
+                            Grid.Row="1"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Left"
+                            Content="Incluir cuentas pagadas con vales"
+                            x:Name="CuentaPagadaVales"
+                            IsChecked="{Binding IncluirCuentaPagadaVales}"/>
+                        
+                        <CheckBox
+                            Grid.Row="2"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Left"
+                            Content="Incluir cuentas pagadas con otros"
+                            x:Name="CuentaPagadaOtros"
+                            IsChecked="{Binding IncluirCuentaPagadaOtros}"/>
+
+                        <CheckBox
+                            Grid.Row="3"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Left"
+                            Content="Incluir cuentas facturadas"
+                            x:Name="CuentaFacturada"
+                            IsChecked="{Binding IncluirCuentaFacturada}"/>
+
+                        <CheckBox
+                            Grid.Row="4"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Left"
+                            Content="Incluir cuentas con nota de consumo"
+                            x:Name="CuentaNotaConsumo"
+                            IsChecked="{Binding IncluirCuentaNotaConsumo}"/>
+
+                        <CheckBox
+                            Grid.Row="6"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Left"
+                            Content="Quitar propinas incluidas manualmente"
+                            x:Name="QuitarPropinasManualmente"
+                            IsChecked="{Binding QuitarPropinasManualmente}"/>
+
+                        <CheckBox
+                            Grid.Row="7"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Left"
+                            Content="NO incluir cuentas reimpresas"
+                            x:Name="NoIncluirCuentasReimpresas"
+                            IsChecked="{Binding NoIncluirCuentasReimpresas}"/>
+                    </Grid>
+                </Grid>
+            </GroupBox>
+        </Grid>
+
+        <ScrollViewer
+            Grid.Row="1"
+            Grid.Column="0"
+            Grid.ColumnSpan="7"
+            HorizontalScrollBarVisibility="Auto"
+            VerticalScrollBarVisibility="Disabled">
+            
+        
+        <Grid
+            Grid.Row="1"
+            Grid.Column="0"
+            Grid.ColumnSpan="7">
+            <DataGrid
+                Name="DetalleModificacionCheques"
+                Margin="5"
+                ItemsSource="{Binding DetalleModificacionCheques}"
+                Style="{DynamicResource DataGridStyle3}">
+                <DataGrid.Columns>
+                    <DataGridTextColumn
+                        
+                        Header="Folio&#xa;cuenta"
+                        Binding="{Binding Folio}"/>
+                    <DataGridTextColumn
+                        
+                        Header="Folio nota&#xa;consumo"
+                        Binding="{Binding FolioNotaConsumo}"/>
+                    <DataGridTextColumn
+                        
+                        Header="Fecha"
+                        Binding="{Binding Fecha}"/>
+                    <DataGridCheckBoxColumn
+                        
+                        Header="Cancelado"
+                        Binding="{Binding Cancelado}"/>
+                    <DataGridCheckBoxColumn
+                        
+                        Header="Faturado"
+                        Binding="{Binding Facturado}"/>
+                    <DataGridTextColumn
+                        
+                        Header="Descuento&#xa;%"
+                        Binding="{Binding Descuento}"/>
+                    <DataGridTextColumn
+                        
+                        Header="Total&#xa;original"
+                        Binding="{Binding TotalOriginal}"/>
+                    <DataGridTextColumn
+                        
+                        Header="Productos&#xa;eliminados"
+                        Binding="{Binding ProductosEliminados}"/>
+                    <DataGridTextColumn
+                        
+                        Header="Total con&#xa;descuento"
+                        Binding="{Binding TotalConDescuento}"/>
+                    <DataGridTextColumn
+                        
+                        Header="Efectivo"
+                        Binding="{Binding Efectivo}"/>
+                    <DataGridTextColumn
+                        
+                        Header="Tarjeta"
+                        Binding="{Binding Tarjeta}"/>
+                    <DataGridTextColumn
+                        
+                        Header="Vales"
+                        Binding="{Binding Vales}"/>
+                    <DataGridTextColumn
+                        
+                        Header="Otros"
+                        Binding="{Binding Otros}"/>
+                    <DataGridCheckBoxColumn
+                        
+                        Header="Modificar"
+                        Binding="{Binding Modificar}">
+                    </DataGridCheckBoxColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Grid>
+        </ScrollViewer>
 
         <Grid
             Grid.Row="2"
             Grid.Column="0"
             Grid.ColumnSpan="7">
-            <DataGrid
-                Name="DetallesCheque"
-                Margin="5"
-                ItemsSource="{Binding DetallesCheque}"
-                Style="{DynamicResource DataGridStyle1}">
-                <DataGrid.Columns>
-                    <DataGridTextColumn
-                        Width="*"
-                        Header="Folio&#xa;cuenta"
-                        Binding="{Binding FolioCuenta}"/>
-                    <DataGridTextColumn
-                        Width="*"
-                        Header="Folio nota&#xa;consumo"
-                        Binding="{Binding FolioNotaConsumo}"/>
-                    <DataGridTextColumn
-                        Width="*"
-                        Header="Fecha"
-                        Binding="{Binding Fecha}"/>
-                    <DataGridTextColumn
-                        Width="*"
-                        Header="Cancelado"
-                        Binding="{Binding Cancelado}"/>
-                    <DataGridTextColumn
-                        Width="*"
-                        Header="Faturado"
-                        Binding="{Binding Facturado}"/>
-                    <DataGridTextColumn
-                        Width="*"
-                        Header="Descuento&#xa;%"
-                        Binding="{Binding Descuento}"/>
-                    <DataGridTextColumn
-                        Width="*"
-                        Header="Total&#xa;original"
-                        Binding="{Binding TotalOriginal}"/>
-                    <DataGridTextColumn
-                        Width="*"
-                        Header="Productos&#xa;eliminados"
-                        Binding="{Binding ProductosEliminados}"/>
-                    <DataGridTextColumn
-                        Width="*"
-                        Header="Total con&#xa;descuento"
-                        Binding="{Binding TotalConDescuento}"/>
-                    <DataGridTextColumn
-                        Width="*"
-                        Header="Efectivo"
-                        Binding="{Binding Efectivo}"/>
-                    <DataGridTextColumn
-                        Width="*"
-                        Header="Tarjeta"
-                        Binding="{Binding Tarjeta}"/>
-                    <DataGridTextColumn
-                        Width="*"
-                        Header="Otros"
-                        Binding="{Binding Otros}"/>
-                    <DataGridTextColumn
-                        Width="*"
-                        Header="Modificar">
-
-                    </DataGridTextColumn>
-                </DataGrid.Columns>
-            </DataGrid>
-        </Grid>
-
-        <Grid
-            Grid.Row="3"
-            Grid.Column="0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="25"/>
                 <RowDefinition Height="25"/>

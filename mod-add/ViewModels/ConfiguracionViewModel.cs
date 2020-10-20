@@ -15,16 +15,22 @@ namespace mod_add.ViewModels
 {
     public class ConfiguracionViewModel : ViewModelBase
     {
-        private readonly DatabaseFactory dbf;
-        private readonly IConfiguracionServicio _configuracionServicio;
-        private readonly IProductoReemplazoServicio _productoReemplazoServicio;
+        private DatabaseFactory dbf;
+        private IConfiguracionServicio _configuracionServicio;
+        private IProductoReemplazoServicio _productoReemplazoServicio;
+
         public ConfiguracionViewModel()
+        {
+            ObtenerCondicionales();
+            Inicializar();
+        }
+
+        public void Inicializar()
         {
             dbf = new DatabaseFactory();
             _configuracionServicio = new ConfiguracionServicio(dbf);
             _productoReemplazoServicio = new ProductoReemplazoServicio(dbf);
 
-            ObtenerCondicionales();
             ObtenerConfiguracion();
             ObtenerProdutosReemplazo();
         }
@@ -48,7 +54,7 @@ namespace mod_add.ViewModels
 
         public void ObtenerConfiguracion()
         {
-            ConfiguracionSistema = _configuracionServicio.ObtenerConfiguracion();
+            var ConfiguracionSistema = _configuracionServicio.ObtenerConfiguracion();
 
             ModificarVentasReales = ConfiguracionSistema.ModificarVentasReales;
             MinProductosCuenta = ConfiguracionSistema.MinProductosCuenta;
@@ -200,6 +206,8 @@ namespace mod_add.ViewModels
 
                     context.SaveChanges();
 
+                    App.ConfiguracionSistema = configuracion;
+                    App.ProductosReemplazo = productosReemplazo;
                     return 1;
                 }
                 catch
@@ -209,7 +217,7 @@ namespace mod_add.ViewModels
             }
         }
 
-        private ConfiguracionSistema ConfiguracionSistema { get; set; }
+        //private ConfiguracionSistema ConfiguracionSistema { get; set; }
 
         private List<Condicional> _Condicionales;
         public List<Condicional> Condicionales

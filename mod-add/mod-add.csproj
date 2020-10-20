@@ -98,6 +98,7 @@
     </Compile>
     <Compile Include="Enums\Respuesta.cs" />
     <Compile Include="Enums\RespuestaCheque.cs" />
+    <Compile Include="Enums\TipoPago.cs" />
     <Compile Include="Helpers\Messenger.cs" />
     <Compile Include="Selectores\Condicional.cs" />
     <Compile Include="ViewModels\AjusteMasivoViewModel.cs" />

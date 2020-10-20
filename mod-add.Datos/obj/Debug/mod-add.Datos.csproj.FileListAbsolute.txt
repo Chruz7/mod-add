@@ -5,7 +5,6 @@ C:\Users\Alber\source\repos\mod-add\mod-add.Datos\bin\Debug\EntityFramework.dll
 C:\Users\Alber\source\repos\mod-add\mod-add.Datos\bin\Debug\EntityFramework.SqlServer.dll
 C:\Users\Alber\source\repos\mod-add\mod-add.Datos\bin\Debug\EntityFramework.xml
 C:\Users\Alber\source\repos\mod-add\mod-add.Datos\bin\Debug\EntityFramework.SqlServer.xml
-C:\Users\Alber\source\repos\mod-add\mod-add.Datos\obj\Debug\mod-add.Datos.csprojAssemblyReference.cache
 C:\Users\Alber\source\repos\mod-add\mod-add.Datos\obj\Debug\mod_add.Datos.Migrations.Inicio.resources
 C:\Users\Alber\source\repos\mod-add\mod-add.Datos\obj\Debug\mod-add.Datos.csproj.GenerateResource.cache
 C:\Users\Alber\source\repos\mod-add\mod-add.Datos\obj\Debug\mod-add.Datos.csproj.CoreCompileInputs.cache

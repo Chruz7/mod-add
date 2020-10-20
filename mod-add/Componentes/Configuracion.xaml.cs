@@ -46,6 +46,11 @@ namespace mod_add.Componentes
             ModificarVentasReales.SelectedItem = ViewModel.Condicionales.Where(x => x.Valor == ViewModel.ModificarVentasReales).FirstOrDefault();
         }
 
+        public void Refrescar()
+        {
+            ViewModel.Inicializar();
+        }
+
         private void ModificarVentasReales_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (!(sender is ComboBox comboBox)) return;

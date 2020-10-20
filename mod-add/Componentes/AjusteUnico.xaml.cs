@@ -93,7 +93,7 @@ namespace mod_add.Componentes
         {
             if (e.Key == Key.Enter && !string.IsNullOrEmpty(Folio.Text))
             {
-                var respuesta = ViewModel.ObtenerCheque(long.Parse(Folio.Text));
+                var respuesta = ViewModel.ObtenerCheque();
 
                 if (respuesta == Respuesta.HECHO)
                 {
@@ -103,7 +103,11 @@ namespace mod_add.Componentes
                 {
                     MessageBox.Show("No se encontró el cheque.", "Busqueda", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
-                else if (respuesta == Respuesta.MAS_DE_UNA_FORMA_PAGO)
+                else if (respuesta == Respuesta.CHEQUE_CANCELADO)
+                {
+                    MessageBox.Show("Cheque cancelado.", "Busqueda", MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
+                else if (respuesta == Respuesta.CHEQUE_CON_MULTIPLE_FORMA_PAGO)
                 {
                     MessageBox.Show("No se puede procesar el cheque por que tiene más de una forma de pago.", "Busqueda", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
@@ -199,6 +203,18 @@ namespace mod_add.Componentes
         {
             ViewModel.AjustarCheque();
             DetallesCheque.Items.Refresh();
+        }
+
+        private void Button_IsEnabledChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (!(sender is Button button)) return;
+
+            if (!(button.Content is Grid grid)) return;
+
+            if (button.IsEnabled)
+                grid.Children[0].Opacity = 1d;
+            else
+                grid.Children[0].Opacity = 0.5d;
         }
     }
 }

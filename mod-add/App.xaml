@@ -4,6 +4,22 @@
              xmlns:local="clr-namespace:mod_add"
              Startup="Application_Startup">
     <Application.Resources>
+        <Style x:Key="ButtonContainerStyle" TargetType="{x:Type Button}">
+            <Setter Property="Control.Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border
+                            BorderBrush="{TemplateBinding Control.BorderBrush}"
+                            BorderThickness="{TemplateBinding Control.BorderThickness}"
+                            Background="{TemplateBinding Control.Background}"
+                            Padding="2"
+                            CornerRadius="0">
+                            <ContentPresenter/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
         <Style x:Key="ButtonBorderRoundStyle" TargetType="{x:Type Button}">
             <Setter Property="Control.Template">
                 <Setter.Value>
@@ -106,6 +122,36 @@
             <Setter Property="SelectionUnit" Value="FullRow"/>
             <Setter Property="VerticalScrollBarVisibility" Value="Auto"/>
             <Setter Property="HorizontalScrollBarVisibility" Value="Auto"/>
+            <Setter Property="Background" Value="#FFFFFF"/>
+            <Setter Property="BorderBrush">
+                <Setter.Value>
+                    <LinearGradientBrush>
+                        <GradientStop Color="{DynamicResource Tabla_Color}"/>
+                    </LinearGradientBrush>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="DataGridStyle3" TargetType="{x:Type DataGrid}">
+            <Setter Property="ColumnHeaderStyle" Value="{DynamicResource ColumnHeaderStyleCenter}"/>
+            <Setter Property="RowStyle" Value="{DynamicResource RowStyle1}"/>
+            <Setter Property="CellStyle" Value="{DynamicResource CellStyle1}"/>
+            <Setter Property="GridLinesVisibility" Value="None"/>
+            <Setter Property="RowHeaderWidth" Value="0"/>
+            <Setter Property="AutoGenerateColumns" Value="False"/>
+            <Setter Property="CanUserAddRows" Value="False"/>
+            <Setter Property="CanUserDeleteRows" Value="False"/>
+            <Setter Property="CanUserReorderColumns" Value="False"/>
+            <Setter Property="CanUserResizeColumns" Value="False"/>
+            <Setter Property="CanUserResizeRows" Value="False"/>
+            <Setter Property="CanUserSortColumns" Value="False"/>
+            <Setter Property="IsReadOnly" Value="True"/>
+            <Setter Property="SelectionMode" Value="Single"/>
+            <Setter Property="BorderThickness" Value="2,0,2,2"/>
+            <Setter Property="SelectionUnit" Value="FullRow"/>
+            
+            <Setter Property="VerticalScrollBarVisibility" Value="Auto"/>
+            <Setter Property="HorizontalScrollBarVisibility" Value="Visible"/>
             <Setter Property="Background" Value="#FFFFFF"/>
             <Setter Property="BorderBrush">
                 <Setter.Value>
