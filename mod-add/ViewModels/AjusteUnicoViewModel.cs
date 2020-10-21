@@ -211,13 +211,11 @@ namespace mod_add.ViewModels
 
             Cheque.subtotal = totalSinImpuestos_Det;
             Cheque.total = Mat.Redondeo(totalConImpuestos_Det * (100m - Cheque.descuento ?? 0) / 100m);
-            //Cheque.subtotalsinimpuestos = null;
+            
             Cheque.totalconpropina = Cheque.total; // falta validar si la propina se agrega por configuracion
-            //Cheque.totalsinimpuestos = null;
-            //Cheque.totalsindescuentosinimpuesto = null;
+            
             Cheque.totalimpuesto1 = Mat.Redondeo(DetallesCheque.Sum(x => x.preciosinimpuestos ?? 0 * x.impuesto1 ?? 0 / 100m * x.cantidad ?? 0 * (100m - x.descuento ?? 0) / 100m));
-            //otros valores nulos
-            //cargo
+            
             Cheque.totalconcargo = Cheque.total + Cheque.cargo;
             Cheque.totalconpropinacargo = Cheque.total + Cheque.cargo; // falta validar si la propina se agrega por configuracion
             Cheque.descuentoimporte = Mat.Redondeo(totalSinImpuestos_Det * Cheque.descuento ?? 0 / 100m); ;
@@ -246,43 +244,56 @@ namespace mod_add.ViewModels
             decimal totalalimentos = 0;
             decimal totalbebidas = 0;
             decimal totalotros = 0;
+            decimal totalalimentosdescuento = 0;
+            decimal totalbebidasdescuento = 0;
+            decimal totalotrosdescuento = 0;
+            decimal totalalimentossindescuento = 0;
+            decimal totalbebidassindescuento = 0;
+            decimal totalotrossindescuento = 0;
 
             foreach (var detalle in DetallesCheque)
             {
                 var producto = detalle.Producto;
                 var grupo = producto.Grupo;
 
-                decimal importedetalle = detalle.preciosinimpuestos ?? 0 * detalle.cantidad ?? 0;
+                decimal importedetalle = detalle.preciosinimpuestos ?? 0 * detalle.cantidad ?? 0 * (100m - detalle.descuento ?? 0) / 100m;
+                decimal importedetalledescuento = detalle.preciosinimpuestos ?? 0 * detalle.cantidad ?? 0 * detalle.descuento ?? 0 / 100m;
+                decimal importedetallesindescuento = detalle.preciosinimpuestos ?? 0 * detalle.cantidad ?? 0;
 
                 if (grupo.clasificacion == 1)
                 {
                     totalbebidas += importedetalle;
+                    totalbebidasdescuento += importedetalledescuento;
+                    totalbebidassindescuento += importedetallesindescuento;
                 }
                 else if (grupo.clasificacion == 2)
                 {
                     totalalimentos += importedetalle;
+                    totalalimentosdescuento += importedetalledescuento;
+                    totalalimentossindescuento += importedetallesindescuento;
                 }
                 else if (grupo.clasificacion == 3)
                 {
                     totalotros += importedetalle;
+                    totalotrosdescuento += importedetalledescuento;
+                    totalotrossindescuento += importedetallesindescuento;
                 }
             }
-
 
             Cheque.totalalimentos = Mat.Redondeo(totalalimentos * (100m - Descuento) / 100m);
             Cheque.totalbebidas = Mat.Redondeo(totalbebidas * (100m - Descuento) / 100m);
             Cheque.totalotros = Mat.Redondeo(totalotros * (100m - Descuento) / 100m);
 
             Cheque.totaldescuentos = Cheque.descuentoimporte;
-            Cheque.totaldescuentoalimentos = Mat.Redondeo(totalalimentos * Descuento / 100m);
-            Cheque.totaldescuentobebidas = Mat.Redondeo(totalbebidas * Descuento / 100m);
-            Cheque.totaldescuentootros = Mat.Redondeo(totalotros * Descuento / 100m);
+            Cheque.totaldescuentoalimentos = Mat.Redondeo(totalalimentosdescuento * Descuento / 100m);
+            Cheque.totaldescuentobebidas = Mat.Redondeo(totalbebidasdescuento * Descuento / 100m);
+            Cheque.totaldescuentootros = Mat.Redondeo(totalotrosdescuento * Descuento / 100m);
             // las cortesias se mantienen?
 
             Cheque.totaldescuentoycortesia = Cheque.totaldescuentos + Cheque.totalcortesias;
-            Cheque.totalalimentossindescuentos = totalalimentos;
-            Cheque.totalbebidassindescuentos = totalbebidas;
-            Cheque.totalotrossindescuentos = totalotros;
+            Cheque.totalalimentossindescuentos = totalalimentossindescuento;
+            Cheque.totalbebidassindescuentos = totalbebidassindescuento;
+            Cheque.totalotrossindescuentos = totalotrossindescuento;
 
             Cheque.subtotalcondescuento = Cheque.subtotal - Cheque.descuentoimporte;
 
@@ -294,10 +305,6 @@ namespace mod_add.ViewModels
 
             Cheque.cambio = 0; // como se debe ajustar el cambio si es efectivo? - por el momento queda en ceros
             Cheque.cambiorepartidor = 0;
-
-
-            
-
 
             //falta ajustar mas campos del cheque
             #endregion

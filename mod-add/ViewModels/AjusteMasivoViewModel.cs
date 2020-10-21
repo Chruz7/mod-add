@@ -95,6 +95,48 @@ namespace mod_add.ViewModels
                     }
                 }
             }
+
+
+
+            
+        }
+
+        public void EliminarProductos()
+        {
+            decimal totalPrecioSustraendo = 0;
+            bool eliminar = false;
+
+            foreach (var detalle in DetalleCheques)
+            {
+                if (App.ProductosEliminar.Any(x => x.Clave == detalle.idproducto))
+                {
+                    int iDet = DetalleChequesCopia.IndexOf(detalle);
+
+                    if (detalle.cantidad > 1)
+                    {
+                        eliminar = true;
+                        DetalleChequesCopia[iDet].cantidad -= 1m;
+                    }
+                    else
+                    {
+                        DetalleChequesCopia.Remove(detalle);
+                    }
+
+                    totalPrecioSustraendo += detalle.precio ?? 0;
+                }
+
+                if ((ImporteAnterior - totalPrecioSustraendo) <= ImporteAjuste)
+                {
+                    break;
+                }
+            }
+
+            DetalleCheques = (DetalleChequesCopia as IEnumerable<SR_cheqdet>).ToList();
+
+            if ((ImporteAnterior - totalPrecioSustraendo) > ImporteAjuste && eliminar)
+            {
+                EliminarProductos();
+            }
         }
 
         public void InicializarControles()
@@ -115,10 +157,12 @@ namespace mod_add.ViewModels
             PorcentajeObjetivo = 1;
             ImporteObjetivo = 0.00m;
             IncluirCuentaPagadaTarjeta = false;
-            CuentaPagadaVales = false;
-            CuentaPagadaOtros = false;
-            IncluirCuentaFacturada = false;
-            IncluirCuentaNotaConsumo = false;
+            IncluirCuentaPagadaVales = false;
+            IncluirCuentaPagadaOtros = false;
+            IncluirCuentaFacturada = true;
+            IncluirCuentaNotaConsumo = true;
+            QuitarPropinasManualmente = false;
+            NoIncluirCuentasReimpresas = false;
             NumeroTotalCuentas = 0;
             NumeroTotalCuentasModificadas = 0;
             ImporteAnterior = 0.00m;
@@ -186,10 +230,18 @@ namespace mod_add.ViewModels
 
                 SR_cheques_DAO cheques_DAO = new SR_cheques_DAO(context, !App.ConfiguracionSistema.ModificarVentasReales);
 
-                string queryWhere = "(efectivo >= total OR tarjeta = (total + propinatarjeta) OR vales = total OR otros = total) AND ";
+                string queryWhere = "(efectivo >= total";
 
-                if (ImporteAjuste > 0)
-                    queryWhere += "total >= @total AND ";
+                if (IncluirCuentaPagadaTarjeta)
+                    queryWhere += " OR tarjeta = (total + propinatarjeta)";
+
+                if (IncluirCuentaPagadaVales)
+                    queryWhere += " OR vales = total";
+
+                if (IncluirCuentaPagadaOtros)
+                    queryWhere += " OR otros = total";
+
+                queryWhere += ") AND ";
 
                 if (!IncluirCuentaFacturada)
                     queryWhere += "facturado = 0 AND ";
@@ -200,7 +252,7 @@ namespace mod_add.ViewModels
                 if (NoIncluirCuentasReimpresas)
                     queryWhere += "impresiones = 1 AND ";
 
-                queryWhere += "cancelado = 0 AND fecha BETWEEN @FechaInicio AND @FechaCierre";
+                queryWhere += "total >= @total AND cancelado = 0 AND fecha BETWEEN @FechaInicio AND @FechaCierre";
 
                 var cheques = cheques_DAO.Get(queryWhere, new object[] {
                     new SqlParameter("FechaInicio", fechaInicio),
@@ -253,9 +305,9 @@ namespace mod_add.ViewModels
                     SR_cheqdet_DAO cheqdet_DAO = new SR_cheqdet_DAO(context, !App.ConfiguracionSistema.ModificarVentasReales);
                     var detalleCheques = cheqdet_DAO.WhereIn("foliodet", cheques.Select(x => (object)x.folio).ToArray());
 
-                    DetalleCheques = detalleCheques.OrderBy(x => x.foliodet).ThenBy(x => x.movimiento).ToList();
-
-                    DetalleChequesCopia = new List<SR_cheqdet>(DetalleCheques);
+                    //DetalleCheques = detalleCheques.OrderBy(x => x.foliodet).ThenBy(x => x.movimiento).ToList();
+                    DetalleCheques = detalleCheques.OrderBy(x => x.movimiento).ThenBy(x => x.foliodet).ToList();
+                    DetalleChequesCopia = (DetalleCheques as IEnumerable<SR_cheqdet>).ToList();
 
                     SR_chequespagos_DAO chequespagos_DAO = new SR_chequespagos_DAO(context, !App.ConfiguracionSistema.ModificarVentasReales);
                     ChequesPagos = chequespagos_DAO.WhereIn("folio", cheques.Select(x => (object)x.folio).ToArray());
@@ -415,45 +467,45 @@ namespace mod_add.ViewModels
         }
 
         private bool _IncluirCuentaPagadaVales;
-        public bool CuentaPagadaVales
+        public bool IncluirCuentaPagadaVales
         {
             get { return _IncluirCuentaPagadaVales; }
             set
             {
                 _IncluirCuentaPagadaVales = value;
-                OnPropertyChanged(nameof(CuentaPagadaVales));
+                OnPropertyChanged(nameof(IncluirCuentaPagadaVales));
             }
         }
 
         private bool _CuentaPagadaOtros;
-        public bool CuentaPagadaOtros
+        public bool IncluirCuentaPagadaOtros
         {
             get { return _CuentaPagadaOtros; }
             set
             {
                 _CuentaPagadaOtros = value;
-                OnPropertyChanged(nameof(CuentaPagadaOtros));
+                OnPropertyChanged(nameof(IncluirCuentaPagadaOtros));
             }
         }
 
-        private bool _CuentaFacturada;
+        private bool _IncluirCuentaFacturada;
         public bool IncluirCuentaFacturada
         {
-            get { return _CuentaFacturada; }
+            get { return _IncluirCuentaFacturada; }
             set
             {
-                _CuentaFacturada = value;
+                _IncluirCuentaFacturada = value;
                 OnPropertyChanged(nameof(IncluirCuentaFacturada));
             }
         }
 
-        private bool _CuentaNotaConsumo;
+        private bool _IncluirCuentaNotaConsumo;
         public bool IncluirCuentaNotaConsumo
         {
-            get { return _CuentaNotaConsumo; }
+            get { return _IncluirCuentaNotaConsumo; }
             set
             {
-                _CuentaNotaConsumo = value;
+                _IncluirCuentaNotaConsumo = value;
                 OnPropertyChanged(nameof(IncluirCuentaNotaConsumo));
             }
         }
