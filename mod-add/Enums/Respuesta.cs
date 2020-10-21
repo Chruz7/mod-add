@@ -6,6 +6,7 @@
         HECHO,
         CHEQUE_NO_ENCONTRADO,
         CHEQUE_CON_MULTIPLE_FORMA_PAGO,
+        CHEQUE_SIN_FORMA_PAGO,
         CHEQUE_CANCELADO
     }
 }

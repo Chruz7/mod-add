@@ -376,13 +376,15 @@
                         IsReadOnly="True"
                         Width="35*"
                         Header="Descripción"
-                        Binding="{Binding Producto.descripcion}"/>
+                        Binding="{Binding Producto.NombreItem}">
+                        
+                    </DataGridTextColumn>
                     <DataGridTextColumn
+                        IsReadOnly="True"
                         Width="10*"
                         Header="Desc. %"
                         Binding="{Binding descuento}"/>
                     <DataGridTextColumn
-                        IsReadOnly="True"
                         Width="10*"
                         Header="Precio"
                         Binding="{Binding precio}"/>

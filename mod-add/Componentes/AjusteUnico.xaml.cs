@@ -111,7 +111,11 @@ namespace mod_add.Componentes
                 {
                     MessageBox.Show("No se puede procesar el cheque por que tiene más de una forma de pago.", "Busqueda", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
-                else
+                else if (respuesta == Respuesta.CHEQUE_SIN_FORMA_PAGO)
+                {
+                    MessageBox.Show("No se puede procesar el cheque por que no tiene forma de pago.", "Busqueda", MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
+                else if (respuesta == Respuesta.ERROR)
                 {
                     MessageBox.Show("Error al intentar buscar el cheque.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
@@ -167,10 +171,18 @@ namespace mod_add.Componentes
 
         private void DetallesCheque_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            string header = DetallesCheque.CurrentColumn.Header.ToString();
+            if (!(DetallesCheque.CurrentColumn is DataGridColumn dataGridColumn)) return;
+
+            string header = dataGridColumn.Header.ToString();
 
             if (header.Equals("Clave"))
             {
+                if (!(DetallesCheque.CurrentItem is SR_cheqdet cheqdet)) return;
+
+                bool modificador = cheqdet.modificador ?? false;
+
+                if (modificador) return;
+
                 Messenger.Default.Register<SR_productos>(this, ProductoCambio);
                 SeleccionProducto window = new SeleccionProducto();
                 window.ShowDialog();
@@ -201,8 +213,10 @@ namespace mod_add.Componentes
 
         public void RefrescarControles()
         {
+            DetallesCheque.IsReadOnly = true;
             ViewModel.AjustarCheque();
             DetallesCheque.Items.Refresh();
+            DetallesCheque.IsReadOnly = false;
         }
 
         private void Button_IsEnabledChanged(object sender, DependencyPropertyChangedEventArgs e)

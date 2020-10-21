@@ -101,6 +101,7 @@
     <Compile Include="Enums\TipoPago.cs" />
     <Compile Include="Helpers\Messenger.cs" />
     <Compile Include="Selectores\Condicional.cs" />
+    <Compile Include="Utils\Mat.cs" />
     <Compile Include="ViewModels\AjusteMasivoViewModel.cs" />
     <Compile Include="ViewModels\AjusteUnicoViewModel.cs" />
     <Compile Include="ViewModels\BitacoraViewModel.cs" />
@@ -207,9 +208,7 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Utils\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\mod-add.Datos\mod-add.Datos.csproj">
       <Project>{95445c47-c528-43a6-9379-000fb06a6b20}</Project>

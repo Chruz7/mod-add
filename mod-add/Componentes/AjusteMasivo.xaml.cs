@@ -25,15 +25,15 @@ namespace mod_add.Componentes
         }
 
         private void Aplicar_Click(object sender, RoutedEventArgs e)
-        {
-            ViewModel.ObtenerInformacionSR();
-            //ViewModel.AjustarCheques();
+        { 
+            ViewModel.AjustarCheques();
         }
 
-        private void Busqueda_Click(object sender, RoutedEventArgs e)
+        private void NuevaBusqueda_Click(object sender, RoutedEventArgs e)
         {
             //HabilitarControles();
-            ViewModel.InicializarControles();
+            //ViewModel.InicializarControles();
+            ViewModel.ObtenerInformacionSR();
         }
 
         private void Cancelar_Click(object sender, RoutedEventArgs e)

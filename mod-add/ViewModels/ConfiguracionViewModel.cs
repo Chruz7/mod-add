@@ -207,7 +207,7 @@ namespace mod_add.ViewModels
                     context.SaveChanges();
 
                     App.ConfiguracionSistema = configuracion;
-                    App.ProductosReemplazo = productosReemplazo;
+                    App.ProductosReemplazo = productosReemplazo.Where(x => x.Reemplazar).OrderBy(x => x.Porcentaje).ToList();
                     return 1;
                 }
                 catch

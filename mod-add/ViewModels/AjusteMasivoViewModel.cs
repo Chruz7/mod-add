@@ -13,16 +13,87 @@ namespace mod_add.ViewModels
 {
     public class AjusteMasivoViewModel : ViewModelBase
     {
+        private readonly Random Random;
         public AjusteMasivoViewModel()
         {
             InicializarControles();
+            Random = new Random();
         }
 
         public void AjustarCheques()
         {
-            foreach (var cheque in Cheques)
+            decimal totalPrecioSustraendo = 0;
+
+            foreach (var detalleMod in DetalleModificacionCheques.OrderBy(x => x.Folio))
             {
-                var detalleCheque = DetalleCheques.Where(x => x.foliodet == cheque.folio);
+                var cheque = Cheques.Where(x => x.folio == detalleMod.Folio).FirstOrDefault();
+                var detallesCheque = DetalleCheques.Where(x => x.foliodet == detalleMod.Folio).ToList();
+                var chequepago = ChequesPagos.Where(x => x.folio == detalleMod.Folio).FirstOrDefault();
+                var formapago = FormasPago.Where(x => x.idformadepago == chequepago.idformadepago).FirstOrDefault();
+
+                decimal totalPrecio = Math.Round(detallesCheque.Sum(x => x.precio ?? 0 * x.cantidad ?? 0), 4, App.MidpointRounding);
+
+                foreach (var detalle in detallesCheque)
+                {
+                    int iDet = DetalleCheques.IndexOf(detalle);
+
+                    if (App.ProductosEliminar.Any(x => x.Clave == detalle.idproducto))
+                    {
+                        if (detalle.cantidad > 1)
+                        {
+                            //que se debe hacer en el caso de los productos con cantidad decimales? 
+                            //al eliminar un producto con mod, los mod tambien se eliminan? si
+                            //si cambia la cantidad del producto padre, la cantidad de los mod tambien cambia? si
+
+
+                            DetalleCheques[iDet].cantidad -= 1m;
+                        }
+                        else
+                        {
+                            DetalleCheques.Remove(detalle);
+                        }
+
+                        totalPrecioSustraendo += detalle.precio ?? 0;
+                    }
+                    else
+                    {
+                        int porcentajeAleatorio = Random.Next(1, 100);
+                        int porcentajeAnterior = 0;
+
+                        foreach (var productoReemplazo in App.ProductosReemplazo)
+                        {
+                            if (productoReemplazo.Porcentaje > porcentajeAnterior && productoReemplazo.Porcentaje <= porcentajeAleatorio)
+                            {
+                                //al cambiar el producto se conserva la cantidad?
+                                //puede cambiar un producto con modificadores? xq?
+
+                                var producto = ObtenerProductoSR(productoReemplazo.Clave);
+                                var detalleProducto = producto.Detalle;
+
+                                if (detalleProducto.precio < detalle.precio)
+                                {
+                                    DetalleCheques[iDet].precio = detalleProducto.precio;
+                                    DetalleCheques[iDet].impuesto1 = detalleProducto.impuesto1;
+                                    DetalleCheques[iDet].impuesto2 = detalleProducto.impuesto2;
+                                    DetalleCheques[iDet].impuesto3 = detalleProducto.impuesto3;
+                                    DetalleCheques[iDet].preciosinimpuestos = detalleProducto.preciosinimpuestos;
+                                    DetalleCheques[iDet].preciocatalogo = detalleProducto.precio;
+                                    DetalleCheques[iDet].impuestoimporte3 = detalleProducto.impuestoimporte3;
+
+                                    totalPrecioSustraendo += (detalle.precio ?? 0 * detalle.cantidad ?? 0);
+                                    totalPrecioSustraendo -= (detalleProducto.precio ?? 0 * detalle.cantidad ?? 0);
+                                }
+
+                                break;
+                            }
+                        }
+                    }
+
+                    if ((ImporteAnterior - totalPrecioSustraendo) < ImporteAjuste)
+                    {
+                        break;
+                    }
+                }
             }
         }
 
@@ -31,6 +102,7 @@ namespace mod_add.ViewModels
             DetalleModificacionCheques = new ObservableCollection<DetalleModificacionCheque>();
             Cheques = new List<SR_cheques>();
             DetalleCheques = new List<SR_cheqdet>();
+            DetalleChequesCopia = new List<SR_cheqdet>();
             ChequesPagos = new List<SR_chequespagos>();
             FormasPago = new List<SR_formasdepago>();
 
@@ -81,6 +153,16 @@ namespace mod_add.ViewModels
                 {
 
                 }
+            }
+        }
+
+        public SR_productos ObtenerProductoSR(string idproducto)
+        {
+            using (SoftRestaurantDBContext context = new SoftRestaurantDBContext())
+            {
+                SR_productos_DAO productos_DAO = new SR_productos_DAO(context);
+
+                return productos_DAO.Find(idproducto);
             }
         }
 
@@ -169,7 +251,11 @@ namespace mod_add.ViewModels
                     Cheques = cheques;
 
                     SR_cheqdet_DAO cheqdet_DAO = new SR_cheqdet_DAO(context, !App.ConfiguracionSistema.ModificarVentasReales);
-                    DetalleCheques = cheqdet_DAO.WhereIn("foliodet", cheques.Select(x => (object)x.folio).ToArray());
+                    var detalleCheques = cheqdet_DAO.WhereIn("foliodet", cheques.Select(x => (object)x.folio).ToArray());
+
+                    DetalleCheques = detalleCheques.OrderBy(x => x.foliodet).ThenBy(x => x.movimiento).ToList();
+
+                    DetalleChequesCopia = new List<SR_cheqdet>(DetalleCheques);
 
                     SR_chequespagos_DAO chequespagos_DAO = new SR_chequespagos_DAO(context, !App.ConfiguracionSistema.ModificarVentasReales);
                     ChequesPagos = chequespagos_DAO.WhereIn("folio", cheques.Select(x => (object)x.folio).ToArray());
@@ -198,12 +284,21 @@ namespace mod_add.ViewModels
                         Modificar = true,
                     });
                 }
+
+                decimal total = cheques.Sum(x => x.total ?? 0);
+
+                ImporteObjetivo = total - (total * (PorcentajeObjetivo / 100m));
+
+                NumeroTotalCuentas = cheques.Count;
+                NumeroTotalCuentasModificadas = cheques.Count;
+                ImporteAnterior = total;
             }
         }
 
         private SR_configuracion SRConfiguracion { get; set; }
         private List<SR_cheques> Cheques { get; set; }
         private List<SR_cheqdet> DetalleCheques { get; set; }
+        private List<SR_cheqdet> DetalleChequesCopia { get; set; }
         private List<SR_chequespagos> ChequesPagos { get; set; }
         private List<SR_formasdepago> FormasPago { get; set; }
         private TimeSpan HoraInicio { get; set; }

@@ -1,5 +1,6 @@
 ﻿using mod_add.Enums;
 using mod_add.Selectores;
+using mod_add.Utils;
 using SR.Datos;
 using SRLibrary.SR_Context;
 using SRLibrary.SR_DAO;
@@ -55,13 +56,15 @@ namespace mod_add.ViewModels
                 try
                 {
                     SR_cheques_DAO cheques_DAO = new SR_cheques_DAO(context, !App.ConfiguracionSistema.ModificarVentasReales);
+                    SR_cheqdet_DAO cheqdet_DAO = new SR_cheqdet_DAO(context, !App.ConfiguracionSistema.ModificarVentasReales);
+                    SR_chequespagos_DAO chequespagos_DAO = new SR_chequespagos_DAO(context, !App.ConfiguracionSistema.ModificarVentasReales);
 
                     cheques_DAO.Update(Cheque);
 
-                    SR_cheqdet_DAO cheqdet_DAO = new SR_cheqdet_DAO(context, !App.ConfiguracionSistema.ModificarVentasReales);
-
                     cheqdet_DAO.Delete(Cheque.folio);
                     cheqdet_DAO.Create(DetallesCheque.ToList());
+
+                    chequespagos_DAO.Update(Chequepago);
 
                     return 1;
                 }
@@ -83,7 +86,7 @@ namespace mod_add.ViewModels
             {
                 foliodet = Cheque.folio,
                 movimiento = ultimoMovimiento + 1,
-                comanda = UltimoCheqDet.comanda,
+                comanda = "",
                 cantidad = 1,
                 idproducto = producto.idproducto,
                 descuento = 0,
@@ -144,7 +147,7 @@ namespace mod_add.ViewModels
             bool modificador = cheqdet.modificador ?? false;
 
             if (!modificador && !string.IsNullOrWhiteSpace(cheqdet.idproductocompuesto))
-                DetallesCheque = new ObservableCollection<SR_cheqdet>(DetallesCheque.Where(x => x.idproductocompuesto != cheqdet.idproductocompuesto && x.modificador.Value).ToList());
+                DetallesCheque = new ObservableCollection<SR_cheqdet>(DetallesCheque.Where(x => x.idproductocompuesto != cheqdet.idproductocompuesto).ToList());
 
             for (int i = 0; i < DetallesCheque.Count; i++)
                 DetallesCheque[i].movimiento = i + 1;
@@ -154,98 +157,70 @@ namespace mod_add.ViewModels
 
         public void Cambiar(SR_cheqdet cheqdet, SR_productos producto)
         {
-            foreach (var detalleCheque in DetallesCheque)
+            var detalleProductoCheque = cheqdet.Producto.Detalle;
+            var detalleProducto = producto.Detalle;
+
+            int index = DetallesCheque.IndexOf(cheqdet);
+
+            DetallesCheque[index].idproducto = producto.idproducto;
+
+            if (detalleProducto.idunidad != detalleProductoCheque.idunidad)
             {
-                if (detalleCheque.idproducto.Equals(cheqdet.idproducto))
-                {
-                    detalleCheque.idproducto = producto.idproducto;
-
-                    if (!CambiarPrecio)
-                    {
-                        var detalleProducto = producto.Detalle;
-
-                        detalleCheque.precio = detalleProducto.precio;
-                        detalleCheque.impuesto1 = detalleProducto.impuesto1;
-                        detalleCheque.impuesto2 = detalleProducto.impuesto2;
-                        detalleCheque.impuesto3 = detalleProducto.impuesto3;
-                        detalleCheque.preciosinimpuestos = detalleProducto.preciosinimpuestos;
-                        detalleCheque.preciocatalogo = detalleProducto.precio;
-                        detalleCheque.impuestoimporte3 = detalleProducto.impuestoimporte3;
-                    }
-                }
+                decimal nuevaCantidad = Math.Round(DetallesCheque[index].cantidad ?? 0, 0, App.MidpointRounding);
+                DetallesCheque[index].cantidad = nuevaCantidad >= 1 ? nuevaCantidad : 1;
             }
 
+            if (!CambiarPrecio)
+            {
+                DetallesCheque[index].precio = detalleProducto.precio;
+                DetallesCheque[index].impuesto1 = detalleProducto.impuesto1;
+                DetallesCheque[index].impuesto2 = detalleProducto.impuesto2;
+                DetallesCheque[index].impuesto3 = detalleProducto.impuesto3;
+                DetallesCheque[index].preciosinimpuestos = detalleProducto.preciosinimpuestos;
+                DetallesCheque[index].preciocatalogo = detalleProducto.precio;
+                DetallesCheque[index].impuestoimporte3 = detalleProducto.impuestoimporte3;
+                DetallesCheque[index].idproductocompuesto = "";
+            }
+
+            bool modificador = cheqdet.modificador ?? false;
+
+            if (!modificador && !string.IsNullOrWhiteSpace(cheqdet.idproductocompuesto))
+                DetallesCheque = new ObservableCollection<SR_cheqdet>(DetallesCheque.Where(x => x.idproductocompuesto != cheqdet.idproductocompuesto).ToList());
+
+            for (int i = 0; i < DetallesCheque.Count; i++)
+                DetallesCheque[i].movimiento = i + 1;
+
             AjustarCheque();
+
+            //al cambiar el producto conserva el descuento?
         }
 
         public void AjustarCheque()
         {
+            //validado con folio 28312  y 28138
+            //falta validar el redondeo
+
+            #region Ajuste del cheque
             Cheque.nopersonas = Personas;
             Cheque.propina = Propina;
             Cheque.descuento = Descuento;
             Cheque.totalarticulos = DetallesCheque.Count;
 
-            decimal subtotalTemp = Math.Round(DetallesCheque.Sum(x => x.preciosinimpuestos ?? 0 * x.cantidad ?? 0), 2, App.MidpointRounding);
+            decimal totalSinImpuestos_Det = Mat.Redondeo(DetallesCheque.Sum(x => x.preciosinimpuestos ?? 0 * x.cantidad ?? 0 * (100m - x.descuento ?? 0) / 100m));
+            decimal totalConImpuestos_Det = Mat.Redondeo(DetallesCheque.Sum(x => x.precio ?? 0 * x.cantidad ?? 0 * (100m - x.descuento ?? 0) / 100m));
 
-            decimal totalTemp = Math.Round(DetallesCheque.Sum(x => x.precio ?? 0 * x.cantidad ?? 0), 2, App.MidpointRounding);
-
-            decimal descuentoimporte = Math.Round(subtotalTemp - (subtotalTemp * (Descuento / 100m)), 2, App.MidpointRounding);
-
-            Cheque.descuentoimporte = descuentoimporte;
-
-            Cheque.subtotal = subtotalTemp;
-            Cheque.subtotalcondescuento = Cheque.subtotal - Cheque.descuentoimporte;
-
-            Cheque.total = Math.Round(totalTemp - (totalTemp * (Descuento / 100m)), 2, App.MidpointRounding);
-
-            Cheque.totalsindescuento = subtotalTemp;
-            Cheque.totalconpropina = Cheque.total + Cheque.propina;
-
-
-            foreach (var detalle in DetallesCheque)
-            {
-                decimal precio = detalle.precio ?? 0;
-                decimal impuesto1 = detalle.impuesto1 ?? 0;
-                decimal impuesto2 = detalle.impuesto2 ?? 0;
-                decimal impuesto3 = detalle.impuesto3 ?? 0;
-                decimal preciosinimpuestos = detalle.preciosinimpuestos ?? 0;
-                decimal cantidad = detalle.cantidad ?? 0;
-
-                Cheque.totalimpuesto1 += (preciosinimpuestos * (impuesto1 * 0.01m)) * cantidad;
-                Cheque.totalimpuestod1 += (preciosinimpuestos * (impuesto1 * 0.01m)) * cantidad;
-                Cheque.totalimpuestod2 += (preciosinimpuestos * (impuesto2 * 0.01m)) * cantidad;
-                Cheque.totalimpuestod3 += (preciosinimpuestos * (impuesto3 * 0.01m)) * cantidad;
-
-                var producto = detalle.Producto;
-                var grupo = producto.Grupo;
-
-                if (grupo.clasificacion == 1)
-                {
-                    Cheque.totalbebidassinimpuestos += (preciosinimpuestos * cantidad);
-                }
-
-                if (grupo.clasificacion == 2)
-                {
-                    Cheque.totalalimentossinimpuestos += (preciosinimpuestos * cantidad);
-                }
-
-                if (grupo.clasificacion == 3)
-                {
-                    Cheque.totalotrossinimpuestos += (preciosinimpuestos * cantidad);
-                }
-            }
-
-            Cheque.totalbebidas = Cheque.totalbebidassindescuentos - (Cheque.totalbebidassindescuentos * (Descuento / 100m));
-            Cheque.totalalimentos = Cheque.totalalimentossindescuentos - (Cheque.totalalimentossinimpuestos * (Descuento / 100m));
-            Cheque.totalotros = Cheque.totalotrossindescuentos - (Cheque.totalotrossinimpuestos * (Descuento / 100m));
-
-
+            Cheque.subtotal = totalSinImpuestos_Det;
+            Cheque.total = Mat.Redondeo(totalConImpuestos_Det * (100m - Cheque.descuento ?? 0) / 100m);
+            //Cheque.subtotalsinimpuestos = null;
+            Cheque.totalconpropina = Cheque.total; // falta validar si la propina se agrega por configuracion
+            //Cheque.totalsinimpuestos = null;
+            //Cheque.totalsindescuentosinimpuesto = null;
+            Cheque.totalimpuesto1 = Mat.Redondeo(DetallesCheque.Sum(x => x.preciosinimpuestos ?? 0 * x.impuesto1 ?? 0 / 100m * x.cantidad ?? 0 * (100m - x.descuento ?? 0) / 100m));
+            //otros valores nulos
+            //cargo
             Cheque.totalconcargo = Cheque.total + Cheque.cargo;
-            Cheque.totalconpropinacargo = Cheque.total + Cheque.propina + Cheque.cargo;
-
-            Cheque.cambio = 0; // como se debe ajustar el cambio si es efectivo? - por el momento queda en ceros
-            Cheque.cambiorepartidor = 0;
-
+            Cheque.totalconpropinacargo = Cheque.total + Cheque.cargo; // falta validar si la propina se agrega por configuracion
+            Cheque.descuentoimporte = Mat.Redondeo(totalSinImpuestos_Det * Cheque.descuento ?? 0 / 100m); ;
 
             if (FormaPago.tipo == (int)TipoPago.EFECTIVO)
             {
@@ -265,8 +240,76 @@ namespace mod_add.ViewModels
                 Cheque.otros = Cheque.total;
             }
 
-            Descuento = Cheque.descuento ?? 0;
-            Propina = Cheque.propina ?? 0;
+
+            Cheque.totalsindescuento = Mat.Redondeo(DetallesCheque.Sum(x => x.preciosinimpuestos ?? 0 * x.cantidad ?? 0));
+
+            decimal totalalimentos = 0;
+            decimal totalbebidas = 0;
+            decimal totalotros = 0;
+
+            foreach (var detalle in DetallesCheque)
+            {
+                var producto = detalle.Producto;
+                var grupo = producto.Grupo;
+
+                decimal importedetalle = detalle.preciosinimpuestos ?? 0 * detalle.cantidad ?? 0;
+
+                if (grupo.clasificacion == 1)
+                {
+                    totalbebidas += importedetalle;
+                }
+                else if (grupo.clasificacion == 2)
+                {
+                    totalalimentos += importedetalle;
+                }
+                else if (grupo.clasificacion == 3)
+                {
+                    totalotros += importedetalle;
+                }
+            }
+
+
+            Cheque.totalalimentos = Mat.Redondeo(totalalimentos * (100m - Descuento) / 100m);
+            Cheque.totalbebidas = Mat.Redondeo(totalbebidas * (100m - Descuento) / 100m);
+            Cheque.totalotros = Mat.Redondeo(totalotros * (100m - Descuento) / 100m);
+
+            Cheque.totaldescuentos = Cheque.descuentoimporte;
+            Cheque.totaldescuentoalimentos = Mat.Redondeo(totalalimentos * Descuento / 100m);
+            Cheque.totaldescuentobebidas = Mat.Redondeo(totalbebidas * Descuento / 100m);
+            Cheque.totaldescuentootros = Mat.Redondeo(totalotros * Descuento / 100m);
+            // las cortesias se mantienen?
+
+            Cheque.totaldescuentoycortesia = Cheque.totaldescuentos + Cheque.totalcortesias;
+            Cheque.totalalimentossindescuentos = totalalimentos;
+            Cheque.totalbebidassindescuentos = totalbebidas;
+            Cheque.totalotrossindescuentos = totalotros;
+
+            Cheque.subtotalcondescuento = Cheque.subtotal - Cheque.descuentoimporte;
+
+            Cheque.totalimpuestod1 = Mat.Redondeo(DetallesCheque.Sum(x => x.preciosinimpuestos ?? 0 * x.impuesto1 ?? 0 / 100m * x.cantidad ?? 0 * (100m - x.descuento ?? 0) / 100m));
+            Cheque.totalimpuestod2 = Mat.Redondeo(DetallesCheque.Sum(x => x.preciosinimpuestos ?? 0 * x.impuesto2 ?? 0 / 100m * x.cantidad ?? 0 * (100m - x.descuento ?? 0) / 100m));
+            Cheque.totalimpuestod3 = Mat.Redondeo(DetallesCheque.Sum(x => x.preciosinimpuestos ?? 0 * x.impuesto3 ?? 0 / 100m * x.cantidad ?? 0 * (100m - x.descuento ?? 0) / 100m));
+
+            Cheque.desc_imp_original = Cheque.descuentoimporte;
+
+            Cheque.cambio = 0; // como se debe ajustar el cambio si es efectivo? - por el momento queda en ceros
+            Cheque.cambiorepartidor = 0;
+
+
+            
+
+
+            //falta ajustar mas campos del cheque
+            #endregion
+
+            #region Ajuste del cheque pago
+            Chequepago.importe = Cheque.total;
+
+            if (FormaPago.tipo == (int)TipoPago.TARJETA)
+            {
+                Chequepago.propina = Cheque.propina;
+            }
+            #endregion
 
             Subtotal = string.Format("{0:C}", Cheque.subtotal);
             Total = string.Format("{0:C}", Cheque.total);
@@ -292,39 +335,36 @@ namespace mod_add.ViewModels
 
                     Cheque = cheques_DAO.Find(Folio);
 
-                    if (Cheque != null)
+                    if (Cheque == null) return Respuesta.CHEQUE_NO_ENCONTRADO;
+                    if (Cheque.cancelado.Value) return Respuesta.CHEQUE_CANCELADO;
+
+                    var chequespagos = Cheque.Chequespagos;
+
+                    if (chequespagos.Count > 1)
                     {
-                        if (Cheque.cancelado.Value) return Respuesta.CHEQUE_CANCELADO;
-
-                        var chequespagos = Cheque.Chequespagos;
-
-                        if (chequespagos.Count != 1)
-                        {
-                            return Respuesta.CHEQUE_CON_MULTIPLE_FORMA_PAGO;
-                        }
-
-                        FormaPago = chequespagos[0].Formasdepago;
-
-                        DetallesCheque = new ObservableCollection<SR_cheqdet>(Cheque.Detalles);
-                        DetallesCheque = new ObservableCollection<SR_cheqdet>(DetallesCheque.OrderBy(x => x.movimiento).ToList());
-
-                        UltimoCheqDet = DetallesCheque.OrderByDescending(x => x.movimiento).FirstOrDefault();
-
-
-                        if (Cheque.fecha.HasValue) Fecha = Cheque.fecha.Value;
-                        Personas = (int)Cheque.Nopersonas;
-                        Cliente = Cheque.idcliente;
-                        Descuento = Cheque.descuento ?? 0;
-                        Propina = Cheque.propina ?? 0;
-
-                        Subtotal = string.Format("{0:C}", Cheque.subtotal);
-                        Total = string.Format("{0:C}", Cheque.total);
+                        return Respuesta.CHEQUE_CON_MULTIPLE_FORMA_PAGO;
                     }
-                    else
+                    else if (chequespagos.Count < 1)
                     {
-                        return Respuesta.CHEQUE_NO_ENCONTRADO;
+                        return Respuesta.CHEQUE_SIN_FORMA_PAGO;
                     }
 
+                    Chequepago = chequespagos[0];
+                    FormaPago = Chequepago.Formasdepago;
+
+                    DetallesCheque = new ObservableCollection<SR_cheqdet>(Cheque.Detalles.OrderBy(x => x.movimiento).ToList());
+
+                    UltimoCheqDet = DetallesCheque.OrderByDescending(x => x.movimiento).FirstOrDefault();
+
+
+                    if (Cheque.fecha.HasValue) Fecha = Cheque.fecha.Value;
+                    Personas = (int)Cheque.Nopersonas;
+                    Cliente = Cheque.idcliente;
+                    Descuento = Cheque.descuento ?? 0;
+                    Propina = Cheque.propina ?? 0;
+
+                    Subtotal = string.Format("{0:C}", Cheque.subtotal);
+                    Total = string.Format("{0:C}", Cheque.total);
 
                     return Respuesta.HECHO;
                 }
@@ -336,9 +376,10 @@ namespace mod_add.ViewModels
             }
         }
 
-        public SR_formasdepago FormaPago { get; set; }
 
         private SR_cheques Cheque { get; set; }
+        private SR_formasdepago FormaPago { get; set; }
+        private SR_chequespagos Chequepago { get; set; }
         public SR_cheqdet UltimoCheqDet { get; set; }
 
         private ObservableCollection<SR_cheqdet> _DetallesCheque;

@@ -43,7 +43,7 @@ namespace mod_add.ViewModels
                         context.SaveChanges();
                     }
 
-                    App.ProductosEliminar = context.ProductosEliminar.ToList();
+                    App.ProductosEliminar = context.ProductosEliminar.Where(x => x.Eliminar).ToList();
 
                     return 1;
                 }
