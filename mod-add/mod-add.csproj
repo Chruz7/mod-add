@@ -101,10 +101,13 @@
     <Compile Include="Enums\TipoPago.cs" />
     <Compile Include="Helpers\Messenger.cs" />
     <Compile Include="Selectores\Condicional.cs" />
+    <Compile Include="Utils\Encriptado.cs" />
     <Compile Include="Utils\Mat.cs" />
     <Compile Include="ViewModels\AjusteMasivoViewModel.cs" />
     <Compile Include="ViewModels\AjusteUnicoViewModel.cs" />
+    <Compile Include="ViewModels\AutenticacionViewModel.cs" />
     <Compile Include="ViewModels\BitacoraViewModel.cs" />
+    <Compile Include="ViewModels\CambioContrasenaViewModel.cs" />
     <Compile Include="ViewModels\ConfiguracionViewModel.cs" />
     <Compile Include="ViewModels\EliminarProductosViewModel.cs" />
     <Compile Include="ViewModels\SeleccionGrupoViewModel.cs" />

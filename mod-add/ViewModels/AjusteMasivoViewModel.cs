@@ -1,4 +1,6 @@
 ﻿using mod_add.Datos.Modelos;
+using mod_add.Enums;
+using mod_add.Utils;
 using SR.Datos;
 using SRLibrary.SR_Context;
 using SRLibrary.SR_DAO;
@@ -20,22 +22,22 @@ namespace mod_add.ViewModels
             Random = new Random();
         }
 
-        public void AjustarCheques()
+        public void AjustarCheques2()
         {
             decimal totalPrecioSustraendo = 0;
 
             foreach (var detalleMod in DetalleModificacionCheques.OrderBy(x => x.Folio))
             {
-                var cheque = Cheques.Where(x => x.folio == detalleMod.Folio).FirstOrDefault();
-                var detallesCheque = DetalleCheques.Where(x => x.foliodet == detalleMod.Folio).ToList();
-                var chequepago = ChequesPagos.Where(x => x.folio == detalleMod.Folio).FirstOrDefault();
+                var cheque = Cheqs1.Where(x => x.folio == detalleMod.Folio).FirstOrDefault();
+                var detallesCheque = CheqsDet1.Where(x => x.foliodet == detalleMod.Folio).ToList();
+                var chequepago = CheqsPago1.Where(x => x.folio == detalleMod.Folio).FirstOrDefault();
                 var formapago = FormasPago.Where(x => x.idformadepago == chequepago.idformadepago).FirstOrDefault();
 
                 decimal totalPrecio = Math.Round(detallesCheque.Sum(x => x.precio ?? 0 * x.cantidad ?? 0), 4, App.MidpointRounding);
 
                 foreach (var detalle in detallesCheque)
                 {
-                    int iDet = DetalleCheques.IndexOf(detalle);
+                    int iDet = CheqsDet1.IndexOf(detalle);
 
                     if (App.ProductosEliminar.Any(x => x.Clave == detalle.idproducto))
                     {
@@ -46,11 +48,11 @@ namespace mod_add.ViewModels
                             //si cambia la cantidad del producto padre, la cantidad de los mod tambien cambia? si
 
 
-                            DetalleCheques[iDet].cantidad -= 1m;
+                            CheqsDet1[iDet].cantidad -= 1m;
                         }
                         else
                         {
-                            DetalleCheques.Remove(detalle);
+                            CheqsDet1.Remove(detalle);
                         }
 
                         totalPrecioSustraendo += detalle.precio ?? 0;
@@ -72,13 +74,13 @@ namespace mod_add.ViewModels
 
                                 if (detalleProducto.precio < detalle.precio)
                                 {
-                                    DetalleCheques[iDet].precio = detalleProducto.precio;
-                                    DetalleCheques[iDet].impuesto1 = detalleProducto.impuesto1;
-                                    DetalleCheques[iDet].impuesto2 = detalleProducto.impuesto2;
-                                    DetalleCheques[iDet].impuesto3 = detalleProducto.impuesto3;
-                                    DetalleCheques[iDet].preciosinimpuestos = detalleProducto.preciosinimpuestos;
-                                    DetalleCheques[iDet].preciocatalogo = detalleProducto.precio;
-                                    DetalleCheques[iDet].impuestoimporte3 = detalleProducto.impuestoimporte3;
+                                    CheqsDet1[iDet].precio = detalleProducto.precio;
+                                    CheqsDet1[iDet].impuesto1 = detalleProducto.impuesto1;
+                                    CheqsDet1[iDet].impuesto2 = detalleProducto.impuesto2;
+                                    CheqsDet1[iDet].impuesto3 = detalleProducto.impuesto3;
+                                    CheqsDet1[iDet].preciosinimpuestos = detalleProducto.preciosinimpuestos;
+                                    CheqsDet1[iDet].preciocatalogo = detalleProducto.precio;
+                                    CheqsDet1[iDet].impuestoimporte3 = detalleProducto.impuestoimporte3;
 
                                     totalPrecioSustraendo += (detalle.precio ?? 0 * detalle.cantidad ?? 0);
                                     totalPrecioSustraendo -= (detalleProducto.precio ?? 0 * detalle.cantidad ?? 0);
@@ -89,16 +91,168 @@ namespace mod_add.ViewModels
                         }
                     }
 
-                    if ((ImporteAnterior - totalPrecioSustraendo) < ImporteAjuste)
+                    if ((ImporteAnterior - totalPrecioSustraendo) < ImporteMinimoAjustable)
                     {
                         break;
                     }
                 }
             }
+        }
 
+        public void AjustarCheques()
+        {
+            //como funciona el checkbox de Modificar
+            //como se realiza la fecha de busqueda
+            //como se aplica el cambio y el eliminar -flujo del proceso
+            foreach(var cheque in Cheqs1)
+            {
+                #region Ajuste del cheque
+                var detalleCheques = CheqsDet1.Where(x => x.foliodet == cheque.folio).ToList();
+                decimal totalConImpuestos_Det1 = Mat.Redondeo(detalleCheques.Sum(x => x.precio.Value * x.cantidad.Value * (100m - x.descuento.Value) / 100m));
+                decimal totalConImpuestos_Det = Mat.Redondeo(detalleCheques.Sum(x => x.ImporteCICD));
+                decimal descuentoAplicado = (100m - cheque.descuento.Value) / 100m;
+                decimal totalNuevo = Mat.Redondeo(totalConImpuestos_Det * descuentoAplicado);
 
+                if (cheque.total.Value == totalNuevo)
+                    continue;
+                else
+                {
+                    long folio = cheque.folio;
+                    Console.WriteLine(folio.ToString());
+                }
 
-            
+                decimal descuento = cheque.descuento.Value / 100m;
+                var detalleModicacionCheque = DetalleModificacionCheques.FirstOrDefault(x => x.Folio == cheque.folio);
+                int iDetModCheq = DetalleModificacionCheques.IndexOf(detalleModicacionCheque);
+                var chequepago = CheqsPago1.Find(x => x.folio == x.folio);
+                int iCheqPag = CheqsPago1.IndexOf(chequepago);
+                var formapago = FormasPago.Find(x => x.idformadepago.Equals(chequepago.idformadepago));
+                decimal totalSinImpuestos_Det = Mat.Redondeo(detalleCheques.Sum(x => x.ImporteSICD));
+
+                cheque.Actualizar = true;
+
+                cheque.totalarticulos = detalleCheques.Count;
+                cheque.subtotal = totalSinImpuestos_Det;
+                cheque.total = totalNuevo;
+
+                cheque.totalconpropina = cheque.total; // falta validar si la propina se agrega por configuracion
+
+                cheque.totalconcargo = cheque.total + cheque.cargo;
+                cheque.totalconpropinacargo = cheque.total + cheque.cargo; // falta validar si la propina se agrega por configuracion
+                cheque.descuentoimporte = Mat.Redondeo(totalSinImpuestos_Det * descuento);
+
+                if (formapago.tipo == (int)TipoPago.EFECTIVO)
+                {
+                    cheque.efectivo = cheque.total;
+                }
+                else if (formapago.tipo == (int)TipoPago.TARJETA)
+                {
+                    cheque.tarjeta = cheque.total;
+                    cheque.propinatarjeta = cheque.propina;
+                }
+                else if (formapago.tipo == (int)TipoPago.VALES)
+                {
+                    cheque.vales = cheque.total;
+                }
+                else if (formapago.tipo == (int)TipoPago.OTROS)
+                {
+                    cheque.otros = cheque.total;
+                }
+
+                cheque.totalsindescuento = Mat.Redondeo(detalleCheques.Sum(x => x.ImporteSISD));
+
+                decimal totalalimentos = 0;
+                decimal totalbebidas = 0;
+                decimal totalotros = 0;
+                decimal totalalimentosdescuento = 0;
+                decimal totalbebidasdescuento = 0;
+                decimal totalotrosdescuento = 0;
+                decimal totalalimentossindescuento = 0;
+                decimal totalbebidassindescuento = 0;
+                decimal totalotrossindescuento = 0;
+
+                foreach (var detalle in detalleCheques)
+                {
+                    var producto = detalle.Producto;
+                    var grupo = producto.Grupo;
+
+                    decimal importedetalle = detalle.ImporteSICD;
+                    decimal importedetallesindescuento = detalle.ImporteSISD;
+                    decimal importedetalledescuento = importedetallesindescuento - importedetalle;
+
+                    if (grupo.clasificacion == 1)
+                    {
+                        totalbebidas += importedetalle;
+                        totalbebidassindescuento += importedetallesindescuento;
+                        totalbebidasdescuento += importedetalledescuento;
+                    }
+                    else if (grupo.clasificacion == 2)
+                    {
+                        totalalimentos += importedetalle;
+                        totalalimentossindescuento += importedetallesindescuento;
+                        totalalimentosdescuento += importedetalledescuento;
+                    }
+                    else if (grupo.clasificacion == 3)
+                    {
+                        totalotros += importedetalle;
+                        totalotrossindescuento += importedetallesindescuento;
+                        totalotrosdescuento += importedetalledescuento;
+                    }
+                }
+
+                cheque.totalalimentos = Mat.Redondeo(totalalimentos * descuentoAplicado);
+                cheque.totalbebidas = Mat.Redondeo(totalbebidas * descuentoAplicado);
+                cheque.totalotros = Mat.Redondeo(totalotros * descuentoAplicado);
+
+                cheque.totaldescuentos = cheque.descuentoimporte;
+                cheque.totaldescuentoalimentos = Mat.Redondeo(totalalimentosdescuento * descuento);
+                cheque.totaldescuentobebidas = Mat.Redondeo(totalbebidasdescuento * descuento);
+                cheque.totaldescuentootros = Mat.Redondeo(totalotrosdescuento * descuento);
+                // las cortesias se mantienen?
+
+                cheque.totaldescuentoycortesia = cheque.totaldescuentos + cheque.totalcortesias;
+                cheque.totalalimentossindescuentos = totalalimentossindescuento;
+                cheque.totalbebidassindescuentos = totalbebidassindescuento;
+                cheque.totalotrossindescuentos = totalotrossindescuento;
+
+                cheque.subtotalcondescuento = cheque.subtotal - cheque.descuentoimporte;
+
+                cheque.totalimpuestod1 = Mat.Redondeo(detalleCheques.Sum(x => x.ImporteI1CD));
+                cheque.totalimpuestod2 = Mat.Redondeo(detalleCheques.Sum(x => x.ImporteI2CD));
+                cheque.totalimpuestod3 = Mat.Redondeo(detalleCheques.Sum(x => x.ImporteI3CD));
+
+                cheque.totalimpuesto1 = cheque.totalimpuestod1;
+
+                cheque.desc_imp_original = cheque.descuentoimporte;
+
+                cheque.cambio = 0; // como se debe ajustar el cambio si es efectivo? - por el momento queda en ceros
+                cheque.cambiorepartidor = 0;
+
+                //falta ajustar mas campos del cheque
+                #endregion
+
+                #region Ajuste del cheque pago
+                CheqsPago1[iCheqPag].importe = cheque.total;
+
+                if (formapago.tipo == (int)TipoPago.TARJETA)
+                {
+                    CheqsPago1[iCheqPag].propina = cheque.propina;
+                }
+                #endregion
+
+                DetalleModificacionCheques[iDetModCheq].TotalConDescuento = totalNuevo;
+                DetalleModificacionCheques[iDetModCheq].Efectivo = cheque.efectivo.Value;
+                DetalleModificacionCheques[iDetModCheq].Tarjeta = cheque.tarjeta.Value;
+                DetalleModificacionCheques[iDetModCheq].Vales = cheque.vales.Value;
+                DetalleModificacionCheques[iDetModCheq].Otros = cheque.otros.Value;
+                DetalleModificacionCheques[iDetModCheq].ProductosEliminados = detalleModicacionCheque.TotalArticulos - (int)cheque.totalarticulos.Value;
+            }
+
+            NumeroTotalCuentasModificadas = Cheqs1.Count(x => x.Actualizar);
+            ImporteNuevo = Cheqs1.Sum(x => x.total.Value);
+            Diferencia = ImporteAnterior - ImporteNuevo;
+            PorcentajeDiferencia = Diferencia / ImporteAnterior * 100m;
+            EfectivoNuevo = Cheqs1.Sum(x => x.efectivo.Value);
         }
 
         public void EliminarProductos()
@@ -106,46 +260,179 @@ namespace mod_add.ViewModels
             decimal totalPrecioSustraendo = 0;
             bool eliminar = false;
 
-            foreach (var detalle in DetalleCheques)
+            foreach (var detalle in CheqsDet1.Where(x => !x.modificador.Value))
             {
-                if (App.ProductosEliminar.Any(x => x.Clave == detalle.idproducto))
+                if (!App.ConfiguracionSistema.EliminarProductosSeleccionados || App.ProductosEliminar.Any(x => x.Clave == detalle.idproducto))
                 {
-                    int iDet = DetalleChequesCopia.IndexOf(detalle);
+                    var cheq = Cheqs.Find(x => x.folio == detalle.foliodet);
+                    decimal descuentoCheque = (100m - cheq.descuento.Value) / 100m;
 
-                    if (detalle.cantidad > 1)
+                    int iDet = CheqsDet2.IndexOf(detalle);
+                    decimal cantidadDescontar = 0;
+
+                    if (detalle.cantidad.Value > 1m)
                     {
                         eliminar = true;
-                        DetalleChequesCopia[iDet].cantidad -= 1m;
+                        cantidadDescontar = 1m;
+
+                        CheqsDet2[iDet].cantidad -= cantidadDescontar;
+
+                        if (!string.IsNullOrWhiteSpace(detalle.idproductocompuesto))
+                        {
+                            var result = EliminarProductosModificadores(detalle.idproductocompuesto, descuentoCheque);
+                            totalPrecioSustraendo += result;
+                        }
                     }
                     else
                     {
-                        DetalleChequesCopia.Remove(detalle);
+                        cantidadDescontar = detalle.cantidad.Value;
+
+                        CheqsDet2.Remove(detalle);
+
+                        if (!string.IsNullOrWhiteSpace(detalle.idproductocompuesto))
+                        {
+                            var result = EliminarProductosModificadores(detalle.idproductocompuesto, descuentoCheque, true);
+                            totalPrecioSustraendo += result;
+                        }
                     }
 
-                    totalPrecioSustraendo += detalle.precio ?? 0;
+                    totalPrecioSustraendo += detalle.precio.Value * cantidadDescontar * (100m - detalle.descuento.Value) / 100m * descuentoCheque;
                 }
 
-                if ((ImporteAnterior - totalPrecioSustraendo) <= ImporteAjuste)
+                if ((ImporteAnterior - totalPrecioSustraendo) <= ImporteObjetivo)
                 {
                     break;
                 }
             }
 
-            DetalleCheques = (DetalleChequesCopia as IEnumerable<SR_cheqdet>).ToList();
+            CheqsDet1 = (CheqsDet2 as IEnumerable<SR_cheqdet>).ToList();
 
-            if ((ImporteAnterior - totalPrecioSustraendo) > ImporteAjuste && eliminar)
+            if ((ImporteAnterior - totalPrecioSustraendo) > ImporteObjetivo && eliminar)
             {
                 EliminarProductos();
             }
         }
 
+        public void CambiarProductos()
+        {
+            decimal totalPrecioSustraendo = 0;
+
+            foreach (var detalle in CheqsDet1.Where(x => !x.modificador.Value))
+            {
+                int porcentajeAleatorio = Random.Next(1, 100);
+                int porcentajeAnterior = 0;
+
+                foreach (var productoReemplazo in App.ProductosReemplazo)
+                {
+                    if (productoReemplazo.Porcentaje > porcentajeAnterior && productoReemplazo.Porcentaje <= porcentajeAleatorio)
+                    {
+                        int iDet = CheqsDet2.IndexOf(detalle);
+
+                        var detalleProductoCheque = detalle.Producto.Detalle;
+                        var producto = ObtenerProductoSR(productoReemplazo.Clave);
+                        var detalleProducto = producto.Detalle;
+
+                        if (detalleProducto.precio < detalle.precio)
+                        {
+                            var cheq = Cheqs.Find(x => x.folio == detalle.foliodet);
+                            decimal descuentoCheque = (100m - cheq.descuento.Value) / 100m;
+                            //se complica en el caso de decimales porque no se sabe el rendimiento del producto
+
+                            CheqsDet1[iDet].idproducto = producto.idproducto;
+                            CheqsDet1[iDet].precio = detalleProducto.precio;
+                            CheqsDet1[iDet].impuesto1 = detalleProducto.impuesto1;
+                            CheqsDet1[iDet].impuesto2 = detalleProducto.impuesto2;
+                            CheqsDet1[iDet].impuesto3 = detalleProducto.impuesto3;
+                            CheqsDet1[iDet].preciosinimpuestos = detalleProducto.preciosinimpuestos;
+                            CheqsDet1[iDet].preciocatalogo = detalleProducto.precio;
+                            CheqsDet1[iDet].impuestoimporte3 = detalleProducto.impuestoimporte3;
+                            CheqsDet1[iDet].idproductocompuesto = "";
+
+                            if (!detalleProducto.idunidad.Equals(detalleProductoCheque.idunidad))
+                            {
+                                CheqsDet2[iDet].cantidad = 1m;
+                            }
+
+                            if (!string.IsNullOrWhiteSpace(detalle.idproductocompuesto))
+                            {
+                                totalPrecioSustraendo += EliminarProductosModificadores(detalle.idproductocompuesto, descuentoCheque, true);
+                            }
+
+                            totalPrecioSustraendo += (detalle.ImporteCICD);
+                            totalPrecioSustraendo -= (CheqsDet2[iDet].ImporteCICD);
+                        }
+
+                        break;
+                    }
+                }
+
+                if ((ImporteAnterior - totalPrecioSustraendo) <= ImporteObjetivo)
+                {
+                    break;
+                }
+            }
+
+            CheqsDet1 = (CheqsDet2 as IEnumerable<SR_cheqdet>).ToList();
+        }
+
+        public void ReordenarDetalles()
+        {
+            int movimiento = 1;
+            long folio = 0;
+            CheqsDet1 = CheqsDet1.OrderBy(x => x.foliodet).ThenBy(x => x.movimiento).ToList();
+
+            foreach (var detalle in CheqsDet1)
+            {
+                if (folio != detalle.foliodet)
+                {
+                    folio = detalle.foliodet ?? 0;
+                    movimiento = 1;
+                }
+
+                detalle.movimiento = movimiento;
+            }
+        }
+
+        public decimal EliminarProductosModificadores(string idproductocompuesto, decimal descuentoCheque, bool eliminarTodo = false)
+        {
+            decimal totaldescontar = 0;
+            var cheqDet_Mod = CheqsDet2.Where(x => x.idproductocompuesto.Equals(idproductocompuesto) && x.modificador.Value).ToList();
+
+            foreach (var det_Mod in cheqDet_Mod)
+            {
+                if (!App.ConfiguracionSistema.EliminarProductosSeleccionados || App.ProductosEliminar.Any(x => x.Clave == det_Mod.idproducto) || eliminarTodo)
+                {
+                    int iDet = CheqsDet2.IndexOf(det_Mod);
+                    decimal cantidadDescontar = 0;
+
+                    if (det_Mod.cantidad.Value > 1m && !eliminarTodo)
+                    {
+                        cantidadDescontar = 1m;
+                        CheqsDet2[iDet].cantidad -= cantidadDescontar;
+                    }
+                    else
+                    {
+                        cantidadDescontar = det_Mod.cantidad.Value;
+                        CheqsDet2.Remove(det_Mod);
+                    }
+
+                    totaldescontar += det_Mod.precio.Value * cantidadDescontar * (100m - det_Mod.cantidad.Value) / 100m * descuentoCheque;
+                }
+            }
+
+            return totaldescontar;
+        }
+
         public void InicializarControles()
         {
-            DetalleModificacionCheques = new ObservableCollection<DetalleModificacionCheque>();
-            Cheques = new List<SR_cheques>();
-            DetalleCheques = new List<SR_cheqdet>();
-            DetalleChequesCopia = new List<SR_cheqdet>();
-            ChequesPagos = new List<SR_chequespagos>();
+            DetalleModificacionCheques = new ObservableCollection<DetalleAjusteMasivo>();
+            Cheqs = new List<SR_cheques>();
+            Cheqs1 = new List<SR_cheques>();
+            CheqsDet = new List<SR_cheqdet>();
+            CheqsDet1 = new List<SR_cheqdet>();
+            CheqsDet2 = new List<SR_cheqdet>();
+            CheqsPago = new List<SR_chequespagos>();
+            CheqsPago1 = new List<SR_chequespagos>();
             FormasPago = new List<SR_formasdepago>();
 
             Turno = true;
@@ -153,7 +440,7 @@ namespace mod_add.ViewModels
             FechaInicio = DateTime.Today;
             FechaCierre = DateTime.Today;
             HorarioTurno = "? - ?";
-            ImporteAjuste = 0.00m;
+            ImporteMinimoAjustable = 0.00m;
             PorcentajeObjetivo = 1;
             ImporteObjetivo = 0.00m;
             IncluirCuentaPagadaTarjeta = false;
@@ -210,154 +497,143 @@ namespace mod_add.ViewModels
             }
         }
 
-        public void ObtenerInformacionSR()
+        public Respuesta ObtenerInformacionSR()
         {
             using (SoftRestaurantDBContext context = new SoftRestaurantDBContext())
             {
-                DateTime fechaInicio;
-                DateTime fechaCierre;
-
-                if (Turno)
+                try
                 {
-                    fechaInicio = FechaInicio.AddSeconds(HoraInicio.TotalSeconds);
-                    fechaCierre = FechaInicio.AddSeconds(HoraCierre.TotalSeconds);
-                }
-                else
-                {
-                    fechaInicio = FechaInicio.AddSeconds(HoraInicio.TotalSeconds);
-                    fechaCierre = FechaCierre.AddSeconds(HoraCierre.TotalSeconds);
-                }
+                    DateTime fechaInicio;
+                    DateTime fechaCierre;
 
-                SR_cheques_DAO cheques_DAO = new SR_cheques_DAO(context, !App.ConfiguracionSistema.ModificarVentasReales);
+                    if (Turno)
+                    {
+                        fechaInicio = FechaInicio.AddSeconds(HoraInicio.TotalSeconds);
+                        fechaCierre = FechaInicio.AddSeconds(HoraCierre.TotalSeconds);
 
-                string queryWhere = "(efectivo >= total";
+                        if (HoraInicio > HoraCierre)
+                        {
+                            fechaCierre = fechaCierre.AddDays(1);
+                        }
+                    }
+                    else
+                    {
+                        fechaInicio = FechaInicio.AddSeconds(HoraInicio.TotalSeconds);
+                        fechaCierre = FechaCierre.AddSeconds(HoraCierre.TotalSeconds);
+                    }
 
-                if (IncluirCuentaPagadaTarjeta)
-                    queryWhere += " OR tarjeta = (total + propinatarjeta)";
+                    SR_cheques_DAO cheques_DAO = new SR_cheques_DAO(context, !App.ConfiguracionSistema.ModificarVentasReales);
 
-                if (IncluirCuentaPagadaVales)
-                    queryWhere += " OR vales = total";
+                    string queryWhere = "(efectivo >= total";
 
-                if (IncluirCuentaPagadaOtros)
-                    queryWhere += " OR otros = total";
+                    if (IncluirCuentaPagadaTarjeta)
+                        queryWhere += " OR tarjeta = (total + propinatarjeta)";
 
-                queryWhere += ") AND ";
+                    if (IncluirCuentaPagadaVales)
+                        queryWhere += " OR vales = total";
 
-                if (!IncluirCuentaFacturada)
-                    queryWhere += "facturado = 0 AND ";
+                    if (IncluirCuentaPagadaOtros)
+                        queryWhere += " OR otros = total";
 
-                if (!IncluirCuentaNotaConsumo)
-                    queryWhere += "folionotadeconsumo = 0 AND ";
+                    queryWhere += ") AND ";
 
-                if (NoIncluirCuentasReimpresas)
-                    queryWhere += "impresiones = 1 AND ";
+                    if (!IncluirCuentaFacturada)
+                        queryWhere += "facturado = 0 AND ";
 
-                queryWhere += "total >= @total AND cancelado = 0 AND fecha BETWEEN @FechaInicio AND @FechaCierre";
+                    if (!IncluirCuentaNotaConsumo)
+                        queryWhere += "folionotadeconsumo = 0 AND ";
 
-                var cheques = cheques_DAO.Get(queryWhere, new object[] {
-                    new SqlParameter("FechaInicio", fechaInicio),
-                    new SqlParameter("FechaCierre", fechaCierre),
-                    new SqlParameter("total", ImporteAjuste),
-                });
+                    if (NoIncluirCuentasReimpresas)
+                        queryWhere += "impresiones = 1 AND ";
 
-                //Validar los tipos de cheque
-                //foreach(var cheque in cheques)
-                //{
-                //    var chequespagos = cheque.Chequespagos;
+                    queryWhere += "total >= @total AND cancelado = 0 AND fecha BETWEEN @FechaInicio AND @FechaCierre";
 
-                //    if (chequespagos.Count == 1)
-                //    {
-                //        var detalleCheque = cheque.Detalles;
-                //        var chequepago = chequespagos[0];
-                //        var formapago = chequepago.Formasdepago;
+                    Cheqs = cheques_DAO.Get(queryWhere, new object[] {
+                        new SqlParameter("FechaInicio", fechaInicio),
+                        new SqlParameter("FechaCierre", fechaCierre),
+                        new SqlParameter("total", ImporteMinimoAjustable),
+                    });
 
-                //        Cheques.Add(cheque);
-                //        DetalleCheques.AddRange(detalleCheque);
-                //        ChequesPagos.Add(chequepago);
-
-                //        if (!FormasPago.Any(x => x.idformadepago == formapago.idformadepago))
-                //            FormasPago.Add(formapago);
-
-                //        DetalleModificacionCheques.Add(new DetalleModificacionCheque
-                //        {
-                //            Folio = cheque.folio,
-                //            FolioNotaConsumo = cheque.folionotadeconsumo.Value,
-                //            Fecha = cheque.fecha.Value,
-                //            Cancelado = cheque.cancelado.Value,
-                //            Facturado = cheque.facturado.Value,
-                //            Descuento = cheque.descuento.Value,
-                //            TotalOriginal = cheque.total.Value,
-                //            ProductosEliminados = 0,
-                //            TotalConDescuento = cheque.total.Value,
-                //            Efectivo = cheque.efectivo.Value,
-                //            Tarjeta = cheque.tarjeta.Value,
-                //            Vales = cheque.vales.Value,
-                //            Otros = cheque.otros.Value,
-                //            Modificar = true,
-                //        });
-                //    }
-                //}
-
-                if (cheques.Count > 0)
-                {
-                    Cheques = cheques;
+                    if (Cheqs.Count == 0)
+                    {
+                        return Respuesta.CHEQUE_NO_ENCONTRADO;
+                    }
 
                     SR_cheqdet_DAO cheqdet_DAO = new SR_cheqdet_DAO(context, !App.ConfiguracionSistema.ModificarVentasReales);
-                    var detalleCheques = cheqdet_DAO.WhereIn("foliodet", cheques.Select(x => (object)x.folio).ToArray());
+                    var detalleCheques = cheqdet_DAO.WhereIn("foliodet", Cheqs.Select(x => (object)x.folio).ToArray());
 
-                    //DetalleCheques = detalleCheques.OrderBy(x => x.foliodet).ThenBy(x => x.movimiento).ToList();
-                    DetalleCheques = detalleCheques.OrderBy(x => x.movimiento).ThenBy(x => x.foliodet).ToList();
-                    DetalleChequesCopia = (DetalleCheques as IEnumerable<SR_cheqdet>).ToList();
+                    CheqsDet = detalleCheques.OrderBy(x => x.movimiento).ThenBy(x => x.foliodet).ToList();
 
                     SR_chequespagos_DAO chequespagos_DAO = new SR_chequespagos_DAO(context, !App.ConfiguracionSistema.ModificarVentasReales);
-                    ChequesPagos = chequespagos_DAO.WhereIn("folio", cheques.Select(x => (object)x.folio).ToArray());
+                    CheqsPago = chequespagos_DAO.WhereIn("folio", Cheqs.Select(x => (object)x.folio).ToArray());
 
                     SR_formasdepago_DAO formasdepago_DAO = new SR_formasdepago_DAO(context);
                     FormasPago = formasdepago_DAO.GetAll();
-                }
 
-                foreach (var cheque in Cheques)
-                {
-                    DetalleModificacionCheques.Add(new DetalleModificacionCheque
+                    foreach (var cheque in Cheqs)
                     {
-                        Folio = cheque.folio,
-                        FolioNotaConsumo = cheque.folionotadeconsumo.Value,
-                        Fecha = cheque.fecha.Value,
-                        Cancelado = cheque.cancelado.Value,
-                        Facturado = cheque.facturado.Value,
-                        Descuento = cheque.descuento.Value,
-                        TotalOriginal = cheque.total.Value,
-                        ProductosEliminados = 0,
-                        TotalConDescuento = cheque.total.Value,
-                        Efectivo = cheque.efectivo.Value,
-                        Tarjeta = cheque.tarjeta.Value,
-                        Vales = cheque.vales.Value,
-                        Otros = cheque.otros.Value,
-                        Modificar = true,
-                    });
+                        DetalleModificacionCheques.Add(new DetalleAjusteMasivo
+                        {
+                            Folio = cheque.folio,
+                            FolioNotaConsumo = cheque.folionotadeconsumo.Value,
+                            Fecha = cheque.fecha.Value,
+                            Cancelado = cheque.cancelado.Value,
+                            Facturado = cheque.facturado.Value,
+                            Descuento = cheque.descuento.Value,
+                            TotalOriginal = cheque.total.Value,
+                            ProductosEliminados = 0,
+                            TotalArticulos = CheqsDet.Count(x => x.foliodet == cheque.folio),
+                            TotalConDescuento = cheque.total.Value,
+                            Efectivo = cheque.efectivo.Value,
+                            Tarjeta = cheque.tarjeta.Value,
+                            Vales = cheque.vales.Value,
+                            Otros = cheque.otros.Value,
+                            Modificar = true,
+                        });
+                    }
+
+                    RefrescarControles();
+
+                    return Respuesta.HECHO;
                 }
-
-                decimal total = cheques.Sum(x => x.total ?? 0);
-
-                ImporteObjetivo = total - (total * (PorcentajeObjetivo / 100m));
-
-                NumeroTotalCuentas = cheques.Count;
-                NumeroTotalCuentasModificadas = cheques.Count;
-                ImporteAnterior = total;
+                catch
+                {
+                    return Respuesta.ERROR;
+                }
             }
         }
 
+        public void RefrescarControles()
+        {
+            Cheqs1 = (Cheqs as IEnumerable<SR_cheques>).ToList();
+
+            CheqsDet1 = (CheqsDet as IEnumerable<SR_cheqdet>).ToList();
+            CheqsDet2 = (CheqsDet as IEnumerable<SR_cheqdet>).ToList();
+
+            CheqsPago1 = (CheqsPago as IEnumerable<SR_chequespagos>).ToList();
+
+            decimal total = Cheqs.Sum(x => x.total ?? 0);
+
+            ImporteObjetivo = total * (100m - PorcentajeObjetivo) / 100m;
+            NumeroTotalCuentas = Cheqs.Count;
+            ImporteAnterior = total;
+            EfectivoAnterior = Cheqs.Sum(x => x.efectivo.Value);
+        }
+
         private SR_configuracion SRConfiguracion { get; set; }
-        private List<SR_cheques> Cheques { get; set; }
-        private List<SR_cheqdet> DetalleCheques { get; set; }
-        private List<SR_cheqdet> DetalleChequesCopia { get; set; }
-        private List<SR_chequespagos> ChequesPagos { get; set; }
+        private List<SR_cheques> Cheqs { get; set; }
+        private List<SR_cheques> Cheqs1 { get; set; }
+        private List<SR_cheqdet> CheqsDet { get; set; }
+        private List<SR_cheqdet> CheqsDet1 { get; set; }
+        private List<SR_cheqdet> CheqsDet2 { get; set; }
+        private List<SR_chequespagos> CheqsPago { get; set; }
+        private List<SR_chequespagos> CheqsPago1 { get; set; }
         private List<SR_formasdepago> FormasPago { get; set; }
         private TimeSpan HoraInicio { get; set; }
         private TimeSpan HoraCierre { get; set; }
 
-        private ObservableCollection<DetalleModificacionCheque> _DetalleModificacionCheques;
-        public ObservableCollection<DetalleModificacionCheque> DetalleModificacionCheques
+        private ObservableCollection<DetalleAjusteMasivo> _DetalleModificacionCheques;
+        public ObservableCollection<DetalleAjusteMasivo> DetalleModificacionCheques
         {
             get { return _DetalleModificacionCheques; }
             set
@@ -422,14 +698,14 @@ namespace mod_add.ViewModels
             }
         }
 
-        private decimal _ImporteAjuste;
-        public decimal ImporteAjuste
+        private decimal _ImporteMinimoAjustable;
+        public decimal ImporteMinimoAjustable
         {
-            get { return _ImporteAjuste; }
+            get { return _ImporteMinimoAjustable; }
             set
             {
-                _ImporteAjuste = value;
-                OnPropertyChanged(nameof(ImporteAjuste));
+                _ImporteMinimoAjustable = value;
+                OnPropertyChanged(nameof(ImporteMinimoAjustable));
             }
         }
 

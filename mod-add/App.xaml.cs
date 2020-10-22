@@ -13,15 +13,15 @@ namespace mod_add
     /// </summary>
     public partial class App : Application
     {
+        public static bool Admin { get; set; }
         public static ConfiguracionSistema ConfiguracionSistema { get; set; }
         public static List<ProductoReemplazo> ProductosReemplazo { get; set; }
         public static List<ProductoEliminar> ProductosEliminar { get; set; }
         public static MidpointRounding MidpointRounding { get; set; }
         private void Application_Startup(object sender, StartupEventArgs e)
         {
+            Admin = false;
             MidpointRounding = MidpointRounding.AwayFromZero;
-            //Autenticacion autenticacion = new Autenticacion();
-            //autenticacion.ShowDialog();
 
             using (ApplicationDbContext context = new ApplicationDbContext())
             {
@@ -59,7 +59,10 @@ namespace mod_add
                 ProductosEliminar = context.ProductosEliminar.ToList();
             }
 
-            IrPrincipal();
+            Autenticacion autenticacion = new Autenticacion();
+            autenticacion.ShowDialog();
+
+            //IrPrincipal();
         }
 
         public static void IrPrincipal()

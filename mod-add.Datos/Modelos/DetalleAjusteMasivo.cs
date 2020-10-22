@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace mod_add.Datos.Modelos
 {
-    public class DetalleModificacionCheque
+    public class DetalleAjusteMasivo
     {
         public long Folio { get; set; }
         public decimal FolioNotaConsumo { get; set; }
@@ -15,6 +15,7 @@ namespace mod_add.Datos.Modelos
         public bool Facturado { get; set; }
         public decimal Descuento { get; set; }
         public decimal TotalOriginal { get; set; }
+        public int TotalArticulos { get; set; }
         public int ProductosEliminados { get; set; }
         public decimal TotalConDescuento { get; set; }
         public decimal Efectivo { get; set; }

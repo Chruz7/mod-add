@@ -1,4 +1,5 @@
-﻿using mod_add.ViewModels;
+﻿using mod_add.Enums;
+using mod_add.ViewModels;
 using System;
 using System.Windows;
 using System.Windows.Controls;
@@ -26,14 +27,24 @@ namespace mod_add.Componentes
 
         private void Aplicar_Click(object sender, RoutedEventArgs e)
         { 
+            ViewModel.EliminarProductos();
             ViewModel.AjustarCheques();
+            DetalleModificacionCheques.Items.Refresh();
         }
 
         private void NuevaBusqueda_Click(object sender, RoutedEventArgs e)
         {
             //HabilitarControles();
-            //ViewModel.InicializarControles();
-            ViewModel.ObtenerInformacionSR();
+            Respuesta respuesta = ViewModel.ObtenerInformacionSR();
+
+            if (respuesta == Respuesta.CHEQUE_NO_ENCONTRADO)
+            {
+                MessageBox.Show("No se encontraron cuentas", "Busqueda", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            else if (respuesta == Respuesta.ERROR)
+            {
+                MessageBox.Show("Hubo un error al intentar buscar las cuentas", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void Cancelar_Click(object sender, RoutedEventArgs e)
@@ -70,7 +81,7 @@ namespace mod_add.Componentes
             Periodo.IsEnabled = habilitar;
             FechaInicio.IsEnabled = habilitar;
             FechaCierre.IsEnabled = habilitar;
-            ImporteAjuste.IsEnabled = habilitar;
+            ImporteMinimoAjustable.IsEnabled = habilitar;
             PorcentajeObjetivo.IsEnabled = habilitar;
             ImporteObjetivo.IsEnabled = habilitar;
             CuentaPagadaTarjerta.IsEnabled = habilitar;
@@ -101,6 +112,11 @@ namespace mod_add.Componentes
         private void FechaInicio_KeyDown(object sender, KeyEventArgs e)
         {
             e.Handled = true;
+        }
+
+        private void PorcentajeObjetivo_ValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        {
+            ViewModel.RefrescarControles();
         }
     }
 }

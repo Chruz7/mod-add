@@ -164,10 +164,9 @@ namespace mod_add.ViewModels
 
             DetallesCheque[index].idproducto = producto.idproducto;
 
-            if (detalleProducto.idunidad != detalleProductoCheque.idunidad)
+            if (detalleProducto.idunidad.Equals(detalleProductoCheque.idunidad))
             {
-                decimal nuevaCantidad = Math.Round(DetallesCheque[index].cantidad ?? 0, 0, App.MidpointRounding);
-                DetallesCheque[index].cantidad = nuevaCantidad >= 1 ? nuevaCantidad : 1;
+                DetallesCheque[index].cantidad = 1m;
             }
 
             if (!CambiarPrecio)
@@ -206,19 +205,19 @@ namespace mod_add.ViewModels
             Cheque.descuento = Descuento;
             Cheque.totalarticulos = DetallesCheque.Count;
 
-            decimal totalSinImpuestos_Det = Mat.Redondeo(DetallesCheque.Sum(x => x.preciosinimpuestos ?? 0 * x.cantidad ?? 0 * (100m - x.descuento ?? 0) / 100m));
-            decimal totalConImpuestos_Det = Mat.Redondeo(DetallesCheque.Sum(x => x.precio ?? 0 * x.cantidad ?? 0 * (100m - x.descuento ?? 0) / 100m));
+            decimal descuentoAplicado = (100m - Cheque.descuento.Value) / 100m;
+            decimal descuento = Cheque.descuento.Value / 100m;
+            decimal totalSinImpuestos_Det = Mat.Redondeo(DetallesCheque.Sum(x => x.ImporteSICD));
+            decimal totalConImpuestos_Det = Mat.Redondeo(DetallesCheque.Sum(x => x.ImporteCICD));
 
             Cheque.subtotal = totalSinImpuestos_Det;
-            Cheque.total = Mat.Redondeo(totalConImpuestos_Det * (100m - Cheque.descuento ?? 0) / 100m);
+            Cheque.total = Mat.Redondeo(totalConImpuestos_Det * descuentoAplicado);
             
             Cheque.totalconpropina = Cheque.total; // falta validar si la propina se agrega por configuracion
             
-            Cheque.totalimpuesto1 = Mat.Redondeo(DetallesCheque.Sum(x => x.preciosinimpuestos ?? 0 * x.impuesto1 ?? 0 / 100m * x.cantidad ?? 0 * (100m - x.descuento ?? 0) / 100m));
-            
             Cheque.totalconcargo = Cheque.total + Cheque.cargo;
             Cheque.totalconpropinacargo = Cheque.total + Cheque.cargo; // falta validar si la propina se agrega por configuracion
-            Cheque.descuentoimporte = Mat.Redondeo(totalSinImpuestos_Det * Cheque.descuento ?? 0 / 100m); ;
+            Cheque.descuentoimporte = Mat.Redondeo(totalSinImpuestos_Det * descuento);
 
             if (FormaPago.tipo == (int)TipoPago.EFECTIVO)
             {
@@ -239,7 +238,7 @@ namespace mod_add.ViewModels
             }
 
 
-            Cheque.totalsindescuento = Mat.Redondeo(DetallesCheque.Sum(x => x.preciosinimpuestos ?? 0 * x.cantidad ?? 0));
+            Cheque.totalsindescuento = Mat.Redondeo(DetallesCheque.Sum(x => x.ImporteSISD));
 
             decimal totalalimentos = 0;
             decimal totalbebidas = 0;
@@ -256,9 +255,9 @@ namespace mod_add.ViewModels
                 var producto = detalle.Producto;
                 var grupo = producto.Grupo;
 
-                decimal importedetalle = detalle.preciosinimpuestos ?? 0 * detalle.cantidad ?? 0 * (100m - detalle.descuento ?? 0) / 100m;
-                decimal importedetalledescuento = detalle.preciosinimpuestos ?? 0 * detalle.cantidad ?? 0 * detalle.descuento ?? 0 / 100m;
-                decimal importedetallesindescuento = detalle.preciosinimpuestos ?? 0 * detalle.cantidad ?? 0;
+                decimal importedetalle = detalle.ImporteSICD;
+                decimal importedetallesindescuento = detalle.ImporteSISD;
+                decimal importedetalledescuento = importedetallesindescuento - importedetalle;
 
                 if (grupo.clasificacion == 1)
                 {
@@ -280,14 +279,14 @@ namespace mod_add.ViewModels
                 }
             }
 
-            Cheque.totalalimentos = Mat.Redondeo(totalalimentos * (100m - Descuento) / 100m);
-            Cheque.totalbebidas = Mat.Redondeo(totalbebidas * (100m - Descuento) / 100m);
-            Cheque.totalotros = Mat.Redondeo(totalotros * (100m - Descuento) / 100m);
+            Cheque.totalalimentos = Mat.Redondeo(totalalimentos * descuentoAplicado);
+            Cheque.totalbebidas = Mat.Redondeo(totalbebidas * descuentoAplicado);
+            Cheque.totalotros = Mat.Redondeo(totalotros * descuentoAplicado);
 
             Cheque.totaldescuentos = Cheque.descuentoimporte;
-            Cheque.totaldescuentoalimentos = Mat.Redondeo(totalalimentosdescuento * Descuento / 100m);
-            Cheque.totaldescuentobebidas = Mat.Redondeo(totalbebidasdescuento * Descuento / 100m);
-            Cheque.totaldescuentootros = Mat.Redondeo(totalotrosdescuento * Descuento / 100m);
+            Cheque.totaldescuentoalimentos = Mat.Redondeo(totalalimentosdescuento * descuento);
+            Cheque.totaldescuentobebidas = Mat.Redondeo(totalbebidasdescuento * descuento);
+            Cheque.totaldescuentootros = Mat.Redondeo(totalotrosdescuento * descuento);
             // las cortesias se mantienen?
 
             Cheque.totaldescuentoycortesia = Cheque.totaldescuentos + Cheque.totalcortesias;
@@ -297,9 +296,11 @@ namespace mod_add.ViewModels
 
             Cheque.subtotalcondescuento = Cheque.subtotal - Cheque.descuentoimporte;
 
-            Cheque.totalimpuestod1 = Mat.Redondeo(DetallesCheque.Sum(x => x.preciosinimpuestos ?? 0 * x.impuesto1 ?? 0 / 100m * x.cantidad ?? 0 * (100m - x.descuento ?? 0) / 100m));
-            Cheque.totalimpuestod2 = Mat.Redondeo(DetallesCheque.Sum(x => x.preciosinimpuestos ?? 0 * x.impuesto2 ?? 0 / 100m * x.cantidad ?? 0 * (100m - x.descuento ?? 0) / 100m));
-            Cheque.totalimpuestod3 = Mat.Redondeo(DetallesCheque.Sum(x => x.preciosinimpuestos ?? 0 * x.impuesto3 ?? 0 / 100m * x.cantidad ?? 0 * (100m - x.descuento ?? 0) / 100m));
+            Cheque.totalimpuestod1 = Mat.Redondeo(DetallesCheque.Sum(x => x.ImporteI1CD));
+            Cheque.totalimpuestod2 = Mat.Redondeo(DetallesCheque.Sum(x => x.ImporteI2CD));
+            Cheque.totalimpuestod3 = Mat.Redondeo(DetallesCheque.Sum(x => x.ImporteI3CD));
+
+            Cheque.totalimpuesto1 = Cheque.totalimpuestod1;
 
             Cheque.desc_imp_original = Cheque.descuentoimporte;
 
@@ -367,8 +368,8 @@ namespace mod_add.ViewModels
                     if (Cheque.fecha.HasValue) Fecha = Cheque.fecha.Value;
                     Personas = (int)Cheque.Nopersonas;
                     Cliente = Cheque.idcliente;
-                    Descuento = Cheque.descuento ?? 0;
-                    Propina = Cheque.propina ?? 0;
+                    Descuento = Cheque.descuento.Value;
+                    Propina = Cheque.propina.Value;
 
                     Subtotal = string.Format("{0:C}", Cheque.subtotal);
                     Total = string.Format("{0:C}", Cheque.total);
@@ -377,12 +378,10 @@ namespace mod_add.ViewModels
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(ex.ToString());
                     return Respuesta.ERROR;
                 }
             }
         }
-
 
         private SR_cheques Cheque { get; set; }
         private SR_formasdepago FormaPago { get; set; }

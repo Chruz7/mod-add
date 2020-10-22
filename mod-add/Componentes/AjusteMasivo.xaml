@@ -186,8 +186,8 @@
                             Grid.ColumnSpan="2"
                             VerticalAlignment="Center"
                             Margin="5,0,5,0"
-                            x:Name="ImporteAjuste"
-                            Text="{Binding ImporteAjuste, UpdateSourceTrigger=PropertyChanged}"
+                            x:Name="ImporteMinimoAjustable"
+                            Text="{Binding ImporteMinimoAjustable, UpdateSourceTrigger=PropertyChanged}"
                             KeyDown="TextBlock_KeyDown"/>
 
                         <Label
@@ -205,7 +205,8 @@
                             x:Name="PorcentajeObjetivo"
                             Maximum="100"
                             Minimum="1"
-                            Value="{Binding PorcentajeObjetivo}"/>
+                            Value="{Binding PorcentajeObjetivo}"
+                            ValueChanged="PorcentajeObjetivo_ValueChanged"/>
                         <Label
                             Grid.Row="1"
                             Grid.Column="2"
@@ -312,15 +313,12 @@
             Grid.ColumnSpan="7"
             HorizontalScrollBarVisibility="Auto"
             VerticalScrollBarVisibility="Disabled">
-            
-        
         <Grid
             Grid.Row="1"
             Grid.Column="0"
             Grid.ColumnSpan="7">
             <DataGrid
                 Name="DetalleModificacionCheques"
-                Margin="5"
                 ItemsSource="{Binding DetalleModificacionCheques}"
                 Style="{DynamicResource DataGridStyle3}">
                 <DataGrid.Columns>

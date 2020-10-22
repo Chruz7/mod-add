@@ -8,8 +8,8 @@
         Title="Cambio de contraseña"
         WindowStartupLocation="CenterScreen"
         ResizeMode="NoResize"
-        Height="180"
-        Width="240">
+        Height="200"
+        Width="260">
     <Grid
         Margin="10,0,10,0">
         <Grid.RowDefinitions>
@@ -33,13 +33,13 @@
             Padding="0,5,0,5"
             Content="Contraseña actual:"/>
 
-        <TextBox
+        <PasswordBox
             Grid.Row="1"
             Grid.Column="0"
             Grid.ColumnSpan="2"
             VerticalAlignment="Center"
-            x:Name="ContrasenaActual"
-            Text="{Binding ContrasenaActual, UpdateSourceTrigger=PropertyChanged}"/>
+            MaxLength="20"
+            x:Name="ContrasenaActual"/>
 
         <Label
             Grid.Row="2"
@@ -48,20 +48,19 @@
             VerticalAlignment="Bottom"
             Padding="0,5,0,5"
             Content="Contraseña nueva:"/>
-
-        <TextBox
+        <PasswordBox
             Grid.Row="3"
             Grid.Column="0"
             Grid.ColumnSpan="2"
             VerticalAlignment="Center"
-            x:Name="ContrasenaNueva"
-            Text="{Binding ContrasenaNueva, UpdateSourceTrigger=PropertyChanged}"/>
+            MaxLength="20"
+            x:Name="ContrasenaNueva"/>
 
         <Button
             Grid.Row="5"
             Grid.Column="0"
             VerticalAlignment="Center"
-            HorizontalAlignment="Center"
+            HorizontalAlignment="Left"
             Width="100"
             x:Name="Cancelar"
             Click="Cancelar_Click">
@@ -88,7 +87,7 @@
             Grid.Row="5"
             Grid.Column="1"
             VerticalAlignment="Center"
-            HorizontalAlignment="Center"
+            HorizontalAlignment="Right"
             Width="100"
             x:Name="Aceptar"
             Click="Aceptar_Click">

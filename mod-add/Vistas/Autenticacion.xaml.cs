@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using mod_add.Enums;
+using mod_add.ViewModels;
+using System.Windows;
 
 namespace mod_add.Vistas
 {
@@ -7,9 +9,16 @@ namespace mod_add.Vistas
     /// </summary>
     public partial class Autenticacion : Window
     {
+        private readonly AutenticacionViewModel ViewModel;
+
         public Autenticacion()
         {
             InitializeComponent();
+            ViewModel = new AutenticacionViewModel();
+            DataContext = ViewModel;
+#if DEBUG
+            Contrasena.Password = "Ok123456";
+#endif
         }
 
         private void Cancelar_Click(object sender, RoutedEventArgs e)
@@ -19,22 +28,18 @@ namespace mod_add.Vistas
 
         private void Aceptar_Click(object sender, RoutedEventArgs e)
         {
-            if (ValidarContrasena())
+            ViewModel.Contrasena = Contrasena.Password;
+            Respuesta respuesta = ViewModel.Autenticar();
+
+            if (respuesta == Respuesta.HECHO)
             {
                 App.IrPrincipal();
                 Close();
             }
-        }
-
-        public bool ValidarContrasena()
-        {
-            if (string.IsNullOrWhiteSpace(Contrasena.Text))
+            else if (respuesta == Respuesta.CONTRASENA_INCORRECTA)
             {
-                MessageBox.Show("Por favor, ingrese su contreseña", "Contraseña", MessageBoxButton.OK, MessageBoxImage.Error);
-                return false;
+                MessageBox.Show("La contraseña es incorrecta", "Contraseña", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
-
-            return true;
         }
     }
 }

@@ -151,7 +151,7 @@
             <Setter Property="SelectionUnit" Value="FullRow"/>
             
             <Setter Property="VerticalScrollBarVisibility" Value="Auto"/>
-            <Setter Property="HorizontalScrollBarVisibility" Value="Visible"/>
+            <Setter Property="HorizontalScrollBarVisibility" Value="Disabled"/>
             <Setter Property="Background" Value="#FFFFFF"/>
             <Setter Property="BorderBrush">
                 <Setter.Value>
