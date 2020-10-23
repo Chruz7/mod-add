@@ -306,7 +306,9 @@
                 HorizontalContentAlignment="Right"
                 Margin="5,0,5,0"
                 x:Name="Propina"
-                KeyDown="Propina_KeyDown"
+                MaxLength="20"
+                PreviewTextInput="TextBox_PreviewTextInput"
+                TextChanged="TextBox_TextChanged"
                 Text="{Binding Propina}"/>
 
             <Label
@@ -367,6 +369,19 @@
                         Width="10*"
                         Header="Cantidad"
                         Binding="{Binding cantidad}"/>
+                    <!--<DataGridTemplateColumn
+                        Width="10*"
+                        Header="Cantidad">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBox
+                                    PreviewTextInput="TextBox2_PreviewTextInput"
+                                    TextChanged="TextBox2_TextChanged"
+                                    MaxLength="15"
+                                    Text="{Binding cantidad,Mode=OneWay}"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>-->
                     <DataGridTextColumn
                         IsReadOnly="True"
                         Width="10*"
@@ -376,9 +391,7 @@
                         IsReadOnly="True"
                         Width="35*"
                         Header="Descripción"
-                        Binding="{Binding Producto.NombreItem}">
-                        
-                    </DataGridTextColumn>
+                        Binding="{Binding Producto.NombreItem}"/>
                     <DataGridTextColumn
                         IsReadOnly="True"
                         Width="10*"
@@ -392,7 +405,7 @@
                         IsReadOnly="True"
                         Width="10*"
                         Header="Importe"
-                        Binding="{Binding Importe}"/>
+                        Binding="{Binding ImporteCICD}"/>
                 </DataGrid.Columns>
             </DataGrid>
         </Grid>

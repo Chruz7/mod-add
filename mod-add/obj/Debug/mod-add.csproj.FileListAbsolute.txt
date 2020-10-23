@@ -88,10 +88,12 @@ C:\Users\Alber\source\repos\mod-add\mod-add\obj\Debug\Componentes\Configuracion.
 C:\Users\Alber\source\repos\mod-add\mod-add\obj\Debug\MainWindow.g.cs
 C:\Users\Alber\source\repos\mod-add\mod-add\obj\Debug\Vistas\Autenticacion.g.cs
 C:\Users\Alber\source\repos\mod-add\mod-add\obj\Debug\Vistas\CambiarContrasena.g.cs
+C:\Users\Alber\source\repos\mod-add\mod-add\obj\Debug\Vistas\LoadingWindow.g.cs
 C:\Users\Alber\source\repos\mod-add\mod-add\obj\Debug\Vistas\Principal.g.cs
 C:\Users\Alber\source\repos\mod-add\mod-add\obj\Debug\Vistas\SeleccionGrupo.g.cs
 C:\Users\Alber\source\repos\mod-add\mod-add\obj\Debug\Vistas\SeleccionProducto.g.cs
 C:\Users\Alber\source\repos\mod-add\mod-add\obj\Debug\Vistas\SeleccionProductosEliminar.g.cs
+C:\Users\Alber\source\repos\mod-add\mod-add\obj\Debug\Vistas\Splash.g.cs
 C:\Users\Alber\source\repos\mod-add\mod-add\obj\Debug\App.g.cs
 C:\Users\Alber\source\repos\mod-add\mod-add\obj\Debug\mod-add_MarkupCompile.cache
 C:\Users\Alber\source\repos\mod-add\mod-add\obj\Debug\mod-add_MarkupCompile.lref
@@ -103,10 +105,12 @@ C:\Users\Alber\source\repos\mod-add\mod-add\obj\Debug\Componentes\Configuracion.
 C:\Users\Alber\source\repos\mod-add\mod-add\obj\Debug\MainWindow.baml
 C:\Users\Alber\source\repos\mod-add\mod-add\obj\Debug\Vistas\Autenticacion.baml
 C:\Users\Alber\source\repos\mod-add\mod-add\obj\Debug\Vistas\CambiarContrasena.baml
+C:\Users\Alber\source\repos\mod-add\mod-add\obj\Debug\Vistas\LoadingWindow.baml
 C:\Users\Alber\source\repos\mod-add\mod-add\obj\Debug\Vistas\Principal.baml
 C:\Users\Alber\source\repos\mod-add\mod-add\obj\Debug\Vistas\SeleccionGrupo.baml
 C:\Users\Alber\source\repos\mod-add\mod-add\obj\Debug\Vistas\SeleccionProducto.baml
 C:\Users\Alber\source\repos\mod-add\mod-add\obj\Debug\Vistas\SeleccionProductosEliminar.baml
+C:\Users\Alber\source\repos\mod-add\mod-add\obj\Debug\Vistas\Splash.baml
 C:\Users\Alber\source\repos\mod-add\mod-add\obj\Debug\mod-add.g.resources
 C:\Users\Alber\source\repos\mod-add\mod-add\obj\Debug\mod_add.Properties.Resources.resources
 C:\Users\Alber\source\repos\mod-add\mod-add\obj\Debug\mod-add.csproj.GenerateResource.cache

@@ -52,6 +52,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Contexto\ApplicationDbContext.cs" />
+    <Compile Include="Enums\TipoLogico.cs" />
     <Compile Include="Implementaciones\BitacoraServicio.cs" />
     <Compile Include="Implementaciones\ConfiguracionServicio.cs" />
     <Compile Include="Implementaciones\ProductoEliminarServicio.cs" />
@@ -66,18 +67,18 @@
     <Compile Include="Interfaces\IConfiguracionServicio.cs" />
     <Compile Include="Interfaces\IProductoEliminarServicio.cs" />
     <Compile Include="Interfaces\IProductoReemplazoServicio.cs" />
-    <Compile Include="Migrations\202010141537042_Inicio.cs" />
-    <Compile Include="Migrations\202010141537042_Inicio.designer.cs">
-      <DependentUpon>202010141537042_Inicio.cs</DependentUpon>
+    <Compile Include="Migrations\202010230217201_Inicio.cs" />
+    <Compile Include="Migrations\202010230217201_Inicio.designer.cs">
+      <DependentUpon>202010230217201_Inicio.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="ModelosPersonalizados\GrupoSeleccion.cs" />
     <Compile Include="ModelosPersonalizados\ProductoSeleccion.cs" />
     <Compile Include="Modelos\ConfiguracionSistema.cs" />
-    <Compile Include="Modelos\DetalleAjusteMasivo.cs" />
+    <Compile Include="Modelos\DetalleAjuste.cs" />
     <Compile Include="Modelos\ProductoEliminar.cs" />
     <Compile Include="Modelos\ProductoReemplazo.cs" />
-    <Compile Include="Modelos\RegistroBitacora.cs" />
+    <Compile Include="Modelos\BitacoraModificacion.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -85,8 +86,8 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202010141537042_Inicio.resx">
-      <DependentUpon>202010141537042_Inicio.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202010230217201_Inicio.resx">
+      <DependentUpon>202010230217201_Inicio.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

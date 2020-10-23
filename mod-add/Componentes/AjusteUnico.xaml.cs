@@ -6,7 +6,10 @@ using mod_add.Vistas;
 using SR.Datos;
 using SRLibrary.SR_DTO;
 using System;
+using System.Diagnostics;
 using System.Linq;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -61,14 +64,37 @@ namespace mod_add.Componentes
 
         private void Aceptar_Click(object sender, RoutedEventArgs e)
         {
-            if (ViewModel.Guardar() == 1)
+            App.HabilitarPrincipal(false);
+
+            Respuesta respuesta = Respuesta.NADA;
+            LoadingWindow loading = new LoadingWindow();
+            loading.AgregarMensaje("Guardando cambios");
+            loading.Show();
+
+            Task.Factory.StartNew(() =>
             {
-                MessageBox.Show("El ajuste se realizó con exito.", "Listo", MessageBoxButton.OK, MessageBoxImage.Information);
-            }
-            else
+                respuesta = ViewModel.Guardar();
+
+                if (respuesta == Respuesta.HECHO)
+                {
+                    loading.AgregarMensaje("Registrando bitácora");
+                    ViewModel.ResgistrarBitacora();
+                }
+
+            }).ContinueWith(task =>
             {
-                MessageBox.Show("Ocurrió un error al internar realizar el ajuste, por favor intente de nuevo.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
+                loading.Close();
+                App.HabilitarPrincipal();
+
+                if (respuesta == Respuesta.HECHO)
+                {
+                    MessageBox.Show("Los cambios se guardaron correctamente.", "Listo", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                else if (respuesta == Respuesta.ERROR)
+                {
+                    MessageBox.Show("Hubo un error al intentar guardar los cambios, por favor intente de nuevo.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }, System.Threading.CancellationToken.None, TaskContinuationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());
         }
 
         private void Cancelar_Click(object sender, RoutedEventArgs e)
@@ -93,32 +119,47 @@ namespace mod_add.Componentes
         {
             if (e.Key == Key.Enter && !string.IsNullOrEmpty(Folio.Text))
             {
-                var respuesta = ViewModel.ObtenerCheque();
+                App.HabilitarPrincipal(false);
 
-                if (respuesta == Respuesta.HECHO)
+                Respuesta respuesta = Respuesta.NADA;
+                LoadingWindow loading = new LoadingWindow();
+                //loading.AgregarMensaje("Buscando cheque");
+                loading.Show();
+
+                Task.Factory.StartNew(() =>
                 {
-                    HabilitarComponentes();
-                }
-                else if (respuesta == Respuesta.CHEQUE_NO_ENCONTRADO)
+                    respuesta = ViewModel.ObtenerChequeSR();
+
+                }).ContinueWith(task =>
                 {
-                    MessageBox.Show("No se encontró el cheque.", "Busqueda", MessageBoxButton.OK, MessageBoxImage.Warning);
-                }
-                else if (respuesta == Respuesta.CHEQUE_CANCELADO)
-                {
-                    MessageBox.Show("Cheque cancelado.", "Busqueda", MessageBoxButton.OK, MessageBoxImage.Warning);
-                }
-                else if (respuesta == Respuesta.CHEQUE_CON_MULTIPLE_FORMA_PAGO)
-                {
-                    MessageBox.Show("No se puede procesar el cheque por que tiene más de una forma de pago.", "Busqueda", MessageBoxButton.OK, MessageBoxImage.Warning);
-                }
-                else if (respuesta == Respuesta.CHEQUE_SIN_FORMA_PAGO)
-                {
-                    MessageBox.Show("No se puede procesar el cheque por que no tiene forma de pago.", "Busqueda", MessageBoxButton.OK, MessageBoxImage.Warning);
-                }
-                else if (respuesta == Respuesta.ERROR)
-                {
-                    MessageBox.Show("Error al intentar buscar el cheque.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-                }
+                    loading.Close();
+                    App.HabilitarPrincipal();
+
+                    if (respuesta == Respuesta.HECHO)
+                    {
+                        HabilitarComponentes();
+                    }
+                    else if (respuesta == Respuesta.CHEQUE_NO_ENCONTRADO)
+                    {
+                        MessageBox.Show("No se encontró el cheque.", "Busqueda", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    }
+                    else if (respuesta == Respuesta.CHEQUE_CANCELADO)
+                    {
+                        MessageBox.Show("Cheque cancelado.", "Busqueda", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    }
+                    else if (respuesta == Respuesta.CHEQUE_CON_MULTIPLE_FORMA_PAGO)
+                    {
+                        MessageBox.Show("El chequetiene más de una forma de pago.", "Busqueda", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    }
+                    else if (respuesta == Respuesta.CHEQUE_SIN_FORMA_PAGO)
+                    {
+                        MessageBox.Show("El cheque no tiene forma de pago.", "Busqueda", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    }
+                    else if (respuesta == Respuesta.ERROR)
+                    {
+                        MessageBox.Show("Error al intentar buscar el cheque.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    }
+                }, System.Threading.CancellationToken.None, TaskContinuationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());
             }
         }
 
@@ -129,33 +170,6 @@ namespace mod_add.Componentes
             else
                 e.Handled = true;
         }
-
-        private void Propina_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Key >= Key.D0 && e.Key <= Key.D9 || e.Key >= Key.NumPad0 && e.Key <= Key.NumPad9 || e.Key == Key.OemPeriod)
-            {
-                bool valido = true;
-
-                if (e.Key == Key.OemPeriod && Propina.Text.Length == 0) valido = false;
-
-                if (e.Key == Key.OemPeriod && Propina.Text.Contains(".")) valido = false;
-
-                var result = Propina.Text.Split('.');
-
-                if (result.Length == 2)
-                {
-                    valido = result[0].Length > 0 && result[1].Length < 4;
-                }
-
-                if (valido)
-                    e.Handled = false;
-                else
-                    e.Handled = true;
-            }
-            else
-                e.Handled = true;
-        }
-
         
 
         public void ProductoCambio(SR_productos producto)
@@ -230,5 +244,71 @@ namespace mod_add.Componentes
             else
                 grid.Children[0].Opacity = 0.5d;
         }
+
+        private string PreviousText = "";
+        private int PreviousCaretIndex = 0;
+        private void TextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            PreviousText = ((TextBox)sender).Text;
+            PreviousCaretIndex = ((TextBox)sender).CaretIndex;
+        }
+
+        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (!Regex.IsMatch(((TextBox)sender).Text, @"^\d{0,15}\.?\d{0,4}$"))
+            {
+                ((TextBox)sender).Text = PreviousText;
+                ((TextBox)sender).CaretIndex = PreviousCaretIndex;
+                e.Handled = true;
+            }
+        }
+
+        private void TextBox2_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            PreviousText = ((TextBox)sender).Text;
+            PreviousCaretIndex = ((TextBox)sender).CaretIndex;
+        }
+
+        private void TextBox2_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (!Regex.IsMatch(((TextBox)sender).Text, @"^\d{0,8}\.?\d{0,6}$"))
+            {
+                ((TextBox)sender).Text = PreviousText;
+                ((TextBox)sender).CaretIndex = PreviousCaretIndex;
+                e.Handled = true;
+            }
+        }
+
+        //private void Propina_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        //{
+        //    var r = new Regex("[0-9]").IsMatch(e.Text);
+        //    e.Handled = !r;
+        //}
+
+        //private void Propina_KeyDown(object sender, KeyEventArgs e)
+        //{
+        //    if (e.Key >= Key.D0 && e.Key <= Key.D9 || e.Key >= Key.NumPad0 && e.Key <= Key.NumPad9 || e.Key == Key.OemPeriod)
+        //    {
+        //        bool valido = true;
+
+        //        if (e.Key == Key.OemPeriod && Propina.Text.Length == 0) valido = false;
+
+        //        if (e.Key == Key.OemPeriod && Propina.Text.Contains(".")) valido = false;
+
+        //        var result = Propina.Text.Split('.');
+
+        //        if (result.Length == 2)
+        //        {
+        //            valido = result[0].Length > 0 && result[1].Length < 4;
+        //        }
+
+        //        if (valido)
+        //            e.Handled = false;
+        //        else
+        //            e.Handled = true;
+        //    }
+        //    else
+        //        e.Handled = true;
+        //}
     }
 }

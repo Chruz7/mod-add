@@ -1,4 +1,5 @@
 ﻿using mod_add.Datos.ModelosPersonalizados;
+using mod_add.Enums;
 using mod_add.Helpers;
 using mod_add.Selectores;
 using mod_add.ViewModels;
@@ -303,14 +304,31 @@ namespace mod_add.Componentes
         {
             if (Validar())
             {
-                if (ViewModel.Guardar() == 1)
+                App.HabilitarPrincipal(false);
+
+                Respuesta respuesta = Respuesta.NADA;
+                LoadingWindow loading = new LoadingWindow();
+                loading.AgregarMensaje("Guardando cambios");
+                loading.Show();
+
+                Task.Factory.StartNew(() =>
                 {
-                    MessageBox.Show("La configuación se guardó con exito", "Guardar", MessageBoxButton.OK, MessageBoxImage.Information);
-                }
-                else
+                    respuesta = ViewModel.Guardar();
+
+                }).ContinueWith(task =>
                 {
-                    MessageBox.Show("Error al intentar guardar la información, por favor intentelo de nuevo", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
+                    loading.Close();
+                    App.HabilitarPrincipal();
+
+                    if (respuesta == Respuesta.HECHO)
+                    {
+                        MessageBox.Show("La configuación se guardó con exito", "Listo", MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
+                    else if (respuesta == Respuesta.ERROR)
+                    {
+                        MessageBox.Show("Hubo un error al intentar guardar la información, por favor intentelo de nuevo", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                }, System.Threading.CancellationToken.None, TaskContinuationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());
             }
         }
 

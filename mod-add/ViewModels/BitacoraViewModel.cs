@@ -23,14 +23,14 @@ namespace mod_add.ViewModels
             RegistrosBitacora = _bitacoraServicio.GetAll().ToList();
         }
 
-        private List<RegistroBitacora> _RegistrosBitacora;
-        public List<RegistroBitacora> RegistrosBitacora
+        private List<BitacoraModificacion> _RegistrosBitacora;
+        public List<BitacoraModificacion> RegistrosBitacora
         {
             get { return _RegistrosBitacora; }
             set
             {
                 _RegistrosBitacora = value;
-                OnPropertyChanged(nameof(RegistroBitacora));
+                OnPropertyChanged(nameof(BitacoraModificacion));
             }
         }
     }

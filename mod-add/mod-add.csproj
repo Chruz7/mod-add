@@ -37,6 +37,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>estimacion.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.4.4\lib\net45\EntityFramework.dll</HintPath>
@@ -102,6 +105,8 @@
     <Compile Include="Helpers\Messenger.cs" />
     <Compile Include="Selectores\Condicional.cs" />
     <Compile Include="Utils\Encriptado.cs" />
+    <Compile Include="Utils\Esportar.cs" />
+    <Compile Include="Utils\Funciones.cs" />
     <Compile Include="Utils\Mat.cs" />
     <Compile Include="ViewModels\AjusteMasivoViewModel.cs" />
     <Compile Include="ViewModels\AjusteUnicoViewModel.cs" />
@@ -119,6 +124,9 @@
     <Compile Include="Vistas\CambiarContrasena.xaml.cs">
       <DependentUpon>CambiarContrasena.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Vistas\LoadingWindow.xaml.cs">
+      <DependentUpon>LoadingWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Vistas\Principal.xaml.cs">
       <DependentUpon>Principal.xaml</DependentUpon>
     </Compile>
@@ -130,6 +138,9 @@
     </Compile>
     <Compile Include="Vistas\SeleccionProductosEliminar.xaml.cs">
       <DependentUpon>SeleccionProductosEliminar.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Vistas\Splash.xaml.cs">
+      <DependentUpon>Splash.xaml</DependentUpon>
     </Compile>
     <Page Include="Componentes\AjusteMasivo.xaml">
       <SubType>Designer</SubType>
@@ -167,6 +178,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Vistas\LoadingWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Vistas\Principal.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -180,6 +195,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Vistas\SeleccionProductosEliminar.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Vistas\Splash.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -211,7 +230,9 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="estimacion.ico" />
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\mod-add.Datos\mod-add.Datos.csproj">
       <Project>{95445c47-c528-43a6-9379-000fb06a6b20}</Project>

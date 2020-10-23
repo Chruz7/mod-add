@@ -1,0 +1,14 @@
+C:\Users\Alber\source\repos\mod-add\mod-add.Datos\bin\Release\mod-add.Datos.dll.config
+C:\Users\Alber\source\repos\mod-add\mod-add.Datos\bin\Release\mod-add.Datos.dll
+C:\Users\Alber\source\repos\mod-add\mod-add.Datos\bin\Release\mod-add.Datos.pdb
+C:\Users\Alber\source\repos\mod-add\mod-add.Datos\bin\Release\EntityFramework.dll
+C:\Users\Alber\source\repos\mod-add\mod-add.Datos\bin\Release\EntityFramework.SqlServer.dll
+C:\Users\Alber\source\repos\mod-add\mod-add.Datos\bin\Release\EntityFramework.xml
+C:\Users\Alber\source\repos\mod-add\mod-add.Datos\bin\Release\EntityFramework.SqlServer.xml
+C:\Users\Alber\source\repos\mod-add\mod-add.Datos\obj\Release\mod-add.Datos.csprojAssemblyReference.cache
+C:\Users\Alber\source\repos\mod-add\mod-add.Datos\obj\Release\mod_add.Datos.Migrations.Inicio.resources
+C:\Users\Alber\source\repos\mod-add\mod-add.Datos\obj\Release\mod-add.Datos.csproj.GenerateResource.cache
+C:\Users\Alber\source\repos\mod-add\mod-add.Datos\obj\Release\mod-add.Datos.csproj.CoreCompileInputs.cache
+C:\Users\Alber\source\repos\mod-add\mod-add.Datos\obj\Release\mod-add.Datos.csproj.CopyComplete
+C:\Users\Alber\source\repos\mod-add\mod-add.Datos\obj\Release\mod-add.Datos.dll
+C:\Users\Alber\source\repos\mod-add\mod-add.Datos\obj\Release\mod-add.Datos.pdb

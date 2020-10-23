@@ -24,7 +24,7 @@
 
         <Button
             Grid.Row="0"
-            Grid.Column="5"
+            Grid.Column="6"
             VerticalAlignment="Center"
             HorizontalAlignment="Center"
             Width="100"

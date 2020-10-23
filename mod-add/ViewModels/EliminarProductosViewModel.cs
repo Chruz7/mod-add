@@ -3,6 +3,7 @@ using mod_add.Datos.Implementaciones;
 using mod_add.Datos.Infraestructura;
 using mod_add.Datos.Interfaces;
 using mod_add.Datos.Modelos;
+using mod_add.Enums;
 using SRLibrary.SR_Context;
 using SRLibrary.SR_DAO;
 using SRLibrary.SR_DTO;
@@ -31,7 +32,7 @@ namespace mod_add.ViewModels
             GenerarListado();
         }
 
-        public int Guardar()
+        public Respuesta Guardar()
         {
             using (ApplicationDbContext context = new ApplicationDbContext())
             {
@@ -45,11 +46,11 @@ namespace mod_add.ViewModels
 
                     App.ProductosEliminar = context.ProductosEliminar.Where(x => x.Eliminar).ToList();
 
-                    return 1;
+                    return Respuesta.HECHO;
                 }
                 catch
                 {
-                    return 0;
+                    return Respuesta.ERROR;
                 }
             }
         }

@@ -1,8 +1,10 @@
 ﻿using mod_add.Datos.Modelos;
+using mod_add.Enums;
 using mod_add.Helpers;
 using mod_add.ViewModels;
 using SRLibrary.SR_DTO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -48,15 +50,31 @@ namespace mod_add.Vistas
 
         private void Aceptar_Click(object sender, RoutedEventArgs e)
         {
-            if (ViewModel.Guardar() == 1)
+            IsEnabled = false;
+            Respuesta respuesta = Respuesta.NADA;
+            LoadingWindow loading = new LoadingWindow();
+            loading.AgregarMensaje("Guardando cambios");
+            loading.Show();
+
+            Task.Factory.StartNew(() =>
             {
-                MessageBox.Show("La configuación se guardó con exito", "Guardar", MessageBoxButton.OK, MessageBoxImage.Information);
-                Close();
-            }
-            else
+                respuesta = ViewModel.Guardar();
+
+            }).ContinueWith(task =>
             {
-                MessageBox.Show("Error al intentar guardar la información, por favor intentelo de nuevo", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
+                loading.Close();
+                IsEnabled = true;
+                if (respuesta == Respuesta.HECHO)
+                {
+                    MessageBox.Show("La configuación se guardó con exito", "Guardar", MessageBoxButton.OK, MessageBoxImage.Information);
+                    Close();
+                }
+                else
+                {
+                    MessageBox.Show("Error al intentar guardar la información, por favor intentelo de nuevo", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+
+            }, System.Threading.CancellationToken.None, TaskContinuationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());
         }
 
         private void Cancelar_Click(object sender, RoutedEventArgs e)

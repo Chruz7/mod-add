@@ -1,4 +1,5 @@
-﻿using mod_add.Enums;
+﻿using mod_add.Datos.Modelos;
+using mod_add.Enums;
 using mod_add.Selectores;
 using mod_add.Utils;
 using SR.Datos;
@@ -8,8 +9,8 @@ using SRLibrary.SR_DTO;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
-using System.Windows;
 
 namespace mod_add.ViewModels
 {
@@ -43,13 +44,13 @@ namespace mod_add.ViewModels
             CambiarPrecio = false;
             Descuento = 0;
             Propina = 0;
-            Subtotal = string.Format("{0:C}", 0);
-            Total = string.Format("{0:C}", 0);
+            Subtotal = 0;
+            Total = 0;
 
             DetallesCheque = new ObservableCollection<SR_cheqdet>();
         }
 
-        public int Guardar()
+        public Respuesta Guardar()
         {
             using (SoftRestaurantDBContext context = new SoftRestaurantDBContext())
             {
@@ -66,14 +67,29 @@ namespace mod_add.ViewModels
 
                     chequespagos_DAO.Update(Chequepago);
 
-                    return 1;
+                    return Respuesta.HECHO;
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(ex.ToString());
-                    return 0;
+                    Debug.WriteLine($"INICIO-ERROR\n{ex}\nFIN-ERROR");
+                    return Respuesta.ERROR;
                 }
             }
+        }
+
+        public void ResgistrarBitacora()
+        {
+            Funciones.RegistrarModificacion(new BitacoraModificacion
+            {
+                FechaProceso = DateTime.Now,
+                FechaInicialVenta = Cheque.fecha.Value,
+                FechaFinalVenta = Cheque.cierre.Value,
+                TotalCuentas = 1,
+                CuentasModificadas = 1,
+                ImporteAnterior = TotalAnterior,
+                ImporteNuevo = Total,
+                Diferencia = Math.Abs(Total - TotalAnterior),
+            });
         }
 
         public void Aniadir(SR_productos producto)
@@ -319,21 +335,11 @@ namespace mod_add.ViewModels
             }
             #endregion
 
-            Subtotal = string.Format("{0:C}", Cheque.subtotal);
-            Total = string.Format("{0:C}", Cheque.total);
+            Subtotal = Cheque.subtotal.Value;
+            Total = Cheque.total.Value;
         }
 
-        public SR_productos ObtenerProductoSR(string idproducto)
-        {
-            using (SoftRestaurantDBContext context = new SoftRestaurantDBContext())
-            {
-                SR_productos_DAO productos_DAO = new SR_productos_DAO();
-
-                return productos_DAO.Find(idproducto);
-            }
-        }
-
-        public Respuesta ObtenerCheque()
+        public Respuesta ObtenerChequeSR()
         {
             using (SoftRestaurantDBContext context = new SoftRestaurantDBContext())
             {
@@ -371,18 +377,20 @@ namespace mod_add.ViewModels
                     Descuento = Cheque.descuento.Value;
                     Propina = Cheque.propina.Value;
 
-                    Subtotal = string.Format("{0:C}", Cheque.subtotal);
-                    Total = string.Format("{0:C}", Cheque.total);
+                    Subtotal = Cheque.subtotal.Value;
+                    Total = Cheque.total.Value;
+                    TotalAnterior = Total;
 
                     return Respuesta.HECHO;
                 }
                 catch (Exception ex)
                 {
+                    Debug.WriteLine($"INICIO-ERROR\n{ex}\nFIN-ERROR");
                     return Respuesta.ERROR;
                 }
             }
         }
-
+        private decimal TotalAnterior { get; set; }
         private SR_cheques Cheque { get; set; }
         private SR_formasdepago FormaPago { get; set; }
         private SR_chequespagos Chequepago { get; set; }
@@ -478,8 +486,8 @@ namespace mod_add.ViewModels
             }
         }
 
-        private string _Subtotal;
-        public string Subtotal
+        private decimal _Subtotal;
+        public decimal Subtotal
         {
             get { return _Subtotal; }
             set
@@ -489,8 +497,8 @@ namespace mod_add.ViewModels
             }
         }
 
-        private string _Total;
-        public string Total
+        private decimal _Total;
+        public decimal Total
         {
             get { return _Total; }
             set

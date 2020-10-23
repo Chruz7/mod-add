@@ -2,6 +2,7 @@
 {
     public enum Respuesta
     {
+        NADA,
         ERROR,
         HECHO,
         CHEQUE_NO_ENCONTRADO,

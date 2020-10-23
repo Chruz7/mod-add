@@ -3,12 +3,15 @@ using mod_add.Datos.Implementaciones;
 using mod_add.Datos.Infraestructura;
 using mod_add.Datos.Interfaces;
 using mod_add.Datos.Modelos;
+using mod_add.Enums;
 using mod_add.Selectores;
 using SRLibrary.Models;
 using SRLibrary.SR_Context;
 using SRLibrary.SR_DAO;
 using SRLibrary.SR_DTO;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace mod_add.ViewModels
@@ -171,7 +174,7 @@ namespace mod_add.ViewModels
             }
         }
 
-        public int Guardar()
+        public Respuesta Guardar()
         {
             using (ApplicationDbContext context = new ApplicationDbContext())
             {
@@ -208,11 +211,14 @@ namespace mod_add.ViewModels
 
                     App.ConfiguracionSistema = configuracion;
                     App.ProductosReemplazo = productosReemplazo.Where(x => x.Reemplazar).OrderBy(x => x.Porcentaje).ToList();
-                    return 1;
+                    App.ObtenerDetalleProductosReemplazoSR();
+
+                    return Respuesta.HECHO;
                 }
-                catch
+                catch (Exception ex)
                 {
-                    return 0;
+                    Debug.WriteLine($"INICIO-ERROR\n{ex}\nFIN-ERROR");
+                    return Respuesta.ERROR;
                 }
             }
         }

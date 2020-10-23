@@ -32,10 +32,11 @@
             Grid.Row="0"
             Grid.Column="0"
             Margin="2"
-            Style="{DynamicResource ButtonContainerStyle}"
+            Padding="0"
             x:Name="AbrirAjusteUnico"
             Click="AbrirAjusteUnico_Click">
-            <Grid>
+            <Grid
+                Height="54">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="40*"/>
                     <RowDefinition Height="60*"/>
@@ -55,10 +56,11 @@
             Grid.Row="0"
             Grid.Column="1"
             Margin="2"
-            Style="{DynamicResource ButtonContainerStyle}"
+            Padding="0"
             x:Name="AbrirAjusteMasivo"
             Click="AbrirAjusteMasivo_Click">
-            <Grid>
+            <Grid
+                Height="54">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="40*"/>
                     <RowDefinition Height="60*"/>
@@ -78,9 +80,9 @@
             Grid.Row="0"
             Grid.Column="2"
             Margin="2"
-            Style="{DynamicResource ButtonContainerStyle}"
             x:Name="CorteCajaPeriodo">
-            <Grid>
+            <Grid
+                Height="54">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="40*"/>
                     <RowDefinition Height="60*"/>
@@ -100,9 +102,10 @@
             Grid.Row="0"
             Grid.Column="3"
             Margin="2"
-            Style="{DynamicResource ButtonContainerStyle}"
+            Padding="0"
             x:Name="CorteCajaZDiario">
-            <Grid>
+            <Grid
+                Height="54">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="40*"/>
                     <RowDefinition Height="60*"/>
@@ -122,9 +125,10 @@
             Grid.Row="0"
             Grid.Column="4"
             Margin="2"
-            Style="{DynamicResource ButtonContainerStyle}"
+            Padding="0"
             x:Name="ReimpresionFolios">
-            <Grid>
+            <Grid
+                Height="54">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="40*"/>
                     <RowDefinition Height="60*"/>
@@ -144,10 +148,11 @@
             Grid.Row="0"
             Grid.Column="5"
             Margin="2"
-            Style="{DynamicResource ButtonContainerStyle}"
+            Padding="0"
             x:Name="AbrirBitacora"
             Click="AbrirBitacora_Click">
-            <Grid>
+            <Grid
+                Height="54">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="40*"/>
                     <RowDefinition Height="60*"/>
@@ -168,10 +173,11 @@
             Grid.Row="0"
             Grid.Column="6"
             Margin="2"
-            Style="{DynamicResource ButtonContainerStyle}"
+            Padding="0"
             x:Name="AbrirConfiguracion"
             Click="AbrirConfiguracion_Click">
-            <Grid>
+            <Grid
+                Height="54">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="40*"/>
                     <RowDefinition Height="60*"/>
@@ -191,10 +197,11 @@
             Grid.Row="0"
             Grid.Column="7"
             Margin="2"
-            Style="{DynamicResource ButtonContainerStyle}"
+            Padding="0"
             x:Name="AbrirCambioContrasena"
             Click="AbrirCambioContrasena_Click">
-            <Grid>
+            <Grid
+                Height="54">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="40*"/>
                     <RowDefinition Height="60*"/>
@@ -214,9 +221,10 @@
             Grid.Row="0"
             Grid.Column="8"
             Margin="2"
-            Style="{DynamicResource ButtonContainerStyle}"
+            Padding="0"
             x:Name="AbrirLicencia">
-            <Grid>
+            <Grid
+                Height="54">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="40*"/>
                     <RowDefinition Height="60*"/>
@@ -236,10 +244,10 @@
             Grid.Row="0"
             Grid.Column="9"
             Margin="2"
-            Style="{DynamicResource ButtonContainerStyle}"
             x:Name="Salir"
             Click="Salir_Click">
-            <Grid>
+            <Grid
+                Height="54">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="40*"/>
                     <RowDefinition Height="60*"/>

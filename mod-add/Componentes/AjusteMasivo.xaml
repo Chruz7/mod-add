@@ -334,11 +334,11 @@
                         
                         Header="Fecha"
                         Binding="{Binding Fecha}"/>
-                    <DataGridCheckBoxColumn
+                    <DataGridTextColumn
                         
                         Header="Cancelado"
                         Binding="{Binding Cancelado}"/>
-                    <DataGridCheckBoxColumn
+                    <DataGridTextColumn
                         
                         Header="Faturado"
                         Binding="{Binding Facturado}"/>
@@ -533,10 +533,10 @@
                 Grid.Column="9"
                 VerticalAlignment="Center"
                 HorizontalAlignment="Center"
-                Height="35"
+                Width="100"
                 x:Name="Cancelar"
-                Click="Cancelar_Click"
-                Style="{DynamicResource ButtonBorderRoundStyle}">
+                IsEnabledChanged="Button_IsEnabledChanged"
+                Click="Cancelar_Click">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="30*"/>
@@ -562,10 +562,10 @@
                 Grid.Column="10"
                 VerticalAlignment="Center"
                 HorizontalAlignment="Center"
-                Height="35"
+                Width="100"
                 x:Name="Aplicar"
-                Click="Aplicar_Click"
-                Style="{DynamicResource ButtonBorderRoundStyle}">
+                IsEnabledChanged="Button_IsEnabledChanged"
+                Click="Aplicar_Click">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="30*"/>

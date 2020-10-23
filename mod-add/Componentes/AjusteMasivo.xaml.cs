@@ -1,6 +1,8 @@
 ﻿using mod_add.Enums;
 using mod_add.ViewModels;
+using mod_add.Vistas;
 using System;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -21,30 +23,85 @@ namespace mod_add.Componentes
             FechaCierre.DisplayDateEnd = DateTime.Today;
             FechaInicio.DisplayDateEnd = DateTime.Today;
 
+            Aplicar.IsEnabled = false;
+            Cancelar.IsEnabled = false;
+
             ViewModel = new AjusteMasivoViewModel();
             DataContext = ViewModel;
         }
 
         private void Aplicar_Click(object sender, RoutedEventArgs e)
-        { 
-            ViewModel.EliminarProductos();
-            ViewModel.AjustarCheques();
-            DetalleModificacionCheques.Items.Refresh();
+        {
+            App.HabilitarPrincipal(false);
+
+            Respuesta respuesta = Respuesta.NADA;
+
+            LoadingWindow loading = new LoadingWindow();
+            loading.AgregarMensaje("Guardando cambios");
+            loading.Show();
+
+            Task.Factory.StartNew(() =>
+            {
+                respuesta = ViewModel.GuardarCambios();
+
+                if (respuesta == Respuesta.HECHO)
+                {
+                    loading.AgregarMensaje("Registrando bitácora");
+                    ViewModel.ResgistrarBitacora();
+
+                    MessageBox.Show("Se guardaron los cambios correctamente", "Listo", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                else if (respuesta == Respuesta.ERROR)
+                {
+                    MessageBox.Show("Hubo un error al intentar guardar los cambios, por favor intente de nuevo", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }).ContinueWith(task =>
+            {
+                loading.Close();
+                App.HabilitarPrincipal();
+            }, System.Threading.CancellationToken.None, TaskContinuationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());
         }
 
         private void NuevaBusqueda_Click(object sender, RoutedEventArgs e)
         {
-            //HabilitarControles();
-            Respuesta respuesta = ViewModel.ObtenerInformacionSR();
+            App.HabilitarPrincipal(false);
 
-            if (respuesta == Respuesta.CHEQUE_NO_ENCONTRADO)
+            Respuesta respuesta = Respuesta.NADA;
+
+            LoadingWindow loading = new LoadingWindow();
+            loading.AgregarMensaje("Buscando cuentas");
+            loading.Show();
+
+            Task.Factory.StartNew(() =>
             {
-                MessageBox.Show("No se encontraron cuentas", "Busqueda", MessageBoxButton.OK, MessageBoxImage.Information);
-            }
-            else if (respuesta == Respuesta.ERROR)
+                respuesta = ViewModel.ObtenerChequesSR();
+
+                if (respuesta == Respuesta.HECHO)
+                {
+                    loading.AgregarMensaje("Procesando información");
+                    ViewModel.Proceso();
+                }
+                else if (respuesta == Respuesta.CHEQUE_NO_ENCONTRADO)
+                {
+                    MessageBox.Show("No se encontraron cuentas", "Busqueda", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                else if (respuesta == Respuesta.ERROR)
+                {
+                    MessageBox.Show("Hubo un error al intentar buscar las cuentas", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }).ContinueWith(task =>
             {
-                MessageBox.Show("Hubo un error al intentar buscar las cuentas", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
+                loading.Close();
+                App.HabilitarPrincipal();
+
+                if (respuesta == Respuesta.HECHO)
+                {
+                    ViewModel.CargarResultados();
+                    DetalleModificacionCheques.Items.Refresh();
+                    Aplicar.IsEnabled = true;
+                    Cancelar.IsEnabled = true;
+                }
+            }, System.Threading.CancellationToken.None, TaskContinuationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());
         }
 
         private void Cancelar_Click(object sender, RoutedEventArgs e)
@@ -52,8 +109,6 @@ namespace mod_add.Componentes
             //HabilitarControles(false);
             ViewModel.InicializarControles();
         }
-
-        
 
         private void Turno_Checked(object sender, RoutedEventArgs e)
         {
@@ -75,21 +130,21 @@ namespace mod_add.Componentes
             ViewModel.FechaCierre = DateTime.Today;
         }
 
-        private void HabilitarControles(bool habilitar = true)
-        {
-            Turno.IsEnabled = habilitar;
-            Periodo.IsEnabled = habilitar;
-            FechaInicio.IsEnabled = habilitar;
-            FechaCierre.IsEnabled = habilitar;
-            ImporteMinimoAjustable.IsEnabled = habilitar;
-            PorcentajeObjetivo.IsEnabled = habilitar;
-            ImporteObjetivo.IsEnabled = habilitar;
-            CuentaPagadaTarjerta.IsEnabled = habilitar;
-            CuentaPagadaVales.IsEnabled = habilitar;
-            CuentaPagadaOtros.IsEnabled = habilitar;
-            CuentaFacturada.IsEnabled = habilitar;
-            CuentaNotaConsumo.IsEnabled = habilitar;
-        }
+        //private void HabilitarControles(bool habilitar = true)
+        //{
+        //    Turno.IsEnabled = habilitar;
+        //    Periodo.IsEnabled = habilitar;
+        //    FechaInicio.IsEnabled = habilitar;
+        //    FechaCierre.IsEnabled = habilitar;
+        //    ImporteMinimoAjustable.IsEnabled = habilitar;
+        //    PorcentajeObjetivo.IsEnabled = habilitar;
+        //    ImporteObjetivo.IsEnabled = habilitar;
+        //    CuentaPagadaTarjerta.IsEnabled = habilitar;
+        //    CuentaPagadaVales.IsEnabled = habilitar;
+        //    CuentaPagadaOtros.IsEnabled = habilitar;
+        //    CuentaFacturada.IsEnabled = habilitar;
+        //    CuentaNotaConsumo.IsEnabled = habilitar;
+        //}
 
         private void TextBlock_KeyDown(object sender, KeyEventArgs e)
         {
@@ -109,14 +164,22 @@ namespace mod_add.Componentes
             FechaInicio.DisplayDateEnd = ViewModel.FechaCierre;
         }
 
-        private void FechaInicio_KeyDown(object sender, KeyEventArgs e)
-        {
-            e.Handled = true;
-        }
 
         private void PorcentajeObjetivo_ValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
             ViewModel.RefrescarControles();
+        }
+
+        private void Button_IsEnabledChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (!(sender is Button button)) return;
+
+            if (!(button.Content is Grid grid)) return;
+
+            if (button.IsEnabled)
+                grid.Children[0].Opacity = 1d;
+            else
+                grid.Children[0].Opacity = 0.5d;
         }
     }
 }
