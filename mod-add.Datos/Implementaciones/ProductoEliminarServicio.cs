@@ -4,7 +4,7 @@ using mod_add.Datos.Modelos;
 
 namespace mod_add.Datos.Implementaciones
 {
-    public class ProductoEliminarServicio : ServiceBase<ProductoEliminar>, IProductoEliminarServicio
+    public class ProductoEliminarServicio : ServiceBase<ProductoEliminacion>, IProductoEliminarServicio
     {
         public ProductoEliminarServicio(IDatabaseFactory databaseFactory) : base(databaseFactory)
         {

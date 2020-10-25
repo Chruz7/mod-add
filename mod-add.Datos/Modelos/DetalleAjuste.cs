@@ -13,13 +13,13 @@ namespace mod_add.Datos.Modelos
         public TipoLogico Facturado { get; set; }
         public decimal Descuento { get; set; }
         public decimal TotalOriginal { get; set; }
-        public int TotalArticulos { get; set; }
-        public int ProductosEliminados { get; set; }
+        public decimal TotalArticulos { get; set; }
+        public decimal ProductosEliminados { get; set; }
         public decimal TotalConDescuento { get; set; }
         public decimal Efectivo { get; set; }
         public decimal Tarjeta { get; set; }
         public decimal Vales { get; set; }
         public decimal Otros { get; set; }
-        public bool Modificar { get; set; }
+        public bool RealizarAccion { get; set; }
     }
 }

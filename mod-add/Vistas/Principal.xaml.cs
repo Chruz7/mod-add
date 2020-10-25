@@ -47,7 +47,7 @@ namespace mod_add.Vistas
         private void AbrirBitacora_Click(object sender, RoutedEventArgs e)
         {
             if (Bitacora == null) Bitacora = new Bitacora();
-
+            Bitacora.Refrescar();
             CargarComponente(Bitacora);
         }
 

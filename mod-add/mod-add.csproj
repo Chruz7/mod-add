@@ -40,12 +40,21 @@
   <PropertyGroup>
     <ApplicationIcon>estimacion.ico</ApplicationIcon>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DocumentFormat.OpenXml">
+      <HintPath>..\..\..\..\Downloads\DocumentFormat.OpenXml.dll</HintPath>
+    </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.4.4\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.4.4\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="SpreadsheetLight, Version=3.4.4.0, Culture=neutral, PublicKeyToken=32fbb46dc1730c57, processorArchitecture=MSIL">
+      <HintPath>..\packages\SpreadsheetLight.3.4.4\lib\SpreadsheetLight.dll</HintPath>
     </Reference>
     <Reference Include="SRLibrary, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -53,7 +62,16 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
+    <Reference Include="System.IO.FileSystem.Primitives, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.IO.FileSystem.Primitives.4.3.0\lib\net46\System.IO.FileSystem.Primitives.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.IO.Packaging, Version=4.0.5.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.IO.Packaging.4.7.0\lib\net46\System.IO.Packaging.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -99,13 +117,16 @@
     <Compile Include="Componentes\Configuracion.xaml.cs">
       <DependentUpon>Configuracion.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Enums\Respuesta.cs" />
+    <Compile Include="Enums\TipoRespuesta.cs" />
     <Compile Include="Enums\RespuestaCheque.cs" />
-    <Compile Include="Enums\TipoPago.cs" />
+    <Compile Include="Enums\TipoProceso.cs" />
     <Compile Include="Helpers\Messenger.cs" />
     <Compile Include="Selectores\Condicional.cs" />
+    <Compile Include="Selectores\Proceso.cs" />
+    <Compile Include="Selectores\RespuestaBusquedaMasiva.cs" />
+    <Compile Include="Utils\ConfiguracionLocalServicio.cs" />
     <Compile Include="Utils\Encriptado.cs" />
-    <Compile Include="Utils\Esportar.cs" />
+    <Compile Include="Utils\Exportar.cs" />
     <Compile Include="Utils\Funciones.cs" />
     <Compile Include="Utils\Mat.cs" />
     <Compile Include="ViewModels\AjusteMasivoViewModel.cs" />
@@ -221,6 +242,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="app.manifest" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

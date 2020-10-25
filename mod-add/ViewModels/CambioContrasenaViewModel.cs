@@ -19,14 +19,14 @@ namespace mod_add.ViewModels
             ContrasenaNueva = "";
         }
 
-        public Respuesta CambiarContrasena()
+        public TipoRespuesta CambiarContrasena()
         {
             if (string.IsNullOrWhiteSpace(ContrasenaActual) && (ContrasenaActual.Length < 8 || ContrasenaActual.Length > 20))
-                return Respuesta.CONTRASENA_INCORRECTA;
+                return TipoRespuesta.CONTRASENA_INCORRECTA;
 
             if (ContrasenaNueva.Length < 8 || ContrasenaNueva.Length > 20)
             {
-                return Respuesta.LONGITUD_INCORRECTA;
+                return TipoRespuesta.LONGITUD_INCORRECTA;
             }
 
             string contrasenaEncriptada = Encriptado.Contrasena(ContrasenaActual);
@@ -41,13 +41,13 @@ namespace mod_add.ViewModels
             }
             else
             {
-                return Respuesta.CONTRASENA_INCORRECTA;
+                return TipoRespuesta.CONTRASENA_INCORRECTA;
             }
 
             if (_configuracionServicio.Update(App.ConfiguracionSistema) == 1)
-                return Respuesta.HECHO;
+                return TipoRespuesta.HECHO;
             else
-                return Respuesta.ERROR;
+                return TipoRespuesta.ERROR;
         }
 
         public string ContrasenaActual { get; set; }

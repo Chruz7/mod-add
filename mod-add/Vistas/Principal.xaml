@@ -48,7 +48,7 @@
                     Grid.Row="1"
                     TextWrapping="Wrap"
                     TextAlignment="Center"
-                    Text="Ajustar un folio"/>
+                    Text="Ajustar unico"/>
             </Grid>
         </Button>
 
@@ -72,7 +72,7 @@
                     Grid.Row="1"
                     TextWrapping="Wrap"
                     TextAlignment="Center"
-                    Text="Ajuste masivo (prod. y folios)"/>
+                    Text="Ajuste masivo"/>
             </Grid>
         </Button>
 
@@ -140,7 +140,7 @@
                     Grid.Row="1"
                     TextWrapping="Wrap"
                     TextAlignment="Center"
-                    Text="Corte de caja por período"/>
+                    Text="Reimpresión de folios"/>
             </Grid>
         </Button>
 

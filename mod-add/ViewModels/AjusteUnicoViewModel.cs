@@ -1,4 +1,5 @@
-﻿using mod_add.Datos.Modelos;
+﻿using mod_add.Datos.Enums;
+using mod_add.Datos.Modelos;
 using mod_add.Enums;
 using mod_add.Selectores;
 using mod_add.Utils;
@@ -9,6 +10,7 @@ using SRLibrary.SR_DTO;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Linq;
 
@@ -50,7 +52,7 @@ namespace mod_add.ViewModels
             DetallesCheque = new ObservableCollection<SR_cheqdet>();
         }
 
-        public Respuesta Guardar()
+        public TipoRespuesta Guardar()
         {
             using (SoftRestaurantDBContext context = new SoftRestaurantDBContext())
             {
@@ -67,12 +69,12 @@ namespace mod_add.ViewModels
 
                     chequespagos_DAO.Update(Chequepago);
 
-                    return Respuesta.HECHO;
+                    return TipoRespuesta.HECHO;
                 }
                 catch (Exception ex)
                 {
                     Debug.WriteLine($"INICIO-ERROR\n{ex}\nFIN-ERROR");
-                    return Respuesta.ERROR;
+                    return TipoRespuesta.ERROR;
                 }
             }
         }
@@ -81,14 +83,15 @@ namespace mod_add.ViewModels
         {
             Funciones.RegistrarModificacion(new BitacoraModificacion
             {
+                TipoAjuste = TipoAjuste.UNICO,
                 FechaProceso = DateTime.Now,
                 FechaInicialVenta = Cheque.fecha.Value,
                 FechaFinalVenta = Cheque.cierre.Value,
                 TotalCuentas = 1,
                 CuentasModificadas = 1,
-                ImporteAnterior = TotalAnterior,
+                ImporteAnterior = ImporteAnterior,
                 ImporteNuevo = Total,
-                Diferencia = Math.Abs(Total - TotalAnterior),
+                Diferencia = Math.Round(Math.Abs(ImporteAnterior - Total) / ImporteAnterior * 100m, 2, MidpointRounding.AwayFromZero),
             });
         }
 
@@ -339,7 +342,7 @@ namespace mod_add.ViewModels
             Total = Cheque.total.Value;
         }
 
-        public Respuesta ObtenerChequeSR()
+        public TipoRespuesta ObtenerChequeSR()
         {
             using (SoftRestaurantDBContext context = new SoftRestaurantDBContext())
             {
@@ -347,29 +350,32 @@ namespace mod_add.ViewModels
                 {
                     SR_cheques_DAO cheques_DAO = new SR_cheques_DAO(context, !App.ConfiguracionSistema.ModificarVentasReales);
 
-                    Cheque = cheques_DAO.Find(Folio);
+                    Cheque = cheques_DAO.Get("folio = @folio and fecha <= @fecha", new object[] {
+                        new SqlParameter("folio", Folio),
+                        new SqlParameter("fecha", App.FechaMaxima),
+                    }).FirstOrDefault();
 
-                    if (Cheque == null) return Respuesta.CHEQUE_NO_ENCONTRADO;
-                    if (Cheque.cancelado.Value) return Respuesta.CHEQUE_CANCELADO;
+                    if (Cheque == null) return TipoRespuesta.REGISTRO_NO_ENCONTRADO;
+                    if (Cheque.cancelado.Value) return TipoRespuesta.CHEQUE_CANCELADO;
+                    var detalles = Cheque.Detalles;
+                    if (detalles.Count == 0) return TipoRespuesta.SIN_REGISTROS;
 
                     var chequespagos = Cheque.Chequespagos;
 
                     if (chequespagos.Count > 1)
                     {
-                        return Respuesta.CHEQUE_CON_MULTIPLE_FORMA_PAGO;
+                        return TipoRespuesta.CHEQUE_CON_MULTIPLE_FORMA_PAGO;
                     }
                     else if (chequespagos.Count < 1)
                     {
-                        return Respuesta.CHEQUE_SIN_FORMA_PAGO;
+                        return TipoRespuesta.CHEQUE_SIN_FORMA_PAGO;
                     }
 
                     Chequepago = chequespagos[0];
                     FormaPago = Chequepago.Formasdepago;
 
-                    DetallesCheque = new ObservableCollection<SR_cheqdet>(Cheque.Detalles.OrderBy(x => x.movimiento).ToList());
-
-                    UltimoCheqDet = DetallesCheque.OrderByDescending(x => x.movimiento).FirstOrDefault();
-
+                    DetallesCheque = new ObservableCollection<SR_cheqdet>(detalles.OrderBy(x => x.movimiento).ToList());
+                    UltimoCheqDet = detalles.OrderByDescending(x => x.movimiento).FirstOrDefault();
 
                     if (Cheque.fecha.HasValue) Fecha = Cheque.fecha.Value;
                     Personas = (int)Cheque.Nopersonas;
@@ -379,18 +385,18 @@ namespace mod_add.ViewModels
 
                     Subtotal = Cheque.subtotal.Value;
                     Total = Cheque.total.Value;
-                    TotalAnterior = Total;
+                    ImporteAnterior = Total;
 
-                    return Respuesta.HECHO;
+                    return TipoRespuesta.HECHO;
                 }
                 catch (Exception ex)
                 {
                     Debug.WriteLine($"INICIO-ERROR\n{ex}\nFIN-ERROR");
-                    return Respuesta.ERROR;
+                    return TipoRespuesta.ERROR;
                 }
             }
         }
-        private decimal TotalAnterior { get; set; }
+        private decimal ImporteAnterior { get; set; }
         private SR_cheques Cheque { get; set; }
         private SR_formasdepago FormaPago { get; set; }
         private SR_chequespagos Chequepago { get; set; }

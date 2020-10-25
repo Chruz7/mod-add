@@ -7,12 +7,10 @@ using mod_add.Enums;
 using SRLibrary.SR_Context;
 using SRLibrary.SR_DAO;
 using SRLibrary.SR_DTO;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data.Entity.Migrations;
 using System.Linq;
-using System.Windows;
 
 namespace mod_add.ViewModels
 {
@@ -25,14 +23,14 @@ namespace mod_add.ViewModels
             dbf = new DatabaseFactory();
             _productoEliminarServicio = new ProductoEliminarServicio(dbf);
 
-            ProductosEliminar = new ObservableCollection<ProductoEliminar>();
+            ProductosEliminar = new ObservableCollection<ProductoEliminacion>();
 
             ObtenerProductosSR();
             ObtenerProductosEliminar();
             GenerarListado();
         }
 
-        public Respuesta Guardar()
+        public TipoRespuesta Guardar()
         {
             using (ApplicationDbContext context = new ApplicationDbContext())
             {
@@ -46,11 +44,11 @@ namespace mod_add.ViewModels
 
                     App.ProductosEliminar = context.ProductosEliminar.Where(x => x.Eliminar).ToList();
 
-                    return Respuesta.HECHO;
+                    return TipoRespuesta.HECHO;
                 }
                 catch
                 {
-                    return Respuesta.ERROR;
+                    return TipoRespuesta.ERROR;
                 }
             }
         }
@@ -90,7 +88,7 @@ namespace mod_add.ViewModels
                     }
                 }
 
-                var productoEliminar = new ProductoEliminar
+                var productoEliminar = new ProductoEliminacion
                 {
                     Clave = producto.idproducto,
                     Grupo = producto.idgrupo,
@@ -108,11 +106,11 @@ namespace mod_add.ViewModels
             }
         }
 
-        private List<ProductoEliminar> ProductosEliminables { get; set; }
+        private List<ProductoEliminacion> ProductosEliminables { get; set; }
         private List<SR_productos> Productos { get; set; }
 
-        private ObservableCollection<ProductoEliminar> _ProductosEliminar;
-        public ObservableCollection<ProductoEliminar> ProductosEliminar
+        private ObservableCollection<ProductoEliminacion> _ProductosEliminar;
+        public ObservableCollection<ProductoEliminacion> ProductosEliminar
         {
             get { return _ProductosEliminar; }
             set

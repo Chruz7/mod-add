@@ -40,6 +40,9 @@
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.4.4\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
+    <Reference Include="SRLibrary">
+      <HintPath>..\..\SRLibrary\SRLibrary\bin\Debug\SRLibrary.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
@@ -52,7 +55,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Contexto\ApplicationDbContext.cs" />
+    <Compile Include="Enums\TipoAccion.cs" />
+    <Compile Include="Enums\TipoAjuste.cs" />
+    <Compile Include="Enums\TipoClasificacion.cs" />
     <Compile Include="Enums\TipoLogico.cs" />
+    <Compile Include="Enums\TipoPago.cs" />
     <Compile Include="Implementaciones\BitacoraServicio.cs" />
     <Compile Include="Implementaciones\ConfiguracionServicio.cs" />
     <Compile Include="Implementaciones\ProductoEliminarServicio.cs" />
@@ -67,16 +74,19 @@
     <Compile Include="Interfaces\IConfiguracionServicio.cs" />
     <Compile Include="Interfaces\IProductoEliminarServicio.cs" />
     <Compile Include="Interfaces\IProductoReemplazoServicio.cs" />
-    <Compile Include="Migrations\202010230217201_Inicio.cs" />
-    <Compile Include="Migrations\202010230217201_Inicio.designer.cs">
-      <DependentUpon>202010230217201_Inicio.cs</DependentUpon>
+    <Compile Include="Migrations\202010242309346_Inicio.cs" />
+    <Compile Include="Migrations\202010242309346_Inicio.designer.cs">
+      <DependentUpon>202010242309346_Inicio.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="ModelosPersonalizados\GrupoSeleccion.cs" />
     <Compile Include="ModelosPersonalizados\ProductoSeleccion.cs" />
+    <Compile Include="Modelos\Cheque.cs" />
+    <Compile Include="Modelos\ChequeDetalle.cs" />
+    <Compile Include="Modelos\ChequePago.cs" />
     <Compile Include="Modelos\ConfiguracionSistema.cs" />
     <Compile Include="Modelos\DetalleAjuste.cs" />
-    <Compile Include="Modelos\ProductoEliminar.cs" />
+    <Compile Include="Modelos\ProductoEliminacion.cs" />
     <Compile Include="Modelos\ProductoReemplazo.cs" />
     <Compile Include="Modelos\BitacoraModificacion.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -86,8 +96,8 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202010230217201_Inicio.resx">
-      <DependentUpon>202010230217201_Inicio.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202010242309346_Inicio.resx">
+      <DependentUpon>202010242309346_Inicio.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

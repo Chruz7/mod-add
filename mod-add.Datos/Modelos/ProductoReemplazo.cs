@@ -1,5 +1,8 @@
-﻿namespace mod_add.Datos.Modelos
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace mod_add.Datos.Modelos
 {
+    [Table("Productos_Reemplazo")]
     public class ProductoReemplazo
     {
         public int Id { get; set; }

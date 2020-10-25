@@ -10,24 +10,24 @@ namespace mod_add.ViewModels
             Contrasena = "";
         }
 
-        public Respuesta Autenticar()
+        public TipoRespuesta Autenticar()
         {
             if (string.IsNullOrWhiteSpace(Contrasena) && Contrasena.Length < 8)
-                return Respuesta.CONTRASENA_INCORRECTA;
+                return TipoRespuesta.CONTRASENA_INCORRECTA;
 
             string contrasenaEncriptada = Encriptado.Contrasena(Contrasena);
 
             if (App.ConfiguracionSistema.Contrasena.Equals(contrasenaEncriptada))
             {
-                return Respuesta.HECHO;
+                return TipoRespuesta.HECHO;
             }
             else if (App.ConfiguracionSistema.ContrasenaAdmin.Equals(contrasenaEncriptada))
             {
                 App.Admin = true;
-                return Respuesta.HECHO;
+                return TipoRespuesta.HECHO;
             }
 
-            return Respuesta.CONTRASENA_INCORRECTA;
+            return TipoRespuesta.CONTRASENA_INCORRECTA;
         }
 
         private string _Contrasena;

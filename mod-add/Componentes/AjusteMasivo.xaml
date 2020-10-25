@@ -178,10 +178,29 @@
                             Grid.Column="0"
                             VerticalAlignment="Center"
                             HorizontalContentAlignment="Right"
-                            Content="Cuentas mayores a:"
-                            Target="{Binding ElementName=ImporteAjuste}"/>
-                        <TextBox
+                            Content="Tipo de Proceso:"
+                            Target="{Binding ElementName=Procesos}"/>
+
+                        <ComboBox
                             Grid.Row="0"
+                            Grid.Column="1"
+                            Grid.ColumnSpan="2"
+                            VerticalAlignment="Center"
+                            Margin="5,0,5,0"
+                            ItemsSource="{Binding Procesos}"
+                            DisplayMemberPath="Texto"
+                            x:Name="Procesos"
+                            SelectionChanged="Procesos_SelectionChanged"/>
+
+                        <Label
+                            Grid.Row="1"
+                            Grid.Column="0"
+                            VerticalAlignment="Center"
+                            HorizontalContentAlignment="Right"
+                            Content="Cuentas mayores a:"
+                            Target="{Binding ElementName=ImporteMinimoAjustable}"/>
+                        <TextBox
+                            Grid.Row="1"
                             Grid.Column="1"
                             Grid.ColumnSpan="2"
                             VerticalAlignment="Center"
@@ -191,14 +210,14 @@
                             KeyDown="TextBlock_KeyDown"/>
 
                         <Label
-                            Grid.Row="1"
+                            Grid.Row="2"
                             Grid.Column="0"
                             VerticalAlignment="Center"
                             HorizontalContentAlignment="Right"
                             Content="Porcentaje objetivo:"
                             Target="{Binding ElementName=PorcentajeObjetivo}"/>
                         <xctk:IntegerUpDown
-                            Grid.Row="1"
+                            Grid.Row="2"
                             Grid.Column="1"
                             VerticalAlignment="Center"
                             Margin="5,0,0,0"
@@ -208,7 +227,7 @@
                             Value="{Binding PorcentajeObjetivo}"
                             ValueChanged="PorcentajeObjetivo_ValueChanged"/>
                         <Label
-                            Grid.Row="1"
+                            Grid.Row="2"
                             Grid.Column="2"
                             VerticalAlignment="Center"
                             HorizontalAlignment="Center"
@@ -216,14 +235,14 @@
                             Content="%"/>
 
                         <Label
-                            Grid.Row="2"
+                            Grid.Row="3"
                             Grid.Column="0"
                             VerticalAlignment="Center"
                             HorizontalContentAlignment="Right"
                             Content="Importe objetivo:"
                             Target="{Binding ElementName=ImporteObjetivo}"/>
                         <TextBox
-                            Grid.Row="2"
+                            Grid.Row="3"
                             Grid.Column="1"
                             Grid.ColumnSpan="2"
                             VerticalAlignment="Center"
@@ -306,6 +325,18 @@
                 </Grid>
             </GroupBox>
         </Grid>
+        
+        <Grid
+            Grid.Row="0"
+            Grid.Column="3">
+            <Button
+                VerticalAlignment="Center"
+                HorizontalAlignment="Center"
+                Padding="25,10,25,10"
+                Content="Vista previa"
+                x:Name="Procesar"
+                Click="Procesar_Click"/>
+        </Grid>
 
         <ScrollViewer
             Grid.Row="1"
@@ -377,7 +408,7 @@
                     <DataGridCheckBoxColumn
                         
                         Header="Modificar"
-                        Binding="{Binding Modificar}">
+                        Binding="{Binding RealizarAccion}">
                     </DataGridCheckBoxColumn>
                 </DataGrid.Columns>
             </DataGrid>

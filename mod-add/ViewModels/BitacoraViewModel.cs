@@ -2,6 +2,8 @@
 using mod_add.Datos.Infraestructura;
 using mod_add.Datos.Interfaces;
 using mod_add.Datos.Modelos;
+using mod_add.Enums;
+using mod_add.Utils;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -16,21 +18,30 @@ namespace mod_add.ViewModels
         {
             dbf = new DatabaseFactory();
             _bitacoraServicio = new BitacoraServicio(dbf);
+
+            ObtenerBitacora();
         }
 
-        public void ObtenerBitacoras()
+        public void ObtenerBitacora()
         {
-            RegistrosBitacora = _bitacoraServicio.GetAll().ToList();
+            BitacoraModificaciones = _bitacoraServicio.GetAll().ToList();
         }
 
-        private List<BitacoraModificacion> _RegistrosBitacora;
-        public List<BitacoraModificacion> RegistrosBitacora
+        public TipoRespuesta ExportarExcel()
         {
-            get { return _RegistrosBitacora; }
+            var respuesta = Exportar.Excel(BitacoraModificaciones);
+
+            return respuesta;
+        }
+
+        private List<BitacoraModificacion> _BitacoraModificaciones;
+        public List<BitacoraModificacion> BitacoraModificaciones
+        {
+            get { return _BitacoraModificaciones; }
             set
             {
-                _RegistrosBitacora = value;
-                OnPropertyChanged(nameof(BitacoraModificacion));
+                _BitacoraModificaciones = value;
+                OnPropertyChanged(nameof(BitacoraModificaciones));
             }
         }
     }

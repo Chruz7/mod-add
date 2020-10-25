@@ -1,13 +1,9 @@
-﻿using mod_add.Datos.Modelos;
-using mod_add.Enums;
+﻿using mod_add.Enums;
 using mod_add.Helpers;
 using mod_add.ViewModels;
 using SRLibrary.SR_DTO;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
 
 namespace mod_add.Vistas
 {
@@ -51,7 +47,7 @@ namespace mod_add.Vistas
         private void Aceptar_Click(object sender, RoutedEventArgs e)
         {
             IsEnabled = false;
-            Respuesta respuesta = Respuesta.NADA;
+            TipoRespuesta respuesta = TipoRespuesta.NADA;
             LoadingWindow loading = new LoadingWindow();
             loading.AgregarMensaje("Guardando cambios");
             loading.Show();
@@ -64,7 +60,7 @@ namespace mod_add.Vistas
             {
                 loading.Close();
                 IsEnabled = true;
-                if (respuesta == Respuesta.HECHO)
+                if (respuesta == TipoRespuesta.HECHO)
                 {
                     MessageBox.Show("La configuación se guardó con exito", "Guardar", MessageBoxButton.OK, MessageBoxImage.Information);
                     Close();

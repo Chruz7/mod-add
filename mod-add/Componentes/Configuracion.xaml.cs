@@ -1,24 +1,13 @@
-﻿using mod_add.Datos.ModelosPersonalizados;
-using mod_add.Enums;
+﻿using mod_add.Enums;
 using mod_add.Helpers;
 using mod_add.Selectores;
 using mod_add.ViewModels;
 using mod_add.Vistas;
 using SRLibrary.SR_DTO;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace mod_add.Componentes
 {
@@ -306,7 +295,7 @@ namespace mod_add.Componentes
             {
                 App.HabilitarPrincipal(false);
 
-                Respuesta respuesta = Respuesta.NADA;
+                TipoRespuesta respuesta = TipoRespuesta.NADA;
                 LoadingWindow loading = new LoadingWindow();
                 loading.AgregarMensaje("Guardando cambios");
                 loading.Show();
@@ -320,11 +309,11 @@ namespace mod_add.Componentes
                     loading.Close();
                     App.HabilitarPrincipal();
 
-                    if (respuesta == Respuesta.HECHO)
+                    if (respuesta == TipoRespuesta.HECHO)
                     {
                         MessageBox.Show("La configuación se guardó con exito", "Listo", MessageBoxButton.OK, MessageBoxImage.Information);
                     }
-                    else if (respuesta == Respuesta.ERROR)
+                    else if (respuesta == TipoRespuesta.ERROR)
                     {
                         MessageBox.Show("Hubo un error al intentar guardar la información, por favor intentelo de nuevo", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     }

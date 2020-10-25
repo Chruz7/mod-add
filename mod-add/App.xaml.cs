@@ -19,13 +19,14 @@ namespace mod_add
     public partial class App : Application
     {
         public static bool Admin { get; set; }
+        public static DateTime FechaMaxima { get; set; }
         public static ConfiguracionSistema ConfiguracionSistema { get; set; }
         public static List<ProductoReemplazo> ProductosReemplazo { get; set; }
-        public static List<ProductoEliminar> ProductosEliminar { get; set; }
+        public static List<ProductoEliminacion> ProductosEliminar { get; set; }
         public static MidpointRounding MidpointRounding { get; set; }
         private static Principal Principal { get; set; }
         public static SR_configuracion SRConfiguracion { get; set; }
-        public static List<SR_productosdetalle> SRDetProductosReemplazo { get; set; }
+        public static List<SR_productosdetalle> SRProductosDetalle { get; set; }
 
         private void Application_Startup(object sender, StartupEventArgs e)
         {
@@ -43,6 +44,7 @@ namespace mod_add
                 {
                     Admin = false;
                     MidpointRounding = MidpointRounding.AwayFromZero;
+                    FechaMaxima = DateTime.Now;
 
                     using (ApplicationDbContext context = new ApplicationDbContext())
                     {
@@ -75,12 +77,12 @@ namespace mod_add
                         }
 
                         ConfiguracionSistema = context.ConfiguracionSistema.FirstOrDefault();
-                        ProductosReemplazo = context.ProductosReemplazo.Where(x => x.Reemplazar).ToList();
+                        ProductosReemplazo = context.ProductosReemplazo.Where(x => x.Reemplazar).OrderBy(x => x.Porcentaje).ToList();
                         ProductosEliminar = context.ProductosEliminar.Where(x => x.Eliminar).ToList();
                     }
 
                     ObtenerConfiguracionSR();
-                    ObtenerDetalleProductosReemplazoSR();
+                    ObtenerProductosDetalleSR();
                 }
                 catch (Exception ex)
                 {
@@ -122,14 +124,14 @@ namespace mod_add
             }
         }
 
-        public static void ObtenerDetalleProductosReemplazoSR()
+        public static void ObtenerProductosDetalleSR()
         {
             using (SoftRestaurantDBContext context = new SoftRestaurantDBContext())
             {
                 try
                 {
                     SR_productosdetalle_DAO productosdetalle_DAO = new SR_productosdetalle_DAO(context);
-                    SRDetProductosReemplazo = productosdetalle_DAO.WhereIn("idproducto", ProductosReemplazo.Select(x => (object)x.Clave).ToArray());
+                    SRProductosDetalle = productosdetalle_DAO.WhereIn("idproducto", ProductosReemplazo.Select(x => (object)x.Clave).ToArray());
                 }
                 catch (Exception ex)
                 {

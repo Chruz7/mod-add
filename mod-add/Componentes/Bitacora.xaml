@@ -9,22 +9,17 @@
     <Grid
         Background="#FFFFFF">
         <Grid.RowDefinitions>
-            <RowDefinition Height="50"/>
+            <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="110"/>
         </Grid.ColumnDefinitions>
 
         <Button
             Grid.Row="0"
-            Grid.Column="6"
+            Grid.Column="1"
             VerticalAlignment="Center"
             HorizontalAlignment="Center"
             Width="100"
@@ -53,43 +48,47 @@
         <Grid
             Grid.Row="1"
             Grid.Column="0"
-            Grid.ColumnSpan="7">
+            Grid.ColumnSpan="2">
             <DataGrid
                 Name="RegistrosBitacora"
                 Margin="5"
-                ItemsSource="{Binding RegistrosBitacora}"
+                ItemsSource="{Binding BitacoraModificaciones}"
                 Style="{DynamicResource DataGridStyle1}">
                 <DataGrid.Columns>
                     <DataGridTextColumn
-                        Width="*"
+                        Width="7*"
+                        Header="Tipo&#xa;ajuste"
+                        Binding="{Binding TipoAjuste}"/>
+                    <DataGridTextColumn
+                        Width="15*"
                         Header="Fecha de&#xa;proceso"
                         Binding="{Binding FechaProceso}"/>
                     <DataGridTextColumn
-                        Width="*"
+                        Width="15*"
                         Header="Fecha inicial&#xa;(venta)"
                         Binding="{Binding FechaInicialVenta}"/>
                     <DataGridTextColumn
-                        Width="*"
+                        Width="15*"
                         Header="Fecha final&#xa;(venta)"
                         Binding="{Binding FechaFinalVenta}"/>
                     <DataGridTextColumn
-                        Width="*"
+                        Width="8*"
                         Header="Total&#xa;cuentas"
                         Binding="{Binding TotalCuentas}"/>
                     <DataGridTextColumn
-                        Width="*"
+                        Width="10*"
                         Header="Cuentas&#xa;modificadas"
                         Binding="{Binding CuentasModificadas}"/>
                     <DataGridTextColumn
-                        Width="*"
+                        Width="10*"
                         Header="Importe&#xa;anterior"
                         Binding="{Binding ImporteAnterior}"/>
                     <DataGridTextColumn
-                        Width="*"
+                        Width="10*"
                         Header="Importe&#xa;nuevo"
                         Binding="{Binding ImporteNuevo}"/>
                     <DataGridTextColumn
-                        Width="*"
+                        Width="10*"
                         Header="Diferencia&#xa;%"
                         Binding="{Binding Diferencia}"/>
                 </DataGrid.Columns>

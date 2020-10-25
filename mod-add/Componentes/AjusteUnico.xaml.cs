@@ -6,7 +6,6 @@ using mod_add.Vistas;
 using SR.Datos;
 using SRLibrary.SR_DTO;
 using System;
-using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -66,7 +65,7 @@ namespace mod_add.Componentes
         {
             App.HabilitarPrincipal(false);
 
-            Respuesta respuesta = Respuesta.NADA;
+            TipoRespuesta respuesta = TipoRespuesta.NADA;
             LoadingWindow loading = new LoadingWindow();
             loading.AgregarMensaje("Guardando cambios");
             loading.Show();
@@ -75,7 +74,7 @@ namespace mod_add.Componentes
             {
                 respuesta = ViewModel.Guardar();
 
-                if (respuesta == Respuesta.HECHO)
+                if (respuesta == TipoRespuesta.HECHO)
                 {
                     loading.AgregarMensaje("Registrando bitácora");
                     ViewModel.ResgistrarBitacora();
@@ -86,11 +85,11 @@ namespace mod_add.Componentes
                 loading.Close();
                 App.HabilitarPrincipal();
 
-                if (respuesta == Respuesta.HECHO)
+                if (respuesta == TipoRespuesta.HECHO)
                 {
                     MessageBox.Show("Los cambios se guardaron correctamente.", "Listo", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
-                else if (respuesta == Respuesta.ERROR)
+                else if (respuesta == TipoRespuesta.ERROR)
                 {
                     MessageBox.Show("Hubo un error al intentar guardar los cambios, por favor intente de nuevo.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
@@ -121,7 +120,7 @@ namespace mod_add.Componentes
             {
                 App.HabilitarPrincipal(false);
 
-                Respuesta respuesta = Respuesta.NADA;
+                TipoRespuesta respuesta = TipoRespuesta.NADA;
                 LoadingWindow loading = new LoadingWindow();
                 //loading.AgregarMensaje("Buscando cheque");
                 loading.Show();
@@ -135,29 +134,33 @@ namespace mod_add.Componentes
                     loading.Close();
                     App.HabilitarPrincipal();
 
-                    if (respuesta == Respuesta.HECHO)
+                    if (respuesta == TipoRespuesta.HECHO)
                     {
                         HabilitarComponentes();
                     }
-                    else if (respuesta == Respuesta.CHEQUE_NO_ENCONTRADO)
+                    else if (respuesta == TipoRespuesta.REGISTRO_NO_ENCONTRADO)
                     {
-                        MessageBox.Show("No se encontró el cheque.", "Busqueda", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        MessageBox.Show("No se encontró la cuenta", "Busqueda", MessageBoxButton.OK, MessageBoxImage.Warning);
                     }
-                    else if (respuesta == Respuesta.CHEQUE_CANCELADO)
+                    else if (respuesta == TipoRespuesta.CHEQUE_CANCELADO)
                     {
-                        MessageBox.Show("Cheque cancelado.", "Busqueda", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        MessageBox.Show("Cuenta cancelada.", "Busqueda", MessageBoxButton.OK, MessageBoxImage.Warning);
                     }
-                    else if (respuesta == Respuesta.CHEQUE_CON_MULTIPLE_FORMA_PAGO)
+                    else if (respuesta == TipoRespuesta.SIN_REGISTROS)
                     {
-                        MessageBox.Show("El chequetiene más de una forma de pago.", "Busqueda", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        MessageBox.Show("La cuenta no tiene detalles", "Busqueda", MessageBoxButton.OK, MessageBoxImage.Warning);
                     }
-                    else if (respuesta == Respuesta.CHEQUE_SIN_FORMA_PAGO)
+                    else if (respuesta == TipoRespuesta.CHEQUE_CON_MULTIPLE_FORMA_PAGO)
                     {
-                        MessageBox.Show("El cheque no tiene forma de pago.", "Busqueda", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        MessageBox.Show("La cuenta tiene más de una forma de pago.", "Busqueda", MessageBoxButton.OK, MessageBoxImage.Warning);
                     }
-                    else if (respuesta == Respuesta.ERROR)
+                    else if (respuesta == TipoRespuesta.CHEQUE_SIN_FORMA_PAGO)
                     {
-                        MessageBox.Show("Error al intentar buscar el cheque.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        MessageBox.Show("La cuenta no tiene forma de pago.", "Busqueda", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    }
+                    else if (respuesta == TipoRespuesta.ERROR)
+                    {
+                        MessageBox.Show("Error al intentar buscar la cuenta.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
                     }
                 }, System.Threading.CancellationToken.None, TaskContinuationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());
             }

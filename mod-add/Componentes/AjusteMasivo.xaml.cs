@@ -1,4 +1,5 @@
 ﻿using mod_add.Enums;
+using mod_add.Selectores;
 using mod_add.ViewModels;
 using mod_add.Vistas;
 using System;
@@ -18,55 +19,32 @@ namespace mod_add.Componentes
         public AjusteMasivo()
         {
             InitializeComponent();
-            //HabilitarControles(false);
 
-            FechaCierre.DisplayDateEnd = DateTime.Today;
-            FechaInicio.DisplayDateEnd = DateTime.Today;
-
+            HabilitarControles(false);
             Aplicar.IsEnabled = false;
             Cancelar.IsEnabled = false;
+
+            FechaInicio.DisplayDateEnd = DateTime.Today;
+            FechaCierre.DisplayDateEnd = App.FechaMaxima;
 
             ViewModel = new AjusteMasivoViewModel();
             DataContext = ViewModel;
         }
 
-        private void Aplicar_Click(object sender, RoutedEventArgs e)
-        {
-            App.HabilitarPrincipal(false);
-
-            Respuesta respuesta = Respuesta.NADA;
-
-            LoadingWindow loading = new LoadingWindow();
-            loading.AgregarMensaje("Guardando cambios");
-            loading.Show();
-
-            Task.Factory.StartNew(() =>
-            {
-                respuesta = ViewModel.GuardarCambios();
-
-                if (respuesta == Respuesta.HECHO)
-                {
-                    loading.AgregarMensaje("Registrando bitácora");
-                    ViewModel.ResgistrarBitacora();
-
-                    MessageBox.Show("Se guardaron los cambios correctamente", "Listo", MessageBoxButton.OK, MessageBoxImage.Information);
-                }
-                else if (respuesta == Respuesta.ERROR)
-                {
-                    MessageBox.Show("Hubo un error al intentar guardar los cambios, por favor intente de nuevo", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
-            }).ContinueWith(task =>
-            {
-                loading.Close();
-                App.HabilitarPrincipal();
-            }, System.Threading.CancellationToken.None, TaskContinuationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());
-        }
-
         private void NuevaBusqueda_Click(object sender, RoutedEventArgs e)
         {
+            HabilitarControles();
+            ViewModel.InicializarControles();
+        }
+
+        private void Procesar_Click(object sender, RoutedEventArgs e)
+        {
             App.HabilitarPrincipal(false);
 
-            Respuesta respuesta = Respuesta.NADA;
+            RespuestaBusquedaMasiva respuesta = new RespuestaBusquedaMasiva
+            {
+                TipoRespuesta = TipoRespuesta.NADA
+            };
 
             LoadingWindow loading = new LoadingWindow();
             loading.AgregarMensaje("Buscando cuentas");
@@ -76,38 +54,82 @@ namespace mod_add.Componentes
             {
                 respuesta = ViewModel.ObtenerChequesSR();
 
-                if (respuesta == Respuesta.HECHO)
+                if (respuesta.TipoRespuesta == TipoRespuesta.HECHO)
                 {
+                    loading.AgregarMensaje("Creando registros temporales");
+                    ViewModel.CrearRegistrosTemporales(respuesta);
+
                     loading.AgregarMensaje("Procesando información");
-                    ViewModel.Proceso();
+                    ViewModel.ProcesarProductos();
                 }
-                else if (respuesta == Respuesta.CHEQUE_NO_ENCONTRADO)
-                {
-                    MessageBox.Show("No se encontraron cuentas", "Busqueda", MessageBoxButton.OK, MessageBoxImage.Information);
-                }
-                else if (respuesta == Respuesta.ERROR)
-                {
-                    MessageBox.Show("Hubo un error al intentar buscar las cuentas", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
+
             }).ContinueWith(task =>
             {
                 loading.Close();
                 App.HabilitarPrincipal();
 
-                if (respuesta == Respuesta.HECHO)
+                if (respuesta.TipoRespuesta == TipoRespuesta.HECHO)
                 {
                     ViewModel.CargarResultados();
                     DetalleModificacionCheques.Items.Refresh();
                     Aplicar.IsEnabled = true;
                     Cancelar.IsEnabled = true;
                 }
+                else if (respuesta.TipoRespuesta == TipoRespuesta.SIN_REGISTROS)
+                {
+                    MessageBox.Show("No se encontraron cuentas", "Busqueda", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                else if (respuesta.TipoRespuesta == TipoRespuesta.ERROR)
+                {
+                    MessageBox.Show("Hubo un error al intentar buscar las cuentas", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }, System.Threading.CancellationToken.None, TaskContinuationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());
         }
+
+        private void Aplicar_Click(object sender, RoutedEventArgs e)
+        {
+            App.HabilitarPrincipal(false);
+
+            TipoRespuesta respuesta = TipoRespuesta.NADA;
+
+            LoadingWindow loading = new LoadingWindow();
+            loading.AgregarMensaje("Guardando cambios");
+            loading.Show();
+
+            Task.Factory.StartNew(() =>
+            {
+                respuesta = ViewModel.GuardarCambios();
+
+                if (respuesta == TipoRespuesta.HECHO)
+                {
+                    loading.AgregarMensaje("Registrando bitácora");
+                    ViewModel.ResgistrarBitacora();
+                }
+            }).ContinueWith(task =>
+            {
+                loading.Close();
+                App.HabilitarPrincipal();
+                if (respuesta == TipoRespuesta.HECHO)
+                {
+                    Aplicar.IsEnabled = false;
+                    MessageBox.Show("Se guardaron los cambios correctamente", "Listo", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                else if (respuesta == TipoRespuesta.ERROR)
+                {
+                    MessageBox.Show("Hubo un error al intentar guardar los cambios, por favor intente de nuevo", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }, System.Threading.CancellationToken.None, TaskContinuationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());
+        }
+
+        
 
         private void Cancelar_Click(object sender, RoutedEventArgs e)
         {
             //HabilitarControles(false);
             ViewModel.InicializarControles();
+            Procesar.IsEnabled = false;
+            Aplicar.IsEnabled = false;
+            Cancelar.IsEnabled = false;
         }
 
         private void Turno_Checked(object sender, RoutedEventArgs e)
@@ -130,21 +152,22 @@ namespace mod_add.Componentes
             ViewModel.FechaCierre = DateTime.Today;
         }
 
-        //private void HabilitarControles(bool habilitar = true)
-        //{
-        //    Turno.IsEnabled = habilitar;
-        //    Periodo.IsEnabled = habilitar;
-        //    FechaInicio.IsEnabled = habilitar;
-        //    FechaCierre.IsEnabled = habilitar;
-        //    ImporteMinimoAjustable.IsEnabled = habilitar;
-        //    PorcentajeObjetivo.IsEnabled = habilitar;
-        //    ImporteObjetivo.IsEnabled = habilitar;
-        //    CuentaPagadaTarjerta.IsEnabled = habilitar;
-        //    CuentaPagadaVales.IsEnabled = habilitar;
-        //    CuentaPagadaOtros.IsEnabled = habilitar;
-        //    CuentaFacturada.IsEnabled = habilitar;
-        //    CuentaNotaConsumo.IsEnabled = habilitar;
-        //}
+        private void HabilitarControles(bool habilitar = true)
+        {
+            Turno.IsEnabled = habilitar;
+            Periodo.IsEnabled = habilitar;
+            FechaInicio.IsEnabled = habilitar;
+            FechaCierre.IsEnabled = habilitar;
+            ImporteMinimoAjustable.IsEnabled = habilitar;
+            PorcentajeObjetivo.IsEnabled = habilitar;
+            ImporteObjetivo.IsEnabled = habilitar;
+            CuentaPagadaTarjerta.IsEnabled = habilitar;
+            CuentaPagadaVales.IsEnabled = habilitar;
+            CuentaPagadaOtros.IsEnabled = habilitar;
+            CuentaFacturada.IsEnabled = habilitar;
+            CuentaNotaConsumo.IsEnabled = habilitar;
+            Procesar.IsEnabled = habilitar;
+        }
 
         private void TextBlock_KeyDown(object sender, KeyEventArgs e)
         {
@@ -167,7 +190,7 @@ namespace mod_add.Componentes
 
         private void PorcentajeObjetivo_ValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
-            ViewModel.RefrescarControles();
+            
         }
 
         private void Button_IsEnabledChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -180,6 +203,11 @@ namespace mod_add.Componentes
                 grid.Children[0].Opacity = 1d;
             else
                 grid.Children[0].Opacity = 0.5d;
+        }
+
+        private void Procesos_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
         }
     }
 }

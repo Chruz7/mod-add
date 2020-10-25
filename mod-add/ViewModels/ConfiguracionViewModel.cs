@@ -174,7 +174,7 @@ namespace mod_add.ViewModels
             }
         }
 
-        public Respuesta Guardar()
+        public TipoRespuesta Guardar()
         {
             using (ApplicationDbContext context = new ApplicationDbContext())
             {
@@ -211,14 +211,14 @@ namespace mod_add.ViewModels
 
                     App.ConfiguracionSistema = configuracion;
                     App.ProductosReemplazo = productosReemplazo.Where(x => x.Reemplazar).OrderBy(x => x.Porcentaje).ToList();
-                    App.ObtenerDetalleProductosReemplazoSR();
+                    App.ObtenerProductosDetalleSR();
 
-                    return Respuesta.HECHO;
+                    return TipoRespuesta.HECHO;
                 }
                 catch (Exception ex)
                 {
                     Debug.WriteLine($"INICIO-ERROR\n{ex}\nFIN-ERROR");
-                    return Respuesta.ERROR;
+                    return TipoRespuesta.ERROR;
                 }
             }
         }

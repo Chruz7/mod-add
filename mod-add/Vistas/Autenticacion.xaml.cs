@@ -29,14 +29,14 @@ namespace mod_add.Vistas
         private void Aceptar_Click(object sender, RoutedEventArgs e)
         {
             ViewModel.Contrasena = Contrasena.Password;
-            Respuesta respuesta = ViewModel.Autenticar();
+            TipoRespuesta respuesta = ViewModel.Autenticar();
 
-            if (respuesta == Respuesta.HECHO)
+            if (respuesta == TipoRespuesta.HECHO)
             {
                 App.IrPrincipal();
                 Close();
             }
-            else if (respuesta == Respuesta.CONTRASENA_INCORRECTA)
+            else if (respuesta == TipoRespuesta.CONTRASENA_INCORRECTA)
             {
                 MessageBox.Show("La contraseña es incorrecta", "Contraseña", MessageBoxButton.OK, MessageBoxImage.Warning);
             }

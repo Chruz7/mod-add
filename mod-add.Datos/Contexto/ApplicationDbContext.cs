@@ -1,6 +1,5 @@
 ﻿using mod_add.Datos.Modelos;
 using System.Data.Entity;
-using System.Data.Entity.ModelConfiguration.Conventions;
 using System.Threading.Tasks;
 
 namespace mod_add.Datos.Contexto
@@ -18,8 +17,11 @@ namespace mod_add.Datos.Contexto
 
         public DbSet<ConfiguracionSistema> ConfiguracionSistema { get; set; }
         public DbSet<BitacoraModificacion> RegistrosBitacora { get; set; }
-        public DbSet<ProductoEliminar> ProductosEliminar { get; set; }
+        public DbSet<ProductoEliminacion> ProductosEliminar { get; set; }
         public DbSet<ProductoReemplazo> ProductosReemplazo { get; set; }
+        public DbSet<Cheque> Cheques { get; set; }
+        public DbSet<ChequeDetalle> ChequesDetalle { get; set; }
+        public DbSet<ChequePago> ChequesPago { get; set; }
 
         public static ApplicationDbContext Create()
         {
