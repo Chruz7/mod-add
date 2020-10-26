@@ -190,6 +190,7 @@
                             ItemsSource="{Binding Procesos}"
                             DisplayMemberPath="Texto"
                             x:Name="Procesos"
+                            SelectedItem="{Binding Proceso}"
                             SelectionChanged="Procesos_SelectionChanged"/>
 
                         <Label
@@ -352,62 +353,74 @@
                 Name="DetalleModificacionCheques"
                 ItemsSource="{Binding DetalleModificacionCheques}"
                 Style="{DynamicResource DataGridStyle3}">
-                <DataGrid.Columns>
+                    <DataGrid.RowStyle>
+                        <Style TargetType="{x:Type DataGridRow}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding RealizarAccion}" Value="True" >
+                                    <Setter Property="Background" Value="Red" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding IsEnable}" Value="False">
+                                    <Setter Property="IsEnabled" Value="False" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DataGrid.RowStyle>
+                    <DataGrid.Columns>
                     <DataGridTextColumn
-                        
+                        IsReadOnly="True"
                         Header="Folio&#xa;cuenta"
                         Binding="{Binding Folio}"/>
                     <DataGridTextColumn
-                        
+                        IsReadOnly="True"
                         Header="Folio nota&#xa;consumo"
                         Binding="{Binding FolioNotaConsumo}"/>
                     <DataGridTextColumn
-                        
+                        IsReadOnly="True"
                         Header="Fecha"
                         Binding="{Binding Fecha}"/>
                     <DataGridTextColumn
-                        
+                        IsReadOnly="True"
                         Header="Cancelado"
                         Binding="{Binding Cancelado}"/>
                     <DataGridTextColumn
-                        
+                        IsReadOnly="True"
                         Header="Faturado"
                         Binding="{Binding Facturado}"/>
                     <DataGridTextColumn
-                        
+                        IsReadOnly="True"
                         Header="Descuento&#xa;%"
                         Binding="{Binding Descuento}"/>
                     <DataGridTextColumn
-                        
+                        IsReadOnly="True"
                         Header="Total&#xa;original"
                         Binding="{Binding TotalOriginal}"/>
                     <DataGridTextColumn
-                        
+                        IsReadOnly="True"
                         Header="Productos&#xa;eliminados"
                         Binding="{Binding ProductosEliminados}"/>
                     <DataGridTextColumn
-                        
+                        IsReadOnly="True"
                         Header="Total con&#xa;descuento"
                         Binding="{Binding TotalConDescuento}"/>
                     <DataGridTextColumn
-                        
+                        IsReadOnly="True"
                         Header="Efectivo"
                         Binding="{Binding Efectivo}"/>
                     <DataGridTextColumn
-                        
+                        IsReadOnly="True"
                         Header="Tarjeta"
                         Binding="{Binding Tarjeta}"/>
                     <DataGridTextColumn
-                        
+                        IsReadOnly="True"
                         Header="Vales"
                         Binding="{Binding Vales}"/>
                     <DataGridTextColumn
-                        
+                        IsReadOnly="True"
                         Header="Otros"
                         Binding="{Binding Otros}"/>
                     <DataGridCheckBoxColumn
-                        
-                        Header="Modificar"
+                        IsReadOnly="True"
+                        Header="Accion"
                         Binding="{Binding RealizarAccion}">
                     </DataGridCheckBoxColumn>
                 </DataGrid.Columns>

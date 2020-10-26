@@ -6,5 +6,6 @@
         CREAR,
         ACTUALIZAR,
         ELIMINAR,
+        MANTENER
     }
 }

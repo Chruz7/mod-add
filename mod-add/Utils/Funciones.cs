@@ -30,12 +30,13 @@ namespace mod_add.Utils
             bitacoraServicio.Create(bitacora);
         }
 
-        public static Cheque ParseCheque(SR_cheques modelo, TipoPago tipoPago = TipoPago.NINGUNO)
+        public static Cheque ParseCheque(SR_cheques modelo, TipoAccion tipoAccion = TipoAccion.NINGUNO, TipoPago tipoPago = TipoPago.NINGUNO)
         {
             return new Cheque
             {
-                TipoAccion = TipoAccion.NINGUNO,
+                TipoAccion = tipoAccion,
                 TipoPago = tipoPago,
+                FolioAnterior = modelo.folio,
                 TotalArticulosAnterior = modelo.totalarticulos.Value,
                 TotalArticulosEliminados = 0,
                 TotalArticulosCambiados = 0,
@@ -453,12 +454,13 @@ namespace mod_add.Utils
             };
         }
 
-        public static ChequeDetalle ParseChequeDetalle(SR_cheqdet modelo, TipoClasificacion tipoClasificacion = TipoClasificacion.NINGUNO)
+        public static ChequeDetalle ParseChequeDetalle(SR_cheqdet modelo, TipoAccion tipoAccion = TipoAccion.NINGUNO, TipoClasificacion tipoClasificacion = TipoClasificacion.NINGUNO)
         {
             return new ChequeDetalle
             {
-                TipoAccion = TipoAccion.NINGUNO,
+                TipoAccion = tipoAccion,
                 TipoClasificacion = tipoClasificacion,
+                FolioAnterior = modelo.foliodet.Value,
                 CantidadAnterior = modelo.cantidad.Value,
                 Cambiado = false,
 
@@ -575,6 +577,7 @@ namespace mod_add.Utils
             return new ChequePago
             {
                 TipoAccion = TipoAccion.NINGUNO,
+                FolioAnterior = modelo.folio,
 
                 folio = modelo.folio,
                 idformadepago = modelo.idformadepago,

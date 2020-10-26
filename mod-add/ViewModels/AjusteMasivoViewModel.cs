@@ -4,10 +4,8 @@ using mod_add.Datos.Modelos;
 using mod_add.Enums;
 using mod_add.Selectores;
 using mod_add.Utils;
-using SR.Datos;
 using SRLibrary.SR_Context;
 using SRLibrary.SR_DAO;
-using SRLibrary.SR_DTO;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -38,6 +36,48 @@ namespace mod_add.ViewModels
             };
 
             InicializarControles();
+
+            Proceso = Procesos[0];
+
+            DetalleModificacionCheques.Add(new DetalleAjuste
+            {
+                Folio = 1,
+                Fecha = DateTime.Now,
+                FolioNotaConsumo = 0,
+                Cancelado = TipoLogico.NO,
+                Facturado = TipoLogico.NO,
+                Descuento = 0,
+                TotalOriginal = 0,
+                TotalArticulos = 0,
+                ProductosEliminados = 0,
+                TotalConDescuento = 0,
+                Efectivo = 0,
+                Tarjeta = 0,
+                Vales = 0,
+                Otros = 0,
+                RealizarAccion = true,
+                IsEnable = true,
+            });
+
+            DetalleModificacionCheques.Add(new DetalleAjuste
+            {
+                Folio = 2,
+                Fecha = DateTime.Now,
+                FolioNotaConsumo = 0,
+                Cancelado = TipoLogico.NO,
+                Facturado = TipoLogico.NO,
+                Descuento = 0,
+                TotalOriginal = 0,
+                TotalArticulos = 0,
+                ProductosEliminados = 0,
+                TotalConDescuento = 0,
+                Efectivo = 0,
+                Tarjeta = 0,
+                Vales = 0,
+                Otros = 0,
+                RealizarAccion = false,
+                IsEnable = false,
+            });
         }
 
         public TipoRespuesta GuardarCambios()
@@ -75,14 +115,110 @@ namespace mod_add.ViewModels
             //    }
             //}
 
-            using (ApplicationDbContext context = new ApplicationDbContext())
-            {
-                context.Database.ExecuteSqlCommand("TRUNCATE TABLE Cheques");
-                context.Database.ExecuteSqlCommand("TRUNCATE TABLE Cheques_Detalle");
-                context.Database.ExecuteSqlCommand("TRUNCATE TABLE Cheques_Pago");
-            }
+            
 
             return TipoRespuesta.HECHO;
+        }
+
+        public void Procesar()
+        {
+            if (Proceso.TipoProceso == TipoProceso.FOLIOS)
+            {
+                ProcesarFolios();
+            }
+            else if (Proceso.TipoProceso == TipoProceso.PRODUCTOS)
+            {
+                ProcesarProductos();
+            }
+        }
+
+        private void ProcesarFolios()
+        {
+            TipoRespuesta ObjetivoAlcanzado = TipoRespuesta.NO;
+            using (ApplicationDbContext context = new ApplicationDbContext())
+            {
+                try
+                {
+                    var cheques = context.Cheques.Where(x => x.TipoAccion == TipoAccion.NINGUNO).ToList();
+
+                    foreach (var cheque in cheques)
+                    {
+                        Debug.WriteLine($"folio: {cheque.folio}");
+
+                        cheque.TipoAccion = TipoAccion.ELIMINAR;
+                        context.SaveChanges();
+
+                        ObjetivoAlcanzado = CalcularImporteNuevo(context);
+
+                        if (ObjetivoAlcanzado == TipoRespuesta.SI)
+                        {
+                            Debug.WriteLine("Objetivo alcanzado");
+                            break;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"INICIO-ERROR\n{ex}\nFIN-ERROR");
+                }
+            }
+        }
+
+        public void CambiarFolio()
+        {
+            using (ApplicationDbContext context = new ApplicationDbContext())
+            {
+                try
+                {
+                    var cheques = context.Cheques.ToList();
+                    long folioMin = cheques.Min(x => x.folio);
+                    long folioMax = cheques.Max(x => x.folio);
+
+                    var cheqRestantes = cheques.Where(x => x.TipoAccion == TipoAccion.NINGUNO || x.TipoAccion == TipoAccion.MANTENER).OrderBy(x => x.folio).ToList();
+
+                    foreach (var cheque in cheqRestantes)
+                    {
+                        cheque.folio = folioMin;
+                        context.SaveChanges();
+
+                        var chequesDetalle = context.ChequesDetalle.Where(x => x.foliodet.Value == cheque.folio).ToList();
+
+                        foreach (var det in chequesDetalle)
+                        {
+                            det.foliodet = cheque.folio;
+                            context.SaveChanges();
+                        }
+
+                        var chequePago = context.ChequesPago.Where(x => x.folio == x.folio).FirstOrDefault();
+                        chequePago.folio = cheque.folio;
+                        context.SaveChanges();
+
+                        folioMin++;
+                    }
+                    //long ultimoFolio = folioMin;
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"INICIO-ERROR\n{ex}\nFIN-ERROR");
+                }
+            }
+        }
+
+        public void EliminarRegistrosTemporales()
+        {
+            using (ApplicationDbContext context = new ApplicationDbContext())
+            {
+                try
+                {
+                    context.Database.ExecuteSqlCommand("TRUNCATE TABLE Cheques");
+                    context.Database.ExecuteSqlCommand("TRUNCATE TABLE Cheques_Detalle");
+                    context.Database.ExecuteSqlCommand("TRUNCATE TABLE Cheques_Pago");
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"INICIO-ERROR\n{ex}\nFIN-ERROR");
+                }
+            }
         }
 
         public void ProcesarProductos()
@@ -143,36 +279,27 @@ namespace mod_add.ViewModels
                 try
                 {
                     var cheques = context.Cheques
-                        .Where(x =>
-                            x.total.Value >= ImporteMinimoAjustable &&
-                            (
-                                x.TipoPago == TipoPago.EFECTIVO ||
-                                (IncluirCuentaPagadaTarjeta ? x.TipoPago == TipoPago.TARJETA : false) ||
-                                (IncluirCuentaPagadaVales ? x.TipoPago == TipoPago.TARJETA : false) ||
-                                (IncluirCuentaPagadaOtros ? x.TipoPago == TipoPago.TARJETA : false)
-                            ) &&
-                            (IncluirCuentaFacturada ? true : !x.facturado.Value) &&
-                            (IncluirCuentaNotaConsumo ? true : x.folionotadeconsumo.Value == 0) &&
-                            (NoIncluirCuentasReimpresas ? x.impresiones.Value == 1 : true)
-                        ).ToList();
+                        .Where(x => x.TipoAccion == TipoAccion.NINGUNO)
+                        .ToList();
 
                     foreach (var cheque in cheques)
                     {
                         #region Ajuste del cheque
-                        var chequesDetalle = context.ChequesDetalle.Where(x => x.foliodet == cheque.folio).ToList();
-                        var detActualizados = chequesDetalle.Where(x => x.TipoAccion != TipoAccion.ELIMINAR).ToList();
+                        var chequesDetalle = context.ChequesDetalle.Where(x => x.foliodet.Value == cheque.folio).ToList();
                         var detEliminados = chequesDetalle.Where(x => x.TipoAccion == TipoAccion.ELIMINAR).ToList();
+                        var detActualizados = chequesDetalle.Where(x => x.TipoAccion == TipoAccion.ACTUALIZAR && !x.Cambiado).ToList();
                         var detCambiados = chequesDetalle.Where(x => x.TipoAccion == TipoAccion.ACTUALIZAR && x.Cambiado).ToList();
+                        var detRestantes = chequesDetalle.Where(x => x.TipoAccion == TipoAccion.NINGUNO || x.TipoAccion == TipoAccion.ACTUALIZAR).ToList();
 
-                        decimal totalConImpuestos_Det1 = Mat.Redondeo(detActualizados.Sum(x => x.precio.Value * x.cantidad.Value * (100m - x.descuento.Value) / 100m));
-                        decimal totalConImpuestos_Det = Mat.Redondeo(detActualizados.Sum(x => x.ImporteCICD));
+                        decimal totalConImpuestos_Det1 = Mat.Redondeo(detRestantes.Sum(x => x.precio.Value * x.cantidad.Value * (100m - x.descuento.Value) / 100m));
+                        decimal totalConImpuestos_Det = Mat.Redondeo(detRestantes.Sum(x => x.ImporteCICD));
                         decimal descuentoAplicado = (100m - cheque.descuento.Value) / 100m;
                         decimal totalNuevo = Mat.Redondeo(totalConImpuestos_Det * descuentoAplicado);
 
                         if (cheque.total.Value == totalNuevo) continue;
 
                         decimal descuento = cheque.descuento.Value / 100m;
-                        decimal totalSinImpuestos_Det = Mat.Redondeo(detActualizados.Sum(x => x.ImporteSICD));
+                        decimal totalSinImpuestos_Det = Mat.Redondeo(detRestantes.Sum(x => x.ImporteSICD));
 
                         cheque.TipoAccion = TipoAccion.ACTUALIZAR;
                         cheque.TotalArticulosEliminados = detEliminados.Sum(x => x.CantidadAnterior);
@@ -185,7 +312,7 @@ namespace mod_add.ViewModels
                             //falta validar lo de las propinas
                         }
 
-                        cheque.totalarticulos = detActualizados.Sum(x => x.cantidad.Value);
+                        cheque.totalarticulos = detRestantes.Sum(x => x.cantidad.Value);
                         cheque.subtotal = totalSinImpuestos_Det;
                         cheque.total = totalNuevo;
 
@@ -213,7 +340,7 @@ namespace mod_add.ViewModels
                             cheque.otros = cheque.total;
                         }
 
-                        cheque.totalsindescuento = Mat.Redondeo(detActualizados.Sum(x => x.ImporteSISD));
+                        cheque.totalsindescuento = Mat.Redondeo(detRestantes.Sum(x => x.ImporteSISD));
 
                         decimal totalalimentos = 0;
                         decimal totalbebidas = 0;
@@ -225,7 +352,7 @@ namespace mod_add.ViewModels
                         decimal totalbebidassindescuento = 0;
                         decimal totalotrossindescuento = 0;
 
-                        foreach (var detalle in detActualizados)
+                        foreach (var detalle in detRestantes)
                         {
                             decimal importedetalle = detalle.ImporteSICD;
                             decimal importedetallesindescuento = detalle.ImporteSISD;
@@ -268,9 +395,9 @@ namespace mod_add.ViewModels
 
                         cheque.subtotalcondescuento = cheque.subtotal - cheque.descuentoimporte;
 
-                        cheque.totalimpuestod1 = Mat.Redondeo(detActualizados.Sum(x => x.ImporteI1CD));
-                        cheque.totalimpuestod2 = Mat.Redondeo(detActualizados.Sum(x => x.ImporteI2CD));
-                        cheque.totalimpuestod3 = Mat.Redondeo(detActualizados.Sum(x => x.ImporteI3CD));
+                        cheque.totalimpuestod1 = Mat.Redondeo(detRestantes.Sum(x => x.ImporteI1CD));
+                        cheque.totalimpuestod2 = Mat.Redondeo(detRestantes.Sum(x => x.ImporteI2CD));
+                        cheque.totalimpuestod3 = Mat.Redondeo(detRestantes.Sum(x => x.ImporteI3CD));
 
                         cheque.totalimpuesto1 = cheque.totalimpuestod1;
 
@@ -300,17 +427,21 @@ namespace mod_add.ViewModels
             }
         }
 
-        public void EliminarProductos(decimal movimiento = 1m)
+        public void EliminarProductos(decimal movimiento = 1m, bool continuaEliminacion = false)
         {
-            if (movimiento == 1) Debug.WriteLine("INICIO-ELIMINACION");
             Debug.WriteLine($"movimiento: {movimiento}");
-            bool continua = false;
+
+            TipoRespuesta ObjetivoAlcanzado = TipoRespuesta.NO;
+
+            if (movimiento == 1)
+                continuaEliminacion = false;
+
             using (ApplicationDbContext context = new ApplicationDbContext())
             {
                 try
                 {
                     var detalles = context.ChequesDetalle
-                        .Where(x => !x.modificador.Value && x.movimiento == movimiento && x.TipoAccion != TipoAccion.ELIMINAR)
+                        .Where(x => !x.modificador.Value && x.movimiento == movimiento && (x.TipoAccion == TipoAccion.ACTUALIZAR || x.TipoAccion == TipoAccion.NINGUNO))
                         .OrderBy(x => x.movimiento.Value).ThenBy(x => x.foliodet.Value)
                         .ToList();
 
@@ -319,7 +450,7 @@ namespace mod_add.ViewModels
                         Debug.WriteLine($"folio: {det.foliodet}, movimiento: {det.movimiento}, producto: {det.idproducto}, precio: {det.precio}, cantidad: {det.cantidad}");
 
                         decimal productosRestantes = context.ChequesDetalle
-                            .Where(x => x.foliodet == det.foliodet && !x.modificador.Value && x.TipoAccion != TipoAccion.ELIMINAR)
+                            .Where(x => x.foliodet == det.foliodet && !x.modificador.Value && (x.TipoAccion == TipoAccion.ACTUALIZAR || x.TipoAccion == TipoAccion.NINGUNO))
                             .Sum(x => x.cantidad.Value);
 
                         Debug.WriteLine($"productos principales restantes de la cuenta: {productosRestantes}");
@@ -331,9 +462,7 @@ namespace mod_add.ViewModels
                             continue;
                         }
 
-                        Debug.WriteLine("Pasó el fitro de productos minimos");
-
-                        if (App.ConfiguracionSistema.EliminarProductosSeleccionados && !App.ProductosEliminar.Any((Func<ProductoEliminacion, bool>)(x => x.Clave == det.idproducto)))
+                        if (App.ConfiguracionSistema.EliminarProductosSeleccionados && !App.ProductosEliminar.Any(x => x.Clave == det.idproducto))
                         {
                             Debug.WriteLine("Producto NO eliminable");
                             continue;
@@ -347,7 +476,7 @@ namespace mod_add.ViewModels
 
                             det.cantidad -= 1m;
                             det.TipoAccion = TipoAccion.ACTUALIZAR;
-                            continua = true;
+                            continuaEliminacion = true;
                         }
                         else
                         {
@@ -360,25 +489,30 @@ namespace mod_add.ViewModels
 
                         context.SaveChanges();
 
-                        EliminarProductosModificadores(context, det.idproductocompuesto, eliminarTodo);
+                        EliminarProductosModificadores(context, det.foliodet.Value, det.idproductocompuesto, eliminarTodo);
 
-                        CalcularImporteNuevo(context);
+                        ObjetivoAlcanzado = CalcularImporteNuevo(context);
 
-                        if (ImporteNuevo <= ImporteObjetivo)
+                        if (ObjetivoAlcanzado == TipoRespuesta.SI)
                         {
+                            Debug.WriteLine("Objetivo alcanzado");
                             break;
                         }
                     }
 
-                    movimiento += 1m;
+                    if (ObjetivoAlcanzado == TipoRespuesta.NO)
+                    {
+                        movimiento += 1m;
 
-                    if (continua && (ImporteNuevo != -1) && (ImporteNuevo > ImporteObjetivo) && movimiento <= UltimoMovimiento)
-                    {
-                        EliminarProductos(movimiento);
-                    }
-                    else if (ImporteNuevo == -1)
-                    {
-                        ImporteNuevo = 0;
+                        if (movimiento >= UltimoMovimiento && continuaEliminacion)
+                        {
+                            movimiento = 1m;
+                        }
+                        else if (movimiento >= UltimoMovimiento && !continuaEliminacion)
+                        {
+                            Debug.WriteLine("NO hay mas producto para eliminar");
+                            ObjetivoAlcanzado = TipoRespuesta.SI;
+                        }
                     }
                 }
                 catch (Exception ex)
@@ -386,10 +520,14 @@ namespace mod_add.ViewModels
                     Debug.WriteLine($"INICIO-ERROR\n{ex}\nFIN-ERROR");
                 }
             }
+
+            if (ObjetivoAlcanzado == TipoRespuesta.NO)
+                EliminarProductos(movimiento);
+
             Debug.WriteLine("FIN-ELIMINACION");
         }
 
-        private void EliminarProductosModificadores(ApplicationDbContext context, string idproductocompuesto, bool eliminarTodo = false)
+        private void EliminarProductosModificadores(ApplicationDbContext context, long foliodet, string idproductocompuesto, bool eliminarTodo = false)
         {
             try
             {
@@ -399,7 +537,11 @@ namespace mod_add.ViewModels
 
                 Debug.WriteLine("INICIO-ELIMINACION-MODIFICADORES");
                 var detalles = context.ChequesDetalle
-                    .Where(x => x.idproductocompuesto.Equals(idproductocompuesto) && x.modificador.Value && x.TipoAccion != TipoAccion.ELIMINAR)
+                    .Where(x => 
+                        x.foliodet.Value == foliodet && 
+                        x.idproductocompuesto.Equals(idproductocompuesto) && 
+                        x.modificador.Value &&
+                        (x.TipoAccion == TipoAccion.ACTUALIZAR || x.TipoAccion == TipoAccion.NINGUNO))
                     .ToList();
 
                 foreach (var det in detalles)
@@ -440,14 +582,18 @@ namespace mod_add.ViewModels
         public void CambiarProductos()
         {
             if (ImporteNuevo <= ImporteObjetivo) return;
-            if (App.ProductosReemplazo.Count == 0) return;
+            if (App.ProductosReemplazo.Count == 0)
+            {
+                Debug.WriteLine("No hay productos reemplazo");
+                return;
+            }
 
             Debug.WriteLine("INICIO-CAMBIO-PRODUCTOS");
 
             using (ApplicationDbContext context = new ApplicationDbContext())
             {
                 var detalles = context.ChequesDetalle
-                    .Where(x => !x.modificador.Value && x.TipoAccion != TipoAccion.ELIMINAR)
+                    .Where(x => !x.modificador.Value && (x.TipoAccion == TipoAccion.ACTUALIZAR || x.TipoAccion == TipoAccion.NINGUNO))
                     .OrderBy(x => x.movimiento).ThenBy(x => x.foliodet)
                     .ToList();
 
@@ -491,7 +637,7 @@ namespace mod_add.ViewModels
 
                                 Debug.WriteLine("producto reemplazado");
 
-                                EliminarProductosModificadores(context, idproductocompuesto, true);
+                                EliminarProductosModificadores(context, det.foliodet.Value, idproductocompuesto, true);
                             }
                             else
                             {
@@ -512,50 +658,37 @@ namespace mod_add.ViewModels
             Debug.WriteLine("FIN-CAMBIO-PRODUCTOS");
         }
 
-        public void CalcularImporteNuevo(ApplicationDbContext context)
+        public TipoRespuesta CalcularImporteNuevo(ApplicationDbContext context)
         {
             try
             {
                 decimal importeNuevo = 0;
-                foreach (var cheq in context.Cheques)
+                var cheques = new List<Cheque>();
+
+                if (Proceso.TipoProceso == TipoProceso.FOLIOS)
+                    cheques = context.Cheques.ToList();
+                else if (Proceso.TipoProceso == TipoProceso.PRODUCTOS)
+                    cheques = context.Cheques.Where(x => x.TipoAccion == TipoAccion.ELIMINAR).ToList();
+
+                foreach (var cheque in context.Cheques)
                 {
-                    var chequesDetalle = context.ChequesDetalle.Where(x => x.foliodet == cheq.folio && x.TipoAccion != TipoAccion.ELIMINAR).ToList();
+                    var chequesDetalle = context.ChequesDetalle.Where(x => x.foliodet == cheque.folio).ToList();
+
                     decimal totalConImpuestos_Det = Mat.Redondeo(chequesDetalle.Sum(x => x.ImporteCICD));
-                    decimal descuentoAplicado = (100m - cheq.descuento.Value) / 100m;
+                    decimal descuentoAplicado = (100m - cheque.descuento.Value) / 100m;
                     importeNuevo += Mat.Redondeo(totalConImpuestos_Det * descuentoAplicado);
                 }
                 ImporteNuevo = importeNuevo;
 
                 Debug.WriteLine($"ImporteAnterior: {ImporteAnterior}, ImporteObjetivo: {ImporteObjetivo}, ImporteNuevo: {ImporteNuevo}");
+
+                return ImporteNuevo <= ImporteObjetivo ? TipoRespuesta.SI : TipoRespuesta.NO;
             }
             catch (Exception ex)
             {
                 Debug.WriteLine($"INICIO-ERROR\n{ex}\nFIN-ERROR");
-                ImporteNuevo = -1;
+                return TipoRespuesta.ERROR;
             }
-        }
-
-        public List<SR_cheqdet> ReenumerarDetalles()
-        {
-            //int movimiento = 1;
-            //long folio = 0;
-            //var foliosAModificar = DetalleModificacionCheques.Where(x => x.RealizarAccion).Select(x => x.Folio).ToList();
-            //var cheqsDet = CheqsDet1.Where(x => foliosAModificar.Contains(x.foliodet.Value)).OrderBy(x => x.foliodet.Value).ThenBy(x => x.movimiento.Value).ToList();
-
-            //foreach (var detalle in cheqsDet)
-            //{
-            //    if (folio != detalle.foliodet.Value)
-            //    {
-            //        folio = detalle.foliodet.Value;
-            //        movimiento = 1;
-            //    }
-
-            //    detalle.movimiento = movimiento;
-            //    movimiento++;
-            //}
-
-            //return cheqsDet;
-            return null;
         }
 
         public void InicializarControles()
@@ -717,7 +850,20 @@ namespace mod_add.ViewModels
                             tipoPago = TipoPago.MULTIPLE;
                         }
 
-                        cheques.Add(Funciones.ParseCheque(cheque, tipoPago));
+                        TipoAccion tipoAccion = (
+                            cheque.total.Value >= ImporteMinimoAjustable &&
+                                (
+                                    tipoPago == TipoPago.EFECTIVO ||
+                                    (IncluirCuentaPagadaTarjeta ? tipoPago == TipoPago.TARJETA : false) ||
+                                    (IncluirCuentaPagadaVales ? tipoPago == TipoPago.VALES : false) ||
+                                    (IncluirCuentaPagadaOtros ? tipoPago == TipoPago.OTROS : false)
+                                ) &&
+                                (IncluirCuentaFacturada ? true : !cheque.facturado.Value) &&
+                                (IncluirCuentaNotaConsumo ? true : cheque.folionotadeconsumo.Value == 0) &&
+                                (NoIncluirCuentasReimpresas ? cheque.impresiones.Value == 1 : true)
+                            ) ? TipoAccion.NINGUNO : TipoAccion.MANTENER;
+
+                        cheques.Add(Funciones.ParseCheque(cheque, tipoAccion, tipoPago));
                     }
 
                     foreach (var chequepago in respuesta.Chequespagos)
@@ -727,13 +873,14 @@ namespace mod_add.ViewModels
 
                     foreach (var det in respuesta.Cheqdet)
                     {
+                        var cheque = cheques.Find(x => x.folio == det.foliodet.Value);
                         TipoClasificacion tipoClasificacion = ObtenerClasificacionProductoSR(det.idproducto);
-                        chequesDetalle.Add(Funciones.ParseChequeDetalle(det, tipoClasificacion));
+                        chequesDetalle.Add(Funciones.ParseChequeDetalle(det, cheque.TipoAccion, tipoClasificacion));
                     }
 
-                    context.Cheques.AddRange(cheques);
-                    context.ChequesDetalle.AddRange(chequesDetalle);
                     context.ChequesPago.AddRange(chequesPago);
+                    context.ChequesDetalle.AddRange(chequesDetalle);
+                    context.Cheques.AddRange(cheques);
                     context.SaveChanges();
                 }
                 catch (Exception ex)
@@ -824,7 +971,16 @@ namespace mod_add.ViewModels
         private TimeSpan CorteInicio { get; set; }
         private TimeSpan CorteCierre { get; set; }
 
-        public Proceso Proceso { get; set; }
+        private string headerAccion;
+        public string HeaderAccion
+        {
+            get { return headerAccion; }
+            set
+            {
+                headerAccion = value;
+                OnPropertyChanged(nameof(HeaderAccion));
+            }
+        }
 
         private List<Proceso> _Procesos;
         public List<Proceso> Procesos
@@ -834,6 +990,17 @@ namespace mod_add.ViewModels
             {
                 _Procesos = value;
                 OnPropertyChanged(nameof(Procesos));
+            }
+        }
+
+        private Proceso _Proceso;
+        public Proceso Proceso
+        {
+            get { return _Proceso; }
+            set
+            {
+                _Proceso = value;
+                OnPropertyChanged(nameof(Proceso));
             }
         }
 

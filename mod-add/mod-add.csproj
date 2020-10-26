@@ -119,7 +119,6 @@
     </Compile>
     <Compile Include="Enums\TipoRespuesta.cs" />
     <Compile Include="Enums\RespuestaCheque.cs" />
-    <Compile Include="Enums\TipoProceso.cs" />
     <Compile Include="Helpers\Messenger.cs" />
     <Compile Include="Selectores\Condicional.cs" />
     <Compile Include="Selectores\Proceso.cs" />

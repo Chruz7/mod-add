@@ -3,7 +3,6 @@ using System;
 
 namespace mod_add.Datos.Modelos
 {
-    [Serializable()]
     public class DetalleAjuste
     {
         public long Folio { get; set; }
@@ -21,5 +20,7 @@ namespace mod_add.Datos.Modelos
         public decimal Vales { get; set; }
         public decimal Otros { get; set; }
         public bool RealizarAccion { get; set; }
+
+        public bool IsEnable { get; set; }
     }
 }

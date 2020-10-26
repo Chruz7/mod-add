@@ -60,6 +60,7 @@
     <Compile Include="Enums\TipoClasificacion.cs" />
     <Compile Include="Enums\TipoLogico.cs" />
     <Compile Include="Enums\TipoPago.cs" />
+    <Compile Include="Enums\TipoProceso.cs" />
     <Compile Include="Implementaciones\BitacoraServicio.cs" />
     <Compile Include="Implementaciones\ConfiguracionServicio.cs" />
     <Compile Include="Implementaciones\ProductoEliminarServicio.cs" />

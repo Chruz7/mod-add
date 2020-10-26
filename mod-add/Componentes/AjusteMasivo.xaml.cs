@@ -1,4 +1,5 @@
-﻿using mod_add.Enums;
+﻿using mod_add.Datos.Enums;
+using mod_add.Enums;
 using mod_add.Selectores;
 using mod_add.ViewModels;
 using mod_add.Vistas;
@@ -121,8 +122,6 @@ namespace mod_add.Componentes
             }, System.Threading.CancellationToken.None, TaskContinuationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());
         }
 
-        
-
         private void Cancelar_Click(object sender, RoutedEventArgs e)
         {
             //HabilitarControles(false);
@@ -158,6 +157,7 @@ namespace mod_add.Componentes
             Periodo.IsEnabled = habilitar;
             FechaInicio.IsEnabled = habilitar;
             FechaCierre.IsEnabled = habilitar;
+            Procesos.IsEnabled = habilitar;
             ImporteMinimoAjustable.IsEnabled = habilitar;
             PorcentajeObjetivo.IsEnabled = habilitar;
             ImporteObjetivo.IsEnabled = habilitar;
@@ -187,7 +187,6 @@ namespace mod_add.Componentes
             FechaInicio.DisplayDateEnd = ViewModel.FechaCierre;
         }
 
-
         private void PorcentajeObjetivo_ValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
             
@@ -207,7 +206,13 @@ namespace mod_add.Componentes
 
         private void Procesos_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-
+            if (!(sender is ComboBox comboBox)) return;
+            if (!(comboBox.SelectedItem is Proceso proceso)) return;
+            //ViewModel.Proceso = proceso;
+            if (proceso.TipoProceso == TipoProceso.FOLIOS)
+                DetalleModificacionCheques.Columns[13].Header = "Eliminar";
+            else if (proceso.TipoProceso == TipoProceso.PRODUCTOS)
+                DetalleModificacionCheques.Columns[13].Header = "Modificar";
         }
     }
 }

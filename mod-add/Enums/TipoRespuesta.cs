@@ -5,6 +5,8 @@
         NADA,
         ERROR,
         HECHO,
+        SI,
+        NO,
         REGISTRO_NO_ENCONTRADO,
         SIN_REGISTROS,
         CHEQUE_CON_MULTIPLE_FORMA_PAGO,

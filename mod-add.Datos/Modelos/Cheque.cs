@@ -10,6 +10,7 @@ namespace mod_add.Datos.Modelos
         public int Id { get; set; }
         public TipoAccion TipoAccion { get; set; }
         public TipoPago TipoPago { get; set; }
+        public long FolioAnterior { get; set; }
         public decimal TotalArticulosAnterior { get; set; }
         public decimal TotalArticulosEliminados { get; set; }
         public decimal TotalArticulosCambiados { get; set; }

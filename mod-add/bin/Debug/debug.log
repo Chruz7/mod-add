@@ -1,158 +1,70 @@
 INICIO-PROCESO-AJUSTE-MASIVO
-INICIO-ELIMINACION
 movimiento: 1
 folio: 28324, movimiento: 1.00, producto: 11010, precio: 115.00, cantidad: 1.00
 productos principales restantes de la cuenta: 4.00
 productos minimos por cuenta: 1
-Pasó el fitro de productos minimos
 Eliminar: 1.00
 ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 31760.5000
 folio: 28325, movimiento: 1.00, producto: 02013, precio: 43.00, cantidad: 1.00
 productos principales restantes de la cuenta: 9.00
 productos minimos por cuenta: 1
-Pasó el fitro de productos minimos
 Eliminar: 1.00
 ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 31717.5000
-folio: 28326, movimiento: 1.00, producto: 19001, precio: 145.00, cantidad: 1.00
-productos principales restantes de la cuenta: 1.00
-productos minimos por cuenta: 1
-Cantidad mínima alcanzada
 folio: 28327, movimiento: 1.00, producto: 027007, precio: 20.00, cantidad: 2.00
 productos principales restantes de la cuenta: 7.00
 productos minimos por cuenta: 1
-Pasó el fitro de productos minimos
 Eliminar: 1
 ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 31697.5000
 folio: 28328, movimiento: 1.00, producto: 02008, precio: 38.00, cantidad: 1.00
 productos principales restantes de la cuenta: 14.00
 productos minimos por cuenta: 1
-Pasó el fitro de productos minimos
 Eliminar: 1.00
 ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 31659.5000
 folio: 28329, movimiento: 1.00, producto: 02013, precio: 43.00, cantidad: 1.00
 productos principales restantes de la cuenta: 13.00
 productos minimos por cuenta: 1
-Pasó el fitro de productos minimos
 Eliminar: 1.00
 ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 31616.5000
-folio: 28330, movimiento: 1.00, producto: 02013, precio: 43.00, cantidad: 1.00
-productos principales restantes de la cuenta: 6.00
-productos minimos por cuenta: 1
-Pasó el fitro de productos minimos
-Eliminar: 1.00
-ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 31573.5000
-folio: 28331, movimiento: 1.00, producto: 12026, precio: 285.00, cantidad: 2.00
-productos principales restantes de la cuenta: 3.00
-productos minimos por cuenta: 1
-Pasó el fitro de productos minimos
-Eliminar: 1
-ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 31288.5000
-folio: 28332, movimiento: 1.00, producto: 02007, precio: 41.00, cantidad: 1.00
-productos principales restantes de la cuenta: 43.00
-productos minimos por cuenta: 1
-Pasó el fitro de productos minimos
-Eliminar: 1.00
-ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 31247.5000
-folio: 28333, movimiento: 1.00, producto: 02021, precio: 38.00, cantidad: 1.00
-productos principales restantes de la cuenta: 17.00
-productos minimos por cuenta: 1
-Pasó el fitro de productos minimos
-Eliminar: 1.00
-ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 31209.5000
-folio: 28334, movimiento: 1.00, producto: 12021, precio: 335.00, cantidad: 1.00
-productos principales restantes de la cuenta: 1.00
-productos minimos por cuenta: 1
-Cantidad mínima alcanzada
 folio: 28335, movimiento: 1.00, producto: 02030, precio: 32.00, cantidad: 1.00
 productos principales restantes de la cuenta: 3.00
 productos minimos por cuenta: 1
-Pasó el fitro de productos minimos
 Eliminar: 1.00
-ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 31177.5000
+ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 31584.5000
 folio: 28336, movimiento: 1.00, producto: 0616006, precio: 85.00, cantidad: 2.00
 productos principales restantes de la cuenta: 6.00
 productos minimos por cuenta: 1
-Pasó el fitro de productos minimos
 Eliminar: 1
 Eliminar modificadores con idproductocompuesto: _5VK0VZ0J9. 
 INICIO-ELIMINACION-MODIFICADORES
 folio: 28336, movimiento: 2.00, producto: 03014, precio: 0.00, cantidad: 1.00
 Elimniar: 1.00
 FIN-ELIMINACION-MODIFICADORES
-ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 31092.5000
-folio: 28338, movimiento: 1.00, producto: 02013, precio: 43.00, cantidad: 2.00
-productos principales restantes de la cuenta: 8.00
-productos minimos por cuenta: 1
-Pasó el fitro de productos minimos
-Eliminar: 1
-ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 31049.5000
-folio: 28339, movimiento: 1.00, producto: 02020, precio: 42.00, cantidad: 1.00
-productos principales restantes de la cuenta: 16.00
-productos minimos por cuenta: 1
-Pasó el fitro de productos minimos
-Eliminar: 1.00
-ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 31007.5000
+ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 31499.5000
 folio: 28340, movimiento: 1.00, producto: 13001, precio: 235.00, cantidad: 1.00
 productos principales restantes de la cuenta: 7.00
 productos minimos por cuenta: 1
-Pasó el fitro de productos minimos
 Eliminar: 1.00
-ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 30772.5000
-folio: 28341, movimiento: 1.00, producto: 07040, precio: 42.50, cantidad: 1.00
-productos principales restantes de la cuenta: 66.00
-productos minimos por cuenta: 1
-Pasó el fitro de productos minimos
-Eliminar: 1.00
-ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 30730.0000
-folio: 28342, movimiento: 1.00, producto: 02013, precio: 43.00, cantidad: 2.00
-productos principales restantes de la cuenta: 30.00
-productos minimos por cuenta: 1
-Pasó el fitro de productos minimos
-Eliminar: 1
-ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 30687.0000
+ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 31264.5000
 folio: 28343, movimiento: 1.00, producto: 0616006, precio: 85.00, cantidad: 1.00
 productos principales restantes de la cuenta: 6.00
 productos minimos por cuenta: 1
-Pasó el fitro de productos minimos
 Eliminar: 1.00
 Eliminar modificadores con idproductocompuesto: _5VK0XFCPU. TODO
 INICIO-ELIMINACION-MODIFICADORES
 folio: 28343, movimiento: 2.00, producto: 03019, precio: 0.00, cantidad: 1.00
 Elimniar: 1.00
 FIN-ELIMINACION-MODIFICADORES
-ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 30602.0000
-folio: 28344, movimiento: 1.00, producto: 0616006, precio: 85.00, cantidad: 1.00
-productos principales restantes de la cuenta: 9.00
-productos minimos por cuenta: 1
-Pasó el fitro de productos minimos
-Eliminar: 1.00
-Eliminar modificadores con idproductocompuesto: _5VK0XR9FT. TODO
-INICIO-ELIMINACION-MODIFICADORES
-FIN-ELIMINACION-MODIFICADORES
-ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 30517.0000
+ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 31179.5000
 folio: 28345, movimiento: 1.00, producto: 1112035, precio: 165.00, cantidad: 1.00
 productos principales restantes de la cuenta: 3.00
 productos minimos por cuenta: 1
-Pasó el fitro de productos minimos
 Eliminar: 1.00
-ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 30352.0000
-folio: 28346, movimiento: 1.00, producto: 0616006, precio: 85.00, cantidad: 2.00
-productos principales restantes de la cuenta: 7.00
-productos minimos por cuenta: 1
-Pasó el fitro de productos minimos
-Eliminar: 1
-Eliminar modificadores con idproductocompuesto: _5VK0Y9N1E. 
-INICIO-ELIMINACION-MODIFICADORES
-folio: 28346, movimiento: 2.00, producto: 03019, precio: 0.00, cantidad: 1.00
-Elimniar: 1.00
-FIN-ELIMINACION-MODIFICADORES
-ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 30267.0000
+ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 31014.5000
 folio: 28347, movimiento: 1.00, producto: 02021, precio: 38.00, cantidad: 1.00
 productos principales restantes de la cuenta: 8.00
 productos minimos por cuenta: 1
-Pasó el fitro de productos minimos
 Eliminar: 1.00
-ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 30229.0000
+ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 30976.5000
 folio: 28348, movimiento: 1.00, producto: 12025, precio: 345.00, cantidad: 1.00
 productos principales restantes de la cuenta: 1.00
 productos minimos por cuenta: 1
@@ -160,9 +72,8 @@ Cantidad mínima alcanzada
 folio: 28349, movimiento: 1.00, producto: 02007, precio: 41.00, cantidad: 1.00
 productos principales restantes de la cuenta: 6.00
 productos minimos por cuenta: 1
-Pasó el fitro de productos minimos
 Eliminar: 1.00
-ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 30188.0000
+ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 30935.5000
 folio: 28350, movimiento: 1.00, producto: 12021, precio: 335.00, cantidad: 1.00
 productos principales restantes de la cuenta: 1.00
 productos minimos por cuenta: 1
@@ -170,7 +81,6 @@ Cantidad mínima alcanzada
 folio: 28351, movimiento: 1.00, producto: 0616006, precio: 85.00, cantidad: 2.00
 productos principales restantes de la cuenta: 5.00
 productos minimos por cuenta: 1
-Pasó el fitro de productos minimos
 Eliminar: 1
 Eliminar modificadores con idproductocompuesto: _5VK11BG9R. 
 INICIO-ELIMINACION-MODIFICADORES
@@ -179,37 +89,22 @@ Elimniar: 1.00
 folio: 28351, movimiento: 3.00, producto: 03015, precio: 0.00, cantidad: 1.00
 Elimniar: 1.00
 FIN-ELIMINACION-MODIFICADORES
-ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 30103.0000
+ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 30850.5000
 folio: 28352, movimiento: 1.00, producto: 02007, precio: 41.00, cantidad: 1.00
 productos principales restantes de la cuenta: 4.00
 productos minimos por cuenta: 1
-Pasó el fitro de productos minimos
 Eliminar: 1.00
-ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 30103.0000
+ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 30850.5000
 folio: 28353, movimiento: 1.00, producto: 02020, precio: 42.00, cantidad: 1.00
 productos principales restantes de la cuenta: 5.00
 productos minimos por cuenta: 1
-Pasó el fitro de productos minimos
 Eliminar: 1.00
-ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 30061.0000
-folio: 28354, movimiento: 1.00, producto: 02007, precio: 41.00, cantidad: 1.00
-productos principales restantes de la cuenta: 19.00
-productos minimos por cuenta: 1
-Pasó el fitro de productos minimos
-Eliminar: 1.00
-ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 30020.0000
-folio: 28355, movimiento: 1.00, producto: 02030, precio: 32.00, cantidad: 2.00
-productos principales restantes de la cuenta: 7.00
-productos minimos por cuenta: 1
-Pasó el fitro de productos minimos
-Eliminar: 1
-ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 29988.0000
+ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 30808.5000
 folio: 28356, movimiento: 1.00, producto: 02010, precio: 41.00, cantidad: 1.00
 productos principales restantes de la cuenta: 3.00
 productos minimos por cuenta: 1
-Pasó el fitro de productos minimos
 Eliminar: 1.00
-ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 29988.0000
+ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 30808.5000
 folio: 28357, movimiento: 1.00, producto: 01001, precio: 37.00, cantidad: 1.00
 productos principales restantes de la cuenta: 1.00
 productos minimos por cuenta: 1
@@ -222,154 +117,128 @@ movimiento: 2
 folio: 28324, movimiento: 2.00, producto: 11010, precio: 115.00, cantidad: 1.00
 productos principales restantes de la cuenta: 3.00
 productos minimos por cuenta: 1
-Pasó el fitro de productos minimos
 Eliminar: 1.00
-ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 29873.0000
+ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 30693.5000
 folio: 28325, movimiento: 2.00, producto: 07024, precio: 70.00, cantidad: 1.00
 productos principales restantes de la cuenta: 8.00
 productos minimos por cuenta: 1
-Pasó el fitro de productos minimos
 Eliminar: 1.00
-ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 29803.0000
+ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 30623.5000
 folio: 28327, movimiento: 2.00, producto: 02032, precio: 89.00, cantidad: 1.00
 productos principales restantes de la cuenta: 6.00
 productos minimos por cuenta: 1
-Pasó el fitro de productos minimos
 Eliminar: 1.00
-ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 29714.0000
+ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 30534.5000
 folio: 28328, movimiento: 2.00, producto: 02007, precio: 41.00, cantidad: 1.00
 productos principales restantes de la cuenta: 13.00
 productos minimos por cuenta: 1
-Pasó el fitro de productos minimos
 Eliminar: 1.00
-ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 29673.0000
+ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 30493.5000
 folio: 28329, movimiento: 2.00, producto: 02015, precio: 43.00, cantidad: 1.00
 productos principales restantes de la cuenta: 12.00
 productos minimos por cuenta: 1
-Pasó el fitro de productos minimos
 Eliminar: 1.00
-ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 29630.0000
-folio: 28330, movimiento: 2.00, producto: 02025, precio: 16.00, cantidad: 1.00
-productos principales restantes de la cuenta: 5.00
-productos minimos por cuenta: 1
-Pasó el fitro de productos minimos
-Eliminar: 1.00
-ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 29614.0000
-folio: 28331, movimiento: 2.00, producto: 1222008, precio: 110.00, cantidad: 1.00
-productos principales restantes de la cuenta: 2.00
-productos minimos por cuenta: 1
-Pasó el fitro de productos minimos
-Eliminar: 1.00
-ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 29504.0000
-folio: 28332, movimiento: 2.00, producto: 02030, precio: 32.00, cantidad: 1.00
-productos principales restantes de la cuenta: 42.00
-productos minimos por cuenta: 1
-Pasó el fitro de productos minimos
-Eliminar: 1.00
-ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 29472.0000
-folio: 28333, movimiento: 2.00, producto: 02021, precio: 38.00, cantidad: 1.00
-productos principales restantes de la cuenta: 16.00
-productos minimos por cuenta: 1
-Pasó el fitro de productos minimos
-Eliminar: 1.00
-ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 29434.0000
+ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 30450.5000
 folio: 28335, movimiento: 2.00, producto: 02013, precio: 43.00, cantidad: 1.00
 productos principales restantes de la cuenta: 2.00
 productos minimos por cuenta: 1
-Pasó el fitro de productos minimos
 Eliminar: 1.00
-ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 29391.0000
-folio: 28338, movimiento: 2.00, producto: 02030, precio: 32.00, cantidad: 1.00
-productos principales restantes de la cuenta: 7.00
-productos minimos por cuenta: 1
-Pasó el fitro de productos minimos
-Eliminar: 1.00
-ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 29359.0000
-folio: 28339, movimiento: 2.00, producto: 06009, precio: 28.00, cantidad: 1.00
-productos principales restantes de la cuenta: 15.00
-productos minimos por cuenta: 1
-Pasó el fitro de productos minimos
-Eliminar: 1.00
-ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 29331.0000
+ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 30407.5000
 folio: 28340, movimiento: 2.00, producto: 02007, precio: 41.00, cantidad: 2.00
 productos principales restantes de la cuenta: 6.00
 productos minimos por cuenta: 1
-Pasó el fitro de productos minimos
 Eliminar: 1
-ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 29290.0000
-folio: 28341, movimiento: 2.00, producto: 07040, precio: 42.50, cantidad: 1.00
-productos principales restantes de la cuenta: 65.00
-productos minimos por cuenta: 1
-Pasó el fitro de productos minimos
-Eliminar: 1.00
-ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 29247.5000
-folio: 28342, movimiento: 2.00, producto: 027007, precio: 20.00, cantidad: 2.00
-productos principales restantes de la cuenta: 29.00
-productos minimos por cuenta: 1
-Pasó el fitro de productos minimos
-Eliminar: 1
-ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 29227.5000
-folio: 28344, movimiento: 2.00, producto: 02013, precio: 43.00, cantidad: 1.00
-productos principales restantes de la cuenta: 8.00
-productos minimos por cuenta: 1
-Pasó el fitro de productos minimos
-Eliminar: 1.00
-ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 29184.5000
+ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 30366.5000
 folio: 28345, movimiento: 2.00, producto: 13007, precio: 255.00, cantidad: 1.00
 productos principales restantes de la cuenta: 2.00
 productos minimos por cuenta: 1
-Pasó el fitro de productos minimos
 Eliminar: 1.00
-ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 28929.5000
+ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 30111.5000
 folio: 28347, movimiento: 2.00, producto: 02030, precio: 32.00, cantidad: 1.00
 productos principales restantes de la cuenta: 7.00
 productos minimos por cuenta: 1
-Pasó el fitro de productos minimos
 Eliminar: 1.00
-ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 28897.5000
+ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 30079.5000
 folio: 28349, movimiento: 2.00, producto: 02013, precio: 43.00, cantidad: 1.00
 productos principales restantes de la cuenta: 5.00
 productos minimos por cuenta: 1
-Pasó el fitro de productos minimos
 Eliminar: 1.00
-ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 28854.5000
+ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 30036.5000
 folio: 28352, movimiento: 2.00, producto: 02007, precio: 41.00, cantidad: 1.00
 productos principales restantes de la cuenta: 3.00
 productos minimos por cuenta: 1
-Pasó el fitro de productos minimos
 Eliminar: 1.00
-ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 28854.5000
+ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 30036.5000
 folio: 28353, movimiento: 2.00, producto: 02020, precio: 42.00, cantidad: 1.00
 productos principales restantes de la cuenta: 4.00
 productos minimos por cuenta: 1
-Pasó el fitro de productos minimos
 Eliminar: 1.00
-ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 28812.5000
-folio: 28354, movimiento: 2.00, producto: 02021, precio: 38.00, cantidad: 1.00
-productos principales restantes de la cuenta: 18.00
-productos minimos por cuenta: 1
-Pasó el fitro de productos minimos
-Eliminar: 1.00
-ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 28774.5000
-folio: 28355, movimiento: 2.00, producto: 02015, precio: 43.00, cantidad: 1.00
-productos principales restantes de la cuenta: 6.00
-productos minimos por cuenta: 1
-Pasó el fitro de productos minimos
-Eliminar: 1.00
-ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 28731.5000
+ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 29994.5000
 folio: 28356, movimiento: 2.00, producto: 02010, precio: 41.00, cantidad: 1.00
 productos principales restantes de la cuenta: 2.00
 productos minimos por cuenta: 1
-Pasó el fitro de productos minimos
 Eliminar: 1.00
-ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 28731.5000
+ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 29994.5000
 movimiento: 3
 folio: 28324, movimiento: 3.00, producto: 11010, precio: 115.00, cantidad: 1.00
 productos principales restantes de la cuenta: 2.00
 productos minimos por cuenta: 1
-Pasó el fitro de productos minimos
 Eliminar: 1.00
-ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 28616.5000
+ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 29879.5000
+folio: 28325, movimiento: 3.00, producto: 12028, precio: 265.00, cantidad: 1.00
+productos principales restantes de la cuenta: 7.00
+productos minimos por cuenta: 1
+Eliminar: 1.00
+ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 29614.5000
+folio: 28327, movimiento: 3.00, producto: 12025, precio: 345.00, cantidad: 1.00
+productos principales restantes de la cuenta: 5.00
+productos minimos por cuenta: 1
+Eliminar: 1.00
+ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 29269.5000
+folio: 28328, movimiento: 3.00, producto: 02030, precio: 32.00, cantidad: 1.00
+productos principales restantes de la cuenta: 12.00
+productos minimos por cuenta: 1
+Eliminar: 1.00
+ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 29237.5000
+folio: 28329, movimiento: 3.00, producto: 02009, precio: 38.00, cantidad: 1.00
+productos principales restantes de la cuenta: 11.00
+productos minimos por cuenta: 1
+Eliminar: 1.00
+ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 29199.5000
+folio: 28335, movimiento: 3.00, producto: 02009, precio: 38.00, cantidad: 1.00
+productos principales restantes de la cuenta: 1.00
+productos minimos por cuenta: 1
+Cantidad mínima alcanzada
+folio: 28336, movimiento: 3.00, producto: 06009, precio: 28.00, cantidad: 1.00
+productos principales restantes de la cuenta: 5.00
+productos minimos por cuenta: 1
+Eliminar: 1.00
+ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 29171.5000
+folio: 28340, movimiento: 3.00, producto: 02013, precio: 43.00, cantidad: 1.00
+productos principales restantes de la cuenta: 5.00
+productos minimos por cuenta: 1
+Eliminar: 1.00
+ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 29128.5000
+folio: 28343, movimiento: 3.00, producto: 02013, precio: 43.00, cantidad: 1.00
+productos principales restantes de la cuenta: 5.00
+productos minimos por cuenta: 1
+Eliminar: 1.00
+ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 29085.5000
+folio: 28345, movimiento: 3.00, producto: 11016, precio: 130.00, cantidad: 1.00
+productos principales restantes de la cuenta: 1.00
+productos minimos por cuenta: 1
+Cantidad mínima alcanzada
+folio: 28347, movimiento: 3.00, producto: 07017, precio: 60.00, cantidad: 1.00
+productos principales restantes de la cuenta: 6.00
+productos minimos por cuenta: 1
+Eliminar: 1.00
+ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 29025.5000
+folio: 28349, movimiento: 3.00, producto: 12025, precio: 345.00, cantidad: 1.00
+productos principales restantes de la cuenta: 4.00
+productos minimos por cuenta: 1
+Eliminar: 1.00
+ImporteAnterior: 31875.5000, ImporteObjetivo: 28687.9500, ImporteNuevo: 28680.5000
+Objetivo alcanzado
 FIN-ELIMINACION
 FIN-ELIMINACION
 FIN-ELIMINACION
