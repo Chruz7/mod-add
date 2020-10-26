@@ -303,6 +303,14 @@ namespace mod_add.Componentes
             Total.IsEnabled = habilitar;
         }
 
+        private async void Descuento_ValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        {
+            await Task.Run(() =>
+            {
+                ViewModel.AjustarCheque();
+            });
+        }
+
         //private void Propina_PreviewTextInput(object sender, TextCompositionEventArgs e)
         //{
         //    var r = new Regex("[0-9]").IsMatch(e.Text);

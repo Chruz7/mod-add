@@ -13,6 +13,7 @@ using System.Collections.ObjectModel;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace mod_add.ViewModels
 {
@@ -223,6 +224,7 @@ namespace mod_add.ViewModels
 
         public void AjustarCheque()
         {
+            if (Cheque == null) return;
             //validado con folio 28312  y 28138
             //falta validar el redondeo
 

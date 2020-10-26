@@ -311,7 +311,8 @@
                 x:Name="Descuento"
                 Maximum="100"
                 Minimum="0"
-                Value="{Binding Descuento}"/>
+                Value="{Binding Descuento}"
+                ValueChanged="Descuento_ValueChanged"/>
             <Label
                 Grid.Row="0"
                 Grid.Column="4"

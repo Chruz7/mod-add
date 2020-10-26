@@ -1,0 +1,95 @@
+﻿<Window x:Class="mod_add.Vistas.LicenciaForm"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:mod_add.Vistas"
+        mc:Ignorable="d"
+        Title="Licencias"
+        WindowStartupLocation="CenterScreen"
+        Height="300"
+        Width="350">
+    <Grid>
+        <Grid Margin="10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="40"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="110"/>
+                <ColumnDefinition Width="110"/>
+            </Grid.ColumnDefinitions>
+            <!--<Label
+                Grid.Row="0"
+                Content="Licencias:"
+                Target="{Binding ElementName=Licencia}"/>-->
+            <TextBox
+                Grid.Row="0"
+                Grid.Column="0"
+                Grid.ColumnSpan="3"
+                VerticalContentAlignment="Top"
+                HorizontalContentAlignment="Left"
+                TextWrapping="Wrap"
+                AcceptsReturn="True"
+                HorizontalScrollBarVisibility="Disabled"
+                VerticalScrollBarVisibility="Auto"
+                x:Name="Licencia"
+                Text="{Binding Licencia, UpdateSourceTrigger=PropertyChanged}"/>
+
+            <Button
+                Grid.Row="3"
+                Grid.Column="1"
+                VerticalAlignment="Center"
+                HorizontalAlignment="Center"
+                Width="100"
+                x:Name="Cancelar"
+                Click="Cancelar_Click">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="30*"/>
+                        <ColumnDefinition Width="70*"/>
+                    </Grid.ColumnDefinitions>
+                    <Image
+                        Grid.Column="0"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
+                        Source="/mod-add;component/Recursos/Iconos/cancelar.png"/>
+                    <TextBlock
+                        Grid.Column="1"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
+                        FontWeight="Bold"
+                        Text="CANCELAR"/>
+                </Grid>
+            </Button>
+
+            <Button
+                Grid.Row="2"
+                Grid.Column="2"
+                VerticalAlignment="Center"
+                HorizontalAlignment="Right"
+                Width="100"
+                x:Name="Aceptar"
+                Click="Aceptar_Click">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="30*"/>
+                        <ColumnDefinition Width="70*"/>
+                    </Grid.ColumnDefinitions>
+                    <Image
+                        Grid.Column="0"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
+                        Source="/mod-add;component/Recursos/Iconos/aceptar.png"/>
+                    <TextBlock
+                        Grid.Column="1"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
+                        FontWeight="Bold"
+                        Text="ACEPTAR"/>
+                </Grid>
+            </Button>
+        </Grid>
+    </Grid>
+</Window>
