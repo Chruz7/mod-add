@@ -80,39 +80,42 @@ namespace mod_add.Componentes
 
         public void ProductoSeleccionado(SR_productos producto)
         {
-            switch (TagSeleccionado)
+            if (producto != null)
             {
-                case "P1":
-                    ViewModel.P1_Clave = producto.idproducto;
-                    ViewModel.P1_Nombre = producto.descripcion;
-                    ViewModel.P1_Precio = producto.Detalle.Display_precio;
-                    break;
+                switch (TagSeleccionado)
+                {
+                    case "P1":
+                        ViewModel.P1_Clave = producto.idproducto;
+                        ViewModel.P1_Nombre = producto.descripcion;
+                        ViewModel.P1_Precio = producto.Detalle.Display_precio;
+                        break;
 
-                case "P2":
-                    ViewModel.P2_Clave = producto.idproducto;
-                    ViewModel.P2_Nombre = producto.descripcion;
-                    ViewModel.P2_Precio = producto.Detalle.Display_precio;
-                    break;
+                    case "P2":
+                        ViewModel.P2_Clave = producto.idproducto;
+                        ViewModel.P2_Nombre = producto.descripcion;
+                        ViewModel.P2_Precio = producto.Detalle.Display_precio;
+                        break;
 
-                case "P3":
-                    ViewModel.P3_Clave = producto.idproducto;
-                    ViewModel.P3_Nombre = producto.descripcion;
-                    ViewModel.P3_Precio = producto.Detalle.Display_precio;
-                    break;
+                    case "P3":
+                        ViewModel.P3_Clave = producto.idproducto;
+                        ViewModel.P3_Nombre = producto.descripcion;
+                        ViewModel.P3_Precio = producto.Detalle.Display_precio;
+                        break;
 
-                case "P4":
-                    ViewModel.P4_Clave = producto.idproducto;
-                    ViewModel.P4_Nombre = producto.descripcion;
-                    ViewModel.P4_Precio = producto.Detalle.Display_precio;
-                    break;
+                    case "P4":
+                        ViewModel.P4_Clave = producto.idproducto;
+                        ViewModel.P4_Nombre = producto.descripcion;
+                        ViewModel.P4_Precio = producto.Detalle.Display_precio;
+                        break;
 
-                case "P5":
-                    ViewModel.P5_Clave = producto.idproducto;
-                    ViewModel.P5_Nombre = producto.descripcion;
-                    ViewModel.P5_Precio = producto.Detalle.Display_precio;
-                    break;
-                default:
-                    break;
+                    case "P5":
+                        ViewModel.P5_Clave = producto.idproducto;
+                        ViewModel.P5_Nombre = producto.descripcion;
+                        ViewModel.P5_Precio = producto.Detalle.Display_precio;
+                        break;
+                    default:
+                        break;
+                }
             }
 
             Messenger.Default.Unregister(this);

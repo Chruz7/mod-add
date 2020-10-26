@@ -61,7 +61,6 @@ C:\Users\Alber\source\repos\mod-add\mod-add.Datos\bin\Debug\pt-BR\Microsoft.Data
 C:\Users\Alber\source\repos\mod-add\mod-add.Datos\bin\Debug\ru\Microsoft.Data.SqlClient.resources.dll
 C:\Users\Alber\source\repos\mod-add\mod-add.Datos\bin\Debug\zh-Hans\Microsoft.Data.SqlClient.resources.dll
 C:\Users\Alber\source\repos\mod-add\mod-add.Datos\bin\Debug\zh-Hant\Microsoft.Data.SqlClient.resources.dll
-C:\Users\Alber\source\repos\mod-add\mod-add.Datos\obj\Debug\mod-add.Datos.csprojAssemblyReference.cache
 C:\Users\Alber\source\repos\mod-add\mod-add.Datos\obj\Debug\mod_add.Datos.Migrations.Inicio.resources
 C:\Users\Alber\source\repos\mod-add\mod-add.Datos\obj\Debug\mod-add.Datos.csproj.GenerateResource.cache
 C:\Users\Alber\source\repos\mod-add\mod-add.Datos\obj\Debug\mod-add.Datos.csproj.CoreCompileInputs.cache

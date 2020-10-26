@@ -9,7 +9,8 @@
         ResizeMode="CanMinimize"
         WindowStartupLocation="CenterScreen"
         Height="600"
-        Width="450">
+        Width="450" 
+        Closed="Window_Closed">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="20"/>

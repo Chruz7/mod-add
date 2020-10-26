@@ -10,11 +10,11 @@ none
 false
 DEBUG;TRACE
 C:\Users\Alber\source\repos\mod-add\mod-add\App.xaml
-13-826418240
+15-1511014139
 
-38-1413419504
+421180207136
 28-1580734840
-Componentes\AjusteMasivo.xaml;Componentes\AjusteUnico.xaml;Componentes\Bitacora.xaml;Componentes\Configuracion.xaml;MainWindow.xaml;Vistas\Autenticacion.xaml;Vistas\CambiarContrasena.xaml;Vistas\LoadingWindow.xaml;Vistas\Principal.xaml;Vistas\SeleccionGrupo.xaml;Vistas\SeleccionProducto.xaml;Vistas\SeleccionProductosEliminar.xaml;Vistas\Splash.xaml;
+Componentes\AjusteMasivo.xaml;Componentes\AjusteUnico.xaml;Componentes\Bitacora.xaml;Componentes\Configuracion.xaml;MainWindow.xaml;Vistas\Autenticacion.xaml;Vistas\CambiarContrasena.xaml;Vistas\LicenciaForm.xaml;Vistas\LoadingWindow.xaml;Vistas\Principal.xaml;Vistas\SeleccionClientes.xaml;Vistas\SeleccionGrupo.xaml;Vistas\SeleccionProducto.xaml;Vistas\SeleccionProductosEliminar.xaml;Vistas\Splash.xaml;
 
 False
 

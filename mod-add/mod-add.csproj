@@ -135,6 +135,8 @@
     <Compile Include="ViewModels\CambioContrasenaViewModel.cs" />
     <Compile Include="ViewModels\ConfiguracionViewModel.cs" />
     <Compile Include="ViewModels\EliminarProductosViewModel.cs" />
+    <Compile Include="ViewModels\LicenciaViewModel.cs" />
+    <Compile Include="ViewModels\SeleccionClienteViewModel.cs" />
     <Compile Include="ViewModels\SeleccionGrupoViewModel.cs" />
     <Compile Include="ViewModels\SeleccionProductoViewModel.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />
@@ -144,11 +146,17 @@
     <Compile Include="Vistas\CambiarContrasena.xaml.cs">
       <DependentUpon>CambiarContrasena.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Vistas\LicenciaForm.xaml.cs">
+      <DependentUpon>LicenciaForm.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Vistas\LoadingWindow.xaml.cs">
       <DependentUpon>LoadingWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Vistas\Principal.xaml.cs">
       <DependentUpon>Principal.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Vistas\SeleccionClientes.xaml.cs">
+      <DependentUpon>SeleccionClientes.xaml</DependentUpon>
     </Compile>
     <Compile Include="Vistas\SeleccionGrupo.xaml.cs">
       <DependentUpon>SeleccionGrupo.xaml</DependentUpon>
@@ -198,11 +206,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Vistas\LicenciaForm.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Vistas\LoadingWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Vistas\Principal.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Vistas\SeleccionClientes.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

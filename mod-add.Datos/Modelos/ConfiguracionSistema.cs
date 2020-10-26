@@ -11,5 +11,6 @@ namespace mod_add.Datos.Modelos
         public bool EliminarProductosSeleccionados { get; set; }
         public string Contrasena { get; set; }
         public string ContrasenaAdmin { get; set; }
+        public string Licencia { get; set; }
     }
 }

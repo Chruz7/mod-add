@@ -1,4 +1,5 @@
-﻿using mod_add.Datos.Contexto;
+﻿using DocumentFormat.OpenXml.Presentation;
+using mod_add.Datos.Contexto;
 using mod_add.Datos.Enums;
 using mod_add.Datos.Modelos;
 using mod_add.Enums;
@@ -134,6 +135,11 @@ namespace mod_add.ViewModels
 
         private void ProcesarFolios()
         {
+            EliminarFolios();
+            EnumerarFoliosRestantes();
+        }
+        public void EliminarFolios()
+        {
             TipoRespuesta ObjetivoAlcanzado = TipoRespuesta.NO;
             using (ApplicationDbContext context = new ApplicationDbContext())
             {
@@ -164,7 +170,7 @@ namespace mod_add.ViewModels
             }
         }
 
-        public void CambiarFolio()
+        public void EnumerarFoliosRestantes()
         {
             using (ApplicationDbContext context = new ApplicationDbContext())
             {
@@ -732,6 +738,208 @@ namespace mod_add.ViewModels
         {
             using (SoftRestaurantDBContext context = new SoftRestaurantDBContext())
             {
+                List<string> list = new List<string>
+                {
+                    "TipoAccion",
+                    "TipoPago",
+                    "FolioAnterior",
+                    "TotalArticulosAnterior",
+                    "TotalArticulosEliminados",
+                    "TotalArticulosCambiados",
+                    "folio",
+                        "seriefolio",
+                        "numcheque",
+                        "fecha",
+                        "salidarepartidor",
+                        "arriborepartidor",
+                        "cierre",
+                        "mesa",
+                        "nopersonas",
+                        "idmesero",
+                        "pagado",
+                        "cancelado",
+                        "impreso",
+                        "impresiones",
+                        "cambio",
+                        "descuento",
+                        "reabiertas",
+                        "razoncancelado",
+                        "orden",
+                        "facturado",
+                        "idcliente",
+                        "idarearestaurant",
+                        "idempresa",
+                        "tipodeservicio",
+                        "idturno",
+                        "usuariocancelo",
+                        "comentariodescuento",
+                        "estacion",
+                        "cambiorepartidor",
+                        "usuariodescuento",
+                        "fechacancelado",
+                        "idtipodescuento",
+                        "numerotarjeta",
+                        "folionotadeconsumo",
+                        "notadeconsumo",
+                        "propinapagada",
+                        "propinafoliomovtocaja",
+                        "puntosmonederogenerados",
+                        "propinaincluida",
+                        "tarjetadescuento",
+                        "porcentajefac",
+                        "usuariopago",
+                        "propinamanual",
+                        "observaciones",
+                        "idclientedomicilio",
+                        "iddireccion",
+                        "idclientefacturacion",
+                        "telefonousadodomicilio",
+                        "totalarticulos",
+                        "subtotal",
+                        "subtotalsinimpuestos",
+                        "total",
+                        "totalconpropina",
+                        "totalsinimpuestos",
+                        "totalsindescuentosinimpuesto",
+                        "totalimpuesto1",
+                        "totalalimentosconimpuestos",
+                        "totalbebidasconimpuestos",
+                        "totalotrosconimpuestos",
+                        "totalalimentossinimpuestos",
+                        "totalbebidassinimpuestos",
+                        "totalotrossinimpuestos",
+                        "totaldescuentossinimpuestos",
+                        "totaldescuentosconimpuestos",
+                        "totaldescuentoalimentosconimpuesto",
+                        "totaldescuentobebidasconimpuesto",
+                        "totaldescuentootrosconimpuesto",
+                        "totaldescuentoalimentossinimpuesto",
+                        "totaldescuentobebidassinimpuesto",
+                        "totaldescuentootrossinimpuesto",
+                        "totalcortesiassinimpuestos",
+                        "totalcortesiasconimpuestos",
+                        "totalcortesiaalimentosconimpuesto",
+                        "totalcortesiabebidasconimpuesto",
+                        "totalcortesiaotrosconimpuesto",
+                        "totalcortesiaalimentossinimpuesto",
+                        "totalcortesiabebidassinimpuesto",
+                        "totalcortesiaotrossinimpuesto",
+                        "totaldescuentoycortesiasinimpuesto",
+                        "totaldescuentoycortesiaconimpuesto",
+                        "cargo",
+                        "totalconcargo",
+                        "totalconpropinacargo",
+                        "descuentoimporte",
+                        "efectivo",
+                        "tarjeta",
+                        "vales",
+                        "otros",
+                        "propina",
+                        "propinatarjeta",
+                        "totalalimentossinimpuestossindescuentos",
+                        "totalbebidassinimpuestossindescuentos",
+                        "totalotrossinimpuestossindescuentos",
+                        "campoadicional1",
+                        "idreservacion",
+                        "idcomisionista",
+                        "importecomision",
+                        "comisionpagada",
+                        "fechapagocomision",
+                        "foliopagocomision",
+                        "tipoventarapida",
+                        "callcenter",
+                        "idordencompra",
+                        "totalsindescuento",
+                        "totalalimentos",
+                        "totalbebidas",
+                        "totalotros",
+                        "totaldescuentos",
+                        "totaldescuentoalimentos",
+                        "totaldescuentobebidas",
+                        "totaldescuentootros",
+                        "totalcortesias",
+                        "totalcortesiaalimentos",
+                        "totalcortesiabebidas",
+                        "totalcortesiaotros",
+                        "totaldescuentoycortesia",
+                        "totalalimentossindescuentos",
+                        "totalbebidassindescuentos",
+                        "totalotrossindescuentos",
+                        "descuentocriterio",
+                        "descuentomonedero",
+                        "idmenucomedor",
+                        "subtotalcondescuento",
+                        "comisionpax",
+                        "procesadointerfaz",
+                        "domicilioprogramado",
+                        "fechadomicilioprogramado",
+                        "enviado",
+                        "ncf",
+                        "numerocuenta",
+                        "codigo_unico_af",
+                        "estatushub",
+                        "idfoliohub",
+                        "EnviadoRW",
+                        "usuarioapertura",
+                        "titulartarjetamonedero",
+                        "saldoanteriormonedero",
+                        "autorizacionfolio",
+                        "fechalimiteemision",
+                        "totalimpuestod1",
+                        "totalimpuestod2",
+                        "totalimpuestod3",
+                        "idmotivocancela",
+                        "sistema_envio",
+                        "idformadepagoDescuento",
+                        "titulartarjetamonederodescuento",
+                        "foliotempcheques",
+                        "c_iddispositivo",
+                        "surveycode",
+                        "salerestaurantid",
+                        "timemarktoconfirmed",
+                        "timemarktodelivery",
+                        "timemarktodeliveryarrive",
+                        "esalestatus",
+                        "statusSR",
+                        "paymentreference",
+                        "deliverycharge",
+                        "comandaimpresa",
+                        "foodorder",
+                        "cashpaymentwith",
+                        "intentoEnvioAF",
+                        "paymentmethod_id",
+                        "TKC_Token",
+                        "TKC_Transaction",
+                        "TKC_Authorization",
+                        "TKC_Cupon",
+                        "TKC_ExpirationDate",
+                        "TKC_Recompensa",
+                        "campoadicional3",
+                        "estrateca_CardNumber",
+                        "estrateca_VoucherText",
+                        "campoadicional4",
+                        "campoadicional5",
+                        "sacoa_CardNumber",
+                        "sacoa_credits",
+                        "estrateca_TypeDisccount",
+                        "estrateca_DiscountCode",
+                        "estrateca_DiscountID",
+                        "estrateca_DiscountAmount",
+                        "desc_imp_original",
+                        "donativo",
+                        "totalcondonativo",
+                        "totalconpropinacargodonativo",
+                        "orderreference",
+                        "appname",
+                        "paymentproviderid",
+                        "paymentprovider",
+                        "ChangeStatusSRX",
+                };
+
+                var texto = string.Join(",", list);
+
+                Debug.WriteLine(texto);
+
                 try
                 {
                     if (Turno)
@@ -771,6 +979,11 @@ namespace mod_add.ViewModels
 
                     //if (NoIncluirCuentasReimpresas)
                     //    queryWhere += "impresiones = 1 AND ";
+
+                    //var che = context.Database.SqlQuery<Cheque>(@"SELECT 0 as TipoAccion, convert(int, (case WHEN fcp.totalChequespagos = 1 THEN (SELECT fp.tipo FROM chequespagos cp join formasdepago fp on cp.idformadepago = fp.idformadepago WHERE cp.folio = fcp.folio) ELSE 5.0 END)) as TipoPago, c.folio AS FolioAnterior,c.totalarticulos AS TotalArticulosAnterior, 0.0 AS TotalArticulosEliminados, 0.0 AS TotalArticulosCambiados,c.total AS TotalAnterior,c.* FROM cheques c join(SELECT folio, COUNT(*) as totalChequespagos FROM chequespagos group by folio) as fcp on c.folio = fcp.folio WHERE c.fecha BETWEEN @FechaInicio AND @FechaCierre",
+                    //    new SqlParameter("FechaInicio", FechaCorteInicio),
+                    //    new SqlParameter("FechaCierre", FechaCorteCierre)
+                    //    ).ToList();
 
                     queryWhere += "fecha BETWEEN @FechaInicio AND @FechaCierre";
 
@@ -941,6 +1154,7 @@ namespace mod_add.ViewModels
                         Vales = cheque.vales.Value,
                         Otros = cheque.otros.Value,
                         RealizarAccion = cheque.TipoAccion == TipoAccion.ACTUALIZAR || cheque.TipoAccion == TipoAccion.ELIMINAR,
+                        IsEnable = cheque.TipoAccion == TipoAccion.ACTUALIZAR || cheque.TipoAccion == TipoAccion.ELIMINAR,
                     });
                 }
             }

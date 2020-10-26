@@ -75,9 +75,9 @@
     <Compile Include="Interfaces\IConfiguracionServicio.cs" />
     <Compile Include="Interfaces\IProductoEliminarServicio.cs" />
     <Compile Include="Interfaces\IProductoReemplazoServicio.cs" />
-    <Compile Include="Migrations\202010242309346_Inicio.cs" />
-    <Compile Include="Migrations\202010242309346_Inicio.designer.cs">
-      <DependentUpon>202010242309346_Inicio.cs</DependentUpon>
+    <Compile Include="Migrations\202010261908323_Inicio.cs" />
+    <Compile Include="Migrations\202010261908323_Inicio.designer.cs">
+      <DependentUpon>202010261908323_Inicio.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="ModelosPersonalizados\GrupoSeleccion.cs" />
@@ -97,8 +97,8 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202010242309346_Inicio.resx">
-      <DependentUpon>202010242309346_Inicio.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202010261908323_Inicio.resx">
+      <DependentUpon>202010261908323_Inicio.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

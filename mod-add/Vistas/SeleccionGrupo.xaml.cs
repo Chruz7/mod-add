@@ -1,19 +1,9 @@
 ﻿using mod_add.Helpers;
 using mod_add.ViewModels;
 using SRLibrary.SR_DTO;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace mod_add.Vistas
 {
@@ -23,6 +13,7 @@ namespace mod_add.Vistas
     public partial class SeleccionGrupo : Window
     {
         private readonly SeleccionGrupoViewModel ViewModel;
+        private SR_grupos Grupo { get; set; }
         public SeleccionGrupo()
         {
             InitializeComponent();
@@ -36,7 +27,7 @@ namespace mod_add.Vistas
 
             if (!(dataGrid.CurrentItem is SR_grupos grupo)) return;
 
-            Messenger.Default.Send(grupo);
+            Grupo = grupo;
             Close();
         }
 
@@ -50,7 +41,13 @@ namespace mod_add.Vistas
 
         private void Cancelar_Click(object sender, RoutedEventArgs e)
         {
+            Grupo = null;
             Close();
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            Messenger.Default.Send(Grupo);
         }
     }
 }

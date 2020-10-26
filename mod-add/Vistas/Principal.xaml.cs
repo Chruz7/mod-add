@@ -1,17 +1,6 @@
 ﻿using mod_add.Componentes;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace mod_add.Vistas
 {
@@ -58,10 +47,7 @@ namespace mod_add.Vistas
             CargarComponente(Configuracion);
         }
 
-        private void Salir_Click(object sender, RoutedEventArgs e)
-        {
-            Close();
-        }
+        
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
@@ -71,16 +57,27 @@ namespace mod_add.Vistas
                 e.Cancel = true;
         }
 
-        public void CargarComponente(UserControl userControl)
-        {
-            Contenido.Children.Clear();
-            Contenido.Children.Add(userControl);
-        }
-
         private void AbrirCambioContrasena_Click(object sender, RoutedEventArgs e)
         {
             CambiarContrasena window = new CambiarContrasena();
             window.ShowDialog();
+        }
+
+        private void AbrirLicencia_Click(object sender, RoutedEventArgs e)
+        {
+            LicenciaForm window = new LicenciaForm();
+            window.ShowDialog();
+        }
+
+        private void Salir_Click(object sender, RoutedEventArgs e)
+        {
+            Close();
+        }
+
+        public void CargarComponente(UserControl userControl)
+        {
+            Contenido.Children.Clear();
+            Contenido.Children.Add(userControl);
         }
     }
 }

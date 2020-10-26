@@ -1,5 +1,4 @@
-﻿using mod_add.Datos.ModelosPersonalizados;
-using mod_add.Helpers;
+﻿using mod_add.Helpers;
 using mod_add.ViewModels;
 using SRLibrary.SR_DTO;
 using System.Windows;
@@ -14,6 +13,7 @@ namespace mod_add.Vistas
     public partial class SeleccionProducto : Window
     {
         private readonly SeleccionProductoViewModel ViewModel;
+        private SR_productos Producto { get; set; }
         public SeleccionProducto()
         {
             InitializeComponent();
@@ -22,9 +22,15 @@ namespace mod_add.Vistas
             DataContext = ViewModel;
         }
 
-        private void Cancelar_Click(object sender, RoutedEventArgs e)
+        private void Grupos_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            Close();
+            if (!(sender is ComboBox comboBox)) return;
+
+            if (!(comboBox.SelectedItem is SR_grupos grupo)) return;
+
+            var productos = grupo.Productos;
+
+            ViewModel.ObtenerProductosSR(productos);
         }
 
         private void Buscador_KeyUp(object sender, KeyEventArgs e)
@@ -41,20 +47,19 @@ namespace mod_add.Vistas
 
             if (!(dataGrid.CurrentItem is SR_productos producto)) return;
 
-            Messenger.Default.Send(producto);
-
+            Producto = producto;
             Close();
         }
 
-        private void Grupos_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void Cancelar_Click(object sender, RoutedEventArgs e)
         {
-            if (!(sender is ComboBox comboBox)) return;
+            Producto = null;
+            Close();
+        }
 
-            if (!(comboBox.SelectedItem is SR_grupos grupo)) return;
-
-            var productos = grupo.Productos;
-
-            ViewModel.ObtenerProductosSR(grupo.Productos);
+        private void Window_Closed(object sender, System.EventArgs e)
+        {
+            Messenger.Default.Send(Producto);
         }
     }
 }

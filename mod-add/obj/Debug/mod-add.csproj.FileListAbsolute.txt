@@ -94,8 +94,10 @@ C:\Users\Alber\source\repos\mod-add\mod-add\obj\Debug\Componentes\Configuracion.
 C:\Users\Alber\source\repos\mod-add\mod-add\obj\Debug\MainWindow.g.cs
 C:\Users\Alber\source\repos\mod-add\mod-add\obj\Debug\Vistas\Autenticacion.g.cs
 C:\Users\Alber\source\repos\mod-add\mod-add\obj\Debug\Vistas\CambiarContrasena.g.cs
+C:\Users\Alber\source\repos\mod-add\mod-add\obj\Debug\Vistas\LicenciaForm.g.cs
 C:\Users\Alber\source\repos\mod-add\mod-add\obj\Debug\Vistas\LoadingWindow.g.cs
 C:\Users\Alber\source\repos\mod-add\mod-add\obj\Debug\Vistas\Principal.g.cs
+C:\Users\Alber\source\repos\mod-add\mod-add\obj\Debug\Vistas\SeleccionClientes.g.cs
 C:\Users\Alber\source\repos\mod-add\mod-add\obj\Debug\Vistas\SeleccionGrupo.g.cs
 C:\Users\Alber\source\repos\mod-add\mod-add\obj\Debug\Vistas\SeleccionProducto.g.cs
 C:\Users\Alber\source\repos\mod-add\mod-add\obj\Debug\Vistas\SeleccionProductosEliminar.g.cs
@@ -111,8 +113,10 @@ C:\Users\Alber\source\repos\mod-add\mod-add\obj\Debug\Componentes\Configuracion.
 C:\Users\Alber\source\repos\mod-add\mod-add\obj\Debug\MainWindow.baml
 C:\Users\Alber\source\repos\mod-add\mod-add\obj\Debug\Vistas\Autenticacion.baml
 C:\Users\Alber\source\repos\mod-add\mod-add\obj\Debug\Vistas\CambiarContrasena.baml
+C:\Users\Alber\source\repos\mod-add\mod-add\obj\Debug\Vistas\LicenciaForm.baml
 C:\Users\Alber\source\repos\mod-add\mod-add\obj\Debug\Vistas\LoadingWindow.baml
 C:\Users\Alber\source\repos\mod-add\mod-add\obj\Debug\Vistas\Principal.baml
+C:\Users\Alber\source\repos\mod-add\mod-add\obj\Debug\Vistas\SeleccionClientes.baml
 C:\Users\Alber\source\repos\mod-add\mod-add\obj\Debug\Vistas\SeleccionGrupo.baml
 C:\Users\Alber\source\repos\mod-add\mod-add\obj\Debug\Vistas\SeleccionProducto.baml
 C:\Users\Alber\source\repos\mod-add\mod-add\obj\Debug\Vistas\SeleccionProductosEliminar.baml

@@ -28,6 +28,34 @@
 
         <Button
             Grid.Row="0"
+            Grid.Column="2"
+            VerticalAlignment="Center"
+            HorizontalAlignment="Center"
+            Width="100"
+            x:Name="AniadirCliente"
+            IsEnabledChanged="Button_IsEnabledChanged"
+            Click="AniadirCliente_Click">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="30*"/>
+                    <ColumnDefinition Width="70*"/>
+                </Grid.ColumnDefinitions>
+                <Image
+                    Grid.Column="0"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Center"
+                    Source="/mod-add;component/Recursos/Iconos/añadir.png"/>
+                <TextBlock
+                    Grid.Column="1"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Center"
+                    FontWeight="Bold"
+                    Text="CLIENTE"/>
+            </Grid>
+        </Button>
+
+        <Button
+            Grid.Row="0"
             Grid.Column="3"
             VerticalAlignment="Center"
             HorizontalAlignment="Center"
@@ -222,14 +250,15 @@
                 MaxLength="15"
                 Margin="5,0,5,0"
                 IsReadOnly="True"
-                x:Name="Cliente"
-                Text="{Binding Cliente}"/>
+                x:Name="ClaveCliente"
+                Text="{Binding ClaveCliente}"/>
             <TextBox
                 Grid.Row="1"
                 Grid.Column="6"
                 VerticalAlignment="Center"
                 Margin="5,0,5,0"
                 IsReadOnly="True"
+                x:Name="NombreCliente"
                 Text="{Binding NombreCliente}"/>
         </Grid>
         <Grid
@@ -264,8 +293,8 @@
                 Margin="5,0,5,0"
                 ItemsSource="{Binding Condicionales}"
                 DisplayMemberPath="Titulo"
-                x:Name="CambiarPrecios"
-                SelectionChanged="CambiarPrecios_SelectionChanged"/>
+                SelectedItem="{Binding Condicional}"
+                x:Name="CambiarPrecios"/>
 
             <Label
                 Grid.Row="0"

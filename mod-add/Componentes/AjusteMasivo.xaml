@@ -7,7 +7,7 @@
              xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"  
              mc:Ignorable="d" 
              d:DesignHeight="500"
-             d:DesignWidth="920">
+             d:DesignWidth="900">
     <Grid
         Background="#FFFFFF">
         <Grid.RowDefinitions>
@@ -333,8 +333,9 @@
             <Button
                 VerticalAlignment="Center"
                 HorizontalAlignment="Center"
-                Padding="25,10,25,10"
-                Content="Vista previa"
+                Padding="25,5,25,5"
+                Content="Vista&#xa;previa"
+                TextBlock.TextAlignment="Center"
                 x:Name="Procesar"
                 Click="Procesar_Click"/>
         </Grid>
@@ -419,7 +420,6 @@
                         Header="Otros"
                         Binding="{Binding Otros}"/>
                     <DataGridCheckBoxColumn
-                        IsReadOnly="True"
                         Header="Accion"
                         Binding="{Binding RealizarAccion}">
                     </DataGridCheckBoxColumn>

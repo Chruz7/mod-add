@@ -29,21 +29,21 @@ namespace mod_add.ViewModels
                 },
                 new Condicional
                 {
-                    Titulo = "No (Usar el precio del producto)",
+                    Titulo = "NO (Usar el precio del producto)",
                     Valor = false
                 }
             };
 
-            Inicializar();
+            InicializarControles();
         }
 
-        public void Inicializar()
+        public void InicializarControles()
         {
             Folio = 0;
             Fecha = new DateTime(2000, 1, 1);
             Personas = 0;
-            Cliente = "";
-            CambiarPrecio = false;
+            ClaveCliente = "";
+            Condicional = Condicionales.Find(x => !x.Valor);
             Descuento = 0;
             Propina = 0;
             Subtotal = 0;
@@ -95,7 +95,15 @@ namespace mod_add.ViewModels
             });
         }
 
-        public void Aniadir(SR_productos producto)
+        public void AniadirCliente(SR_clientes cliente)
+        {
+            Cheque.idcliente = cliente.idcliente;
+
+            ClaveCliente = cliente.idcliente;
+            NombreCliente = cliente.nombre;
+        }
+
+        public void AniadirProducto(SR_productos producto)
         {
             int ultimoMovimiento = (int)DetallesCheque.Max(x => x.movimiento);
 
@@ -157,11 +165,11 @@ namespace mod_add.ViewModels
             AjustarCheque();
         }
 
-        public void Eliminar(SR_cheqdet cheqdet)
+        public void EliminarProducto(SR_cheqdet cheqdet)
         {
-            int index = DetallesCheque.IndexOf(cheqdet);
+            //int index = DetallesCheque.IndexOf(cheqdet);
 
-            DetallesCheque.RemoveAt(index);
+            DetallesCheque.Remove(cheqdet);
 
             bool modificador = cheqdet.modificador ?? false;
 
@@ -174,7 +182,7 @@ namespace mod_add.ViewModels
             AjustarCheque();
         }
 
-        public void Cambiar(SR_cheqdet cheqdet, SR_productos producto)
+        public void CambiarProducto(SR_cheqdet cheqdet, SR_productos producto)
         {
             var detalleProductoCheque = cheqdet.Producto.Detalle;
             var detalleProducto = producto.Detalle;
@@ -188,7 +196,7 @@ namespace mod_add.ViewModels
                 DetallesCheque[index].cantidad = 1m;
             }
 
-            if (!CambiarPrecio)
+            if (!Condicional.Valor)
             {
                 DetallesCheque[index].precio = detalleProducto.precio;
                 DetallesCheque[index].impuesto1 = detalleProducto.impuesto1;
@@ -222,7 +230,7 @@ namespace mod_add.ViewModels
             Cheque.nopersonas = Personas;
             Cheque.propina = Propina;
             Cheque.descuento = Descuento;
-            Cheque.totalarticulos = DetallesCheque.Count;
+            Cheque.totalarticulos = DetallesCheque.Sum(x => x.cantidad.Value);
 
             decimal descuentoAplicado = (100m - Cheque.descuento.Value) / 100m;
             decimal descuento = Cheque.descuento.Value / 100m;
@@ -379,13 +387,14 @@ namespace mod_add.ViewModels
 
                     if (Cheque.fecha.HasValue) Fecha = Cheque.fecha.Value;
                     Personas = (int)Cheque.Nopersonas;
-                    Cliente = Cheque.idcliente;
+                    ClaveCliente = Cheque.idcliente;
                     Descuento = Cheque.descuento.Value;
                     Propina = Cheque.propina.Value;
-
                     Subtotal = Cheque.subtotal.Value;
                     Total = Cheque.total.Value;
                     ImporteAnterior = Total;
+
+                    ObtenerClienteSR();
 
                     return TipoRespuesta.HECHO;
                 }
@@ -396,11 +405,32 @@ namespace mod_add.ViewModels
                 }
             }
         }
-        private decimal ImporteAnterior { get; set; }
+
+        public void ObtenerClienteSR()
+        {
+            if (string.IsNullOrWhiteSpace(ClaveCliente)) return;
+
+            using (SoftRestaurantDBContext context = new SoftRestaurantDBContext())
+            {
+                try
+                {
+                    SR_clientes_DAO clientes_DAO = new SR_clientes_DAO(context);
+                    var cliente = clientes_DAO.Find(ClaveCliente);
+
+                    NombreCliente = cliente.nombre;
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"INICIO-ERROR\n{ex}\nFIN-ERROR");
+                }
+            }
+        }
+
         private SR_cheques Cheque { get; set; }
         private SR_formasdepago FormaPago { get; set; }
         private SR_chequespagos Chequepago { get; set; }
-        public SR_cheqdet UltimoCheqDet { get; set; }
+        private SR_cheqdet UltimoCheqDet { get; set; }
+        private decimal ImporteAnterior { get; set; }
 
         private ObservableCollection<SR_cheqdet> _DetallesCheque;
         public ObservableCollection<SR_cheqdet> DetallesCheque
@@ -423,9 +453,6 @@ namespace mod_add.ViewModels
                 OnPropertyChanged(nameof(Condicionales));
             }
         }
-
-        public bool CambiarPrecio { get; set; }
-
         private long _Folio;
         public long Folio
         {
@@ -448,6 +475,17 @@ namespace mod_add.ViewModels
             }
         }
 
+        private Condicional condicional;
+        public Condicional Condicional
+        {
+            get { return condicional; }
+            set
+            {
+                condicional = value;
+                OnPropertyChanged(nameof(Condicional));
+            }
+        }
+
         private int _Personas;
         public int Personas
         {
@@ -459,14 +497,25 @@ namespace mod_add.ViewModels
             }
         }
 
-        private string _Cliente;
-        public string Cliente
+        private string claveCliente;
+        public string ClaveCliente
         {
-            get { return _Cliente; }
+            get { return claveCliente; }
             set
             {
-                _Cliente = value;
-                OnPropertyChanged(nameof(Cliente));
+                claveCliente = value;
+                OnPropertyChanged(nameof(ClaveCliente));
+            }
+        }
+
+        private string nombreCliente;
+        public string NombreCliente
+        {
+            get { return nombreCliente; }
+            set
+            {
+                nombreCliente = value;
+                OnPropertyChanged(nameof(nombreCliente));
             }
         }
 

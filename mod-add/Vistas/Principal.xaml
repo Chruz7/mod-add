@@ -222,7 +222,8 @@
             Grid.Column="8"
             Margin="2"
             Padding="0"
-            x:Name="AbrirLicencia">
+            x:Name="AbrirLicencia"
+            Click="AbrirLicencia_Click">
             <Grid
                 Height="54">
                 <Grid.RowDefinitions>

@@ -1,12 +1,10 @@
 ﻿using mod_add.Enums;
 using mod_add.Helpers;
-using mod_add.Selectores;
 using mod_add.ViewModels;
 using mod_add.Vistas;
 using SR.Datos;
 using SRLibrary.SR_DTO;
 using System;
-using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
@@ -30,7 +28,7 @@ namespace mod_add.Componentes
 
             DataContext = ViewModel;
 
-            CambiarPrecios.SelectedItem = ViewModel.Condicionales.Where(x => x.Valor == ViewModel.CambiarPrecio).FirstOrDefault();
+            //CambiarPrecios.SelectedItem = ViewModel.Condicionales.Where(x => x.Valor == ViewModel.CambiarPrecio).FirstOrDefault();
 
             HabilitarComponentes(false);
         }
@@ -43,20 +41,11 @@ namespace mod_add.Componentes
             window.ShowDialog();
         }
 
-        private void ProductoSelecionado(SR_productos producto)
-        {
-            ViewModel.Aniadir(producto);
-
-            DetallesCheque.Items.Refresh();
-
-            Messenger.Default.Unregister(this);
-        }
-
         private void Eliminar_Click(object sender, RoutedEventArgs e)
         {
             if (!(DetallesCheque.SelectedItem is SR_cheqdet cheqdet)) return;
 
-            ViewModel.Eliminar(cheqdet);
+            ViewModel.EliminarProducto(cheqdet);
 
             DetallesCheque.Items.Refresh();
         }
@@ -98,21 +87,21 @@ namespace mod_add.Componentes
 
         private void Cancelar_Click(object sender, RoutedEventArgs e)
         {
-            ViewModel.Inicializar();
+            ViewModel.InicializarControles();
 
-            CambiarPrecios.SelectedItem = ViewModel.Condicionales.Where(x => x.Valor == ViewModel.CambiarPrecio).FirstOrDefault();
+            //CambiarPrecios.SelectedItem = ViewModel.Condicionales.Where(x => x.Valor == ViewModel.CambiarPrecio).FirstOrDefault();
 
             HabilitarComponentes(false);
         }
 
-        private void CambiarPrecios_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (!(sender is ComboBox comboBox)) return;
+        //private void CambiarPrecios_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        //{
+        //    if (!(sender is ComboBox comboBox)) return;
 
-            if (!(comboBox.SelectedItem is Condicional condicional)) return;
+        //    if (!(comboBox.SelectedItem is Condicional condicional)) return;
 
-            ViewModel.CambiarPrecio = condicional.Valor;
-        }
+        //    ViewModel.CambiarPrecio = condicional.Valor;
+        //}
 
         private void Folio_KeyUp(object sender, KeyEventArgs e)
         {
@@ -174,18 +163,6 @@ namespace mod_add.Componentes
                 e.Handled = true;
         }
         
-
-        public void ProductoCambio(SR_productos producto)
-        {
-            if (!(DetallesCheque.CurrentItem is SR_cheqdet cheqdet)) return;
-
-            ViewModel.Cambiar(cheqdet, producto);
-
-            DetallesCheque.Items.Refresh();
-
-            Messenger.Default.Unregister(this);
-        }
-
         private void DetallesCheque_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             if (!(DetallesCheque.CurrentColumn is DataGridColumn dataGridColumn)) return;
@@ -206,34 +183,9 @@ namespace mod_add.Componentes
             }
         }
 
-        private void HabilitarComponentes(bool habilitar = true)
-        {
-            Aniadir.IsEnabled = habilitar;
-            Eliminar.IsEnabled = habilitar;
-            Aceptar.IsEnabled = habilitar;
-            Cancelar.IsEnabled = habilitar;
-
-            CambiarPrecios.IsEnabled = habilitar;
-            Fecha.IsEnabled = habilitar;
-            Personas.IsEnabled = habilitar;
-            Cliente.IsEnabled = habilitar;
-            Descuento.IsEnabled = habilitar;
-            Propina.IsEnabled = habilitar;
-            Subtotal.IsEnabled = habilitar;
-            Total.IsEnabled = habilitar;
-        }
-
         private void DetallesCheque_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
         {
             DetallesCheque.Dispatcher.BeginInvoke(new Action(() => RefrescarControles()), DispatcherPriority.Background);
-        }
-
-        public void RefrescarControles()
-        {
-            DetallesCheque.IsReadOnly = true;
-            ViewModel.AjustarCheque();
-            DetallesCheque.Items.Refresh();
-            DetallesCheque.IsReadOnly = false;
         }
 
         private void Button_IsEnabledChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -280,6 +232,75 @@ namespace mod_add.Componentes
                 ((TextBox)sender).CaretIndex = PreviousCaretIndex;
                 e.Handled = true;
             }
+        }
+
+        private void AniadirCliente_Click(object sender, RoutedEventArgs e)
+        {
+            Messenger.Default.Register<SR_clientes>(this, ClienteSeleccionado);
+
+            SeleccionClientes window = new SeleccionClientes();
+            window.ShowDialog();
+        }
+
+        public void ClienteSeleccionado(SR_clientes cliente)
+        {
+            if (cliente != null)
+                ViewModel.AniadirCliente(cliente);
+
+            Messenger.Default.Unregister(this);
+        }
+
+        public void ProductoCambio(SR_productos producto)
+        {
+            if (producto != null)
+            {
+                if (!(DetallesCheque.CurrentItem is SR_cheqdet cheqdet)) return;
+
+                ViewModel.CambiarProducto(cheqdet, producto);
+
+                DetallesCheque.Items.Refresh();
+            }
+
+            Messenger.Default.Unregister(this);
+        }
+
+        private void ProductoSelecionado(SR_productos producto)
+        {
+            if (producto != null)
+            {
+                ViewModel.AniadirProducto(producto);
+
+                DetallesCheque.Items.Refresh();
+            }
+
+            Messenger.Default.Unregister(this);
+        }
+
+        public void RefrescarControles()
+        {
+            DetallesCheque.IsReadOnly = true;
+            ViewModel.AjustarCheque();
+            DetallesCheque.Items.Refresh();
+            DetallesCheque.IsReadOnly = false;
+        }
+
+        private void HabilitarComponentes(bool habilitar = true)
+        {
+            AniadirCliente.IsEnabled = habilitar;
+            Aniadir.IsEnabled = habilitar;
+            Eliminar.IsEnabled = habilitar;
+            Aceptar.IsEnabled = habilitar;
+            Cancelar.IsEnabled = habilitar;
+
+            CambiarPrecios.IsEnabled = habilitar;
+            Fecha.IsEnabled = habilitar;
+            Personas.IsEnabled = habilitar;
+            ClaveCliente.IsEnabled = habilitar;
+            NombreCliente.IsEnabled = habilitar;
+            Descuento.IsEnabled = habilitar;
+            Propina.IsEnabled = habilitar;
+            Subtotal.IsEnabled = habilitar;
+            Total.IsEnabled = habilitar;
         }
 
         //private void Propina_PreviewTextInput(object sender, TextCompositionEventArgs e)

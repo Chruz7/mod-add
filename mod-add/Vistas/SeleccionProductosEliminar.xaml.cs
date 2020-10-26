@@ -31,15 +31,18 @@ namespace mod_add.Vistas
 
         public void GrupoSeleccionado(SR_grupos grupo)
         {
-            foreach (var productoElimnar in ViewModel.ProductosEliminar)
+            if (grupo != null)
             {
-                if (productoElimnar.Grupo == grupo.idgrupo)
+                foreach (var productoElimnar in ViewModel.ProductosEliminar)
                 {
-                    productoElimnar.Eliminar = true;
+                    if (productoElimnar.Grupo == grupo.idgrupo)
+                    {
+                        productoElimnar.Eliminar = true;
+                    }
                 }
-            }
 
-            ProductosEliminar.Items.Refresh();
+                ProductosEliminar.Items.Refresh();
+            }
 
             Messenger.Default.Unregister(this);
         }
