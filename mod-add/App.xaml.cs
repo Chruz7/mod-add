@@ -1,5 +1,6 @@
 ﻿using mod_add.Datos.Contexto;
 using mod_add.Datos.Modelos;
+using mod_add.Utils;
 using mod_add.Vistas;
 using SRLibrary.SR_Context;
 using SRLibrary.SR_DAO;
@@ -19,6 +20,7 @@ namespace mod_add
     public partial class App : Application
     {
         public static bool Admin { get; set; }
+        public static string ClaveEmpresa { get; set; }
         public static DateTime FechaMaxima { get; set; }
         public static ConfiguracionSistema ConfiguracionSistema { get; set; }
         public static List<ProductoReemplazo> ProductosReemplazo { get; set; }
@@ -33,6 +35,7 @@ namespace mod_add
             Debug.Listeners.Add(new TextWriterTraceListener(".\\debug.log"));
             Debug.AutoFlush = true;
 
+            bool sinErrores = true;
             Autenticacion autenticacion = new Autenticacion();
 
             Splash splash = new Splash();
@@ -43,8 +46,9 @@ namespace mod_add
                 try
                 {
                     Admin = false;
+                    ClaveEmpresa = ConfiguracionLocalServicio.ReadSetting("CLAVE-EMPRESA");
                     MidpointRounding = MidpointRounding.AwayFromZero;
-                    FechaMaxima = DateTime.Now;
+                    FechaMaxima = DateTime.Now.AddDays(-1);
 
                     using (ApplicationDbContext context = new ApplicationDbContext())
                     {
@@ -87,14 +91,18 @@ namespace mod_add
                 catch (Exception ex)
                 {
                     Debug.WriteLine($"INICIO-ERROR\n{ex}\nFIN-ERROR");
+                    sinErrores = false;
                 }
 
             }).ContinueWith(task =>
             {
                 splash.Close();
-                autenticacion.Show();
+
+                if (sinErrores)
+                    autenticacion.Show();
+                else
+                    autenticacion.Close();
             }, System.Threading.CancellationToken.None, TaskContinuationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());
-            //IrPrincipal();
         }
 
         public static void IrPrincipal()

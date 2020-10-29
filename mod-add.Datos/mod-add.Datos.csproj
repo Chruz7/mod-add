@@ -62,9 +62,13 @@
     <Compile Include="Enums\TipoPago.cs" />
     <Compile Include="Enums\TipoProceso.cs" />
     <Compile Include="Implementaciones\BitacoraServicio.cs" />
+    <Compile Include="Implementaciones\ChequeDetalleServicio.cs" />
+    <Compile Include="Implementaciones\ChequePagoServicio.cs" />
+    <Compile Include="Implementaciones\ChequeServicio.cs" />
     <Compile Include="Implementaciones\ConfiguracionServicio.cs" />
     <Compile Include="Implementaciones\ProductoEliminarServicio.cs" />
     <Compile Include="Implementaciones\ProductoReemplazoServicio.cs" />
+    <Compile Include="Implementaciones\TurnoServicio.cs" />
     <Compile Include="Infraestructura\DatabaseFactory.cs" />
     <Compile Include="Infraestructura\Disposable.cs" />
     <Compile Include="Infraestructura\IDatabaseFactory.cs" />
@@ -72,12 +76,16 @@
     <Compile Include="Infraestructura\Page.cs" />
     <Compile Include="Infraestructura\ServiceBase.cs" />
     <Compile Include="Interfaces\IBitacoraServicio.cs" />
+    <Compile Include="Interfaces\IChequeDetalleServicio.cs" />
+    <Compile Include="Interfaces\IChequePagoServicio.cs" />
+    <Compile Include="Interfaces\IChequeServicio.cs" />
     <Compile Include="Interfaces\IConfiguracionServicio.cs" />
     <Compile Include="Interfaces\IProductoEliminarServicio.cs" />
     <Compile Include="Interfaces\IProductoReemplazoServicio.cs" />
-    <Compile Include="Migrations\202010261908323_Inicio.cs" />
-    <Compile Include="Migrations\202010261908323_Inicio.designer.cs">
-      <DependentUpon>202010261908323_Inicio.cs</DependentUpon>
+    <Compile Include="Interfaces\ITurnoServicio.cs" />
+    <Compile Include="Migrations\202010290511372_Inicio.cs" />
+    <Compile Include="Migrations\202010290511372_Inicio.designer.cs">
+      <DependentUpon>202010290511372_Inicio.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="ModelosPersonalizados\GrupoSeleccion.cs" />
@@ -90,6 +98,7 @@
     <Compile Include="Modelos\ProductoEliminacion.cs" />
     <Compile Include="Modelos\ProductoReemplazo.cs" />
     <Compile Include="Modelos\BitacoraModificacion.cs" />
+    <Compile Include="Modelos\Turno.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -97,8 +106,8 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202010261908323_Inicio.resx">
-      <DependentUpon>202010261908323_Inicio.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202010290511372_Inicio.resx">
+      <DependentUpon>202010290511372_Inicio.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

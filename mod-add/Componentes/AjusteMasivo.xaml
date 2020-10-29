@@ -336,8 +336,8 @@
                 Padding="25,5,25,5"
                 Content="Vista&#xa;previa"
                 TextBlock.TextAlignment="Center"
-                x:Name="Procesar"
-                Click="Procesar_Click"/>
+                x:Name="GenerarVistaPrevia"
+                Click="GenerarVistaPrevia_Click"/>
         </Grid>
 
         <ScrollViewer

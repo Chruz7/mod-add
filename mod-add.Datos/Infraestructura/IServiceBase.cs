@@ -20,6 +20,7 @@ namespace mod_add.Datos.Infraestructura
         int Save();
         int Create(T entity);
         int Delete(int id);
+        int Count();
         int Count(Expression<Func<T, bool>> where);
     }
 }

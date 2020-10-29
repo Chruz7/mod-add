@@ -8,7 +8,9 @@ namespace mod_add.Datos.Modelos
     {
         public int Id { get; set; }
         public TipoAccion TipoAccion { get; set; }
-        public long FolioAnterior { get; set; }
+        public long FolioAnt { get; set; }
+        public decimal ImporteAnt { get; set; }
+        public decimal PropinaAnt { get; set; }
 
         public long folio { get; set; }
         public string idformadepago { get; set; }

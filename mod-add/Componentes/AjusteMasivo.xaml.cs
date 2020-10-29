@@ -25,7 +25,7 @@ namespace mod_add.Componentes
             Aplicar.IsEnabled = false;
             Cancelar.IsEnabled = false;
 
-            FechaInicio.DisplayDateEnd = DateTime.Today;
+            FechaInicio.DisplayDateEnd = App.FechaMaxima;
             FechaCierre.DisplayDateEnd = App.FechaMaxima;
 
             ViewModel = new AjusteMasivoViewModel();
@@ -38,7 +38,7 @@ namespace mod_add.Componentes
             ViewModel.InicializarControles();
         }
 
-        private void Procesar_Click(object sender, RoutedEventArgs e)
+        private void GenerarVistaPrevia_Click(object sender, RoutedEventArgs e)
         {
             App.HabilitarPrincipal(false);
 
@@ -61,7 +61,7 @@ namespace mod_add.Componentes
                     ViewModel.CrearRegistrosTemporales(respuesta);
 
                     loading.AgregarMensaje("Procesando información");
-                    ViewModel.ProcesarProductos();
+                    ViewModel.GenerarVistaPrevia();
                 }
 
             }).ContinueWith(task =>
@@ -99,7 +99,7 @@ namespace mod_add.Componentes
 
             Task.Factory.StartNew(() =>
             {
-                respuesta = ViewModel.GuardarCambios();
+                respuesta = ViewModel.Guardar();
 
                 if (respuesta == TipoRespuesta.HECHO)
                 {
@@ -126,7 +126,7 @@ namespace mod_add.Componentes
         {
             //HabilitarControles(false);
             ViewModel.InicializarControles();
-            Procesar.IsEnabled = false;
+            GenerarVistaPrevia.IsEnabled = false;
             Aplicar.IsEnabled = false;
             Cancelar.IsEnabled = false;
         }
@@ -166,7 +166,7 @@ namespace mod_add.Componentes
             CuentaPagadaOtros.IsEnabled = habilitar;
             CuentaFacturada.IsEnabled = habilitar;
             CuentaNotaConsumo.IsEnabled = habilitar;
-            Procesar.IsEnabled = habilitar;
+            GenerarVistaPrevia.IsEnabled = habilitar;
         }
 
         private void TextBlock_KeyDown(object sender, KeyEventArgs e)

@@ -55,11 +55,11 @@
                 ItemsSource="{Binding BitacoraModificaciones}"
                 Style="{DynamicResource DataGridStyle1}">
                 <DataGrid.Columns>
-                    <DataGridTextColumn
+                    <!--<DataGridTextColumn
                         Width="7*"
                         Header="Tipo&#xa;ajuste"
-                        Binding="{Binding TipoAjuste}"/>
-                    <DataGridTextColumn
+                        Binding="{Binding TipoAjuste}"/>-->
+                    <!--<DataGridTextColumn
                         Width="15*"
                         Header="Fecha de&#xa;proceso"
                         Binding="{Binding FechaProceso}"/>
@@ -90,7 +90,43 @@
                     <DataGridTextColumn
                         Width="10*"
                         Header="Diferencia&#xa;%"
-                        Binding="{Binding Diferencia}"/>
+                        Binding="{Binding Diferencia}"/>-->
+                    <DataGridTextColumn
+                        Width="15*"
+                        Header="Fecha de&#xa;proceso"
+                        Binding="{Binding fecha}"/>
+                    <DataGridTextColumn
+                        Width="15*"
+                        Header="Fecha inicial&#xa;(venta)"
+                        Binding="{Binding fechainicial}"/>
+                    <DataGridTextColumn
+                        Width="15*"
+                        Header="Fecha final&#xa;(venta)"
+                        Binding="{Binding fechafinal}"/>
+                    <DataGridTextColumn
+                        Width="8*"
+                        Header="Total&#xa;cuentas"
+                        Binding="{Binding cuentastotal}"/>
+                    <DataGridTextColumn
+                        Width="10*"
+                        Header="Cuentas&#xa;modificadas"
+                        Binding="{Binding cuentasmodificadas}"/>
+                    <DataGridTextColumn
+                        Width="10*"
+                        Header="Importe&#xa;anterior"
+                        Binding="{Binding importeanterior}"/>
+                    <DataGridTextColumn
+                        Width="10*"
+                        Header="Importe&#xa;nuevo"
+                        Binding="{Binding importenuevo}"/>
+                    <DataGridTextColumn
+                        Width="10*"
+                        Header="Diferencia&#xa;%"
+                        Binding="{Binding diferencia}"/>
+                    <DataGridTextColumn
+                        Width="10*"
+                        Header="Tipo de&#xa;eliminación"
+                        Binding="{Binding tipo}"/>
                 </DataGrid.Columns>
             </DataGrid>
         </Grid>

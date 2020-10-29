@@ -12,7 +12,17 @@ namespace mod_add.Datos.Modelos
         public TipoClasificacion TipoClasificacion { get; set; }
         public long FolioAnterior { get; set; }
         public bool Cambiado { get; set; }
-        public decimal CantidadAnterior { get; set; }
+
+        public decimal CantidadAnt { get; set; }
+        public string IdProductoAnt { get; set; }
+        public decimal PrecioAnt { get; set; }
+        public decimal Impuesto1Ant { get; set; }
+        public decimal Impuesto2Ant { get; set; }
+        public decimal Impuesto3Ant { get; set; }
+        public decimal PrecioSinImpuestosAnt { get; set; }
+        public decimal ImpuestoImporte3Ant { get; set; }
+        public decimal PrecioCatalogoAnt { get; set; }
+        public string IdProductoCompuestoAnt { get; set; }
 
         public long? foliodet { get; set; }
         public decimal? movimiento { get; set; }

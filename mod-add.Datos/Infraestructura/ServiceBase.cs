@@ -55,7 +55,7 @@ namespace mod_add.Datos.Infraestructura
 
         public IQueryable<T> GetMany(Expression<Func<T, bool>> @where)
         {
-            return dbset.Where(where);
+            return dbset.AsNoTracking().Where(where);
         }
 
         public IQueryable<T> GetAll()
@@ -138,9 +138,14 @@ namespace mod_add.Datos.Infraestructura
 
         }
 
-        public int Count(Expression<Func<T, bool>> where)
+        public int Count()
         {
-            return dbset.Where(where).Count();
+            return dbset.Count();
+        }
+
+        public int Count(Expression<Func<T, bool>> expression)
+        {
+            return dbset.Count(expression);
         }
 
         public void Dispose()

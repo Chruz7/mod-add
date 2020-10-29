@@ -1,6 +1,7 @@
 ﻿using mod_add.Datos.Enums;
 using System;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Data.Entity.Migrations.Model;
 
 namespace mod_add.Datos.Modelos
 {
@@ -10,11 +11,41 @@ namespace mod_add.Datos.Modelos
         public int Id { get; set; }
         public TipoAccion TipoAccion { get; set; }
         public TipoPago TipoPago { get; set; }
-        public long FolioAnterior { get; set; }
-        public decimal TotalArticulosAnterior { get; set; }
         public decimal TotalArticulosEliminados { get; set; }
-        public decimal TotalArticulosCambiados { get; set; }
-        public decimal TotalAnterior { get; set; }
+        public long FolioAnt { get; set; }
+        public decimal TotalArticulosAnt { get; set; }
+        public decimal SubtotalAnt { get; set; }
+        public decimal PropinaAnt { get; set; }
+        public decimal TotalAnt { get; set; }
+        public decimal TotalConPropinaAnt { get; set; }
+        public decimal TotalConCargoAnt { get; set; }
+        public decimal TotalConPropinaCargoAnt { get; set; }
+        public decimal DescuentoImporteAnt { get; set; }
+        public decimal EfectivoAnt { get; set; }
+        public decimal TarjetaAnt { get; set; }
+        public decimal PropinaTarjetaAnt { get; set; }
+        public decimal ValesAnt { get; set; }
+        public decimal OtrosAnt { get; set; }
+        public decimal TotalSinDescuentoAnt { get; set; }
+        public decimal TotalAlimentosAnt { get; set; }
+        public decimal TotalBebidasAnt { get; set; }
+        public decimal TotalOtrosAnt { get; set; }
+        public decimal TotalDescuentosAnt { get; set; }
+        public decimal TotalDescuentoAlimentosAnt { get; set; }
+        public decimal TotalDescuentoBebidasAnt { get; set; }
+        public decimal TotalDescuentoOtrosAnt { get; set; }
+        public decimal TotalDescuentoYCortesiaAnt { get; set; }
+        public decimal TotalAlimentosSinDescuentosAnt { get; set; }
+        public decimal TotalBebidasSinDescuentosAnt { get; set; }
+        public decimal TotalOtrosSinDescuentosAnt { get; set; }
+        public decimal SubtotalConDescuentoAnt { get; set; }
+        public decimal TotalImpuestoD1Ant { get; set; }
+        public decimal TotalImpuestoD2Ant { get; set; }
+        public decimal TotalImpuestoD3Ant { get; set; }
+        public decimal TotalImpuesto1Ant { get; set; }
+        public decimal Desc_Imp_OriginalAnt { get; set; }
+        public decimal CambioAnt { get; set; }
+        public decimal CambioRepartidorAnt { get; set; }
 
         public long folio { get; set; }
         public string seriefolio { get; set; }

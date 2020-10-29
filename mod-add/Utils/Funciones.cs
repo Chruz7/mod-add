@@ -36,11 +36,41 @@ namespace mod_add.Utils
             {
                 TipoAccion = tipoAccion,
                 TipoPago = tipoPago,
-                FolioAnterior = modelo.folio,
-                TotalArticulosAnterior = modelo.totalarticulos.Value,
+                FolioAnt = modelo.folio,
                 TotalArticulosEliminados = 0,
-                TotalArticulosCambiados = 0,
-                TotalAnterior = modelo.total.Value,
+                PropinaAnt = modelo.propina.Value,
+                PropinaTarjetaAnt = modelo.propinatarjeta.Value,
+                TotalArticulosAnt = modelo.totalarticulos.Value,
+                SubtotalAnt = modelo.subtotal.Value,
+                TotalAnt = modelo.total.Value,
+                TotalConPropinaAnt = modelo.totalconpropina.Value,
+                TotalConCargoAnt = modelo.totalconcargo.Value,
+                TotalConPropinaCargoAnt = modelo.totalconpropinacargo.Value,
+                DescuentoImporteAnt = modelo.descuentoimporte.Value,
+                EfectivoAnt = modelo.efectivo.Value,
+                TarjetaAnt = modelo.tarjeta.Value,
+                ValesAnt = modelo.vales.Value,
+                OtrosAnt = modelo.otros.Value,
+                TotalSinDescuentoAnt = modelo.totalsindescuento.Value,
+                TotalAlimentosAnt = modelo.totalalimentos.Value,
+                TotalBebidasAnt = modelo.totalbebidas.Value,
+                TotalOtrosAnt = modelo.totalotros.Value,
+                TotalDescuentosAnt = modelo.totaldescuentos.Value,
+                TotalDescuentoAlimentosAnt = modelo.totaldescuentoalimentos.Value,
+                TotalDescuentoBebidasAnt = modelo.totaldescuentobebidas.Value,
+                TotalDescuentoOtrosAnt = modelo.totaldescuentootros.Value,
+                TotalDescuentoYCortesiaAnt = modelo.totaldescuentoycortesia.Value,
+                TotalAlimentosSinDescuentosAnt = modelo.totalalimentossindescuentos.Value,
+                TotalBebidasSinDescuentosAnt = modelo.totalbebidassindescuentos.Value,
+                TotalOtrosSinDescuentosAnt = modelo.totalotrossindescuentos.Value,
+                SubtotalConDescuentoAnt = modelo.subtotalcondescuento.Value,
+                TotalImpuestoD1Ant = modelo.totalimpuestod1,
+                TotalImpuestoD2Ant = modelo.totalimpuestod2,
+                TotalImpuestoD3Ant = modelo.totalimpuestod3,
+                TotalImpuesto1Ant = modelo.totalimpuesto1.Value,
+                Desc_Imp_OriginalAnt = modelo.desc_imp_original.Value,
+                CambioAnt = modelo.cambio.Value,
+                CambioRepartidorAnt = modelo.cambiorepartidor.Value,
 
                 folio = modelo.folio,
                 seriefolio = modelo.seriefolio,
@@ -460,9 +490,18 @@ namespace mod_add.Utils
             {
                 TipoAccion = tipoAccion,
                 TipoClasificacion = tipoClasificacion,
-                FolioAnterior = modelo.foliodet.Value,
-                CantidadAnterior = modelo.cantidad.Value,
                 Cambiado = false,
+                FolioAnterior = modelo.foliodet.Value,
+                CantidadAnt = modelo.cantidad.Value,
+                IdProductoCompuestoAnt = modelo.idproductocompuesto,
+                IdProductoAnt = modelo.idproducto,
+                PrecioAnt = modelo.precio.Value,
+                Impuesto1Ant = modelo.impuesto1.Value,
+                Impuesto2Ant = modelo.impuesto2.Value,
+                Impuesto3Ant = modelo.impuesto3.Value,
+                PrecioSinImpuestosAnt = modelo.preciosinimpuestos.Value,
+                PrecioCatalogoAnt = modelo.preciocatalogo.Value,
+                ImpuestoImporte3Ant = modelo.impuestoimporte3.Value,
 
                 foliodet = modelo.foliodet,
                 movimiento = modelo.movimiento,
@@ -577,7 +616,9 @@ namespace mod_add.Utils
             return new ChequePago
             {
                 TipoAccion = TipoAccion.NINGUNO,
-                FolioAnterior = modelo.folio,
+                FolioAnt = modelo.folio,
+                ImporteAnt = modelo.importe.Value,
+                PropinaAnt = modelo.propina.Value,
 
                 folio = modelo.folio,
                 idformadepago = modelo.idformadepago,
@@ -604,6 +645,68 @@ namespace mod_add.Utils
                 idturno_cierre = modelo.idturno_cierre,
                 procesado = modelo.procesado,
                 sistema_envio = modelo.sistema_envio,
+            };
+        }
+
+        public static Turno ParseTurno(SR_turnos modelo, TipoAccion tipoAccion)
+        {
+            return new Turno
+            {
+                TipoAccion = tipoAccion,
+                EfectivoAnterior = modelo.efectivo.Value,
+                TarjetaAnterior = modelo.tarjeta.Value,
+                ValesAnterior = modelo.vales.Value,
+                CreditoAnterior = modelo.credito.Value,
+
+                idturnointerno = modelo.idturnointerno,
+                idturno = modelo.idturno,
+                fondo = modelo.fondo,
+                apertura = modelo.apertura,
+                cierre = modelo.cierre,
+                idestacion = modelo.idestacion,
+                cajero = modelo.cajero,
+                efectivo = modelo.efectivo,
+                tarjeta = modelo.tarjeta,
+                vales = modelo.vales,
+                credito = modelo.credito,
+                procesadoweb = modelo.procesadoweb,
+                idempresa = modelo.idempresa,
+                enviadoacentral = modelo.enviadoacentral,
+                fechaenviado = modelo.fechaenviado,
+                usuarioenvio = modelo.usuarioenvio,
+                offline = modelo.offline,
+                enviadoaf = modelo.enviadoaf,
+                corte_enviado = modelo.corte_enviado,
+                eliminartemporalesencierre = modelo.eliminartemporalesencierre,
+                idmesero = modelo.idmesero,
+            };
+        }
+
+        public static SR_turnos ParseSR_turnos(Turno modelo)
+        {
+            return new SR_turnos
+            {
+                idturnointerno = modelo.idturnointerno,
+                idturno = modelo.idturno,
+                fondo = modelo.fondo,
+                apertura = modelo.apertura,
+                cierre = modelo.cierre,
+                idestacion = modelo.idestacion,
+                cajero = modelo.cajero,
+                efectivo = modelo.efectivo,
+                tarjeta = modelo.tarjeta,
+                vales = modelo.vales,
+                credito = modelo.credito,
+                procesadoweb = modelo.procesadoweb,
+                idempresa = modelo.idempresa,
+                enviadoacentral = modelo.enviadoacentral,
+                fechaenviado = modelo.fechaenviado,
+                usuarioenvio = modelo.usuarioenvio,
+                offline = modelo.offline,
+                enviadoaf = modelo.enviadoaf,
+                corte_enviado = modelo.corte_enviado,
+                eliminartemporalesencierre = modelo.eliminartemporalesencierre,
+                idmesero = modelo.idmesero,
             };
         }
     }
