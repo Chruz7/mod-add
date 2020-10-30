@@ -165,11 +165,11 @@ namespace mod_add.ViewModels
                             new SqlParameter($"{nameof(idturno)}", idturno),
                             new SqlParameter($"{nameof(App.ClaveEmpresa)}", App.ClaveEmpresa)).Single();
 
-                        if (Proceso.TipoProceso == TipoProceso.FOLIOS)
-                        {
-                            EnumerarIdsTurnos(idturno + 1);
-                            EnumerarFoliosCheques(folio + 1);
-                        }
+                        //if (Proceso.TipoProceso == TipoProceso.FOLIOS)
+                        //{
+                        //    //EnumerarFoliosCheques(folio + 1, idturno + 1);
+                        //}
+                        EnumerarTurnosYFolios(idturno + 1, folio + 1);
 
                         Debug.WriteLine("Inicio de la transaccion");
 
@@ -621,7 +621,7 @@ namespace mod_add.ViewModels
             Debug.WriteLine("ELIMINACION-FOLIOS-FIN");
         }
 
-        public void EnumerarIdsTurnos(long idturno)
+        public void EnumerarTurnosYFolios(long idturno, long folio)
         {
             Debug.WriteLine("ENUMERCION-ID-TURNOS-INICIO");
             using (ApplicationDbContext context = new ApplicationDbContext())
@@ -631,18 +631,54 @@ namespace mod_add.ViewModels
                     //long folioMin = context.Cheques.Min(x => x.folio);
                     long idturnoActual = idturno;
                     long idturnoNuevo = idturno;
+                    long folioActual = folio;
+                    long folioNuevo = folio;
 
-                    var turnos = context.Turnos.OrderBy(x => x.idturnointerno).ToList();
+                    var turnos = context.Turnos
+                        .OrderBy(x => x.idturnointerno)
+                        .ToList();
 
                     foreach (var turno in turnos)
                     {
                         Debug.WriteLine($"idturno anterior: {turno.idturno}, idturno nuevo: {idturnoNuevo}");
-                        var cheques = context.Cheques.OrderBy(x => x.folio).ToList();
+                        var cheques = context.Cheques
+                            .Where(x => x.idturno.Value == (decimal)turno.idturno.Value)
+                            .OrderBy(x => x.folio)
+                            .ToList();
 
                         foreach (var cheque in cheques)
                         {
+                            Debug.WriteLine($"folio anterior: {cheque.FolioAnt}, folio nuevo: {folioNuevo}");
+
                             cheque.IdTurnoAnt = idturnoActual;
                             cheque.idturno = idturnoNuevo;
+
+                            var chequesDetalle = context.ChequesDetalle.Where(x => x.foliodet.Value == cheque.folio).ToList();
+
+                            foreach (var det in chequesDetalle)
+                            {
+                                det.FolioAnt = folioActual;
+                                det.foliodet = folioNuevo;
+                            }
+
+                            var chequesPago = context.ChequesPago.Where(x => x.folio == cheque.folio).ToList();
+
+                            foreach (var chequePago in chequesPago)
+                            {
+                                chequePago.FolioAnt = folioActual;
+                                chequePago.folio = folioNuevo;
+                            }
+
+                            cheque.FolioAnt = folioActual;
+                            cheque.folio = folioNuevo;
+
+                            context.SaveChanges();
+
+                            if (cheque.TipoAccion != TipoAccion.ELIMINAR)
+                            {
+                                folioNuevo++;
+                            }
+                            folioActual++;
                         }
 
                         turno.IdTurnoAnt = idturnoActual;
@@ -664,7 +700,8 @@ namespace mod_add.ViewModels
             }
             Debug.WriteLine("ENUMERCION-ID-TURNOS-FIN");
         }
-        public void EnumerarFoliosCheques(long folio)
+
+        public void EnumerarFoliosCheques(long folio, long idturno)
         {
             Debug.WriteLine("ENUMERCION-FOLIOS-INICIO");
             using (ApplicationDbContext context = new ApplicationDbContext())
