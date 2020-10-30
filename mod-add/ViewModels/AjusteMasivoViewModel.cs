@@ -13,6 +13,7 @@ using SRLibrary.SR_DTO;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data.Entity;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Linq;
@@ -112,183 +113,179 @@ namespace mod_add.ViewModels
             chequeDetalleServicio = new ChequeDetalleServicio(dbf);
             chequePagoServicio = new ChequePagoServicio(dbf);
 
-            DateTime fechaActual = DateTime.Now;
             using (SoftRestaurantDBContext context = new SoftRestaurantDBContext())
             {
-                try
+                using (DbContextTransaction transaction = context.Database.BeginTransaction())
                 {
-                    var query = "";
-                    //List<string> nombresParametros = new List<string>();
-                    //object[] parametros;
-                    //object[] valores;
-                    long folio = 0;
-                    long idturnointerno = 0;
-                    long idturno = 0;
-                    string tablaCheques;
-                    string tablaTurnos;
-
-                    SR_cheques_DAO cheques_DAO = new SR_cheques_DAO(context, !App.ConfiguracionSistema.ModificarVentasReales);
-                    SR_cheqdet_DAO cheqdet_DAO = new SR_cheqdet_DAO(context, !App.ConfiguracionSistema.ModificarVentasReales);
-                    SR_cheqdetfeliminados_DAO cheqdetfeliminados_DAO = new SR_cheqdetfeliminados_DAO(context);
-                    SR_chequespagos_DAO chequespagos_DAO = new SR_chequespagos_DAO(context, !App.ConfiguracionSistema.ModificarVentasReales);
-                    SR_turnos_DAO turnos_DAO = new SR_turnos_DAO(context, !App.ConfiguracionSistema.ModificarVentasReales);
-                    SR_bitacorafiscal_DAO bitacorafiscal_DAO = new SR_bitacorafiscal_DAO(context);
-
-                    if (App.ConfiguracionSistema.ModificarVentasReales)
+                    try
                     {
-                        //folioMin = chequeServicio.PrimerFolio();
-                        //idturnoMin = turnoServicio.Primeridturno();
-                        tablaCheques = "cheques";
-                        tablaTurnos = "turnos";
-                    }
-                    else
-                    {
-                        tablaCheques = "chequesf";
-                        tablaTurnos = "turnosf";
-                    }
+                        var query = "";
+                        //List<string> nombresParametros = new List<string>();
+                        //object[] parametros;
+                        //object[] valores;
+                        long folio = 0;
+                        long idturnointerno = 0;
+                        long idturno = 0;
+                        string tablaCheques;
+                        string tablaTurnos;
 
-                    query = $"SELECT CAST(ISNULL(MAX(idturnointerno), 0) AS bigint) AS idturnointerno FROM {tablaTurnos} WHERE apertura < @{nameof(FechaCorteInicio)} AND idempresa=@{nameof(App.ClaveEmpresa)}";
-                    idturnointerno = context.Database.SqlQuery<long>(query,
-                        new SqlParameter($"{nameof(FechaCorteInicio)}", FechaCorteInicio),
-                        new SqlParameter($"{nameof(App.ClaveEmpresa)}", App.ClaveEmpresa)).Single();
+                        SR_cheques_DAO cheques_DAO = new SR_cheques_DAO(context, !App.ConfiguracionSistema.ModificarVentasReales);
+                        SR_cheqdet_DAO cheqdet_DAO = new SR_cheqdet_DAO(context, !App.ConfiguracionSistema.ModificarVentasReales);
+                        SR_cheqdetfeliminados_DAO cheqdetfeliminados_DAO = new SR_cheqdetfeliminados_DAO(context);
+                        SR_chequespagos_DAO chequespagos_DAO = new SR_chequespagos_DAO(context, !App.ConfiguracionSistema.ModificarVentasReales);
+                        SR_turnos_DAO turnos_DAO = new SR_turnos_DAO(context, !App.ConfiguracionSistema.ModificarVentasReales);
+                        SR_bitacorafiscal_DAO bitacorafiscal_DAO = new SR_bitacorafiscal_DAO(context);
 
-                    query = $"SELECT CAST(ISNULL(MAX(idturno), 0) AS bigint) AS idturno FROM {tablaTurnos} WHERE apertura < @{nameof(FechaCorteInicio)} AND idempresa=@{nameof(App.ClaveEmpresa)}";
-                    idturno = context.Database.SqlQuery<long>(query,
-                        new SqlParameter($"{nameof(FechaCorteInicio)}", FechaCorteInicio),
-                        new SqlParameter($"{nameof(App.ClaveEmpresa)}", App.ClaveEmpresa)).Single();
+                        if (App.ConfiguracionSistema.ModificarVentasReales)
+                        {
+                            //folioMin = chequeServicio.PrimerFolio();
+                            //idturnoMin = turnoServicio.Primeridturno();
+                            tablaCheques = "cheques";
+                            tablaTurnos = "turnos";
+                        }
+                        else
+                        {
+                            tablaCheques = "chequesf";
+                            tablaTurnos = "turnosf";
+                        }
 
-                    query = $"SELECT CAST(ISNULL(MAX(folio), 0) AS bigint) AS folio FROM {tablaCheques} WHERE idturno <= @{nameof(idturno)} AND idempresa=@{nameof(App.ClaveEmpresa)}";
-                    folio = context.Database.SqlQuery<long>(query,
-                        new SqlParameter($"{nameof(idturno)}", idturno),
-                        new SqlParameter($"{nameof(App.ClaveEmpresa)}", App.ClaveEmpresa)).Single();
+                        query = $"SELECT CAST(ISNULL(MAX(idturnointerno), 0) AS bigint) AS idturnointerno FROM {tablaTurnos} WHERE apertura < @{nameof(FechaCorteInicio)} AND idempresa=@{nameof(App.ClaveEmpresa)}";
+                        idturnointerno = context.Database.SqlQuery<long>(query,
+                            new SqlParameter($"{nameof(FechaCorteInicio)}", FechaCorteInicio),
+                            new SqlParameter($"{nameof(App.ClaveEmpresa)}", App.ClaveEmpresa)).Single();
 
-                    if (Proceso.TipoProceso == TipoProceso.FOLIOS)
-                    {
-                        EnumerarIdsTurnos(idturno + 1);
-                        EnumerarFoliosCheques(folio + 1);
-                    }
+                        query = $"SELECT CAST(ISNULL(MAX(idturno), 0) AS bigint) AS idturno FROM {tablaTurnos} WHERE apertura < @{nameof(FechaCorteInicio)} AND idempresa=@{nameof(App.ClaveEmpresa)}";
+                        idturno = context.Database.SqlQuery<long>(query,
+                            new SqlParameter($"{nameof(FechaCorteInicio)}", FechaCorteInicio),
+                            new SqlParameter($"{nameof(App.ClaveEmpresa)}", App.ClaveEmpresa)).Single();
 
-                    Debug.WriteLine("Inicio de la transaccion");
-                    query = "set implicit_transactions on";
-                    context.Database.ExecuteSqlCommand(query);
+                        query = $"SELECT CAST(ISNULL(MAX(folio), 0) AS bigint) AS folio FROM {tablaCheques} WHERE idturno <= @{nameof(idturno)} AND idempresa=@{nameof(App.ClaveEmpresa)}";
+                        folio = context.Database.SqlQuery<long>(query,
+                            new SqlParameter($"{nameof(idturno)}", idturno),
+                            new SqlParameter($"{nameof(App.ClaveEmpresa)}", App.ClaveEmpresa)).Single();
 
-                    #region Eliminacion de registros
-                    Debug.WriteLine("Eliminando bitacora fiscal");
-                    query = $"(@{nameof(FechaCorteInicio)} BETWEEN fechainicial AND fechafinal) AND idempresa=@{nameof(App.ClaveEmpresa)}";
-                    bitacorafiscal_DAO.Delete(query,
-                        new SqlParameter($"{nameof(FechaCorteInicio)}", FechaCorteInicio),
-                        new SqlParameter($"{nameof(App.ClaveEmpresa)}", App.ClaveEmpresa));
+                        if (Proceso.TipoProceso == TipoProceso.FOLIOS)
+                        {
+                            EnumerarIdsTurnos(idturno + 1);
+                            EnumerarFoliosCheques(folio + 1);
+                        }
 
-                    //Debug.WriteLine("Obteniendo folios a eliminar");
-                    //valores = chequeServicio.ObtenerFolios();
-                    //Debug.WriteLine($"folios {string.Join(",", valores)}");
-                    //parametros = new object[valores.Length + 1];
-                    //parametros[0] = new SqlParameter($"{nameof(App.ClaveEmpresa)}", App.ClaveEmpresa);
-                    //nombresParametros.Clear();
+                        Debug.WriteLine("Inicio de la transaccion");
 
-                    //for (int i = 0; i < valores.Length; i++)
-                    //{
-                    //    string nombreParametro = $"p{i + 1}";
-                    //    nombresParametros.Add($"@{nombreParametro}");
-                    //    parametros[i + 1] = new SqlParameter(nombreParametro, valores[i]);
-                    //}
+                        #region Eliminacion de registros
+                        Debug.WriteLine("Eliminando bitacora fiscal");
+                        query = $"(@{nameof(FechaCorteInicio)} BETWEEN fechainicial AND fechafinal) AND idempresa=@{nameof(App.ClaveEmpresa)}";
+                        bitacorafiscal_DAO.Delete(query,
+                            new SqlParameter($"{nameof(FechaCorteInicio)}", FechaCorteInicio),
+                            new SqlParameter($"{nameof(App.ClaveEmpresa)}", App.ClaveEmpresa));
 
-                    Debug.WriteLine("Eliminando cheques pago");
-                    //query = $"folio IN ({string.Join(",", nombresParametros)})";
-                    //chequespagos_DAO.Delete(query, parametros);
-                    query = $"folio > @{nameof(folio)}";
-                    chequespagos_DAO.Delete(query, new SqlParameter($"{nameof(folio)}", folio));
+                        //Debug.WriteLine("Obteniendo folios a eliminar");
+                        //valores = chequeServicio.ObtenerFolios();
+                        //Debug.WriteLine($"folios {string.Join(",", valores)}");
+                        //parametros = new object[valores.Length + 1];
+                        //parametros[0] = new SqlParameter($"{nameof(App.ClaveEmpresa)}", App.ClaveEmpresa);
+                        //nombresParametros.Clear();
 
-                    Debug.WriteLine("Eliminando cheques detalle");
-                    //query = $"foliodet IN ({string.Join(",", nombresParametros)})";
-                    //cheqdet_DAO.Delete(query, parametros);
-                    query = $"foliodet > @{nameof(folio )}";
-                    cheqdet_DAO.Delete(query, new SqlParameter($"{nameof(folio)}", folio));
+                        //for (int i = 0; i < valores.Length; i++)
+                        //{
+                        //    string nombreParametro = $"p{i + 1}";
+                        //    nombresParametros.Add($"@{nombreParametro}");
+                        //    parametros[i + 1] = new SqlParameter(nombreParametro, valores[i]);
+                        //}
 
-                    if (!App.ConfiguracionSistema.ModificarVentasReales)
-                    {
-                        Debug.WriteLine("Eliminando cheques detalle fiscal eliminados");
+                        Debug.WriteLine("Eliminando cheques pago");
+                        //query = $"folio IN ({string.Join(",", nombresParametros)})";
+                        //chequespagos_DAO.Delete(query, parametros);
+                        query = $"folio > @{nameof(folio)}";
+                        chequespagos_DAO.Delete(query, new SqlParameter($"{nameof(folio)}", folio));
+
+                        Debug.WriteLine("Eliminando cheques detalle");
                         //query = $"foliodet IN ({string.Join(",", nombresParametros)})";
-                        //cheqdeteliminados_DAO.Delete(query, parametros);
+                        //cheqdet_DAO.Delete(query, parametros);
                         query = $"foliodet > @{nameof(folio)}";
-                        cheqdetfeliminados_DAO.Delete(query, new SqlParameter($"{nameof(folio)}", folio));
+                        cheqdet_DAO.Delete(query, new SqlParameter($"{nameof(folio)}", folio));
+
+                        if (!App.ConfiguracionSistema.ModificarVentasReales)
+                        {
+                            Debug.WriteLine("Eliminando cheques detalle fiscal eliminados");
+                            //query = $"foliodet IN ({string.Join(",", nombresParametros)})";
+                            //cheqdeteliminados_DAO.Delete(query, parametros);
+                            query = $"foliodet > @{nameof(folio)}";
+                            cheqdetfeliminados_DAO.Delete(query, new SqlParameter($"{nameof(folio)}", folio));
+                        }
+
+                        Debug.WriteLine("Eliminando cheques");
+                        //query = $"folio IN ({string.Join(",", nombresParametros)}) AND idempresa=@{nameof(App.ClaveEmpresa)}";
+                        //cheques_DAO.Delete(query, parametros);
+                        query = $"folio > @{nameof(folio)} AND idempresa=@{nameof(App.ClaveEmpresa)}";
+                        cheques_DAO.Delete(query,
+                            new SqlParameter($"{nameof(folio)}", folio),
+                            new SqlParameter($"{nameof(App.ClaveEmpresa)}", App.ClaveEmpresa));
+
+                        Debug.WriteLine("Eliminando turnos");
+                        query = $"idturnointerno > @{nameof(idturnointerno)} AND idempresa=@{nameof(App.ClaveEmpresa)}";
+                        turnos_DAO.Delete(query,
+                            new SqlParameter($"{nameof(idturnointerno)}", idturnointerno),
+                            new SqlParameter($"{nameof(App.ClaveEmpresa)}", App.ClaveEmpresa));
+
+                        Debug.WriteLine("Restablecer indices cheques");
+                        query = $"DBCC CHECKIDENT ({tablaCheques}, RESEED, @{nameof(folio)})";
+                        context.Database.ExecuteSqlCommand(query, new SqlParameter($"{nameof(folio)}", folio));
+
+                        Debug.WriteLine("Restablecer indices turnos");
+                        query = $"DBCC CHECKIDENT ({tablaTurnos}, RESEED, @{nameof(idturnointerno)})";
+                        context.Database.ExecuteSqlCommand(query, new SqlParameter($"{nameof(idturnointerno)}", idturnointerno));
+                        #endregion
+
+                        #region Creacion y actualizacion de registros
+                        Debug.WriteLine("Actualizando turnos");
+                        //ActualizarTurnosSR(turnos_DAO);
+                        RecrearTurnosSR(turnos_DAO);
+
+                        Debug.WriteLine("Recreando cheques");
+                        RecrearChequesSR(cheques_DAO);
+
+                        Debug.WriteLine("Recreando cheques detalle");
+                        RecrearChequesDetalleSR(cheqdet_DAO);
+
+                        Debug.WriteLine("Recreando cheques pago");
+                        RecrearChequesPagoSR(chequespagos_DAO);
+
+                        if (!App.ConfiguracionSistema.ModificarVentasReales)
+                        {
+                            Debug.WriteLine("Recreando cheques detalle eliminados");
+                            RecrearChequesDetalleEliminadosSR(cheqdetfeliminados_DAO);
+                        }
+
+                        Debug.WriteLine("Recreando registro de la bitacora fiscal");
+
+                        bitacorafiscal_DAO.Create(new SR_bitacorafiscal
+                        {
+                            fecha = DateTime.Now,
+                            fechainicial = FechaCorteInicio,
+                            fechafinal = FechaCorteCierre,
+                            cuentastotal = NumeroTotalCuentas,
+                            cuentasmodificadas = NumeroTotalCuentasModificadas,
+                            importeanterior = ImporteAnterior,
+                            importenuevo = ImporteNuevo,
+                            diferencia = PorcentajeDiferencia,
+                            tipo = Proceso.TipoProceso.ToString(),
+                            modificaventareal = App.ConfiguracionSistema.ModificarVentasReales,
+                            idempresa = App.ClaveEmpresa,
+                        });
+                        #endregion
+
+                        transaction.Commit();
+                        tipoRespuesta = TipoRespuesta.HECHO;
+                        Debug.WriteLine("Fin de la transaccion");
                     }
-
-                    Debug.WriteLine("Eliminando cheques");
-                    //query = $"folio IN ({string.Join(",", nombresParametros)}) AND idempresa=@{nameof(App.ClaveEmpresa)}";
-                    //cheques_DAO.Delete(query, parametros);
-                    query = $"folio > @{nameof(folio)} AND idempresa=@{nameof(App.ClaveEmpresa)}";
-                    cheques_DAO.Delete(query,
-                        new SqlParameter($"{nameof(folio)}", folio),
-                        new SqlParameter($"{nameof(App.ClaveEmpresa)}", App.ClaveEmpresa));
-
-                    Debug.WriteLine("Eliminando turnos");
-                    query = $"idturnointerno > @{nameof(idturnointerno)} AND idempresa=@{nameof(App.ClaveEmpresa)}";
-                    turnos_DAO.Delete(query, 
-                        new SqlParameter($"{nameof(idturnointerno)}", idturnointerno),
-                        new SqlParameter($"{nameof(App.ClaveEmpresa)}", App.ClaveEmpresa));
-
-                    Debug.WriteLine("Restablecer indices cheques");
-                    query = $"DBCC CHECKIDENT ({tablaCheques}, RESEED, @{nameof(folio)})";
-                    context.Database.ExecuteSqlCommand(query, new SqlParameter($"{nameof(folio)}", folio));
-
-                    Debug.WriteLine("Restablecer indices turnos");
-                    query = $"DBCC CHECKIDENT ({tablaTurnos}, RESEED, @{nameof(idturnointerno)})";
-                    context.Database.ExecuteSqlCommand(query, new SqlParameter($"{nameof(idturnointerno)}", idturnointerno));
-                    #endregion
-
-                    #region Creacion y actualizacion de registros
-                    Debug.WriteLine("Actualizando turnos");
-                    //ActualizarTurnosSR(turnos_DAO);
-                    RecrearTurnosSR(turnos_DAO);
-
-                    Debug.WriteLine("Recreando cheques");
-                    RecrearChequesSR(cheques_DAO);
-
-                    Debug.WriteLine("Recreando cheques detalle");
-                    RecrearChequesDetalleSR(cheqdet_DAO);
-
-                    Debug.WriteLine("Recreando cheques pago");
-                    RecrearChequesPagoSR(chequespagos_DAO);
-
-                    if (!App.ConfiguracionSistema.ModificarVentasReales)
+                    catch (Exception ex)
                     {
-                        Debug.WriteLine("Recreando cheques detalle eliminados");
-                        RecrearChequesDetalleEliminadosSR(cheqdetfeliminados_DAO);
+                        transaction.Rollback();
+                        Debug.WriteLine($"INICIO-ERROR\n{ex}\nFIN-ERROR");
+                        Debug.WriteLine("Transaccion interrumpida");
+                        tipoRespuesta = TipoRespuesta.ERROR;
                     }
-
-                    Debug.WriteLine("Recreando registro de la bitacora fiscal");
-                    decimal importeAnterior = chequeServicio.GetAll().Sum(x => x.TotalAnt);
-                    decimal importeNuevo = chequeServicio.GetAll().Sum(x => x.total.Value);
-
-                    bitacorafiscal_DAO.Create(new SR_bitacorafiscal
-                    {
-                        fecha = fechaActual,
-                        fechainicial = FechaCorteInicio,
-                        fechafinal = FechaCorteCierre,
-                        cuentastotal = chequeServicio.Count(),
-                        cuentasmodificadas = chequeServicio.Count(x => x.TipoAccion == TipoAccion.ACTUALIZAR || x.TipoAccion == TipoAccion.ELIMINAR),
-                        importeanterior = importeAnterior,
-                        importenuevo = importeNuevo,
-                        diferencia = (Math.Abs(importeAnterior - importeNuevo) / importeAnterior * 100),
-                        tipo = Proceso.TipoProceso.ToString(),
-                        modificaventareal = App.ConfiguracionSistema.ModificarVentasReales,
-                        idempresa = App.ClaveEmpresa,
-                    });
-                    #endregion
-
-                    context.Database.ExecuteSqlCommand("IF @@TRANCOUNT > 0 COMMIT TRAN");
-                    tipoRespuesta = TipoRespuesta.HECHO;
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine($"INICIO-ERROR\n{ex}\nFIN-ERROR");
-                    tipoRespuesta = TipoRespuesta.ERROR;
-                }
-                finally
-                {
-                    context.Database.ExecuteSqlCommand("set implicit_transactions off");
-                    Debug.WriteLine("Fin de la transaccion");
                 }
             }
 
@@ -442,22 +439,24 @@ namespace mod_add.ViewModels
             }
         }
 
-        public void ActualizarTurnosSR(SR_turnos_DAO turnos_DAO)
-        {
-            var turnos = turnoServicio
-                .GetMany(x => x.TipoAccion == TipoAccion.ACTUALIZAR)
-                .ToList();
+        //public void ActualizarTurnosSR(SR_turnos_DAO turnos_DAO)
+        //{
+        //    var turnos = turnoServicio
+        //        .GetMany(x => x.TipoAccion == TipoAccion.ACTUALIZAR)
+        //        .ToList();
 
-            foreach (var turno in turnos)
-            {
-                turnos_DAO.Update(Funciones.ParseSR_turnos(turno));
-            }
-        }
+        //    foreach (var turno in turnos)
+        //    {
+        //        turnos_DAO.Update(Funciones.ParseSR_turnos(turno));
+        //    }
+        //}
 
         public void RecrearTurnosSR(SR_turnos_DAO turnos_DAO)
         {
             var turnos = turnoServicio
-                .GetMany(x => x.TipoAccion != TipoAccion.ELIMINAR)
+                .GetMany(x => x.TipoAccion != TipoAccion.ELIMINAR &&
+                        (App.ConfiguracionSistema.ModificarVentasReales ? true : (x.TipoAccion != TipoAccion.OMITIR))
+                )
                 .ToList();
 
             foreach (var turno in turnos)
@@ -469,7 +468,9 @@ namespace mod_add.ViewModels
         public void RecrearChequesSR(SR_cheques_DAO cheques_DAO)
         {
             var cheques = chequeServicio
-                .GetMany(x => x.TipoAccion != TipoAccion.ELIMINAR)
+                .GetMany(x => x.TipoAccion != TipoAccion.ELIMINAR &&
+                        (App.ConfiguracionSistema.ModificarVentasReales ? true : (x.TipoAccion != TipoAccion.OMITIR))
+                )
                 .ToList();
 
             foreach (var cheque in cheques)
@@ -481,7 +482,9 @@ namespace mod_add.ViewModels
         public void RecrearChequesDetalleSR(SR_cheqdet_DAO cheqdet_DAO)
         {
             var chequesDetalle = chequeDetalleServicio
-                        .GetMany(x => x.TipoAccion != TipoAccion.ELIMINAR)
+                        .GetMany(x => x.TipoAccion != TipoAccion.ELIMINAR &&
+                                (App.ConfiguracionSistema.ModificarVentasReales ? true : (x.TipoAccion != TipoAccion.OMITIR))
+                        )
                         .ToList();
 
             foreach (var chequeDetalle in chequesDetalle)
@@ -492,7 +495,11 @@ namespace mod_add.ViewModels
 
         public void RecrearChequesDetalleEliminadosSR(SR_cheqdetfeliminados_DAO cheqdetfeliminados_DAO)
         {
-            var chequesDetalle = chequeDetalleServicio.GetMany(x => x.TipoAccion == TipoAccion.ELIMINAR).ToList();
+            var chequesDetalle = chequeDetalleServicio
+                .GetMany(x => x.TipoAccion == TipoAccion.ELIMINAR &&
+                        (App.ConfiguracionSistema.ModificarVentasReales ? true : (x.TipoAccion != TipoAccion.OMITIR))
+                )
+                .ToList();
 
             foreach(var chequeDetalle in chequesDetalle)
             {
@@ -510,7 +517,9 @@ namespace mod_add.ViewModels
         public void RecrearChequesPagoSR(SR_chequespagos_DAO chequespagos_DAO)
         {
             var chequesPago = chequePagoServicio
-                .GetMany(x => x.TipoAccion != TipoAccion.ELIMINAR)
+                .GetMany(x => x.TipoAccion != TipoAccion.ELIMINAR &&
+                        (App.ConfiguracionSistema.ModificarVentasReales ? true : (x.TipoAccion != TipoAccion.OMITIR))
+                )
                 .ToList();
 
             foreach(var chequePago in chequesPago)
