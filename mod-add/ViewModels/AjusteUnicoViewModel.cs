@@ -14,7 +14,6 @@ using System.Data.Entity;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace mod_add.ViewModels
 {
@@ -102,11 +101,12 @@ namespace mod_add.ViewModels
 
                         turnos_DAO.Update(turno);
 
-
+                        transaction.Commit();
                         return TipoRespuesta.HECHO;
                     }
                     catch (Exception ex)
                     {
+                        transaction.Rollback();
                         Debug.WriteLine($"INICIO-ERROR\n{ex}\nFIN-ERROR");
                         return TipoRespuesta.ERROR;
                     }
