@@ -1512,7 +1512,7 @@ namespace mod_add.ViewModels
             using (ApplicationDbContext context = new ApplicationDbContext())
             {
                 var cheques = context.Cheques.Where(x => x.TipoAccion != TipoAccion.OMITIR).ToList();
-                //var fondoTurnos = context.Turnos.Where(x => x.TipoAccion == TipoAccion.NINGUNO || x.TipoAccion == TipoAccion.ACTUALIZAR).Sum(x => x.fondo.Value);
+                var fondoTurnos = context.Turnos.Where(x => x.TipoAccion == TipoAccion.NINGUNO || x.TipoAccion == TipoAccion.ACTUALIZAR).Sum(x => x.fondo.Value);
 
                 NumeroTotalCuentasModificadas = cheques.Count(x => x.TipoAccion == TipoAccion.ACTUALIZAR || x.TipoAccion == TipoAccion.ELIMINAR);
                 Diferencia = ImporteAnterior - ImporteNuevo;
@@ -1520,7 +1520,7 @@ namespace mod_add.ViewModels
                 EfectivoNuevo = cheques
                     .Where(x => x.TipoAccion == TipoAccion.NINGUNO || x.TipoAccion == TipoAccion.MANTENER || x.TipoAccion == TipoAccion.ACTUALIZAR)
                     .Sum(x => x.efectivo.Value);
-                //EfectivoCaja = EfectivoNuevo + fondoTurnos;
+                EfectivoCaja = EfectivoNuevo + fondoTurnos;
 
                 foreach (var cheque in cheques)
                 {
