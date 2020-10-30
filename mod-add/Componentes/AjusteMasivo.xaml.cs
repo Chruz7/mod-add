@@ -73,6 +73,7 @@ namespace mod_add.Componentes
                 {
                     ViewModel.CargarResultados();
                     DetalleModificacionCheques.Items.Refresh();
+                    HabilitarControles(false);
                     Aplicar.IsEnabled = true;
                     Cancelar.IsEnabled = true;
                 }
@@ -101,11 +102,11 @@ namespace mod_add.Componentes
             {
                 respuesta = ViewModel.Guardar();
 
-                if (respuesta == TipoRespuesta.HECHO)
-                {
-                    loading.AgregarMensaje("Registrando bitácora");
-                    ViewModel.ResgistrarBitacora();
-                }
+                //if (respuesta == TipoRespuesta.HECHO)
+                //{
+                //    loading.AgregarMensaje("Registrando bitácora");
+                //    ViewModel.ResgistrarBitacora();
+                //}
             }).ContinueWith(task =>
             {
                 loading.Close();
@@ -124,7 +125,7 @@ namespace mod_add.Componentes
 
         private void Cancelar_Click(object sender, RoutedEventArgs e)
         {
-            //HabilitarControles(false);
+            ViewModel.EliminarRegistrosTemporales();
             ViewModel.InicializarControles();
             GenerarVistaPrevia.IsEnabled = false;
             Aplicar.IsEnabled = false;

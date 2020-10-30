@@ -1,14 +1,9 @@
-﻿using mod_add.Datos.Implementaciones;
-using mod_add.Datos.Infraestructura;
-using mod_add.Datos.Interfaces;
-using mod_add.Datos.Modelos;
-using mod_add.Enums;
+﻿using mod_add.Enums;
 using mod_add.Utils;
 using SRLibrary.SR_Context;
 using SRLibrary.SR_DAO;
 using SRLibrary.SR_DTO;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace mod_add.ViewModels
 {

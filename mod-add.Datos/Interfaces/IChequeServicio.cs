@@ -7,5 +7,7 @@ namespace mod_add.Datos.Interfaces
     public interface IChequeServicio : IServiceBase<Cheque>
     {
         object[] ObtenerFolios();
+
+        long PrimerFolio();
     }
 }

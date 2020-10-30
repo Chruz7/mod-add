@@ -83,8 +83,10 @@ namespace mod_add.Utils
                 sl.SetColumnStyle(3, styleColumn);
                 sl.SetColumnStyle(4, styleColumn);
                 sl.SetColumnStyle(5, styleColumn);
-                sl.SetColumnStyle(8, styleColumn);
                 sl.SetColumnStyle(9, styleColumn);
+
+                styleColumn.FormatCode = "#,##0.00";
+                sl.SetColumnStyle(8, styleColumn);
 
                 styleColumn2.FormatCode = "#,##0.0000";
                 sl.SetColumnStyle(6, styleColumn2);

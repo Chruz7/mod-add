@@ -10,9 +10,8 @@ namespace mod_add.Datos.Modelos
         public int Id { get; set; }
         public TipoAccion TipoAccion { get; set; }
         public TipoClasificacion TipoClasificacion { get; set; }
-        public long FolioAnterior { get; set; }
         public bool Cambiado { get; set; }
-
+        public long FolioAnt { get; set; }
         public decimal CantidadAnt { get; set; }
         public string IdProductoAnt { get; set; }
         public decimal PrecioAnt { get; set; }

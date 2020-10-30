@@ -36,8 +36,8 @@ namespace mod_add.Utils
             {
                 TipoAccion = tipoAccion,
                 TipoPago = tipoPago,
-                FolioAnt = modelo.folio,
                 TotalArticulosEliminados = 0,
+                FolioAnt = modelo.folio,
                 PropinaAnt = modelo.propina.Value,
                 PropinaTarjetaAnt = modelo.propinatarjeta.Value,
                 TotalArticulosAnt = modelo.totalarticulos.Value,
@@ -71,6 +71,7 @@ namespace mod_add.Utils
                 Desc_Imp_OriginalAnt = modelo.desc_imp_original.Value,
                 CambioAnt = modelo.cambio.Value,
                 CambioRepartidorAnt = modelo.cambiorepartidor.Value,
+                IdTurnoAnt = (long)modelo.Idturno.Value,
 
                 folio = modelo.folio,
                 seriefolio = modelo.seriefolio,
@@ -491,7 +492,7 @@ namespace mod_add.Utils
                 TipoAccion = tipoAccion,
                 TipoClasificacion = tipoClasificacion,
                 Cambiado = false,
-                FolioAnterior = modelo.foliodet.Value,
+                FolioAnt = modelo.foliodet.Value,
                 CantidadAnt = modelo.cantidad.Value,
                 IdProductoCompuestoAnt = modelo.idproductocompuesto,
                 IdProductoAnt = modelo.idproducto,
@@ -611,11 +612,11 @@ namespace mod_add.Utils
             };
         }
 
-        public static ChequePago ParseChequePago(SR_chequespagos modelo)
+        public static ChequePago ParseChequePago(SR_chequespagos modelo, TipoAccion tipoAccion = TipoAccion.NINGUNO)
         {
             return new ChequePago
             {
-                TipoAccion = TipoAccion.NINGUNO,
+                TipoAccion = tipoAccion,
                 FolioAnt = modelo.folio,
                 ImporteAnt = modelo.importe.Value,
                 PropinaAnt = modelo.propina.Value,
@@ -653,6 +654,7 @@ namespace mod_add.Utils
             return new Turno
             {
                 TipoAccion = tipoAccion,
+                IdTurnoAnt = modelo.idturno.Value,
                 EfectivoAnterior = modelo.efectivo.Value,
                 TarjetaAnterior = modelo.tarjeta.Value,
                 ValesAnterior = modelo.vales.Value,

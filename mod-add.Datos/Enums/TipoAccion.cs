@@ -6,6 +6,7 @@
         CREAR,
         ACTUALIZAR,
         ELIMINAR,
-        MANTENER
+        MANTENER,
+        OMITIR
     }
 }

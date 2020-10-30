@@ -6,5 +6,7 @@ namespace mod_add.Datos.Interfaces
     public interface ITurnoServicio : IServiceBase<Turno>
     {
         object[] Obteneridturno();
+
+        long Primeridturno();
     }
 }

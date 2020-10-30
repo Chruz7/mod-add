@@ -19,5 +19,14 @@ namespace mod_add.Datos.Implementaciones
 
             return result;
         }
+
+        public long Primeridturno()
+        {
+            var result = (from turno in dbset.AsNoTracking()
+                          orderby turno.idturno.Value ascending
+                          select turno.idturno.Value).FirstOrDefault();
+
+            return result;
+        }
     }
 }

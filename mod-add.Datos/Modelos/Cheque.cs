@@ -46,6 +46,7 @@ namespace mod_add.Datos.Modelos
         public decimal Desc_Imp_OriginalAnt { get; set; }
         public decimal CambioAnt { get; set; }
         public decimal CambioRepartidorAnt { get; set; }
+        public long IdTurnoAnt { get; set; }
 
         public long folio { get; set; }
         public string seriefolio { get; set; }

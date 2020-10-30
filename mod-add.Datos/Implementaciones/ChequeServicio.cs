@@ -19,5 +19,14 @@ namespace mod_add.Datos.Implementaciones
 
             return result;
         }
+
+        public long PrimerFolio()
+        {
+            var result = (from cheque in dbset.AsNoTracking()
+                          orderby cheque.folio ascending
+                          select cheque.folio).FirstOrDefault();
+
+            return result;
+        }
     }
 }
