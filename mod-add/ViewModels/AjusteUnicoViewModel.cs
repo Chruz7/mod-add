@@ -10,6 +10,7 @@ using SRLibrary.SR_DTO;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data.Entity;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Linq;
@@ -57,25 +58,58 @@ namespace mod_add.ViewModels
         {
             using (SoftRestaurantDBContext context = new SoftRestaurantDBContext())
             {
-                try
+                using (DbContextTransaction transaction = context.Database.BeginTransaction())
                 {
-                    SR_cheques_DAO cheques_DAO = new SR_cheques_DAO(context, !App.ConfiguracionSistema.ModificarVentasReales);
-                    SR_cheqdet_DAO cheqdet_DAO = new SR_cheqdet_DAO(context, !App.ConfiguracionSistema.ModificarVentasReales);
-                    SR_chequespagos_DAO chequespagos_DAO = new SR_chequespagos_DAO(context, !App.ConfiguracionSistema.ModificarVentasReales);
+                    try
+                    {
+                        SR_cheques_DAO cheques_DAO = new SR_cheques_DAO(context, !App.ConfiguracionSistema.ModificarVentasReales);
+                        SR_cheqdet_DAO cheqdet_DAO = new SR_cheqdet_DAO(context, !App.ConfiguracionSistema.ModificarVentasReales);
+                        SR_chequespagos_DAO chequespagos_DAO = new SR_chequespagos_DAO(context, !App.ConfiguracionSistema.ModificarVentasReales);
+                        SR_turnos_DAO turnos_DAO = new SR_turnos_DAO(context, !App.ConfiguracionSistema.ModificarVentasReales);
 
-                    cheques_DAO.Update(Cheque);
+                        cheques_DAO.Update(Cheque);
 
-                    cheqdet_DAO.Delete(Cheque.folio);
-                    cheqdet_DAO.Create(DetallesCheque.ToList());
+                        cheqdet_DAO.Delete(Cheque.folio);
+                        cheqdet_DAO.Create(DetallesCheque.ToList());
 
-                    chequespagos_DAO.Update(Chequepago);
+                        chequespagos_DAO.Update(Chequepago);
 
-                    return TipoRespuesta.HECHO;
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine($"INICIO-ERROR\n{ex}\nFIN-ERROR");
-                    return TipoRespuesta.ERROR;
+                        SR_turnos turno;
+
+                        if (App.ConfiguracionSistema.ModificarVentasReales)
+                            turno = turnos_DAO.Get("idturno", Cheque.Idturno).FirstOrDefault();
+                        else
+                            turno = turnos_DAO.Get("idturno", Cheque.idturno_f).FirstOrDefault();
+
+                        var cheque = cheques_DAO.Find(Cheque.folio);
+
+                        if (FormaPago.tipo == (int)TipoPago.EFECTIVO)
+                        {
+                            turno.efectivo += (cheque.efectivo - Cheque.efectivo);
+                        }
+                        else if (FormaPago.tipo == (int)TipoPago.TARJETA)
+                        {
+                            turno.tarjeta += (cheque.tarjeta - Cheque.tarjeta);
+                        }
+                        else if (FormaPago.tipo == (int)TipoPago.VALES)
+                        {
+                            turno.vales += (cheque.vales - Cheque.vales);
+                        }
+                        else if (FormaPago.tipo == (int)TipoPago.OTROS)
+                        {
+                            turno.credito += (cheque.otros - Cheque.otros);
+                        }
+
+                        turnos_DAO.Update(turno);
+
+
+                        return TipoRespuesta.HECHO;
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine($"INICIO-ERROR\n{ex}\nFIN-ERROR");
+                        return TipoRespuesta.ERROR;
+                    }
                 }
             }
         }
