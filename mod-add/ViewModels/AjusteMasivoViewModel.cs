@@ -558,9 +558,11 @@ namespace mod_add.ViewModels
 
         private void ProcesarFolios()
         {
+            Debug.WriteLine($"INICIO-PROCESO-AJUSTE-MASIVO-FOLIOS - {DateTime.Now}");
             EliminarFolios();
             //EnumerarFoliosRestantes();
             //AjustarTurnos();
+            Debug.WriteLine($"INICIO-PROCESO-AJUSTE-MASIVO-FOLIOS");
         }
 
         public void EliminarFolios()
@@ -735,7 +737,7 @@ namespace mod_add.ViewModels
 
         public void ProcesarProductos()
         {
-            Debug.WriteLine("INICIO-PROCESO-AJUSTE-MASIVO");
+            Debug.WriteLine($"INICIO-PROCESO-AJUSTE-MASIVO-PRODUCTOS - {DateTime.Now}");
             try
             {
                 EliminarProductos();
@@ -781,7 +783,7 @@ namespace mod_add.ViewModels
                 Debug.WriteLine($"INICIO-ERROR\n{ex}\nFIN-ERROR");
             }
 
-            Debug.WriteLine("FIN-PROCESO-AJUSTE-MASIVO");
+            Debug.WriteLine("FIN-PROCESO-AJUSTE-MASIVO-PRODUCTOS");
         }
 
         public void AjustarTurnos()
