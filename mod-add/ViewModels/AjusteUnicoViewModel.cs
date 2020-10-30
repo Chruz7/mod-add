@@ -11,7 +11,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data.Entity;
-using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Linq;
 
@@ -66,38 +65,33 @@ namespace mod_add.ViewModels
                         SR_chequespagos_DAO chequespagos_DAO = new SR_chequespagos_DAO(context, !App.ConfiguracionSistema.ModificarVentasReales);
                         SR_turnos_DAO turnos_DAO = new SR_turnos_DAO(context, !App.ConfiguracionSistema.ModificarVentasReales);
 
+                        SR_turnos turno = turnos_DAO.Get("idturno", Cheque.idturno).FirstOrDefault();
+
+                        var cheque = cheques_DAO.Find(Cheque.folio);
+
+                        if (FormaPago.tipo == (int)TipoPago.EFECTIVO)
+                        {
+                            turno.efectivo += (cheque.efectivo - Cheque.efectivo) * -1;
+                        }
+                        else if (FormaPago.tipo == (int)TipoPago.TARJETA)
+                        {
+                            turno.tarjeta += (cheque.tarjeta - Cheque.tarjeta) * -1;
+                        }
+                        else if (FormaPago.tipo == (int)TipoPago.VALES)
+                        {
+                            turno.vales += (cheque.vales - Cheque.vales) * -1;
+                        }
+                        else if (FormaPago.tipo == (int)TipoPago.OTROS)
+                        {
+                            turno.credito += (cheque.otros - Cheque.otros) * 1;
+                        }
+
                         cheques_DAO.Update(Cheque);
 
                         cheqdet_DAO.Delete(Cheque.folio);
                         cheqdet_DAO.Create(DetallesCheque.ToList());
 
                         chequespagos_DAO.Update(Chequepago);
-
-                        SR_turnos turno;
-
-                        if (App.ConfiguracionSistema.ModificarVentasReales)
-                            turno = turnos_DAO.Get("idturno", Cheque.Idturno).FirstOrDefault();
-                        else
-                            turno = turnos_DAO.Get("idturno", Cheque.idturno_f).FirstOrDefault();
-
-                        var cheque = cheques_DAO.Find(Cheque.folio);
-
-                        if (FormaPago.tipo == (int)TipoPago.EFECTIVO)
-                        {
-                            turno.efectivo += (cheque.efectivo - Cheque.efectivo);
-                        }
-                        else if (FormaPago.tipo == (int)TipoPago.TARJETA)
-                        {
-                            turno.tarjeta += (cheque.tarjeta - Cheque.tarjeta);
-                        }
-                        else if (FormaPago.tipo == (int)TipoPago.VALES)
-                        {
-                            turno.vales += (cheque.vales - Cheque.vales);
-                        }
-                        else if (FormaPago.tipo == (int)TipoPago.OTROS)
-                        {
-                            turno.credito += (cheque.otros - Cheque.otros);
-                        }
 
                         turnos_DAO.Update(turno);
 
@@ -394,10 +388,7 @@ namespace mod_add.ViewModels
                 {
                     SR_cheques_DAO cheques_DAO = new SR_cheques_DAO(context, !App.ConfiguracionSistema.ModificarVentasReales);
 
-                    Cheque = cheques_DAO.Get("folio = @folio and fecha <= @fecha", new object[] {
-                        new SqlParameter("folio", Folio),
-                        new SqlParameter("fecha", App.FechaMaxima),
-                    }).FirstOrDefault();
+                    Cheque = cheques_DAO.Find(Folio);
 
                     if (Cheque == null) return TipoRespuesta.REGISTRO_NO_ENCONTRADO;
                     if (Cheque.cancelado.Value) return TipoRespuesta.CHEQUE_CANCELADO;
@@ -422,7 +413,7 @@ namespace mod_add.ViewModels
                     UltimoCheqDet = detalles.OrderByDescending(x => x.movimiento).FirstOrDefault();
 
                     if (Cheque.fecha.HasValue) Fecha = Cheque.fecha.Value;
-                    Personas = (int)Cheque.Nopersonas;
+                    Personas = (int)Cheque.nopersonas;
                     ClaveCliente = Cheque.idcliente;
                     Descuento = Cheque.descuento.Value;
                     Propina = Cheque.propina.Value;

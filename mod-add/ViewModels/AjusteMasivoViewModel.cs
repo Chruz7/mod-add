@@ -7,6 +7,7 @@ using mod_add.Datos.Modelos;
 using mod_add.Enums;
 using mod_add.Selectores;
 using mod_add.Utils;
+using SR.Datos;
 using SRLibrary.SR_Context;
 using SRLibrary.SR_DAO;
 using SRLibrary.SR_DTO;
@@ -1307,10 +1308,21 @@ namespace mod_add.ViewModels
 
                     SR_turnos_DAO turnos_DAO = new SR_turnos_DAO(context, false);
 
-                    //var turnos = turnos_DAO.Get($"apertura BETWEEN @{nameof(FechaCorteInicio)} AND @{nameof(FechaCorteCierre)} AND idempresa=@{nameof(App.ClaveEmpresa)}",
-                    var turnos = turnos_DAO.Get($"apertura >= @{nameof(FechaCorteInicio)} AND idempresa=@{nameof(App.ClaveEmpresa)}",
-                        new SqlParameter($"{nameof(FechaCorteInicio)}", FechaCorteInicio),
-                        new SqlParameter($"{nameof(App.ClaveEmpresa)}", App.ClaveEmpresa));
+                    List<SR_turnos> turnos = new List<SR_turnos>();
+
+                    if (App.ConfiguracionSistema.ModificarVentasReales)
+                    {
+                        turnos = turnos_DAO.Get($"apertura >= @{nameof(FechaCorteInicio)} AND idempresa=@{nameof(App.ClaveEmpresa)}",
+                            new SqlParameter($"{nameof(FechaCorteInicio)}", FechaCorteInicio),
+                            new SqlParameter($"{nameof(App.ClaveEmpresa)}", App.ClaveEmpresa));
+                    }
+                    else
+                    {
+                        turnos = turnos_DAO.Get($"apertura BETWEEN @{nameof(FechaCorteInicio)} AND @{nameof(FechaCorteCierre)} AND idempresa=@{nameof(App.ClaveEmpresa)}",
+                            new SqlParameter($"{nameof(FechaCorteInicio)}", FechaCorteInicio),
+                            new SqlParameter($"{nameof(FechaCorteCierre)}", FechaCorteCierre),
+                            new SqlParameter($"{nameof(App.ClaveEmpresa)}", App.ClaveEmpresa));
+                    }
 
                     if (turnos.Count == 0) return new RespuestaBusquedaMasiva
                     {

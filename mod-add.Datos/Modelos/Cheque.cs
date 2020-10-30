@@ -1,7 +1,6 @@
 ﻿using mod_add.Datos.Enums;
 using System;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.Migrations.Model;
 
 namespace mod_add.Datos.Modelos
 {
@@ -51,35 +50,35 @@ namespace mod_add.Datos.Modelos
         public long folio { get; set; }
         public string seriefolio { get; set; }
         public decimal? numcheque { get; set; }
-        public long? numcheque_f { get; set; }
+        //public long? numcheque_f { get; set; }
         public DateTime? fecha { get; set; }
         public DateTime? salidarepartidor { get; set; }
         public DateTime? arriborepartidor { get; set; }
         public DateTime? cierre { get; set; }
         public string mesa { get; set; }
         public decimal? nopersonas { get; set; }
-        public int? nopersonas_f { get; set; }
+        //public int? nopersonas_f { get; set; }
         public string idmesero { get; set; }
         public bool? pagado { get; set; }
         public bool? cancelado { get; set; }
         public bool? impreso { get; set; }
         public decimal? impresiones { get; set; }
-        public int? impresiones_f { get; set; }
+        //public int? impresiones_f { get; set; }
         public decimal? cambio { get; set; }
         public decimal? descuento { get; set; }
         public decimal? reabiertas { get; set; }
-        public int? reabiertas_f { get; set; }
+        //public int? reabiertas_f { get; set; }
         public string razoncancelado { get; set; }
         public decimal? orden { get; set; }
-        public long? orden_f { get; set; }
+        //public long? orden_f { get; set; }
         public bool? facturado { get; set; }
         public string idcliente { get; set; }
         public string idarearestaurant { get; set; }
         public string idempresa { get; set; }
         public decimal? tipodeservicio { get; set; }
-        public int? tipodeservicio_f { get; set; }
+        //public int? tipodeservicio_f { get; set; }
         public decimal? idturno { get; set; }
-        public long? idturno_f { get; set; }
+        //public long? idturno_f { get; set; }
         public string usuariocancelo { get; set; }
         public string comentariodescuento { get; set; }
         public string estacion { get; set; }
@@ -89,11 +88,11 @@ namespace mod_add.Datos.Modelos
         public string idtipodescuento { get; set; }
         public string numerotarjeta { get; set; }
         public decimal? folionotadeconsumo { get; set; }
-        public long? folionotadeconsumo_f { get; set; }
+        //public long? folionotadeconsumo_f { get; set; }
         public bool? notadeconsumo { get; set; }
         public bool? propinapagada { get; set; }
         public decimal? propinafoliomovtocaja { get; set; }
-        public long? propinafoliomovtocaja_f { get; set; }
+        //public long? propinafoliomovtocaja_f { get; set; }
         public decimal? puntosmonederogenerados { get; set; }
         public decimal? propinaincluida { get; set; }
         public string tarjetadescuento { get; set; }

@@ -111,7 +111,7 @@ namespace mod_add.Componentes
 
                 TipoRespuesta respuesta = TipoRespuesta.NADA;
                 LoadingWindow loading = new LoadingWindow();
-                //loading.AgregarMensaje("Buscando cheque");
+                loading.AgregarMensaje("Buscando cuenta");
                 loading.Show();
 
                 Task.Factory.StartNew(() =>
