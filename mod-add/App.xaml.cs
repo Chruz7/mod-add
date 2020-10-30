@@ -21,6 +21,7 @@ namespace mod_add
     {
         public static bool Admin { get; set; }
         public static string ClaveEmpresa { get; set; }
+        public static string ClavePagoEfectivo { get; set; }
         public static DateTime FechaMaxima { get; set; }
         public static ConfiguracionSistema ConfiguracionSistema { get; set; }
         public static List<ProductoReemplazo> ProductosReemplazo { get; set; }
@@ -47,6 +48,7 @@ namespace mod_add
                 {
                     Admin = false;
                     ClaveEmpresa = ConfiguracionLocalServicio.ReadSetting("CLAVE-EMPRESA");
+                    ClavePagoEfectivo = ConfiguracionLocalServicio.ReadSetting("CLAVE-PAGO-EFECTIVO");
                     MidpointRounding = MidpointRounding.AwayFromZero;
                     FechaMaxima = DateTime.Now.AddDays(-1);
 
@@ -56,7 +58,7 @@ namespace mod_add
                         {
                             context.ConfiguracionSistema.Add(new ConfiguracionSistema
                             {
-                                ModificarVentasReales = true,
+                                ModificarVentasReales = false,
                                 MinProductosCuenta = 1,
                                 EliminarProductosSeleccionados = false,
                                 Contrasena = "Ok123456",

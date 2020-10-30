@@ -300,6 +300,19 @@ namespace mod_add.ViewModels
             {
                 try
                 {
+                    //var turnos = context.Turnos.Where(x => x.TipoAccion == TipoAccion.ACTUALIZAR || x.TipoAccion == TipoAccion.ELIMINAR).ToList();
+
+                    //foreach (var turno in turnos)
+                    //{
+                    //    turno.efectivo = turno.EfectivoAnterior;
+                    //    turno.tarjeta = turno.TarjetaAnterior;
+                    //    turno.vales = turno.ValesAnterior;
+                    //    turno.credito = turno.CreditoAnterior;
+
+                    //    context.SaveChanges();
+                    //}
+
+
                     var cheques = context.Cheques.Where(x => x.TipoAccion == TipoAccion.ACTUALIZAR || x.TipoAccion == TipoAccion.ELIMINAR).ToList();
 
                     foreach (var cheque in cheques)
@@ -539,6 +552,8 @@ namespace mod_add.ViewModels
             {
                 ProcesarProductos();
             }
+
+            //AjustarTurnos();
         }
 
         private void ProcesarFolios()
@@ -842,7 +857,7 @@ namespace mod_add.ViewModels
                             .Where(x => x.TipoAccion == TipoAccion.ELIMINAR || (x.TipoAccion == TipoAccion.ACTUALIZAR && x.Cambiado))
                             .Sum(x => x.CantidadAnt);
 
-                        if (QuitarPropinasManualmente)
+                        if (!QuitarPropinasManualmente)
                         {
                             cheque.propina = 0;
                             cheque.propinatarjeta = 0;
@@ -859,23 +874,27 @@ namespace mod_add.ViewModels
                         cheque.totalconpropinacargo = cheque.total + cheque.cargo; // falta validar si la propina se agrega por configuracion
                         cheque.descuentoimporte = Mat.Redondeo(totalSinImpuestos_Det * descuento);
 
-                        if (cheque.TipoPago == TipoPago.EFECTIVO)
-                        {
-                            cheque.efectivo = cheque.total;
-                        }
-                        else if (cheque.TipoPago == TipoPago.TARJETA)
-                        {
-                            cheque.tarjeta = cheque.total;
-                            cheque.propinatarjeta = cheque.propina;
-                        }
-                        else if (cheque.TipoPago == TipoPago.VALES)
-                        {
-                            cheque.vales = cheque.total;
-                        }
-                        else if (cheque.TipoPago == TipoPago.OTROS)
-                        {
-                            cheque.otros = cheque.total;
-                        }
+                        cheque.efectivo = cheque.total;
+                        cheque.tarjeta = 0;
+                        cheque.vales = 0;
+                        cheque.otros = 0;
+
+                        //if (cheque.TipoPago == TipoPago.EFECTIVO)
+                        //{
+                        //    cheque.efectivo = cheque.total;
+                        //}
+                        //else if (cheque.TipoPago == TipoPago.TARJETA)
+                        //{
+                        //    cheque.tarjeta = cheque.total;
+                        //}
+                        //else if (cheque.TipoPago == TipoPago.VALES)
+                        //{
+                        //    cheque.vales = cheque.total;
+                        //}
+                        //else if (cheque.TipoPago == TipoPago.OTROS)
+                        //{
+                        //    cheque.otros = cheque.total;
+                        //}
 
                         cheque.totalsindescuento = Mat.Redondeo(detRestantes.Sum(x => x.ImporteSISD));
 
@@ -947,6 +966,7 @@ namespace mod_add.ViewModels
                         #region Ajuste del cheque pago
                         var chequePago = context.ChequesPago.FirstOrDefault(x => x.folio == cheque.folio);
                         chequePago.importe = cheque.total;
+                        chequePago.idformadepago = App.ClavePagoEfectivo;
 
                         if (cheque.TipoPago == TipoPago.TARJETA)
                         {
@@ -1492,6 +1512,7 @@ namespace mod_add.ViewModels
             using (ApplicationDbContext context = new ApplicationDbContext())
             {
                 var cheques = context.Cheques.Where(x => x.TipoAccion != TipoAccion.OMITIR).ToList();
+                //var fondoTurnos = context.Turnos.Where(x => x.TipoAccion == TipoAccion.NINGUNO || x.TipoAccion == TipoAccion.ACTUALIZAR).Sum(x => x.fondo.Value);
 
                 NumeroTotalCuentasModificadas = cheques.Count(x => x.TipoAccion == TipoAccion.ACTUALIZAR || x.TipoAccion == TipoAccion.ELIMINAR);
                 Diferencia = ImporteAnterior - ImporteNuevo;
@@ -1499,7 +1520,7 @@ namespace mod_add.ViewModels
                 EfectivoNuevo = cheques
                     .Where(x => x.TipoAccion == TipoAccion.NINGUNO || x.TipoAccion == TipoAccion.MANTENER || x.TipoAccion == TipoAccion.ACTUALIZAR)
                     .Sum(x => x.efectivo.Value);
-
+                //EfectivoCaja = EfectivoNuevo + fondoTurnos;
 
                 foreach (var cheque in cheques)
                 {
@@ -1522,10 +1543,10 @@ namespace mod_add.ViewModels
                         TotalArticulos = cheque.TotalArticulosAnt,
                         ProductosEliminados = cheque.TotalArticulosEliminados,
                         TotalConDescuento = totalconDescuento,
-                        Efectivo = cheque.efectivo.Value,
-                        Tarjeta = cheque.tarjeta.Value,
-                        Vales = cheque.vales.Value,
-                        Otros = cheque.otros.Value,
+                        Efectivo = cheque.EfectivoAnt,
+                        Tarjeta = cheque.TarjetaAnt,
+                        Vales = cheque.ValesAnt,
+                        Otros = cheque.OtrosAnt,
                         RealizarAccion = cheque.TipoAccion == TipoAccion.ACTUALIZAR || cheque.TipoAccion == TipoAccion.ELIMINAR,
                         IsEnable = cheque.TipoAccion == TipoAccion.ACTUALIZAR || cheque.TipoAccion == TipoAccion.ELIMINAR,
                     });

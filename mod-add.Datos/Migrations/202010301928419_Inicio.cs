@@ -323,6 +323,7 @@
                         Id = c.Int(nullable: false, identity: true),
                         TipoAccion = c.Int(nullable: false),
                         FolioAnt = c.Long(nullable: false),
+                        IdFormadePagoAnt = c.String(),
                         ImporteAnt = c.Decimal(nullable: false, precision: 18, scale: 2),
                         PropinaAnt = c.Decimal(nullable: false, precision: 18, scale: 2),
                         folio = c.Long(nullable: false),
@@ -373,23 +374,6 @@
                 .PrimaryKey(t => t.Id);
             
             CreateTable(
-                "dbo.Bitatora_Modificaciones",
-                c => new
-                    {
-                        Id = c.Int(nullable: false, identity: true),
-                        TipoAjuste = c.Int(nullable: false),
-                        FechaProceso = c.DateTime(nullable: false),
-                        FechaInicialVenta = c.DateTime(nullable: false),
-                        FechaFinalVenta = c.DateTime(nullable: false),
-                        TotalCuentas = c.Int(nullable: false),
-                        CuentasModificadas = c.Int(nullable: false),
-                        ImporteAnterior = c.Decimal(nullable: false, precision: 18, scale: 2),
-                        ImporteNuevo = c.Decimal(nullable: false, precision: 18, scale: 2),
-                        Diferencia = c.Decimal(nullable: false, precision: 18, scale: 2),
-                    })
-                .PrimaryKey(t => t.Id);
-            
-            CreateTable(
                 "dbo.Turnos",
                 c => new
                     {
@@ -429,7 +413,6 @@
         public override void Down()
         {
             DropTable("dbo.Turnos");
-            DropTable("dbo.Bitatora_Modificaciones");
             DropTable("dbo.Productos_Reemplazo");
             DropTable("dbo.Productos_Eliminacion");
             DropTable("dbo.Configuracion_Sistema");

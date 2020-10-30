@@ -618,6 +618,7 @@ namespace mod_add.Utils
             {
                 TipoAccion = tipoAccion,
                 FolioAnt = modelo.folio,
+                IdFormadePagoAnt = modelo.idformadepago,
                 ImporteAnt = modelo.importe.Value,
                 PropinaAnt = modelo.propina.Value,
 
