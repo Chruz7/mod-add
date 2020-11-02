@@ -1123,7 +1123,7 @@ namespace mod_add.ViewModels
 
             if (ObjetivoAlcanzado == TipoRespuesta.NO)
             {
-                EliminarProductos(movimiento);
+                EliminarProductos(movimiento, continuaEliminacion);
                 return;
             }
 
@@ -1587,7 +1587,7 @@ namespace mod_add.ViewModels
                     if (Proceso.TipoProceso == TipoProceso.FOLIOS)
                         totalconDescuento = cheque.total.Value;
                     else if (Proceso.TipoProceso == TipoProceso.PRODUCTOS)
-                        totalconDescuento = cheque.TotalAnt - cheque.total.Value;
+                        totalconDescuento = cheque.total.Value;
 
                     DetalleModificacionCheques.Add(new DetalleAjuste
                     {
@@ -1598,7 +1598,7 @@ namespace mod_add.ViewModels
                         Facturado = cheque.facturado.Value ? TipoLogico.SI : TipoLogico.NO,
                         Descuento = cheque.descuento.Value,
                         TotalOriginal = cheque.TotalAnt,
-                        TotalArticulos = cheque.TotalArticulosAnt,
+                        TotalArticulos = cheque.totalarticulos.Value,
                         ProductosEliminados = cheque.TotalArticulosEliminados,
                         TotalConDescuento = totalconDescuento,
                         Efectivo = cheque.EfectivoAnt,

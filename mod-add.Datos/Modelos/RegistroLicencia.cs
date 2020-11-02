@@ -17,7 +17,7 @@ namespace mod_add.Datos.Modelos
             {
                 DateTime fecha = new DateTime(Anio, Mes, 1);
 
-                return fecha.ToString("MMM", CultureInfo.CreateSpecificCulture("es")).ToUpper();
+                return fecha.ToString("MMM - yyyy", CultureInfo.CreateSpecificCulture("es")).ToUpper();
             }
         }
     }
