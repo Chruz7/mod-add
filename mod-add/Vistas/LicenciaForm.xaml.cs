@@ -1,4 +1,5 @@
-﻿using mod_add.Enums;
+﻿using DocumentFormat.OpenXml.Wordprocessing;
+using mod_add.Enums;
 using mod_add.ViewModels;
 using System.Threading.Tasks;
 using System.Windows;
@@ -41,6 +42,7 @@ namespace mod_add.Vistas
             {
                 loading.Close();
                 App.HabilitarPrincipal();
+                ViewModel.Licencia = "";
 
                 if (respuesta == TipoRespuesta.HECHO)
                 {
