@@ -68,6 +68,7 @@
     <Compile Include="Implementaciones\ConfiguracionServicio.cs" />
     <Compile Include="Implementaciones\ProductoEliminarServicio.cs" />
     <Compile Include="Implementaciones\ProductoReemplazoServicio.cs" />
+    <Compile Include="Implementaciones\RegistroLicenciaServicio.cs" />
     <Compile Include="Implementaciones\TurnoServicio.cs" />
     <Compile Include="Infraestructura\DatabaseFactory.cs" />
     <Compile Include="Infraestructura\Disposable.cs" />
@@ -82,10 +83,11 @@
     <Compile Include="Interfaces\IConfiguracionServicio.cs" />
     <Compile Include="Interfaces\IProductoEliminarServicio.cs" />
     <Compile Include="Interfaces\IProductoReemplazoServicio.cs" />
+    <Compile Include="Interfaces\IRegistroLicenciaServicio.cs" />
     <Compile Include="Interfaces\ITurnoServicio.cs" />
-    <Compile Include="Migrations\202010301928419_Inicio.cs" />
-    <Compile Include="Migrations\202010301928419_Inicio.designer.cs">
-      <DependentUpon>202010301928419_Inicio.cs</DependentUpon>
+    <Compile Include="Migrations\202011021639255_Inicio.cs" />
+    <Compile Include="Migrations\202011021639255_Inicio.designer.cs">
+      <DependentUpon>202011021639255_Inicio.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="ModelosPersonalizados\GrupoSeleccion.cs" />
@@ -95,6 +97,7 @@
     <Compile Include="Modelos\ChequePago.cs" />
     <Compile Include="Modelos\ConfiguracionSistema.cs" />
     <Compile Include="Modelos\DetalleAjuste.cs" />
+    <Compile Include="Modelos\RegistroLicencia.cs" />
     <Compile Include="Modelos\ProductoEliminacion.cs" />
     <Compile Include="Modelos\ProductoReemplazo.cs" />
     <Compile Include="Modelos\BitacoraModificacion.cs" />
@@ -106,8 +109,8 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202010301928419_Inicio.resx">
-      <DependentUpon>202010301928419_Inicio.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202011021639255_Inicio.resx">
+      <DependentUpon>202011021639255_Inicio.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

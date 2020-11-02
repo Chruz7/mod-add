@@ -22,6 +22,7 @@ namespace mod_add
         public static bool Admin { get; set; }
         public static string ClaveEmpresa { get; set; }
         public static string ClavePagoEfectivo { get; set; }
+        public static List<DateTime> MesesValidos { get; set; }
         public static DateTime FechaMaxima { get; set; }
         public static ConfiguracionSistema ConfiguracionSistema { get; set; }
         public static List<ProductoReemplazo> ProductosReemplazo { get; set; }
@@ -51,6 +52,7 @@ namespace mod_add
                     ClavePagoEfectivo = ConfiguracionLocalServicio.ReadSetting("CLAVE-PAGO-EFECTIVO");
                     MidpointRounding = MidpointRounding.AwayFromZero;
                     FechaMaxima = DateTime.Now.AddDays(-1);
+                    MesesValidos = new List<DateTime>();
 
                     using (ApplicationDbContext context = new ApplicationDbContext())
                     {
@@ -86,7 +88,7 @@ namespace mod_add
                         ProductosReemplazo = context.ProductosReemplazo.Where(x => x.Reemplazar).OrderBy(x => x.Porcentaje).ToList();
                         ProductosEliminar = context.ProductosEliminar.Where(x => x.Eliminar).ToList();
                     }
-
+                    ObtenerLicencias();
                     ObtenerConfiguracionSR();
                     ObtenerProductosDetalleSR();
                 }
@@ -105,6 +107,24 @@ namespace mod_add
                 else
                     autenticacion.Close();
             }, System.Threading.CancellationToken.None, TaskContinuationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());
+        }
+
+        public static void ObtenerLicencias()
+        {
+            using (ApplicationDbContext context = new ApplicationDbContext())
+            {
+                var registroLicencias = context.RegistroLicencias.OrderBy(x => x.Anio).ThenBy(x => x.Mes);
+
+                SRLibrary.Utils.valideSerialKey valideSerialKey = new SRLibrary.Utils.valideSerialKey();
+
+                foreach (var registroLicencia in registroLicencias)
+                {
+
+                    var result = valideSerialKey.getDecryptSerial(registroLicencia.Licencia);
+                    var fecha = DateTime.Parse(result);
+                    MesesValidos.Add(fecha);
+                }
+            }
         }
 
         public static void IrPrincipal()

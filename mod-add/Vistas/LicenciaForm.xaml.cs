@@ -19,7 +19,7 @@ namespace mod_add.Vistas
             DataContext = ViewModel;
         }
 
-        private void Aceptar_Click(object sender, RoutedEventArgs e)
+        private void Agregar_Click(object sender, RoutedEventArgs e)
         {
             App.HabilitarPrincipal(false);
 
@@ -32,6 +32,11 @@ namespace mod_add.Vistas
             {
                 respuesta = ViewModel.Guardar();
 
+                if (respuesta == TipoRespuesta.HECHO)
+                {
+                    ViewModel.ObtenerRegistrosLicencia();
+                }
+
             }).ContinueWith(task =>
             {
                 loading.Close();
@@ -40,7 +45,14 @@ namespace mod_add.Vistas
                 if (respuesta == TipoRespuesta.HECHO)
                 {
                     MessageBox.Show("La licencia se guardó con exito", "Listo", MessageBoxButton.OK, MessageBoxImage.Information);
-                    Close();
+                }
+                else if (respuesta == TipoRespuesta.LICENCIA_INCORRECTA)
+                {
+                    MessageBox.Show("La licencia es incorrecta", "Licencia", MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
+                else if (respuesta == TipoRespuesta.EXITE)
+                {
+                    MessageBox.Show("La licencia ya existe", "Licencia", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
                 else if (respuesta == TipoRespuesta.ERROR)
                 {
@@ -49,7 +61,7 @@ namespace mod_add.Vistas
             }, System.Threading.CancellationToken.None, TaskContinuationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());
         }
 
-        private void Cancelar_Click(object sender, RoutedEventArgs e)
+        private void Cerrar_Click(object sender, RoutedEventArgs e)
         {
             Close();
         }

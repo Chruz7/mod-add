@@ -4,14 +4,21 @@ using mod_add.Datos.Infraestructura;
 using mod_add.Datos.Interfaces;
 using mod_add.Datos.Modelos;
 using SR.Datos;
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 
 namespace mod_add.Utils
 {
     public static class Funciones
     {
+        public static bool ValidarMesBusqueda(List<DateTime> MesesValidos, DateTime fecha)
+        {
+            return MesesValidos.Any(x => x.Year == fecha.Year && x.Month == fecha.Month);
+        }
+
         public static List<T> CloneList<T>(List<T> oldList)
         {
             BinaryFormatter formatter = new BinaryFormatter();

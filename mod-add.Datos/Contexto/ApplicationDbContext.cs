@@ -16,6 +16,7 @@ namespace mod_add.Datos.Contexto
         }
 
         public DbSet<ConfiguracionSistema> ConfiguracionSistema { get; set; }
+        public DbSet<RegistroLicencia> RegistroLicencias { get; set; }
         //public DbSet<BitacoraModificacion> RegistrosBitacora { get; set; }
         public DbSet<ProductoEliminacion> ProductosEliminar { get; set; }
         public DbSet<ProductoReemplazo> ProductosReemplazo { get; set; }

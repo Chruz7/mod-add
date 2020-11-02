@@ -11,7 +11,9 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data.Entity;
+using System.Data.SqlClient;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 
 namespace mod_add.ViewModels
@@ -91,7 +93,8 @@ namespace mod_add.ViewModels
                         cheqdet_DAO.Delete(Cheque.folio);
                         cheqdet_DAO.Create(DetallesCheque.ToList());
 
-                        chequespagos_DAO.Update(Chequepago);
+                        chequespagos_DAO.Delete("folio = @folio", new SqlParameter("folio", Cheque.folio));
+                        chequespagos_DAO.Create(Chequepago);
 
                         turnos_DAO.Update(turno);
 
@@ -380,7 +383,7 @@ namespace mod_add.ViewModels
             Total = Cheque.total.Value;
         }
 
-        public TipoRespuesta ObtenerChequeSR()
+        public RespuestaBusqueda ObtenerChequeSR()
         {
             using (SoftRestaurantDBContext context = new SoftRestaurantDBContext())
             {
@@ -390,24 +393,46 @@ namespace mod_add.ViewModels
 
                     Cheque = cheques_DAO.Find(Folio);
 
-                    if (Cheque == null) return TipoRespuesta.REGISTRO_NO_ENCONTRADO;
-                    if (Cheque.cancelado.Value) return TipoRespuesta.CHEQUE_CANCELADO;
+                    if (!Funciones.ValidarMesBusqueda(App.MesesValidos, Cheque.fecha.Value))
+                    {
+                        return new RespuestaBusqueda
+                        {
+                            TipoRespuesta = TipoRespuesta.FECHA_INACCESIBLE,
+                            Mensaje = Cheque.fecha.Value.ToString("MMMM yyyy", CultureInfo.CreateSpecificCulture("es"))
+                        };
+                    }
+
+                    if (Cheque == null) return new RespuestaBusqueda
+                    {
+                        TipoRespuesta = TipoRespuesta.REGISTRO_NO_ENCONTRADO
+                    };
+
+                    if (Cheque.cancelado.Value) return new RespuestaBusqueda
+                    {
+                        TipoRespuesta = TipoRespuesta.CHEQUE_CANCELADO
+                    };
+
                     var detalles = Cheque.Detalles;
-                    if (detalles.Count == 0) return TipoRespuesta.SIN_REGISTROS;
+
+                    if (detalles.Count == 0) return new RespuestaBusqueda
+                    {
+                        TipoRespuesta = TipoRespuesta.SIN_REGISTROS
+                    };
 
                     var chequespagos = Cheque.Chequespagos;
 
-                    if (chequespagos.Count > 1)
+                    if (chequespagos.Count == 0)
                     {
-                        return TipoRespuesta.CHEQUE_CON_MULTIPLE_FORMA_PAGO;
-                    }
-                    else if (chequespagos.Count < 1)
-                    {
-                        return TipoRespuesta.CHEQUE_SIN_FORMA_PAGO;
+                        return new RespuestaBusqueda
+                        {
+                            TipoRespuesta = TipoRespuesta.CHEQUE_SIN_FORMA_PAGO
+                        };
                     }
 
                     Chequepago = chequespagos[0];
                     FormaPago = Chequepago.Formasdepago;
+
+                    Chequepago.idformadepago = App.ClavePagoEfectivo;
 
                     DetallesCheque = new ObservableCollection<SR_cheqdet>(detalles.OrderBy(x => x.movimiento).ToList());
                     UltimoCheqDet = detalles.OrderByDescending(x => x.movimiento).FirstOrDefault();
@@ -423,12 +448,19 @@ namespace mod_add.ViewModels
 
                     ObtenerClienteSR();
 
-                    return TipoRespuesta.HECHO;
+                    return new RespuestaBusqueda
+                    {
+                        TipoRespuesta = TipoRespuesta.HECHO,
+                        MultipleFormaPago = chequespagos.Count > 1
+                    };
                 }
                 catch (Exception ex)
                 {
                     Debug.WriteLine($"INICIO-ERROR\n{ex}\nFIN-ERROR");
-                    return TipoRespuesta.ERROR;
+                    return new RespuestaBusqueda
+                    {
+                        TipoRespuesta = TipoRespuesta.ERROR
+                    };
                 }
             }
         }

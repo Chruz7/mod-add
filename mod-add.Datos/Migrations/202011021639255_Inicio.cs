@@ -348,7 +348,6 @@
                         EliminarProductosSeleccionados = c.Boolean(nullable: false),
                         Contrasena = c.String(),
                         ContrasenaAdmin = c.String(),
-                        Licencia = c.String(),
                     })
                 .PrimaryKey(t => t.Id);
             
@@ -370,6 +369,17 @@
                         Reemplazar = c.Boolean(nullable: false),
                         Clave = c.String(),
                         Porcentaje = c.Int(nullable: false),
+                    })
+                .PrimaryKey(t => t.Id);
+            
+            CreateTable(
+                "dbo.Registro_Licencias",
+                c => new
+                    {
+                        Id = c.Int(nullable: false, identity: true),
+                        Anio = c.Int(nullable: false),
+                        Mes = c.Int(nullable: false),
+                        Licencia = c.String(),
                     })
                 .PrimaryKey(t => t.Id);
             
@@ -413,6 +423,7 @@
         public override void Down()
         {
             DropTable("dbo.Turnos");
+            DropTable("dbo.Registro_Licencias");
             DropTable("dbo.Productos_Reemplazo");
             DropTable("dbo.Productos_Eliminacion");
             DropTable("dbo.Configuracion_Sistema");

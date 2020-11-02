@@ -17,6 +17,7 @@ using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Data.SqlClient;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 
 namespace mod_add.ViewModels
@@ -1058,7 +1059,7 @@ namespace mod_add.ViewModels
                             continue;
                         }
 
-                        if (App.ConfiguracionSistema.EliminarProductosSeleccionados && !App.ProductosEliminar.Any(x => x.Clave == det.idproducto))
+                        if (App.ConfiguracionSistema.EliminarProductosSeleccionados && App.ProductosEliminar.Count > 0 && !App.ProductosEliminar.Any(x => x.Clave == det.idproducto))
                         {
                             Debug.WriteLine("Producto NO eliminable");
                             continue;
@@ -1150,7 +1151,7 @@ namespace mod_add.ViewModels
                 {
                     Debug.WriteLine($"folio: {det.foliodet}, movimiento: {det.movimiento}, producto: {det.idproducto}, precio: {det.precio}, cantidad: {det.cantidad}");
 
-                    if (App.ConfiguracionSistema.EliminarProductosSeleccionados && !App.ProductosEliminar.Any(x => x.Clave == det.idproducto) && !eliminarTodo)
+                    if (App.ConfiguracionSistema.EliminarProductosSeleccionados && App.ProductosEliminar.Count > 0 && !App.ProductosEliminar.Any(x => x.Clave == det.idproducto) && !eliminarTodo)
                     {
                         Debug.WriteLine("Producto NO eliminable");
                         continue;
@@ -1205,7 +1206,7 @@ namespace mod_add.ViewModels
                     int porcentajeAleatorio = Random.Next(1, 100);
                     int porcentajeAnterior = 0;
                     Debug.WriteLine($"Porcentaje aleatorio: {porcentajeAleatorio}");
-                    if (App.ConfiguracionSistema.EliminarProductosSeleccionados && !App.ProductosEliminar.Any(x => x.Clave == det.idproducto))
+                    if (App.ConfiguracionSistema.EliminarProductosSeleccionados && App.ProductosEliminar.Count > 0 && !App.ProductosEliminar.Any(x => x.Clave == det.idproducto))
                     {
                         Debug.WriteLine("Producto NO eliminable");
                         continue;
@@ -1343,7 +1344,7 @@ namespace mod_add.ViewModels
             PorcentajeObjetivo = 10;
         }
 
-        public RespuestaBusquedaMasiva ObtenerChequesSR()
+        public RespuestaBusqueda ObtenerChequesSR()
         {
             using (SoftRestaurantDBContext context = new SoftRestaurantDBContext())
             {
@@ -1365,6 +1366,24 @@ namespace mod_add.ViewModels
                         FechaCorteCierre = FechaCierre.AddSeconds(CorteCierre.TotalSeconds);
                     }
 
+                    if (!Funciones.ValidarMesBusqueda(App.MesesValidos, FechaCorteInicio))
+                    {
+                        return new RespuestaBusqueda
+                        {
+                            TipoRespuesta = TipoRespuesta.FECHA_INACCESIBLE,
+                            Mensaje = FechaCorteInicio.ToString("MMMM yyyy", CultureInfo.CreateSpecificCulture("es"))
+                        };
+                    }
+
+                    if (!Funciones.ValidarMesBusqueda(App.MesesValidos, FechaCorteCierre))
+                    {
+                        return new RespuestaBusqueda
+                        {
+                            TipoRespuesta = TipoRespuesta.FECHA_INACCESIBLE,
+                            Mensaje = FechaCorteCierre.ToString("MMMM yyyy", CultureInfo.CreateSpecificCulture("es"))
+                        };
+                    }
+
                     SR_turnos_DAO turnos_DAO = new SR_turnos_DAO(context, false);
 
                     List<SR_turnos> turnos = new List<SR_turnos>();
@@ -1383,7 +1402,7 @@ namespace mod_add.ViewModels
                             new SqlParameter($"{nameof(App.ClaveEmpresa)}", App.ClaveEmpresa));
                     }
 
-                    if (turnos.Count == 0) return new RespuestaBusquedaMasiva
+                    if (turnos.Count == 0) return new RespuestaBusqueda
                     {
                         TipoRespuesta = TipoRespuesta.SIN_REGISTROS
                     };
@@ -1393,7 +1412,7 @@ namespace mod_add.ViewModels
                     SR_cheques_DAO cheques_DAO = new SR_cheques_DAO(context, false);
                     var cheques = cheques_DAO.WhereIn("idturno", idsturno);
 
-                    if (cheques.Count == 0) return new RespuestaBusquedaMasiva
+                    if (cheques.Count == 0) return new RespuestaBusqueda
                     {
                         TipoRespuesta = TipoRespuesta.SIN_REGISTROS
                     };
@@ -1415,7 +1434,7 @@ namespace mod_add.ViewModels
                     //NumeroTotalCuentas = cheques.Count;
                     //EfectivoAnterior = cheques.Sum(x => x.efectivo.Value);
 
-                    return new RespuestaBusquedaMasiva
+                    return new RespuestaBusqueda
                     {
                         TipoRespuesta = TipoRespuesta.HECHO,
                         Turnos = turnos,
@@ -1428,7 +1447,7 @@ namespace mod_add.ViewModels
                 catch (Exception ex)
                 {
                     Debug.WriteLine($"INICIO-ERROR\n{ex}\nFIN-ERROR");
-                    return new RespuestaBusquedaMasiva
+                    return new RespuestaBusqueda
                     {
                         TipoRespuesta = TipoRespuesta.ERROR
                     };
@@ -1436,7 +1455,7 @@ namespace mod_add.ViewModels
             }
         }
 
-        public void CrearRegistrosTemporales(RespuestaBusquedaMasiva respuesta)
+        public void CrearRegistrosTemporales(RespuestaBusqueda respuesta)
         {
             using (ApplicationDbContext context = new ApplicationDbContext())
             {

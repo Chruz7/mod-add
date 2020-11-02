@@ -42,7 +42,7 @@ namespace mod_add.Componentes
         {
             App.HabilitarPrincipal(false);
 
-            RespuestaBusquedaMasiva respuesta = new RespuestaBusquedaMasiva
+            RespuestaBusqueda respuesta = new RespuestaBusqueda
             {
                 TipoRespuesta = TipoRespuesta.NADA
             };
@@ -77,9 +77,13 @@ namespace mod_add.Componentes
                     Aplicar.IsEnabled = true;
                     Cancelar.IsEnabled = true;
                 }
+                else if (respuesta.TipoRespuesta == TipoRespuesta.FECHA_INACCESIBLE)
+                {
+                    MessageBox.Show($"No cuenta con la licencia para la busqueda de cuentas en el mes de {respuesta.Mensaje}", "Busqueda", MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
                 else if (respuesta.TipoRespuesta == TipoRespuesta.SIN_REGISTROS)
                 {
-                    MessageBox.Show("No se encontraron cuentas", "Busqueda", MessageBoxButton.OK, MessageBoxImage.Information);
+                    MessageBox.Show("No se encontraron cuentas", "Busqueda", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
                 else if (respuesta.TipoRespuesta == TipoRespuesta.ERROR)
                 {

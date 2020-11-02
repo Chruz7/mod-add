@@ -7,38 +7,67 @@
         mc:Ignorable="d"
         Title="Licencias"
         WindowStartupLocation="CenterScreen"
+        ResizeMode="CanMinimize"
         Height="300"
-        Width="350">
+        Width="820">
     <Grid>
-        <Grid Margin="10">
+        <Grid Margin="5">
             <Grid.RowDefinitions>
+                <RowDefinition Height="40"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="40"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="110"/>
-                <ColumnDefinition Width="110"/>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="10"/>
+                <ColumnDefinition Width="auto"/>
             </Grid.ColumnDefinitions>
-            <!--<Label
-                Grid.Row="0"
-                Content="Licencias:"
-                Target="{Binding ElementName=Licencia}"/>-->
-            <TextBox
+            <Grid 
                 Grid.Row="0"
                 Grid.Column="0"
-                Grid.ColumnSpan="3"
-                VerticalContentAlignment="Top"
-                HorizontalContentAlignment="Left"
-                TextWrapping="Wrap"
-                AcceptsReturn="True"
-                HorizontalScrollBarVisibility="Disabled"
-                VerticalScrollBarVisibility="Auto"
-                x:Name="Licencia"
-                Text="{Binding Licencia, UpdateSourceTrigger=PropertyChanged}"/>
+                Grid.ColumnSpan="4">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="70"/>
+                </Grid.ColumnDefinitions>
+                <TextBox
+                    Grid.Column="0"
+                    VerticalAlignment="Center"
+                    MaxLength="150"
+                    x:Name="Licencia"
+                    Text="{Binding Licencia, UpdateSourceTrigger=PropertyChanged}"/>
+                <Button
+                    Grid.Column="1"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Center"
+                    Padding="8,0,8,0"
+                    Content="Agregar"
+                    x:Name="Agregar"
+                    Click="Agregar_Click"/>
+            </Grid>
 
-            <Button
-                Grid.Row="3"
+            <DataGrid
+                Grid.Row="1"
+                Grid.Column="0"
+                Grid.ColumnSpan="4"
+                Name="Grupos"
+                ItemsSource="{Binding RegistrosLicencia}"
+                Style="{DynamicResource DataGridStyle1}">
+                <DataGrid.Columns>
+                    <DataGridTextColumn
+                        Width="15*"
+                        Header="Mes"
+                        Binding="{Binding MesDisplay}"/>
+                    <DataGridTextColumn
+                        Width="85*"
+                        Header="Licencia"
+                        Binding="{Binding Licencia}"/>
+                </DataGrid.Columns>
+            </DataGrid>
+
+            <!--<Button
+                Grid.Row="2"
                 Grid.Column="1"
                 VerticalAlignment="Center"
                 HorizontalAlignment="Center"
@@ -62,16 +91,16 @@
                         FontWeight="Bold"
                         Text="CANCELAR"/>
                 </Grid>
-            </Button>
+            </Button>-->
 
             <Button
                 Grid.Row="2"
-                Grid.Column="2"
+                Grid.Column="3"
                 VerticalAlignment="Center"
                 HorizontalAlignment="Right"
                 Width="100"
-                x:Name="Aceptar"
-                Click="Aceptar_Click">
+                x:Name="Cerrar"
+                Click="Cerrar_Click">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="30*"/>
@@ -81,13 +110,13 @@
                         Grid.Column="0"
                         VerticalAlignment="Center"
                         HorizontalAlignment="Center"
-                        Source="/mod-add;component/Recursos/Iconos/aceptar.png"/>
+                        Source="/mod-add;component/Recursos/Iconos/cancelar.png"/>
                     <TextBlock
                         Grid.Column="1"
                         VerticalAlignment="Center"
                         HorizontalAlignment="Center"
                         FontWeight="Bold"
-                        Text="ACEPTAR"/>
+                        Text="Cerrar"/>
                 </Grid>
             </Button>
         </Grid>

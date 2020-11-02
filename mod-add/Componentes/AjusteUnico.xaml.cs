@@ -1,5 +1,6 @@
 ﻿using mod_add.Enums;
 using mod_add.Helpers;
+using mod_add.Selectores;
 using mod_add.ViewModels;
 using mod_add.Vistas;
 using SR.Datos;
@@ -65,8 +66,8 @@ namespace mod_add.Componentes
 
                 if (respuesta == TipoRespuesta.HECHO)
                 {
-                    loading.AgregarMensaje("Registrando bitácora");
-                    ViewModel.ResgistrarBitacora();
+                    //loading.AgregarMensaje("Registrando bitácora");
+                    //ViewModel.ResgistrarBitacora();
                 }
 
             }).ContinueWith(task =>
@@ -109,7 +110,10 @@ namespace mod_add.Componentes
             {
                 App.HabilitarPrincipal(false);
 
-                TipoRespuesta respuesta = TipoRespuesta.NADA;
+                var respuesta = new RespuestaBusqueda
+                {
+                    TipoRespuesta = TipoRespuesta.NADA
+                };
                 LoadingWindow loading = new LoadingWindow();
                 loading.AgregarMensaje("Buscando cuenta");
                 loading.Show();
@@ -123,31 +127,35 @@ namespace mod_add.Componentes
                     loading.Close();
                     App.HabilitarPrincipal();
 
-                    if (respuesta == TipoRespuesta.HECHO)
+                    if (respuesta.TipoRespuesta == TipoRespuesta.HECHO)
                     {
+                        if (respuesta.MultipleFormaPago)
+                        {
+                            MessageBox.Show("Cuenta fue cerrada con multiple forma de pago. Al ajustarse la cuenta se guardará solo con la forma de pago en efectivo.", "Busqueda", MessageBoxButton.OK, MessageBoxImage.Information);
+                        }
                         HabilitarComponentes();
                     }
-                    else if (respuesta == TipoRespuesta.REGISTRO_NO_ENCONTRADO)
+                    else if (respuesta.TipoRespuesta == TipoRespuesta.REGISTRO_NO_ENCONTRADO)
                     {
                         MessageBox.Show("No se encontró la cuenta", "Busqueda", MessageBoxButton.OK, MessageBoxImage.Warning);
                     }
-                    else if (respuesta == TipoRespuesta.CHEQUE_CANCELADO)
+                    else if (respuesta.TipoRespuesta == TipoRespuesta.CHEQUE_CANCELADO)
                     {
                         MessageBox.Show("Cuenta cancelada.", "Busqueda", MessageBoxButton.OK, MessageBoxImage.Warning);
                     }
-                    else if (respuesta == TipoRespuesta.SIN_REGISTROS)
+                    else if (respuesta.TipoRespuesta == TipoRespuesta.SIN_REGISTROS)
                     {
                         MessageBox.Show("La cuenta no tiene detalles", "Busqueda", MessageBoxButton.OK, MessageBoxImage.Warning);
                     }
-                    else if (respuesta == TipoRespuesta.CHEQUE_CON_MULTIPLE_FORMA_PAGO)
-                    {
-                        MessageBox.Show("La cuenta tiene más de una forma de pago.", "Busqueda", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    }
-                    else if (respuesta == TipoRespuesta.CHEQUE_SIN_FORMA_PAGO)
+                    else if (respuesta.TipoRespuesta == TipoRespuesta.CHEQUE_SIN_FORMA_PAGO)
                     {
                         MessageBox.Show("La cuenta no tiene forma de pago.", "Busqueda", MessageBoxButton.OK, MessageBoxImage.Warning);
                     }
-                    else if (respuesta == TipoRespuesta.ERROR)
+                    else if (respuesta.TipoRespuesta == TipoRespuesta.FECHA_INACCESIBLE)
+                    {
+                        MessageBox.Show($"No cuenta con la licencia para la busqueda de cuentas en el mes de {respuesta.Mensaje}", "Busqueda", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    }
+                    else if (respuesta.TipoRespuesta == TipoRespuesta.ERROR)
                     {
                         MessageBox.Show("Error al intentar buscar la cuenta.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
                     }

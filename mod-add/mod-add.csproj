@@ -121,7 +121,7 @@
     <Compile Include="Helpers\Messenger.cs" />
     <Compile Include="Selectores\Condicional.cs" />
     <Compile Include="Selectores\Proceso.cs" />
-    <Compile Include="Selectores\RespuestaBusquedaMasiva.cs" />
+    <Compile Include="Selectores\RespuestaBusqueda.cs" />
     <Compile Include="Utils\ConfiguracionLocalServicio.cs" />
     <Compile Include="Utils\Encriptado.cs" />
     <Compile Include="Utils\Exportar.cs" />
