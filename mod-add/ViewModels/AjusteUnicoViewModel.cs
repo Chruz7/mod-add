@@ -393,6 +393,11 @@ namespace mod_add.ViewModels
 
                     Cheque = cheques_DAO.Find(Folio);
 
+                    if (Cheque == null) return new RespuestaBusqueda
+                    {
+                        TipoRespuesta = TipoRespuesta.REGISTRO_NO_ENCONTRADO
+                    };
+
                     if (!Funciones.ValidarMesBusqueda(App.MesesValidos, Cheque.fecha.Value))
                     {
                         return new RespuestaBusqueda
@@ -401,11 +406,6 @@ namespace mod_add.ViewModels
                             Mensaje = Cheque.fecha.Value.ToString("MMMM yyyy", CultureInfo.CreateSpecificCulture("es"))
                         };
                     }
-
-                    if (Cheque == null) return new RespuestaBusqueda
-                    {
-                        TipoRespuesta = TipoRespuesta.REGISTRO_NO_ENCONTRADO
-                    };
 
                     if (Cheque.cancelado.Value) return new RespuestaBusqueda
                     {

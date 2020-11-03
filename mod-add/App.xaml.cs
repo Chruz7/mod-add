@@ -23,7 +23,6 @@ namespace mod_add
         public static string ClaveEmpresa { get; set; }
         public static string ClavePagoEfectivo { get; set; }
         public static List<DateTime> MesesValidos { get; set; }
-        public static DateTime FechaMaxima { get; set; }
         public static ConfiguracionSistema ConfiguracionSistema { get; set; }
         public static List<ProductoReemplazo> ProductosReemplazo { get; set; }
         public static List<ProductoEliminacion> ProductosEliminar { get; set; }
@@ -51,7 +50,6 @@ namespace mod_add
                     ClaveEmpresa = ConfiguracionLocalServicio.ReadSetting("CLAVE-EMPRESA");
                     ClavePagoEfectivo = ConfiguracionLocalServicio.ReadSetting("CLAVE-PAGO-EFECTIVO");
                     MidpointRounding = MidpointRounding.AwayFromZero;
-                    FechaMaxima = DateTime.Now.AddDays(-1);
                     MesesValidos = new List<DateTime>();
 
                     using (ApplicationDbContext context = new ApplicationDbContext())

@@ -1314,12 +1314,12 @@ namespace mod_add.ViewModels
         {
             DetalleModificacionCheques = new ObservableCollection<DetalleAjuste>();
             UltimoMovimiento = 0;
-            FechaCorteInicio = App.FechaMaxima;
-            FechaCorteCierre = App.FechaMaxima;
+            FechaCorteInicio = DateTime.Today.AddDays(-1);
+            FechaCorteCierre = DateTime.Today.AddDays(-1);
             Turno = true;
             Periodo = false;
-            FechaInicio = App.FechaMaxima;
-            FechaCierre = App.FechaMaxima;
+            FechaInicio = DateTime.Today.AddDays(-1);
+            FechaCierre = DateTime.Today.AddDays(-1);
             CorteInicio = App.SRConfiguracion.CorteInicio;
             CorteCierre = App.SRConfiguracion.CorteCierre;
             HorarioTurno = $"{App.SRConfiguracion.cortezinicio} - {App.SRConfiguracion.cortezfin}";

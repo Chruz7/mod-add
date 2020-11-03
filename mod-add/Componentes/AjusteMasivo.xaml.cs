@@ -25,8 +25,8 @@ namespace mod_add.Componentes
             Aplicar.IsEnabled = false;
             Cancelar.IsEnabled = false;
 
-            FechaInicio.DisplayDateEnd = App.FechaMaxima;
-            FechaCierre.DisplayDateEnd = App.FechaMaxima;
+            FechaInicio.DisplayDateEnd = DateTime.Today.AddDays(-1);
+            FechaCierre.DisplayDateEnd = DateTime.Today.AddDays(-1);
 
             ViewModel = new AjusteMasivoViewModel();
             DataContext = ViewModel;
@@ -151,7 +151,7 @@ namespace mod_add.Componentes
             FechaCierre.Visibility = Visibility.Visible;
             HorarioTurno.Visibility = Visibility.Hidden;
 
-            FechaCierre.DisplayDateStart = ViewModel.FechaCierre;
+            FechaCierre.DisplayDateStart = ViewModel.FechaInicio;
             FechaCierre.DisplayDateEnd = DateTime.Today;
             ViewModel.FechaCierre = DateTime.Today;
         }
