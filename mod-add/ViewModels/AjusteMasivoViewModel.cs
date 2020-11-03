@@ -894,7 +894,7 @@ namespace mod_add.ViewModels
 
                         cheque.TipoAccion = TipoAccion.ACTUALIZAR;
                         cheque.TotalArticulosEliminados = chequesDetalle
-                            .Where(x => x.TipoAccion == TipoAccion.ELIMINAR || (x.TipoAccion == TipoAccion.ACTUALIZAR && x.Cambiado))
+                            .Where(x => (x.TipoAccion == TipoAccion.ELIMINAR || (x.TipoAccion == TipoAccion.ACTUALIZAR && x.Cambiado)) && !x.modificador.Value)
                             .Sum(x => x.CantidadAnt);
 
                         if (!QuitarPropinasManualmente)
@@ -1205,6 +1205,7 @@ namespace mod_add.ViewModels
                     Debug.WriteLine($"folio: {det.foliodet}, movimiento: {det.movimiento}, producto: {det.idproducto}, precio: {det.precio}, cantidad: {det.cantidad}");
                     int porcentajeAleatorio = Random.Next(1, 100);
                     int porcentajeAnterior = 0;
+                    int porcentajeActual = 0;
                     Debug.WriteLine($"Porcentaje aleatorio: {porcentajeAleatorio}");
                     if (App.ConfiguracionSistema.EliminarProductosSeleccionados && App.ProductosEliminar.Count > 0 && !App.ProductosEliminar.Any(x => x.Clave == det.idproducto))
                     {
@@ -1214,7 +1215,10 @@ namespace mod_add.ViewModels
 
                     foreach (var productoReemplazo in App.ProductosReemplazo)
                     {
-                        if (productoReemplazo.Porcentaje > porcentajeAnterior && productoReemplazo.Porcentaje <= porcentajeAleatorio)
+                        porcentajeActual += productoReemplazo.Porcentaje;
+
+                        //if (productoReemplazo.Porcentaje > porcentajeActual && porcentajeAleatorio <= (productoReemplazo.Porcentaje + porcentajeActual))
+                        if (porcentajeAleatorio > porcentajeAnterior && porcentajeAleatorio <= porcentajeActual)
                         {
                             var detalleProducto = App.SRProductosDetalle.Find(x => x.idproducto == productoReemplazo.Clave);
                             Debug.WriteLine($"producto reemplazo: {productoReemplazo.Clave}, porcentaje: {productoReemplazo.Porcentaje}, precio: {detalleProducto.precio}");
@@ -1251,7 +1255,7 @@ namespace mod_add.ViewModels
                             break;
                         }
 
-                        porcentajeAnterior = productoReemplazo.Porcentaje;
+                        porcentajeAnterior += productoReemplazo.Porcentaje;
                     }
 
                     CalcularImporteNuevo(context);
