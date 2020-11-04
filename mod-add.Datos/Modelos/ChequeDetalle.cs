@@ -11,6 +11,7 @@ namespace mod_add.Datos.Modelos
         public TipoAccion TipoAccion { get; set; }
         public TipoClasificacion TipoClasificacion { get; set; }
         public bool Cambiado { get; set; }
+        public decimal PrecionEnUnidad { get; set; }
         public long FolioAnt { get; set; }
         public decimal CantidadAnt { get; set; }
         public string IdProductoAnt { get; set; }

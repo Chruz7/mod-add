@@ -5,8 +5,8 @@ namespace mod_add.Datos.Modelos
 {
     public class DetalleAjuste
     {
-        public long Folio { get; set; }
-        public decimal FolioNotaConsumo { get; set; }
+        public int Folio { get; set; }
+        public int FolioNotaConsumo { get; set; }
         public DateTime Fecha { get; set; }
         public TipoLogico Cancelado { get; set; }
         public TipoLogico Facturado { get; set; }

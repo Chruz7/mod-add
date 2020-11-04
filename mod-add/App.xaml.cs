@@ -83,7 +83,7 @@ namespace mod_add
                         }
 
                         ConfiguracionSistema = context.ConfiguracionSistema.FirstOrDefault();
-                        ProductosReemplazo = context.ProductosReemplazo.Where(x => x.Reemplazar).OrderBy(x => x.Porcentaje).ToList();
+                        ProductosReemplazo = context.ProductosReemplazo.Where(x => x.Reemplazar).ToList();
                         ProductosEliminar = context.ProductosEliminar.Where(x => x.Eliminar).ToList();
                     }
                     ObtenerLicencias();

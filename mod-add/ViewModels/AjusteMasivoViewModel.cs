@@ -1044,33 +1044,43 @@ namespace mod_add.ViewModels
 
                     foreach (var det in detalles)
                     {
-                        Debug.WriteLine($"folio: {det.foliodet}, movimiento: {det.movimiento}, producto: {det.idproducto}, precio: {det.precio}, cantidad: {det.cantidad}");
-
-                        decimal productosRestantes = context.ChequesDetalle
-                            .Where(x => x.foliodet == det.foliodet && !x.modificador.Value && (x.TipoAccion == TipoAccion.ACTUALIZAR || x.TipoAccion == TipoAccion.NINGUNO))
-                            .Sum(x => x.cantidad.Value);
-
-                        Debug.WriteLine($"productos principales restantes de la cuenta: {productosRestantes}");
-                        Debug.WriteLine($"productos minimos por cuenta: {App.ConfiguracionSistema.MinProductosCuenta}");
-
-                        if (productosRestantes <= App.ConfiguracionSistema.MinProductosCuenta)
+                        if (det.descuento.Value == 100m)
                         {
-                            Debug.WriteLine("Cantidad mínima alcanzada");
+                            Debug.WriteLine($"Producto: {det.idproducto} no eliminado. Descuento de 100%");
                             continue;
                         }
 
                         if (App.ConfiguracionSistema.EliminarProductosSeleccionados && App.ProductosEliminar.Count > 0 && !App.ProductosEliminar.Any(x => x.Clave == det.idproducto))
                         {
-                            Debug.WriteLine("Producto NO eliminable");
+                            Debug.WriteLine($"Producto: {det.idproducto} NO eliminable");
+                            continue;
+                        }
+
+                        Debug.WriteLine($"folio: {det.foliodet}, movimiento: {det.movimiento}, producto: {det.idproducto}, precio: {det.precio}, cantidad: {det.cantidad}, descuento: {det.descuento.Value}");
+
+                        decimal cantidadRestanteUnidad = context.ChequesDetalle
+                            .Where(x => x.foliodet == det.foliodet && !x.modificador.Value && (x.TipoAccion == TipoAccion.ACTUALIZAR || x.TipoAccion == TipoAccion.NINGUNO))
+                            .Sum(x => x.cantidad.Value == Math.Truncate(x.cantidad.Value) ? x.cantidad.Value : 1m);
+
+                        decimal cantidadTotal = context.ChequesDetalle
+                            .Where(x => x.foliodet == det.foliodet && !x.modificador.Value && (x.TipoAccion == TipoAccion.ACTUALIZAR || x.TipoAccion == TipoAccion.NINGUNO))
+                            .Sum(x => x.cantidad.Value);
+
+                        Debug.WriteLine($"Cantidad restante como unidad entera: {cantidadRestanteUnidad}. Cantidad total: {cantidadTotal}");
+                        Debug.WriteLine($"Productos minimos por cuenta: {App.ConfiguracionSistema.MinProductosCuenta}");
+
+                        if (cantidadRestanteUnidad <= App.ConfiguracionSistema.MinProductosCuenta)
+                        {
+                            Debug.WriteLine("Cantidad mínima alcanzada");
                             continue;
                         }
 
                         bool eliminarTodo = false;
-                        string idproductocompuesto = "";
+                        string idproductocompuesto = det.idproductocompuesto;
 
-                        if (det.cantidad.Value > 1m)
+                        if (det.cantidad.Value > 1m && det.cantidad.Value == Math.Truncate(det.cantidad.Value))
                         {
-                            Debug.WriteLine($"Eliminar: {1}");
+                            Debug.WriteLine($"Eliminar: {1.00m}");
 
                             det.TipoAccion = TipoAccion.ACTUALIZAR;
                             det.cantidad -= 1m;
@@ -1079,8 +1089,6 @@ namespace mod_add.ViewModels
                         else
                         {
                             Debug.WriteLine($"Eliminar: {det.cantidad.Value}");
-                            idproductocompuesto = det.idproductocompuesto;
-
                             det.TipoAccion = TipoAccion.ELIMINAR;
                             det.cantidad = 0;
                             det.idproductocompuesto = "";
@@ -1157,9 +1165,9 @@ namespace mod_add.ViewModels
                         continue;
                     }
 
-                    if (det.cantidad.Value > 1m && !eliminarTodo)
+                    if (det.cantidad.Value > 1m && det.cantidad.Value == Math.Truncate(det.cantidad.Value) && !eliminarTodo)
                     {
-                        Debug.WriteLine($"Eliminar: {1}");
+                        Debug.WriteLine($"Eliminar: {1.00m}");
 
                         det.cantidad -= 1m;
                         det.TipoAccion = TipoAccion.ACTUALIZAR;
@@ -1185,9 +1193,10 @@ namespace mod_add.ViewModels
         public void CambiarProductos()
         {
             if (ImporteNuevo <= ImporteObjetivo) return;
+
             if (App.ProductosReemplazo.Count == 0)
             {
-                Debug.WriteLine("No hay productos reemplazo");
+                Debug.WriteLine("No hay productos para reemplazo");
                 return;
             }
 
@@ -1202,28 +1211,34 @@ namespace mod_add.ViewModels
 
                 foreach (var det in detalles)
                 {
-                    Debug.WriteLine($"folio: {det.foliodet}, movimiento: {det.movimiento}, producto: {det.idproducto}, precio: {det.precio}, cantidad: {det.cantidad}");
+                    if (App.ConfiguracionSistema.EliminarProductosSeleccionados && App.ProductosEliminar.Count > 0 && !App.ProductosEliminar.Any(x => x.Clave == det.idproducto))
+                    {
+                        Debug.WriteLine($"Producto: {det.idproducto} NO eliminable");
+                        continue;
+                    }
+
+                    Debug.WriteLine($"folio: {det.foliodet}, movimiento: {det.movimiento}, producto: {det.idproducto}, precio: {det.precio}, cantidad: {det.cantidad}, descuento: {det.descuento}");
+
                     int porcentajeAleatorio = Random.Next(1, 100);
                     int porcentajeAnterior = 0;
                     int porcentajeActual = 0;
                     Debug.WriteLine($"Porcentaje aleatorio: {porcentajeAleatorio}");
-                    if (App.ConfiguracionSistema.EliminarProductosSeleccionados && App.ProductosEliminar.Count > 0 && !App.ProductosEliminar.Any(x => x.Clave == det.idproducto))
-                    {
-                        Debug.WriteLine("Producto NO eliminable");
-                        continue;
-                    }
 
                     foreach (var productoReemplazo in App.ProductosReemplazo)
                     {
                         porcentajeActual += productoReemplazo.Porcentaje;
 
-                        //if (productoReemplazo.Porcentaje > porcentajeActual && porcentajeAleatorio <= (productoReemplazo.Porcentaje + porcentajeActual))
                         if (porcentajeAleatorio > porcentajeAnterior && porcentajeAleatorio <= porcentajeActual)
                         {
                             var detalleProducto = App.SRProductosDetalle.Find(x => x.idproducto == productoReemplazo.Clave);
-                            Debug.WriteLine($"producto reemplazo: {productoReemplazo.Clave}, porcentaje: {productoReemplazo.Porcentaje}, precio: {detalleProducto.precio}");
+                            decimal precioUnidad = det.precio.Value;
 
-                            if (detalleProducto.precio < det.precio)
+                            if (det.cantidad.Value != Math.Truncate(det.cantidad.Value))
+                                precioUnidad = det.precio.Value * det.cantidad.Value;
+
+                            Debug.WriteLine($"producto reemplazo: {productoReemplazo.Clave}, porcentaje: {productoReemplazo.Porcentaje}, precio: {detalleProducto.precio}, precio por unidad: {precioUnidad}");
+
+                            if (detalleProducto.precio < precioUnidad)
                             {
                                 string idproductocompuesto = det.idproductocompuesto;
 
@@ -1595,9 +1610,9 @@ namespace mod_add.ViewModels
 
                     DetalleModificacionCheques.Add(new DetalleAjuste
                     {
-                        Folio = cheque.folio,
+                        Folio = (int)cheque.folionotadeconsumo.Value,
+                        FolioNotaConsumo = (int)cheque.folionotadeconsumo.Value,
                         Fecha = cheque.fecha.Value,
-                        FolioNotaConsumo = cheque.folionotadeconsumo.Value,
                         Cancelado = cheque.cancelado.Value ? TipoLogico.SI : TipoLogico.NO,
                         Facturado = cheque.facturado.Value ? TipoLogico.SI : TipoLogico.NO,
                         Descuento = cheque.descuento.Value,
@@ -1634,7 +1649,7 @@ namespace mod_add.ViewModels
         //        Diferencia = PorcentajeDiferencia,
         //    });
         //}
-
+        
         public decimal UltimoMovimiento { get; set; }
         public DateTime FechaCorteInicio { get; set; }
         public DateTime FechaCorteCierre { get; set; }

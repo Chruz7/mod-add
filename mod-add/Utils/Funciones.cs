@@ -499,6 +499,7 @@ namespace mod_add.Utils
                 TipoAccion = tipoAccion,
                 TipoClasificacion = tipoClasificacion,
                 Cambiado = false,
+                PrecionEnUnidad = modelo.cantidad.Value == Math.Truncate(modelo.cantidad.Value) ? modelo.precio.Value : modelo.cantidad.Value * modelo.precio.Value,
                 FolioAnt = modelo.foliodet.Value,
                 CantidadAnt = modelo.cantidad.Value,
                 IdProductoCompuestoAnt = modelo.idproductocompuesto,

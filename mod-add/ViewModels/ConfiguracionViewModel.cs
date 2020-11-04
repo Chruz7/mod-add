@@ -5,7 +5,6 @@ using mod_add.Datos.Interfaces;
 using mod_add.Datos.Modelos;
 using mod_add.Enums;
 using mod_add.Selectores;
-using SRLibrary.Models;
 using SRLibrary.SR_Context;
 using SRLibrary.SR_DAO;
 using SRLibrary.SR_DTO;
@@ -210,7 +209,7 @@ namespace mod_add.ViewModels
                     context.SaveChanges();
 
                     App.ConfiguracionSistema = configuracion;
-                    App.ProductosReemplazo = productosReemplazo.Where(x => x.Reemplazar).OrderBy(x => x.Porcentaje).ToList();
+                    App.ProductosReemplazo = productosReemplazo.Where(x => x.Reemplazar).ToList();
                     App.ObtenerProductosDetalleSR();
 
                     return TipoRespuesta.HECHO;
