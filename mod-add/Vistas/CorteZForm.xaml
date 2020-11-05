@@ -1,0 +1,80 @@
+﻿<Window x:Class="mod_add.Vistas.CorteZForm"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:mod_add.Vistas"
+        mc:Ignorable="d"
+        Title="Corte Z" 
+        Height="400"
+        Width="600"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="CanMinimize">
+    <Grid Margin="5">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Label
+            Grid.Row="0"
+            Grid.Column="0"
+            Content="Fecha:"
+            Target="{Binding ElementName=Fecha}"/>
+
+        <DatePicker
+            Grid.Row="1"
+            Grid.Column="0"
+            VerticalAlignment="Center"
+            HorizontalAlignment="Left"
+            Width="200"
+            x:Name="Fecha"
+            DisplayDateStart="2000,1,1"
+            SelectedDate="{Binding Fecha}">
+            <DatePicker.Resources>
+                <Style TargetType="{x:Type DatePickerTextBox}">
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate>
+                                <TextBox
+                                    IsReadOnly="True"
+                                    x:Name="PART_TextBox"
+                                    Text="{Binding Path=SelectedDate,StringFormat='dd/MM/yyyy',RelativeSource={RelativeSource AncestorType={x:Type DatePicker}}}" />
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </DatePicker.Resources>
+        </DatePicker>
+
+        <TextBlock
+            Grid.Row="2"
+            Grid.Column="0"
+            Grid.ColumnSpan="2"
+            x:Name="HorarioTurno"
+            Text="{Binding HorarioTurno}"/>
+
+        <Label
+            Grid.Row="0"
+            Grid.Column="1"
+            Content="Reporte:"
+            Target="{Binding ElementName=Fecha}"/>
+
+        <ComboBox
+            Grid.Row="1"
+            Grid.Column="1"
+            Grid.ColumnSpan="2"
+            VerticalAlignment="Center"
+            HorizontalAlignment="Left"
+            Width="200"
+            ItemsSource="{Binding Reportes}"
+            DisplayMemberPath="DisplayText"
+            x:Name="Reportes"
+            SelectedItem="{Binding Reporte}"/>
+    </Grid>
+</Window>

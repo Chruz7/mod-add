@@ -117,10 +117,12 @@
     <Compile Include="Componentes\Configuracion.xaml.cs">
       <DependentUpon>Configuracion.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Enums\TipoReporte.cs" />
     <Compile Include="Enums\TipoRespuesta.cs" />
     <Compile Include="Helpers\Messenger.cs" />
     <Compile Include="Selectores\Condicional.cs" />
     <Compile Include="Selectores\Proceso.cs" />
+    <Compile Include="Selectores\Reporte.cs" />
     <Compile Include="Selectores\RespuestaBusqueda.cs" />
     <Compile Include="Utils\ConfiguracionLocalServicio.cs" />
     <Compile Include="Utils\Encriptado.cs" />
@@ -144,6 +146,9 @@
     </Compile>
     <Compile Include="Vistas\CambiarContrasena.xaml.cs">
       <DependentUpon>CambiarContrasena.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Vistas\CorteZForm.xaml.cs">
+      <DependentUpon>CorteZForm.xaml</DependentUpon>
     </Compile>
     <Compile Include="Vistas\LicenciaForm.xaml.cs">
       <DependentUpon>LicenciaForm.xaml</DependentUpon>
@@ -202,6 +207,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Vistas\CambiarContrasena.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Vistas\CorteZForm.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
