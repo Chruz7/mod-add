@@ -45,6 +45,8 @@ namespace mod_add.Utils
                 TipoPago = tipoPago,
                 TotalArticulosEliminados = 0,
                 FolioAnt = modelo.folio,
+                NumChequeAnt = modelo.numcheque.Value,
+                FolioNotaConsumoAnt = modelo.folionotadeconsumo.Value,
                 PropinaAnt = modelo.propina.Value,
                 PropinaTarjetaAnt = modelo.propinatarjeta.Value,
                 TotalArticulosAnt = modelo.totalarticulos.Value,
@@ -78,7 +80,7 @@ namespace mod_add.Utils
                 Desc_Imp_OriginalAnt = modelo.desc_imp_original.Value,
                 CambioAnt = modelo.cambio.Value,
                 CambioRepartidorAnt = modelo.cambiorepartidor.Value,
-                //IdTurnoAnt = (long)modelo.Idturno.Value,
+                IdTurnoAnt = modelo.idturno.Value,
 
                 folio = modelo.folio,
                 seriefolio = modelo.seriefolio,
@@ -663,6 +665,7 @@ namespace mod_add.Utils
             return new Turno
             {
                 TipoAccion = tipoAccion,
+                IdTurnoInternoAnt = modelo.idturno.Value,
                 IdTurnoAnt = modelo.idturno.Value,
                 EfectivoAnterior = modelo.efectivo.Value,
                 TarjetaAnterior = modelo.tarjeta.Value,

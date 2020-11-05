@@ -129,7 +129,6 @@ namespace mod_add.Componentes
 
         private void Cancelar_Click(object sender, RoutedEventArgs e)
         {
-            ViewModel.EliminarRegistrosTemporales();
             ViewModel.InicializarControles();
             GenerarVistaPrevia.IsEnabled = false;
             Aplicar.IsEnabled = false;
@@ -142,7 +141,7 @@ namespace mod_add.Componentes
             FechaCierre.Visibility = Visibility.Hidden;
             HorarioTurno.Visibility = Visibility.Visible;
 
-            FechaInicio.DisplayDateEnd = DateTime.Today;
+            FechaInicio.DisplayDateEnd = DateTime.Today.AddDays(-1);
         }
 
         private void Turno_Unchecked(object sender, RoutedEventArgs e)
@@ -152,8 +151,8 @@ namespace mod_add.Componentes
             HorarioTurno.Visibility = Visibility.Hidden;
 
             FechaCierre.DisplayDateStart = ViewModel.FechaInicio;
-            FechaCierre.DisplayDateEnd = DateTime.Today;
-            ViewModel.FechaCierre = DateTime.Today;
+            FechaCierre.DisplayDateEnd = DateTime.Today.AddDays(-1);
+            ViewModel.FechaCierre = DateTime.Today.AddDays(-1);
         }
 
         private void HabilitarControles(bool habilitar = true)

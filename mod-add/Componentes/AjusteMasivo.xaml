@@ -370,7 +370,7 @@
                     <DataGridTextColumn
                         IsReadOnly="True"
                         Header="Folio&#xa;cuenta"
-                        Binding="{Binding Folio}"/>
+                        Binding="{Binding FolioCuenta}"/>
                     <DataGridTextColumn
                         IsReadOnly="True"
                         Header="Folio nota&#xa;consumo"

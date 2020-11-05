@@ -12,6 +12,8 @@ namespace mod_add.Datos.Modelos
         public TipoPago TipoPago { get; set; }
         public decimal TotalArticulosEliminados { get; set; }
         public long FolioAnt { get; set; }
+        public decimal NumChequeAnt { get; set; }
+        public decimal FolioNotaConsumoAnt { get; set; }
         public decimal TotalArticulosAnt { get; set; }
         public decimal SubtotalAnt { get; set; }
         public decimal PropinaAnt { get; set; }
@@ -45,25 +47,22 @@ namespace mod_add.Datos.Modelos
         public decimal Desc_Imp_OriginalAnt { get; set; }
         public decimal CambioAnt { get; set; }
         public decimal CambioRepartidorAnt { get; set; }
-        public long IdTurnoAnt { get; set; }
+        public decimal IdTurnoAnt { get; set; }
 
         public long folio { get; set; }
         public string seriefolio { get; set; }
         public decimal? numcheque { get; set; }
-        //public long? numcheque_f { get; set; }
         public DateTime? fecha { get; set; }
         public DateTime? salidarepartidor { get; set; }
         public DateTime? arriborepartidor { get; set; }
         public DateTime? cierre { get; set; }
         public string mesa { get; set; }
         public decimal? nopersonas { get; set; }
-        //public int? nopersonas_f { get; set; }
         public string idmesero { get; set; }
         public bool? pagado { get; set; }
         public bool? cancelado { get; set; }
         public bool? impreso { get; set; }
         public decimal? impresiones { get; set; }
-        //public int? impresiones_f { get; set; }
         public decimal? cambio { get; set; }
         public decimal? descuento { get; set; }
         public decimal? reabiertas { get; set; }

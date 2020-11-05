@@ -79,6 +79,15 @@ namespace mod_add
 
                             context.ProductosReemplazo.AddRange(productosReemplazo);
 
+                            SRLibrary.Utils.valideSerialKey valideSerialKey = new SRLibrary.Utils.valideSerialKey();
+
+                            context.RegistroLicencias.Add(new RegistroLicencia
+                            {
+                                Anio = 2020,
+                                Mes = 11,
+                                Licencia = valideSerialKey.getEncryptSerial("2020-11-01")
+                            });
+
                             context.SaveChanges();
                         }
 
@@ -117,7 +126,6 @@ namespace mod_add
 
                 foreach (var registroLicencia in registroLicencias)
                 {
-
                     var result = valideSerialKey.getDecryptSerial(registroLicencia.Licencia);
                     var fecha = DateTime.Parse(result);
                     MesesValidos.Add(fecha);

@@ -13,7 +13,7 @@ namespace mod_add.Datos.Migrations
         
         string IMigrationMetadata.Id
         {
-            get { return "202011021639255_Inicio"; }
+            get { return "202011050217588_Inicio"; }
         }
         
         string IMigrationMetadata.Source

@@ -9,6 +9,7 @@ namespace mod_add.Datos.Modelos
     {
         public int Id { get; set; }
         public TipoAccion TipoAccion { get; set; }
+        public long IdTurnoInternoAnt { get; set; }
         public long IdTurnoAnt { get; set; }
         public decimal EfectivoAnterior { get; set; }
         public decimal TarjetaAnterior { get; set; }

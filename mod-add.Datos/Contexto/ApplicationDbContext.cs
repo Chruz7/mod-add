@@ -20,10 +20,10 @@ namespace mod_add.Datos.Contexto
         //public DbSet<BitacoraModificacion> RegistrosBitacora { get; set; }
         public DbSet<ProductoEliminacion> ProductosEliminar { get; set; }
         public DbSet<ProductoReemplazo> ProductosReemplazo { get; set; }
-        public DbSet<Turno> Turnos { get; set; }
-        public DbSet<Cheque> Cheques { get; set; }
-        public DbSet<ChequeDetalle> ChequesDetalle { get; set; }
-        public DbSet<ChequePago> ChequesPago { get; set; }
+        //public DbSet<Turno> Turnos { get; set; }
+        //public DbSet<Cheque> Cheques { get; set; }
+        //public DbSet<ChequeDetalle> ChequesDetalle { get; set; }
+        //public DbSet<ChequePago> ChequesPago { get; set; }
 
         public static ApplicationDbContext Create()
         {
