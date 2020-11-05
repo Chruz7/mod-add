@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace mod_add.Selectores
 {
-    public class RespuestaBusqueda
+    public class Respuesta
     {
         public TipoRespuesta TipoRespuesta { get; set; }
         public bool MultipleFormaPago { get; set; }

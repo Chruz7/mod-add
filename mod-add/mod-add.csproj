@@ -117,13 +117,14 @@
     <Compile Include="Componentes\Configuracion.xaml.cs">
       <DependentUpon>Configuracion.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Enums\TipoDestino.cs" />
     <Compile Include="Enums\TipoReporte.cs" />
     <Compile Include="Enums\TipoRespuesta.cs" />
     <Compile Include="Helpers\Messenger.cs" />
     <Compile Include="Selectores\Condicional.cs" />
     <Compile Include="Selectores\Proceso.cs" />
     <Compile Include="Selectores\Reporte.cs" />
-    <Compile Include="Selectores\RespuestaBusqueda.cs" />
+    <Compile Include="Selectores\Respuesta.cs" />
     <Compile Include="Utils\ConfiguracionLocalServicio.cs" />
     <Compile Include="Utils\Encriptado.cs" />
     <Compile Include="Utils\Exportar.cs" />
@@ -135,6 +136,7 @@
     <Compile Include="ViewModels\BitacoraViewModel.cs" />
     <Compile Include="ViewModels\CambioContrasenaViewModel.cs" />
     <Compile Include="ViewModels\ConfiguracionViewModel.cs" />
+    <Compile Include="ViewModels\CorteZViewModel.cs" />
     <Compile Include="ViewModels\EliminarProductosViewModel.cs" />
     <Compile Include="ViewModels\LicenciaViewModel.cs" />
     <Compile Include="ViewModels\SeleccionClienteViewModel.cs" />
@@ -322,6 +324,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Recursos\Iconos\seleccion-grupo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Recursos\Iconos\monitor.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

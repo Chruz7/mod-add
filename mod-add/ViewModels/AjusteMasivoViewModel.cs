@@ -1194,7 +1194,7 @@ namespace mod_add.ViewModels
             FechaInicio = new DateTime(2020, 11, 1);
         }
 
-        public RespuestaBusqueda ObtenerChequesSR()
+        public Respuesta ObtenerChequesSR()
         {
             using (SoftRestaurantDBContext context = new SoftRestaurantDBContext())
             {
@@ -1218,7 +1218,7 @@ namespace mod_add.ViewModels
 
                     if (!Funciones.ValidarMesBusqueda(App.MesesValidos, FechaCorteInicio))
                     {
-                        return new RespuestaBusqueda
+                        return new Respuesta
                         {
                             TipoRespuesta = TipoRespuesta.FECHA_INACCESIBLE,
                             Mensaje = FechaCorteInicio.ToString("MMMM yyyy", CultureInfo.CreateSpecificCulture("es"))
@@ -1227,7 +1227,7 @@ namespace mod_add.ViewModels
 
                     if (!Funciones.ValidarMesBusqueda(App.MesesValidos, FechaCorteCierre))
                     {
-                        return new RespuestaBusqueda
+                        return new Respuesta
                         {
                             TipoRespuesta = TipoRespuesta.FECHA_INACCESIBLE,
                             Mensaje = FechaCorteCierre.ToString("MMMM yyyy", CultureInfo.CreateSpecificCulture("es"))
@@ -1252,7 +1252,7 @@ namespace mod_add.ViewModels
                             new SqlParameter($"{nameof(App.ClaveEmpresa)}", App.ClaveEmpresa));
                     }
 
-                    if (turnos.Count == 0) return new RespuestaBusqueda
+                    if (turnos.Count == 0) return new Respuesta
                     {
                         TipoRespuesta = TipoRespuesta.SIN_REGISTROS
                     };
@@ -1262,7 +1262,7 @@ namespace mod_add.ViewModels
                     SR_cheques_DAO cheques_DAO = new SR_cheques_DAO(context, false);
                     var cheques = cheques_DAO.WhereIn("idturno", idsturno);
 
-                    if (cheques.Count == 0) return new RespuestaBusqueda
+                    if (cheques.Count == 0) return new Respuesta
                     {
                         TipoRespuesta = TipoRespuesta.SIN_REGISTROS
                     };
@@ -1278,7 +1278,7 @@ namespace mod_add.ViewModels
                     SR_formasdepago_DAO formasdepago_DAO = new SR_formasdepago_DAO(context);
                     var formasdepago = formasdepago_DAO.GetAll();
 
-                    return new RespuestaBusqueda
+                    return new Respuesta
                     {
                         TipoRespuesta = TipoRespuesta.HECHO,
                         Turnos = turnos.OrderBy(x => x.idturno).ToList(),
@@ -1291,7 +1291,7 @@ namespace mod_add.ViewModels
                 catch (Exception ex)
                 {
                     Debug.WriteLine($"INICIO-ERROR\n{ex}\nFIN-ERROR");
-                    return new RespuestaBusqueda
+                    return new Respuesta
                     {
                         TipoRespuesta = TipoRespuesta.ERROR
                     };
@@ -1299,7 +1299,7 @@ namespace mod_add.ViewModels
             }
         }
 
-        public void CrearRegistrosTemporales(RespuestaBusqueda respuesta)
+        public void CrearRegistrosTemporales(Respuesta respuesta)
         {
             try
             {

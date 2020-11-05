@@ -6,16 +6,16 @@
         xmlns:local="clr-namespace:mod_add.Vistas"
         mc:Ignorable="d"
         Title="Corte Z" 
-        Height="400"
-        Width="600"
+        Height="300"
+        Width="500"
         WindowStartupLocation="CenterScreen"
         ResizeMode="CanMinimize">
     <Grid Margin="5">
         <Grid.RowDefinitions>
             <RowDefinition Height="25"/>
             <RowDefinition Height="30"/>
-            <RowDefinition Height="30"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="60"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
@@ -63,7 +63,7 @@
             Grid.Row="0"
             Grid.Column="1"
             Content="Reporte:"
-            Target="{Binding ElementName=Fecha}"/>
+            Target="{Binding ElementName=Reportes}"/>
 
         <ComboBox
             Grid.Row="1"
@@ -76,5 +76,81 @@
             DisplayMemberPath="DisplayText"
             x:Name="Reportes"
             SelectedItem="{Binding Reporte}"/>
+
+        <Grid 
+            Grid.Row="3"
+            Grid.Column="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            
+            <Button
+                Grid.Column="0"
+                Margin="2"
+                Padding="0"
+                x:Name="Imprimir"
+                Click="Imprimir_Click">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="60*"/>
+                        <RowDefinition Height="40*"/>
+                    </Grid.RowDefinitions>
+                    <Image
+                        Grid.Row="0"
+                        Source="/mod-add;component/Recursos/Iconos/imprimir.png"/>
+                    <TextBlock
+                        Grid.Row="1"
+                        TextWrapping="Wrap"
+                        TextAlignment="Center"
+                        Text="Imprimir"/>
+                </Grid>
+            </Button>
+
+            <Button
+                Grid.Column="1"
+                Margin="2"
+                Padding="0"
+                x:Name="ExportarTXT"
+                Click="ExportarTXT_Click">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="60*"/>
+                        <RowDefinition Height="40*"/>
+                    </Grid.RowDefinitions>
+                    <Image
+                        Grid.Row="0"
+                        Source="/mod-add;component/Recursos/Iconos/monitor.png"/>
+                    <TextBlock
+                        Grid.Row="1"
+                        TextWrapping="Wrap"
+                        TextAlignment="Center"
+                        Text="Pantalla"/>
+                </Grid>
+            </Button>
+
+            <Button
+                Grid.Column="2"
+                Margin="2"
+                Padding="0"
+                x:Name="ExportarExcel"
+                Click="ExportarExcel_Click">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="60*"/>
+                        <RowDefinition Height="40*"/>
+                    </Grid.RowDefinitions>
+                    <Image
+                        Grid.Row="0"
+                        Source="/mod-add;component/Recursos/Iconos/excel.png"/>
+                    <TextBlock
+                        Grid.Row="1"
+                        TextWrapping="Wrap"
+                        TextAlignment="Center"
+                        Text="Excel"/>
+                </Grid>
+            </Button>
+        </Grid>
     </Grid>
 </Window>

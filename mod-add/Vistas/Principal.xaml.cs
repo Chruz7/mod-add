@@ -33,6 +33,12 @@ namespace mod_add.Vistas
             CargarComponente(AjusteMasivo);
         }
 
+        private void AbrirFormCorteZ_Click(object sender, RoutedEventArgs e)
+        {
+            CorteZForm form = new CorteZForm();
+            form.ShowDialog();
+        }
+
         private void AbrirBitacora_Click(object sender, RoutedEventArgs e)
         {
             if (Bitacora == null) Bitacora = new Bitacora();

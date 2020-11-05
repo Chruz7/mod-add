@@ -42,7 +42,7 @@ namespace mod_add.Componentes
         {
             App.HabilitarPrincipal(false);
 
-            RespuestaBusqueda respuesta = new RespuestaBusqueda
+            Respuesta respuesta = new Respuesta
             {
                 TipoRespuesta = TipoRespuesta.NADA
             };

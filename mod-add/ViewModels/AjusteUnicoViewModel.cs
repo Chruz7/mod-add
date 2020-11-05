@@ -383,7 +383,7 @@ namespace mod_add.ViewModels
             Total = Cheque.total.Value;
         }
 
-        public RespuestaBusqueda ObtenerChequeSR()
+        public Respuesta ObtenerChequeSR()
         {
             using (SoftRestaurantDBContext context = new SoftRestaurantDBContext())
             {
@@ -391,30 +391,30 @@ namespace mod_add.ViewModels
                 {
                     SR_cheques_DAO cheques_DAO = new SR_cheques_DAO(context, !App.ConfiguracionSistema.ModificarVentasReales);
 
-                    Cheque = cheques_DAO.Find(Folio);
+                    Cheque = cheques_DAO.Get("numcheque", Folio).FirstOrDefault();
 
-                    if (Cheque == null) return new RespuestaBusqueda
+                    if (Cheque == null) return new Respuesta
                     {
                         TipoRespuesta = TipoRespuesta.REGISTRO_NO_ENCONTRADO
                     };
 
                     if (!Funciones.ValidarMesBusqueda(App.MesesValidos, Cheque.fecha.Value))
                     {
-                        return new RespuestaBusqueda
+                        return new Respuesta
                         {
                             TipoRespuesta = TipoRespuesta.FECHA_INACCESIBLE,
                             Mensaje = Cheque.fecha.Value.ToString("MMMM yyyy", CultureInfo.CreateSpecificCulture("es"))
                         };
                     }
 
-                    if (Cheque.cancelado.Value) return new RespuestaBusqueda
+                    if (Cheque.cancelado.Value) return new Respuesta
                     {
                         TipoRespuesta = TipoRespuesta.CHEQUE_CANCELADO
                     };
 
                     var detalles = Cheque.Detalles;
 
-                    if (detalles.Count == 0) return new RespuestaBusqueda
+                    if (detalles.Count == 0) return new Respuesta
                     {
                         TipoRespuesta = TipoRespuesta.SIN_REGISTROS
                     };
@@ -423,7 +423,7 @@ namespace mod_add.ViewModels
 
                     if (chequespagos.Count == 0)
                     {
-                        return new RespuestaBusqueda
+                        return new Respuesta
                         {
                             TipoRespuesta = TipoRespuesta.CHEQUE_SIN_FORMA_PAGO
                         };
@@ -448,7 +448,7 @@ namespace mod_add.ViewModels
 
                     ObtenerClienteSR();
 
-                    return new RespuestaBusqueda
+                    return new Respuesta
                     {
                         TipoRespuesta = TipoRespuesta.HECHO,
                         MultipleFormaPago = chequespagos.Count > 1
@@ -457,7 +457,7 @@ namespace mod_add.ViewModels
                 catch (Exception ex)
                 {
                     Debug.WriteLine($"INICIO-ERROR\n{ex}\nFIN-ERROR");
-                    return new RespuestaBusqueda
+                    return new Respuesta
                     {
                         TipoRespuesta = TipoRespuesta.ERROR
                     };

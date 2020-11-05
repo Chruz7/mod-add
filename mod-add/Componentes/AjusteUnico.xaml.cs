@@ -110,7 +110,7 @@ namespace mod_add.Componentes
             {
                 App.HabilitarPrincipal(false);
 
-                var respuesta = new RespuestaBusqueda
+                var respuesta = new Respuesta
                 {
                     TipoRespuesta = TipoRespuesta.NADA
                 };
