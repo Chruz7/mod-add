@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:mod_add.Vistas"
         mc:Ignorable="d"
         Title="Corte Z" 
-        Height="300"
+        Height="250"
         Width="500"
         WindowStartupLocation="CenterScreen"
         ResizeMode="CanMinimize">

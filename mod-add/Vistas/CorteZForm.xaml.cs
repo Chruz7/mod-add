@@ -18,6 +18,7 @@ namespace mod_add.Vistas
             InitializeComponent();
 
             Fecha.DisplayDateEnd = DateTime.Today.AddDays(-1);
+            Reportes.IsEnabled = false;
 
             ViewModel = new CorteZViewModel();
             DataContext = ViewModel;

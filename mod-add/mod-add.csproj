@@ -121,6 +121,7 @@
     <Compile Include="Enums\TipoReporte.cs" />
     <Compile Include="Enums\TipoRespuesta.cs" />
     <Compile Include="Helpers\Messenger.cs" />
+    <Compile Include="Modelos\ImpuestoVenta.cs" />
     <Compile Include="Modelos\Pago.cs" />
     <Compile Include="Modelos\PagoTarjeta.cs" />
     <Compile Include="Modelos\ReporteZ.cs" />

@@ -9,7 +9,10 @@ namespace mod_add.Modelos
         public ReporteZ()
         {
             Pagos = new List<Pago>();
+            PagosTarjeta = new List<PagoTarjeta>();
+            ImpuestosVentas = new List<ImpuestoVenta>();
         }
+
         public string TituloCorteZ { get; set; }
         public long FolioCorte { get; set; }
         public DateTime FechaCorteInicio { get; set; }
@@ -68,13 +71,30 @@ namespace mod_add.Modelos
         public decimal Subtotal { get; set; }
         public decimal Descuentos { get; set; }
         public decimal VentaNeta { get; set; }
-        //lista de venta e impuesto
-        public decimal ImpuestoTotal { get; set; }
+        public decimal ImpuestoTotal
+        {
+            get
+            {
+                return ImpuestosVentas.Sum(x => x.impuesto);
+            }
+        }
         public decimal VentasConImpuesto { get; set; }
         public decimal VentaFacturada { get; set; }
         public decimal PropinaFacturada { get; set; }
-        public decimal Facturado { get; set; }
-        public decimal VentaNoFacturada { get; set; }
+        public decimal Facturado
+        {
+            get
+            {
+                return VentaFacturada + PropinaFacturada;
+            }
+        }
+        public decimal VentaNoFacturada
+        {
+            get
+            {
+                return VentasConImpuesto - Facturado;
+            }
+        }
         public int CuentasNormales { get; set; }
         public int CuentasCanceladas { get; set; }
         public int CuentasConDescuento { get; set; }
@@ -85,20 +105,45 @@ namespace mod_add.Modelos
         public decimal Propinas { get; set; }
         public decimal Cargos { get; set; }
         public decimal DescuentoMonedero { get; set; }
-        public long FolioInicial { get; set; }
-        public long FolioFinal { get; set; }
+        public int FolioInicial { get; set; }
+        public int FolioFinal { get; set; }
         public decimal CortesiaAlimentos { get; set; }
         public decimal CortesiaBebidas { get; set; }
         public decimal CortesiaOtros { get; set; }
-        public decimal TotalCortesias { get; set; }
+        public decimal TotalCortesias
+        {
+            get
+            {
+                return CortesiaAlimentos + CortesiaBebidas + CortesiaOtros;
+            }
+        }
         public decimal DescuentoAlimentos { get; set; }
         public decimal DescuentoBebidas { get; set; }
         public decimal DescuentoOtros { get; set; }
-        public decimal TotalDescuentos { get; set; }
+        public decimal TotalDescuentos
+        {
+            get
+            {
+                return DescuentoAlimentos + DescuentoBebidas + DescuentoOtros;
+            }
+        }
         public decimal TotalDeclarado { get; set; }
-        public decimal SobranteOFaltante { get; set; }
+        public decimal SobranteOFaltante
+        {
+            get
+            {
+                return Math.Abs(TotalDeclarado - SaldoFinal);
+            }
+        }
         public decimal AcumuladoMesAnterior { get; set; }
         public decimal AcumuladoMesActual { get; set; }
         public List<Pago> Pagos { get; set; }
+        public List<ImpuestoVenta> ImpuestosVentas { get; set; }
+        public List<PagoTarjeta> PagosTarjeta { get; set; }
+
+
+        public bool ConsiderarFondoInicial { get; set; }
+        public bool NoConsiderarPropinas { get; set; }
+        public bool NoConsiderarDepositosRetiros { get; set; }
     }
 }
