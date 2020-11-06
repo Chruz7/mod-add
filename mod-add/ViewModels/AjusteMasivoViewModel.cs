@@ -1,8 +1,5 @@
-﻿using mod_add.Datos.Contexto;
-using mod_add.Datos.Enums;
-using mod_add.Datos.Implementaciones;
+﻿using mod_add.Datos.Enums;
 using mod_add.Datos.Infraestructura;
-using mod_add.Datos.Interfaces;
 using mod_add.Datos.Modelos;
 using mod_add.Enums;
 using mod_add.Selectores;
@@ -116,8 +113,8 @@ namespace mod_add.ViewModels
                             tablaTurnos = "turnosf";
                         }
 
-                        query = $"SELECT CAST(ISNULL(MAX(idturnointerno), 0) AS bigint) AS idturnointerno FROM {tablaTurnos}";
-                        long idturnointerno = context.Database.SqlQuery<long>(query).Single();
+                        //query = $"SELECT CAST(ISNULL(MAX(idturnointerno), 0) AS bigint) AS idturnointerno FROM {tablaTurnos}";
+                        //long idturnointerno = context.Database.SqlQuery<long>(query).Single();
 
                         query = $"SELECT CAST(ISNULL(MAX(idturno), 0) AS bigint) AS idturno FROM {tablaTurnos}";
                         long idturno = context.Database.SqlQuery<long>(query).Single();
@@ -128,11 +125,11 @@ namespace mod_add.ViewModels
                         query = $"SELECT CAST(ISNULL(MAX(numcheque), 0) AS numeric(8,0)) AS numcheque FROM {tablaCheques}";
                         decimal numcheque = context.Database.SqlQuery<decimal>(query).Single();
 
-                        query = $"DBCC CHECKIDENT ({tablaCheques}, RESEED, @{nameof(folio)})";
-                        context.Database.ExecuteSqlCommand(query, new SqlParameter($"{nameof(folio)}", folio));
+                        //query = $"DBCC CHECKIDENT ({tablaCheques}, RESEED, @{nameof(folio)})";
+                        //context.Database.ExecuteSqlCommand(query, new SqlParameter($"{nameof(folio)}", folio));
 
-                        query = $"DBCC CHECKIDENT ({tablaTurnos}, RESEED, @{nameof(idturnointerno)})";
-                        context.Database.ExecuteSqlCommand(query, new SqlParameter($"{nameof(idturnointerno)}", idturnointerno));
+                        //query = $"DBCC CHECKIDENT ({tablaTurnos}, RESEED, @{nameof(idturnointerno)})";
+                        //context.Database.ExecuteSqlCommand(query, new SqlParameter($"{nameof(idturnointerno)}", idturnointerno));
 
                         //idturnointerno = idturnointerno > 0 ? idturnointerno + 1 : 0;
                         idturno++;
@@ -154,7 +151,27 @@ namespace mod_add.ViewModels
                         Debug.WriteLine("Recreando cheques pago");
                         RecrearChequesPagoSR(chequespagos_DAO);
 
-                        if (!App.ConfiguracionSistema.ModificarVentasReales)
+                        if (App.ConfiguracionSistema.ModificarVentasReales)
+                        {
+                            if (Proceso.TipoProceso == TipoProceso.FOLIOS)
+                            {
+                                SR_parametros_DAO parametros_DAO = new SR_parametros_DAO(context);
+                                SR_parametros parametros = parametros_DAO.GetAll().FirstOrDefault();
+
+                                long ultimoturno = Turnos.Max(x => x.idturno.Value);
+                                parametros.ultimoturno = ultimoturno;
+                                parametros_DAO.Update(parametros);
+
+                                SR_folios_DAO folios_DAO = new SR_folios_DAO(context);
+                                SR_folios folios = folios_DAO.GetAll().FirstOrDefault();
+                                
+                                decimal ultimofolio = Cheques.Max(x => x.numcheque.Value);
+                                folios.ultimofolio = ultimofolio;
+                                folios.ultimofolionotadeconsumo = ultimofolio;
+                                folios_DAO.Update(folios);
+                            }
+                        }
+                        else
                         {
                             Debug.WriteLine("Recreando cheques detalle eliminados");
                             RecrearChequesDetalleEliminadosSR(cheqdetfeliminados_DAO);
@@ -232,7 +249,7 @@ namespace mod_add.ViewModels
             query = $"DELETE FROM chequespagosf WHERE folio IN ({string.Join(",", nombresParametros)})";
             context.Database.ExecuteSqlCommand(query, parametrosSql);
 
-            query = $"DELETE FROM cheqdetf WHERE folio IN ({string.Join(",", nombresParametros)})";
+            query = $"DELETE FROM cheqdetf WHERE foliodet IN ({string.Join(",", nombresParametros)})";
             context.Database.ExecuteSqlCommand(query, parametrosSql);
 
             query = $"DELETE FROM chequesf WHERE folio IN ({string.Join(",", nombresParametros)}) AND idempresa=@{nameof(App.ClaveEmpresa)}";
@@ -285,7 +302,7 @@ namespace mod_add.ViewModels
             query = $"DELETE FROM chequespagos WHERE folio IN ({string.Join(",", nombresParametros)})";
             context.Database.ExecuteSqlCommand(query, parametrosSql);
 
-            query = $"DELETE FROM cheqdet WHERE folio IN ({string.Join(",", nombresParametros)})";
+            query = $"DELETE FROM cheqdet WHERE foliodet IN ({string.Join(",", nombresParametros)})";
             context.Database.ExecuteSqlCommand(query, parametrosSql);
 
             query = $"DELETE FROM cheques WHERE folio IN ({string.Join(",", nombresParametros)}) AND idempresa=@{nameof(App.ClaveEmpresa)}";
@@ -616,17 +633,22 @@ namespace mod_add.ViewModels
                             Debug.WriteLine($"Número de cheque anterior: {cheque.numcheque}, Número de cheque nuevo: {numcheque}");
                             cheque.idturno = idturno;
                             cheque.folio = folio;
-                            cheque.numcheque = numcheque;
-                            if (cheque.folionotadeconsumo > 0) cheque.folionotadeconsumo = numcheque;
 
                             folio++;
-                            numcheque++;
+
+                            if (App.ConfiguracionSistema.ModificarVentasReales)
+                            {
+                                cheque.numcheque = numcheque;
+                                if (cheque.folionotadeconsumo > 0) cheque.folionotadeconsumo = numcheque;
+
+                                numcheque++;
+                            }
                         }
                     }
 
                     if (turno.TipoAccion != TipoAccion.ELIMINAR)
                     {
-                        Debug.WriteLine($"idturno anterior: {turno.idturno}, idturno nuevo: {idturno}");
+                        Debug.WriteLine($"Id turno anterior: {turno.idturno}, id turno nuevo: {idturno}");
                         turno.idturno = idturno;
                         idturno++;
                     }
@@ -1237,6 +1259,7 @@ namespace mod_add.ViewModels
                     SR_turnos_DAO turnos_DAO = new SR_turnos_DAO(context, false);
 
                     List<SR_turnos> turnos = new List<SR_turnos>();
+                    bool registrosProcesados = false;
 
                     if (App.ConfiguracionSistema.ModificarVentasReales)
                     {
@@ -1250,6 +1273,14 @@ namespace mod_add.ViewModels
                             new SqlParameter($"{nameof(FechaCorteInicio)}", FechaCorteInicio),
                             new SqlParameter($"{nameof(FechaCorteCierre)}", FechaCorteCierre),
                             new SqlParameter($"{nameof(App.ClaveEmpresa)}", App.ClaveEmpresa));
+
+                        SR_turnos_DAO turnosf_DAO = new SR_turnos_DAO(context, true);
+                        var turnosf = turnosf_DAO.Get($"apertura BETWEEN @{nameof(FechaCorteInicio)} AND @{nameof(FechaCorteCierre)} AND idempresa=@{nameof(App.ClaveEmpresa)}",
+                            new SqlParameter($"{nameof(FechaCorteInicio)}", FechaCorteInicio),
+                            new SqlParameter($"{nameof(FechaCorteCierre)}", FechaCorteCierre),
+                            new SqlParameter($"{nameof(App.ClaveEmpresa)}", App.ClaveEmpresa));
+
+                        registrosProcesados = turnosf.Count > 0;
                     }
 
                     if (turnos.Count == 0) return new Respuesta
@@ -1281,6 +1312,7 @@ namespace mod_add.ViewModels
                     return new Respuesta
                     {
                         TipoRespuesta = TipoRespuesta.HECHO,
+                        RegistrosProcesados = registrosProcesados,
                         Turnos = turnos.OrderBy(x => x.idturno).ToList(),
                         Cheques = cheques.OrderBy(x => x.numcheque.Value).ToList(),
                         Cheqdet = cheqdet,

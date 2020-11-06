@@ -13,7 +13,10 @@
     <Grid Margin="5">
         <Grid.RowDefinitions>
             <RowDefinition Height="25"/>
-            <RowDefinition Height="30"/>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="25"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="60"/>
         </Grid.RowDefinitions>
@@ -21,12 +24,12 @@
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
+        
         <Label
             Grid.Row="0"
             Grid.Column="0"
             Content="Fecha:"
             Target="{Binding ElementName=Fecha}"/>
-
         <DatePicker
             Grid.Row="1"
             Grid.Column="0"
@@ -60,14 +63,13 @@
             Text="{Binding HorarioTurno}"/>
 
         <Label
-            Grid.Row="0"
-            Grid.Column="1"
+            Grid.Row="3"
+            Grid.Column="0"
             Content="Reporte:"
             Target="{Binding ElementName=Reportes}"/>
-
         <ComboBox
-            Grid.Row="1"
-            Grid.Column="1"
+            Grid.Row="4"
+            Grid.Column="0"
             Grid.ColumnSpan="2"
             VerticalAlignment="Center"
             HorizontalAlignment="Left"
@@ -77,8 +79,44 @@
             x:Name="Reportes"
             SelectedItem="{Binding Reporte}"/>
 
-        <Grid 
+        <CheckBox
+            Grid.Row="0"
+            Grid.Column="1"
+            VerticalAlignment="Center"
+            HorizontalAlignment="Left"
+            Content="Convertir moneda extrangera"
+            x:Name="ConvertirMonedaExtrangera"
+            IsChecked="{Binding ConvertirMonedaExtrangera}"/>
+
+        <CheckBox
+            Grid.Row="1"
+            Grid.Column="1"
+            VerticalAlignment="Center"
+            HorizontalAlignment="Left"
+            Content="No considerar depositos y retiros"
+            x:Name="NoConsiderarDepositosRetiros"
+            IsChecked="{Binding NoConsiderarDepositosRetiros}"/>
+
+        <CheckBox
+            Grid.Row="2"
+            Grid.Column="1"
+            VerticalAlignment="Center"
+            HorizontalAlignment="Left"
+            Content="Considerar fondo inicial"
+            x:Name="ConsiderarFondoinicial"
+            IsChecked="{Binding ConsiderarFondoinicial}"/>
+
+        <CheckBox
             Grid.Row="3"
+            Grid.Column="1"
+            VerticalAlignment="Center"
+            HorizontalAlignment="Left"
+            Content="No considerar propinas"
+            x:Name="NoConsiderarPropinas"
+            IsChecked="{Binding NoConsiderarPropinas}"/>
+
+        <Grid 
+            Grid.Row="6"
             Grid.Column="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
@@ -87,7 +125,7 @@
             </Grid.ColumnDefinitions>
             
             <Button
-                Grid.Column="0"
+                Grid.Column="1"
                 Margin="2"
                 Padding="0"
                 x:Name="Imprimir"
@@ -109,7 +147,7 @@
             </Button>
 
             <Button
-                Grid.Column="1"
+                Grid.Column="2"
                 Margin="2"
                 Padding="0"
                 x:Name="ExportarTXT"
@@ -134,6 +172,7 @@
                 Grid.Column="2"
                 Margin="2"
                 Padding="0"
+                Visibility="Collapsed"
                 x:Name="ExportarExcel"
                 Click="ExportarExcel_Click">
                 <Grid>

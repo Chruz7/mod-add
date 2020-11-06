@@ -121,6 +121,9 @@
     <Compile Include="Enums\TipoReporte.cs" />
     <Compile Include="Enums\TipoRespuesta.cs" />
     <Compile Include="Helpers\Messenger.cs" />
+    <Compile Include="Modelos\Pago.cs" />
+    <Compile Include="Modelos\PagoTarjeta.cs" />
+    <Compile Include="Modelos\ReporteZ.cs" />
     <Compile Include="Selectores\Condicional.cs" />
     <Compile Include="Selectores\Proceso.cs" />
     <Compile Include="Selectores\Reporte.cs" />
@@ -129,6 +132,7 @@
     <Compile Include="Utils\Encriptado.cs" />
     <Compile Include="Utils\Exportar.cs" />
     <Compile Include="Utils\Funciones.cs" />
+    <Compile Include="Utils\GenerarReporte.cs" />
     <Compile Include="Utils\Mat.cs" />
     <Compile Include="ViewModels\AjusteMasivoViewModel.cs" />
     <Compile Include="ViewModels\AjusteUnicoViewModel.cs" />

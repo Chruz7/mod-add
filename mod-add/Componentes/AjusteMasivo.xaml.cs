@@ -4,6 +4,7 @@ using mod_add.Selectores;
 using mod_add.ViewModels;
 using mod_add.Vistas;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -57,11 +58,24 @@ namespace mod_add.Componentes
 
                 if (respuesta.TipoRespuesta == TipoRespuesta.HECHO)
                 {
-                    loading.AgregarMensaje("Creando registros temporales");
-                    ViewModel.CrearRegistrosTemporales(respuesta);
+                    MessageBoxResult result = MessageBoxResult.Yes;
+                    if (respuesta.RegistrosProcesados)
+                    {
+                        result = MessageBox.Show($"Ya se han procesado uno o varios registros de la busqueda. ¿Desea reprocesarlos?", "Busqueda", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                    }
 
-                    loading.AgregarMensaje("Procesando información");
-                    ViewModel.GenerarVistaPrevia();
+                    if (result == MessageBoxResult.Yes)
+                    {
+                        loading.AgregarMensaje("Creando registros temporales");
+                        ViewModel.CrearRegistrosTemporales(respuesta);
+
+                        loading.AgregarMensaje("Procesando información");
+                        ViewModel.GenerarVistaPrevia();
+                    }
+                    else
+                    {
+                        respuesta.TipoRespuesta = TipoRespuesta.NADA;
+                    }
                 }
 
             }).ContinueWith(task =>
@@ -94,6 +108,12 @@ namespace mod_add.Componentes
 
         private void Aplicar_Click(object sender, RoutedEventArgs e)
         {
+            if (ViewModel.DetalleModificacionCheques.Where(x => x.RealizarAccion).Count() == 0)
+            {
+                MessageBox.Show("No hay cambios", "Listo", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
             App.HabilitarPrincipal(false);
 
             TipoRespuesta respuesta = TipoRespuesta.NADA;
@@ -105,12 +125,6 @@ namespace mod_add.Componentes
             Task.Factory.StartNew(() =>
             {
                 respuesta = ViewModel.Guardar();
-
-                //if (respuesta == TipoRespuesta.HECHO)
-                //{
-                //    loading.AgregarMensaje("Registrando bitácora");
-                //    ViewModel.ResgistrarBitacora();
-                //}
             }).ContinueWith(task =>
             {
                 loading.Close();
