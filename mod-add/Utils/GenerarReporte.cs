@@ -251,16 +251,7 @@ namespace mod_add.Utils
             lineas.Add("");
             lineas.Add(Relleno('='));
 
-            List<Pago> pagos;
-
-            if (reporte.NoConsiderarPropinas)
-            {
-                pagos = reporte.Pagos.Where(x => x.propina > 0).OrderBy(x => x.importe).ToList();
-            }
-            else
-            {
-                pagos = reporte.Pagos.Where(x => x.propina > 0).OrderBy(x => x.importe + x.propina).ToList();
-            }
+            var pagos = reporte.Pagos.Where(x => x.propina > 0).OrderBy(x => x.idformadepago).ToList();
 
             foreach (var pago in pagos)
             {

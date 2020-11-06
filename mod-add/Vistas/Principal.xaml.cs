@@ -17,6 +17,8 @@ namespace mod_add.Vistas
         public Principal()
         {
             InitializeComponent();
+            AbrirFormCortePeriodo.Visibility = Visibility.Collapsed;
+            AbrirFormReimpresionFolios.Visibility = Visibility.Collapsed;
         }
 
         private void AbrirAjusteUnico_Click(object sender, RoutedEventArgs e)

@@ -29,15 +29,15 @@ namespace mod_add.ViewModels
                 return TipoRespuesta.LONGITUD_INCORRECTA;
             }
 
-            string contrasenaEncriptada = Encriptado.Contrasena(ContrasenaActual);
+            string contrasenaEncriptada = Encriptado.Codificar(ContrasenaActual);
 
             if (App.ConfiguracionSistema.Contrasena.Equals(contrasenaEncriptada))
             {
-                App.ConfiguracionSistema.Contrasena = Encriptado.Contrasena(ContrasenaNueva);
+                App.ConfiguracionSistema.Contrasena = Encriptado.Codificar(ContrasenaNueva);
             }
             else if (App.Admin && App.ConfiguracionSistema.ContrasenaAdmin.Equals(contrasenaEncriptada))
             {
-                App.ConfiguracionSistema.ContrasenaAdmin = Encriptado.Contrasena(ContrasenaNueva);
+                App.ConfiguracionSistema.Contrasena = Encriptado.Codificar(ContrasenaNueva);
             }
             else
             {

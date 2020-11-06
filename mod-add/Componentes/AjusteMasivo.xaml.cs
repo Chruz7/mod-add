@@ -29,6 +29,8 @@ namespace mod_add.Componentes
             FechaInicio.DisplayDateEnd = DateTime.Today.AddDays(-1);
             FechaCierre.DisplayDateEnd = DateTime.Today.AddDays(-1);
 
+            Procesos.IsEnabled = false;
+
             ViewModel = new AjusteMasivoViewModel();
             DataContext = ViewModel;
         }

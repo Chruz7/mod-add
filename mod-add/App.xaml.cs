@@ -61,8 +61,8 @@ namespace mod_add
                                 ModificarVentasReales = false,
                                 MinProductosCuenta = 1,
                                 EliminarProductosSeleccionados = false,
-                                Contrasena = "Ok123456",
-                                ContrasenaAdmin = "Ok123456"
+                                Contrasena = Encriptado.Codificar("Ok123456"),
+                                ContrasenaAdmin = Encriptado.Codificar("Ok123456")
                             });
 
                             List<ProductoReemplazo> productosReemplazo = new List<ProductoReemplazo>();
@@ -84,9 +84,24 @@ namespace mod_add
                             context.RegistroLicencias.Add(new RegistroLicencia
                             {
                                 Anio = 2020,
+                                Mes = 9,
+                                Licencia = valideSerialKey.getEncryptSerial("2020-09-01")
+                            });
+
+                            context.RegistroLicencias.Add(new RegistroLicencia
+                            {
+                                Anio = 2020,
+                                Mes = 10,
+                                Licencia = valideSerialKey.getEncryptSerial("2020-10-01")
+                            });
+
+                            context.RegistroLicencias.Add(new RegistroLicencia
+                            {
+                                Anio = 2020,
                                 Mes = 11,
                                 Licencia = valideSerialKey.getEncryptSerial("2020-11-01")
                             });
+
 
                             context.SaveChanges();
                         }

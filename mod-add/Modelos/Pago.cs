@@ -2,7 +2,7 @@
 {
     public class Pago
     {
-        public string idformapago { get; set; }
+        public string idformadepago { get; set; }
         public string descripcion { get; set; }
         public decimal tipodecambio { get; set; }
         public decimal importe { get; set; }

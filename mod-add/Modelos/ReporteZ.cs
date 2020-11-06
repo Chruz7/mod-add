@@ -132,7 +132,7 @@ namespace mod_add.Modelos
         {
             get
             {
-                return Math.Abs(TotalDeclarado - SaldoFinal);
+                return TotalDeclarado - SaldoFinal;
             }
         }
         public decimal AcumuladoMesAnterior { get; set; }

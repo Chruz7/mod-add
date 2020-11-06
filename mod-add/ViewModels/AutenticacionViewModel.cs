@@ -15,7 +15,7 @@ namespace mod_add.ViewModels
             if (string.IsNullOrWhiteSpace(Contrasena) && Contrasena.Length < 8)
                 return TipoRespuesta.CONTRASENA_INCORRECTA;
 
-            string contrasenaEncriptada = Encriptado.Contrasena(Contrasena);
+            string contrasenaEncriptada = Encriptado.Codificar(Contrasena);
 
             if (App.ConfiguracionSistema.Contrasena.Equals(contrasenaEncriptada))
             {

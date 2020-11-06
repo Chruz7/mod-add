@@ -2,6 +2,7 @@
 using mod_add.Modelos;
 using mod_add.Selectores;
 using mod_add.Utils;
+using SR.Datos;
 using SRLibrary.SR_Context;
 using SRLibrary.SR_DAO;
 using System;
@@ -88,51 +89,80 @@ namespace mod_add.ViewModels
 
                     string query;
 
+                    List<SR_turnos> turnosf = new List<SR_turnos>();
+
+                    if (!App.ConfiguracionSistema.ModificarVentasReales)
+                    {
+                        SR_turnos_DAO turnosf_DAO = new SR_turnos_DAO(context, true);
+                        query = $"apertura BETWEEN @{nameof(FechaCorteInicio)} AND @{nameof(FechaCorteCierre)} AND cierre IS NOT NULL AND idempresa=@{nameof(App.ClaveEmpresa)}";
+
+                        turnosf = turnosf_DAO.Get(query,
+                        new SqlParameter($"{nameof(FechaCorteInicio)}", FechaCorteInicio),
+                        new SqlParameter($"{nameof(FechaCorteCierre)}", FechaCorteCierre),
+                        new SqlParameter($"{nameof(App.ClaveEmpresa)}", App.ClaveEmpresa));
+                    }
+
                     SR_turnos_DAO turnos_DAO = new SR_turnos_DAO(context, false);
                     query = $"apertura BETWEEN @{nameof(FechaCorteInicio)} AND @{nameof(FechaCorteCierre)} AND cierre IS NOT NULL AND idempresa=@{nameof(App.ClaveEmpresa)}";
 
                     var turnos = turnos_DAO.Get(query,
-                                new SqlParameter($"{nameof(FechaCorteInicio)}", FechaCorteInicio),
-                                new SqlParameter($"{nameof(FechaCorteCierre)}", FechaCorteCierre),
-                                new SqlParameter($"{nameof(App.ClaveEmpresa)}", App.ClaveEmpresa));
+                        new SqlParameter($"{nameof(FechaCorteInicio)}", FechaCorteInicio),
+                        new SqlParameter($"{nameof(FechaCorteCierre)}", FechaCorteCierre),
+                        new SqlParameter($"{nameof(App.ClaveEmpresa)}", App.ClaveEmpresa));
 
-                    if (turnos.Count == 0)
+                    int registros = App.ConfiguracionSistema.ModificarVentasReales ? turnos.Count : turnosf.Count;
+
+                    if (registros == 0)
                     {
                         return new Respuesta
                         {
                             TipoRespuesta = TipoRespuesta.SIN_REGISTROS
                         };
                     }
-                    //string tablacheq;
-                    //string tablacheqdet;
-                    //string tablacheqpago;
 
-                    //if (App.ConfiguracionSistema.ModificarVentasReales)
-                    //{
-                    //    tablacheq = "cheques";
-                    //    tablacheqdet = "cheqdet";
-                    //    tablacheqpago = "chequespagos";
-                    //}
-                    //else
-                    //{
-                    //    tablacheq = "chequesf";
-                    //    tablacheqdet = "cheqdetf";
-                    //    tablacheqpago = "chequespagosf";
-                    //}
+                    string turnosT;
+                    string chequesT;
+                    string cheqdetT;
+                    string chequespagosT;
+
+                    if (App.ConfiguracionSistema.ModificarVentasReales)
+                    {
+                        turnosT = "turnos";
+                        chequesT = "cheques";
+                        cheqdetT = "cheqdet";
+                        chequespagosT = "chequespagos";
+                    }
+                    else
+                    {
+                        turnosT = "turnosf";
+                        chequesT = "chequesf";
+                        cheqdetT = "cheqdetf";
+                        chequespagosT = "chequespagosf";
+                    }
 
                     List<string> nombresParametros = new List<string>();
                     object[] valores;
                     object[] parametrosSql;
 
-                    var turno = turnos[0];
+                    SR_turnos turno;
+
+                    if (App.ConfiguracionSistema.ModificarVentasReales)
+                    {
+                        turno = turnos[0];
+                    }
+                    else
+                    {
+                        turno = turnosf[0];
+                    }
 
                     var idsturno = turnos.Select(x => (object)x.idturno).ToArray();
+                    var idsturnof = turnosf.Select(x => (object)x.idturno).ToArray();
 
                     SR_parametros_DAO parametros_DAO = new SR_parametros_DAO(context);
                     var parametros = parametros_DAO.GetAll().FirstOrDefault();
 
-                    SR_cheques_DAO cheques_DAO = new SR_cheques_DAO(context, false);
-                    var cheques = cheques_DAO.WhereIn("idturno", idsturno);
+                    SR_cheques_DAO cheques_DAO = new SR_cheques_DAO(context, !App.ConfiguracionSistema.ModificarVentasReales);
+                    var cheques = cheques_DAO.WhereIn("idturno", App.ConfiguracionSistema.ModificarVentasReales ? idsturno : idsturnof);
 
                     nombresParametros.Clear();
                     valores = cheques.Where(x => !x.cancelado.Value).OrderBy(x => x.folio).Select(x => (object)x.folio).ToArray();
@@ -149,7 +179,13 @@ namespace mod_add.ViewModels
 
                     if (valores.Length > 0)
                     {
-                        query = $"SELECT cp.idformadepago, fp.descripcion, fp.tipodecambio, SUM(cp.importe) AS importe, SUM(cp.propina) AS propina, fp.prioridadboton FROM chequespagos AS cp INNER JOIN formasdepago AS fp ON fp.idformadepago = cp.idformadepago WHERE cp.folio IN ({string.Join(",", nombresParametros)}) GROUP BY cp.idformadepago, fp.descripcion, fp.tipodecambio, fp.prioridadboton ORDER BY fp.prioridadboton";
+                        query = $"SELECT cp.idformadepago, fp.descripcion, fp.tipodecambio, SUM(cp.importe) AS importe, SUM(cp.propina) AS propina, fp.prioridadboton " +
+                            $"FROM {chequespagosT} AS cp " +
+                            $"INNER JOIN formasdepago AS fp " +
+                            $"ON fp.idformadepago = cp.idformadepago " +
+                            $"WHERE cp.folio IN ({string.Join(",", nombresParametros)}) " +
+                            $"GROUP BY cp.idformadepago, fp.descripcion, fp.tipodecambio, fp.prioridadboton " +
+                            $"ORDER BY fp.prioridadboton";
 
                         pagos = context.Database.SqlQuery<Pago>(query, parametrosSql).ToList();
                     }
@@ -189,7 +225,22 @@ namespace mod_add.ViewModels
                             .Single();
                     }
 
-                    query = $"SELECT CAST(ISNULL(SUM(cheqdet.cantidad), 0) as decimal(19,2)) as cantidad FROM productos INNER JOIN cheqdet ON Productos.idproducto=cheqdet.idproducto INNER JOIN cheques ON cheques.folio = cheqdet.foliodet INNER JOIN grupos ON Grupos.idgrupo=Productos.idgrupo WHERE cheques.idturno in (SELECT idturno FROM turnos WHERE (apertura BETWEEN @{nameof(FechaCorteInicio)} AND @{nameof(FechaCorteCierre)}) AND cierre is not null and idempresa=@{nameof(App.ClaveEmpresa)})  AND CAST(cheques.cancelado as int)=0 AND grupos.clasificacion=2";
+                    query = $"SELECT CAST(ISNULL(SUM(cd.cantidad), 0) as decimal(19,2)) as cantidad " +
+                        $"FROM productos p " +
+                        $"INNER JOIN {cheqdetT} cd " +
+                        $"ON p.idproducto=cd.idproducto " +
+                        $"INNER JOIN {chequesT} c " +
+                        $"ON c.folio = cd.foliodet " +
+                        $"INNER JOIN grupos g " +
+                        $"ON g.idgrupo=p.idgrupo " +
+                        $"WHERE c.idturno in (" +
+                            $"SELECT t.idturno " +
+                            $"FROM {turnosT} t " +
+                            $"WHERE (t.apertura BETWEEN @{nameof(FechaCorteInicio)} AND @{nameof(FechaCorteCierre)}) " +
+                            $"AND t.cierre is not null " +
+                            $"and t.idempresa=@{nameof(App.ClaveEmpresa)}) " +
+                        $"AND CAST(c.cancelado as int)=0 " +
+                        $"AND g.clasificacion=2";
 
                     decimal cantidadAlimentos = context.Database.SqlQuery<decimal>(query,
                         new SqlParameter($"{nameof(FechaCorteInicio)}", FechaCorteInicio),
@@ -197,7 +248,22 @@ namespace mod_add.ViewModels
                         new SqlParameter($"{nameof(App.ClaveEmpresa)}", App.ClaveEmpresa))
                         .Single();
 
-                    query = $"SELECT CAST(ISNULL(SUM(cheqdet.cantidad), 0) as decimal(19,2)) as cantidad FROM productos INNER JOIN cheqdet ON Productos.idproducto=cheqdet.idproducto INNER JOIN cheques ON cheques.folio = cheqdet.foliodet INNER JOIN grupos ON Grupos.idgrupo=Productos.idgrupo WHERE cheques.idturno in (SELECT idturno FROM turnos WHERE (apertura BETWEEN @{nameof(FechaCorteInicio)} AND @{nameof(FechaCorteCierre)}) AND cierre is not null and idempresa=@{nameof(App.ClaveEmpresa)})  AND CAST(cheques.cancelado as int)=0 AND grupos.clasificacion=1";
+                    query = $"SELECT CAST(ISNULL(SUM(cd.cantidad), 0) as decimal(19,2)) as cantidad " +
+                        $"FROM productos p " +
+                        $"INNER JOIN {cheqdetT} cd " +
+                        $"ON p.idproducto=cd.idproducto " +
+                        $"INNER JOIN {chequesT} c " +
+                        $"ON c.folio = cd.foliodet " +
+                        $"INNER JOIN grupos g " +
+                        $"ON g.idgrupo=p.idgrupo " +
+                        $"WHERE c.idturno in (" +
+                            $"SELECT t.idturno " +
+                            $"FROM {turnosT} t " +
+                            $"WHERE (t.apertura BETWEEN @{nameof(FechaCorteInicio)} AND @{nameof(FechaCorteCierre)}) " +
+                            $"AND t.cierre is not null " +
+                            $"and t.idempresa=@{nameof(App.ClaveEmpresa)}) " +
+                        $"AND CAST(c.cancelado as int)=0 " +
+                        $"AND g.clasificacion=1";
 
                     decimal cantidadBebidas = context.Database.SqlQuery<decimal>(query,
                         new SqlParameter($"{nameof(FechaCorteInicio)}", FechaCorteInicio),
@@ -205,7 +271,22 @@ namespace mod_add.ViewModels
                         new SqlParameter($"{nameof(App.ClaveEmpresa)}", App.ClaveEmpresa))
                         .Single();
 
-                    query = $"SELECT CAST(ISNULL(SUM(cheqdet.cantidad), 0) as decimal(19,2)) as cantidad FROM productos INNER JOIN cheqdet ON Productos.idproducto=cheqdet.idproducto INNER JOIN cheques ON cheques.folio = cheqdet.foliodet INNER JOIN grupos ON Grupos.idgrupo=Productos.idgrupo WHERE cheques.idturno in (SELECT idturno FROM turnos WHERE (apertura BETWEEN @{nameof(FechaCorteInicio)} AND @{nameof(FechaCorteCierre)}) AND cierre is not null and idempresa=@{nameof(App.ClaveEmpresa)})  AND CAST(cheques.cancelado as int)=0 AND grupos.clasificacion=3";
+                    query = $"SELECT CAST(ISNULL(SUM(cd.cantidad), 0) as decimal(19,2)) as cantidad " +
+                        $"FROM productos p " +
+                        $"INNER JOIN {cheqdetT} cd " +
+                        $"ON p.idproducto=cd.idproducto " +
+                        $"INNER JOIN {chequesT} c " +
+                        $"ON c.folio = cd.foliodet " +
+                        $"INNER JOIN grupos g " +
+                        $"ON g.idgrupo=p.idgrupo " +
+                        $"WHERE c.idturno in (" +
+                            $"SELECT t.idturno " +
+                            $"FROM {turnosT} t " +
+                            $"WHERE (t.apertura BETWEEN @{nameof(FechaCorteInicio)} AND @{nameof(FechaCorteCierre)}) " +
+                            $"AND t.cierre is not null " +
+                            $"and t.idempresa=@{nameof(App.ClaveEmpresa)}) " +
+                        $"AND CAST(c.cancelado as int)=0 " +
+                        $"AND g.clasificacion=3";
 
                     decimal cantidadOtros = context.Database.SqlQuery<decimal>(query,
                         new SqlParameter($"{nameof(FechaCorteInicio)}", FechaCorteInicio),
@@ -214,7 +295,7 @@ namespace mod_add.ViewModels
                         .Single();
 
                     nombresParametros.Clear();
-                    valores = idsturno;
+                    valores = App.ConfiguracionSistema.ModificarVentasReales ? idsturno : idsturnof;
                     parametrosSql = new object[valores.Length + 1];
                     parametrosSql[0] = new SqlParameter($"{nameof(App.ClaveEmpresa)}", App.ClaveEmpresa);
 
@@ -225,14 +306,27 @@ namespace mod_add.ViewModels
                         parametrosSql[i + 1] = new SqlParameter(nombreParametro, valores[i]);
                     }
 
-                    query = $"SELECT CAST(c.numcheque AS int) AS numcheque,fp.descripcion, cp.importe, cp.propina FROM cheques c INNER JOIN chequespagos cp ON c.folio = cp.folio INNER JOIN formasdepago fp ON fp.idformadepago = cp.idformadepago WHERE c.idturno in ({string.Join(",", nombresParametros)}) and fp.tipo = 2 AND (c.cancelado = 0 OR c.cancelado is null) ORDER BY c.numcheque";
+                    query = $"SELECT CAST(c.numcheque AS int) AS numcheque,fp.descripcion, cp.importe, cp.propina " +
+                        $"FROM {chequesT} c " +
+                        $"INNER JOIN {chequespagosT} cp " +
+                        $"ON c.folio = cp.folio " +
+                        $"INNER JOIN formasdepago fp " +
+                        $"ON fp.idformadepago = cp.idformadepago " +
+                        $"WHERE c.idturno in ({string.Join(",", nombresParametros)}) " +
+                        $"and fp.tipo = 2 " +
+                        $"AND (c.cancelado = 0 OR c.cancelado is null) " +
+                        $"ORDER BY c.numcheque";
 
                     List<PagoTarjeta> pagosTarjeta = context.Database.SqlQuery<PagoTarjeta>(query, parametrosSql).ToList();
 
                     int anio = FechaCorteInicio.Year;
                     int mes = FechaCorteInicio.Month;
 
-                    query = $"select sum(total) as total from cheques where month(fecha)=@{nameof(mes)} and year(fecha)=@{nameof(anio)} and idempresa=@{nameof(App.ClaveEmpresa)}";
+                    query = $"select sum(total) as total " +
+                        $"from {chequesT} " +
+                        $"where month(fecha)=@{nameof(mes)} " +
+                        $"and year(fecha)=@{nameof(anio)} " +
+                        $"and idempresa=@{nameof(App.ClaveEmpresa)}";
 
                     decimal acumuladoMesAnterior = context.Database.SqlQuery<decimal>(query,
                         new SqlParameter($"{nameof(mes)}", mes - 1),
@@ -292,7 +386,17 @@ namespace mod_add.ViewModels
                         parametrosSql[i] = new SqlParameter(nombreParametro, valores[i]);
                     }
 
-                    query = $"SELECT CAST(cd.impuesto1 AS int) AS porcentaje, sum(cd.preciosinimpuestos * cd.cantidad * (100 - cd.descuento) / 100 * (100 - c.descuento) / 100) AS venta, sum(cd.preciosinimpuestos * cd.impuesto1 / 100 * cd.cantidad * (100 - cd.descuento) / 100 * (100 - c.descuento) / 100) AS impuesto FROM cheqdet cd inner join cheques c on cd.foliodet = c.folio WHERE c.folio IN ({string.Join(",", nombresParametros)}) and c.descuento != 100 GROUP by cd.impuesto1 ORDER BY cd.impuesto1";
+                    query = $"SELECT " +
+                            $"CAST(cd.impuesto1 AS int) AS porcentaje, " +
+                            $"sum(cd.preciosinimpuestos * cd.cantidad * (100 - cd.descuento) / 100 * (100 - c.descuento) / 100) AS venta, " +
+                            $"sum(cd.preciosinimpuestos * cd.impuesto1 / 100 * cd.cantidad * (100 - cd.descuento) / 100 * (100 - c.descuento) / 100) AS impuesto " +
+                        $"FROM {cheqdetT} cd " +
+                        $"inner join {chequesT} c " +
+                        $"on cd.foliodet = c.folio " +
+                        $"WHERE c.folio IN ({string.Join(",", nombresParametros)}) " +
+                        $"and c.descuento != 100 " +
+                        $"GROUP by cd.impuesto1 " +
+                        $"ORDER BY cd.impuesto1";
 
                     List<ImpuestoVenta> impuestosVentas = context.Database.SqlQuery<ImpuestoVenta>(query, parametrosSql).ToList();
 

@@ -80,7 +80,7 @@
             Grid.Row="0"
             Grid.Column="2"
             Margin="2"
-            x:Name="CorteCajaPeriodo">
+            x:Name="AbrirFormCortePeriodo">
             <Grid
                 Height="54">
                 <Grid.RowDefinitions>
@@ -127,7 +127,7 @@
             Grid.Column="4"
             Margin="2"
             Padding="0"
-            x:Name="ReimpresionFolios">
+            x:Name="AbrirFormReimpresionFolios">
             <Grid
                 Height="54">
                 <Grid.RowDefinitions>
