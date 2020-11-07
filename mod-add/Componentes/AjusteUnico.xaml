@@ -407,7 +407,13 @@
                         Width="10*"
                         ElementStyle="{DynamicResource CenterCell}"
                         Header="Cantidad"
-                        Binding="{Binding cantidad}"/>
+                        Binding="{Binding cantidad}">
+                        <DataGridTextColumn.EditingElementStyle>
+                            <Style TargetType="TextBox">
+                                <Setter Property="MaxLength" Value="16"/>
+                            </Style>
+                        </DataGridTextColumn.EditingElementStyle>
+                    </DataGridTextColumn>
                     <!--<DataGridTemplateColumn
                         Width="10*"
                         Header="Cantidad">

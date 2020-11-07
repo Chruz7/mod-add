@@ -295,10 +295,17 @@ namespace mod_add.Componentes
 
         public void RefrescarControles()
         {
-            DetallesCheque.IsReadOnly = true;
-            ViewModel.AjustarCheque();
-            DetallesCheque.Items.Refresh();
-            DetallesCheque.IsReadOnly = false;
+            try
+            {
+                DetallesCheque.IsReadOnly = true;
+                ViewModel.AjustarCheque();
+                DetallesCheque.Items.Refresh();
+                DetallesCheque.IsReadOnly = false;
+            }
+            catch
+            {
+
+            }
         }
 
         private void HabilitarComponentes(bool habilitar = true)
