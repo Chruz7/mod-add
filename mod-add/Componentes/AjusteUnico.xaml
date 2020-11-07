@@ -357,6 +357,7 @@
                 Grid.Row="0"
                 Grid.Column="6"
                 VerticalAlignment="Center"
+                HorizontalContentAlignment="Right"
                 Margin="5,0,5,0"
                 x:Name="Subtotal"
                 IsReadOnly="True"
@@ -373,6 +374,7 @@
                 Grid.Row="1"
                 Grid.Column="6"
                 VerticalAlignment="Center"
+                HorizontalContentAlignment="Right"
                 Margin="5,0,5,0"
                 x:Name="Total"
                 IsReadOnly="True"
@@ -391,17 +393,19 @@
                 CellEditEnding="DetallesCheque_CellEditEnding">
                 <DataGrid.Columns>
                     <DataGridTextColumn
-                        IsReadOnly="True"
                         Width="5*"
+                        IsReadOnly="True"
+                        ElementStyle="{DynamicResource CenterCell}"
                         Header="Mov."
                         Binding="{Binding movimiento}"/>
                     <DataGridTextColumn
-                        IsReadOnly="True"
                         Width="10*"
+                        IsReadOnly="True"
                         Header="Comanda"
                         Binding="{Binding comanda}"/>
                     <DataGridTextColumn
                         Width="10*"
+                        ElementStyle="{DynamicResource CenterCell}"
                         Header="Cantidad"
                         Binding="{Binding cantidad}"/>
                     <!--<DataGridTemplateColumn
@@ -418,29 +422,33 @@
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>-->
                     <DataGridTextColumn
-                        IsReadOnly="True"
                         Width="10*"
+                        IsReadOnly="True"
                         Header="Clave"
                         Binding="{Binding idproducto}"/>
                     <DataGridTextColumn
-                        IsReadOnly="True"
                         Width="35*"
+                        IsReadOnly="True"
                         Header="Descripción"
                         Binding="{Binding Producto.NombreItem}"/>
                     <DataGridTextColumn
-                        IsReadOnly="True"
                         Width="10*"
+                        IsReadOnly="True"
+                        ElementStyle="{DynamicResource CenterCell}"
                         Header="Desc. %"
                         Binding="{Binding descuento}"/>
                     <DataGridTextColumn
                         Width="10*"
+                        IsReadOnly="True"
+                        ElementStyle="{DynamicResource RightCell}"
                         Header="Precio"
                         Binding="{Binding precio}"/>
                     <DataGridTextColumn
-                        IsReadOnly="True"
                         Width="10*"
+                        IsReadOnly="True"
+                        ElementStyle="{DynamicResource RightCell}"
                         Header="Importe"
-                        Binding="{Binding ImporteCICD}"/>
+                        Binding="{Binding ImporteCICDDisplay}"/>
                 </DataGrid.Columns>
             </DataGrid>
         </Grid>

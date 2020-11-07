@@ -807,15 +807,15 @@ namespace mod_add.ViewModels
                     //var detCambiados = chequesDetalle.Where(x => x.TipoAccion == TipoAccion.ACTUALIZAR && x.Cambiado).ToList();
                     var detRestantes = chequesDetalle.Where(x => x.TipoAccion == TipoAccion.NINGUNO || x.TipoAccion == TipoAccion.ACTUALIZAR).ToList();
 
-                    decimal totalConImpuestos_Det1 = Mat.Redondeo(detRestantes.Sum(x => x.precio.Value * x.cantidad.Value * (100m - x.descuento.Value) / 100m));
-                    decimal totalConImpuestos_Det = Mat.Redondeo(detRestantes.Sum(x => x.ImporteCICD));
+                    decimal totalConImpuestos_Det1 = Mat.Redondear(detRestantes.Sum(x => x.precio.Value * x.cantidad.Value * (100m - x.descuento.Value) / 100m));
+                    decimal totalConImpuestos_Det = Mat.Redondear(detRestantes.Sum(x => x.ImporteCICD));
                     decimal descuentoAplicado = (100m - cheque.descuento.Value) / 100m;
-                    decimal totalNuevo = Mat.Redondeo(totalConImpuestos_Det * descuentoAplicado);
+                    decimal totalNuevo = Mat.Redondear(totalConImpuestos_Det * descuentoAplicado);
 
                     if (cheque.total.Value == totalNuevo) continue;
 
                     decimal descuento = cheque.descuento.Value / 100m;
-                    decimal totalSinImpuestos_Det = Mat.Redondeo(detRestantes.Sum(x => x.ImporteSICD));
+                    decimal totalSinImpuestos_Det = Mat.Redondear(detRestantes.Sum(x => x.ImporteSICD));
 
                     cheque.TipoAccion = TipoAccion.ACTUALIZAR;
                     cheque.TotalArticulosEliminados = chequesDetalle
@@ -837,7 +837,7 @@ namespace mod_add.ViewModels
 
                     cheque.totalconcargo = cheque.total + cheque.cargo;
                     cheque.totalconpropinacargo = cheque.total + cheque.cargo; // falta validar si la propina se agrega por configuracion
-                    cheque.descuentoimporte = Mat.Redondeo(totalSinImpuestos_Det * descuento);
+                    cheque.descuentoimporte = Mat.Redondear(totalSinImpuestos_Det * descuento);
 
                     cheque.efectivo = cheque.total;
                     cheque.tarjeta = 0;
@@ -861,7 +861,7 @@ namespace mod_add.ViewModels
                     //    cheque.otros = cheque.total;
                     //}
 
-                    cheque.totalsindescuento = Mat.Redondeo(detRestantes.Sum(x => x.ImporteSISD));
+                    cheque.totalsindescuento = Mat.Redondear(detRestantes.Sum(x => x.ImporteSISD));
 
                     decimal totalalimentos = 0;
                     decimal totalbebidas = 0;
@@ -899,14 +899,14 @@ namespace mod_add.ViewModels
                         }
                     }
 
-                    cheque.totalalimentos = Mat.Redondeo(totalalimentos * descuentoAplicado);
-                    cheque.totalbebidas = Mat.Redondeo(totalbebidas * descuentoAplicado);
-                    cheque.totalotros = Mat.Redondeo(totalotros * descuentoAplicado);
+                    cheque.totalalimentos = Mat.Redondear(totalalimentos * descuentoAplicado);
+                    cheque.totalbebidas = Mat.Redondear(totalbebidas * descuentoAplicado);
+                    cheque.totalotros = Mat.Redondear(totalotros * descuentoAplicado);
 
                     cheque.totaldescuentos = cheque.descuentoimporte;
-                    cheque.totaldescuentoalimentos = Mat.Redondeo(totalalimentosdescuento * descuento);
-                    cheque.totaldescuentobebidas = Mat.Redondeo(totalbebidasdescuento * descuento);
-                    cheque.totaldescuentootros = Mat.Redondeo(totalotrosdescuento * descuento);
+                    cheque.totaldescuentoalimentos = Mat.Redondear(totalalimentosdescuento * descuento);
+                    cheque.totaldescuentobebidas = Mat.Redondear(totalbebidasdescuento * descuento);
+                    cheque.totaldescuentootros = Mat.Redondear(totalotrosdescuento * descuento);
                     // las cortesias se mantienen?
 
                     cheque.totaldescuentoycortesia = cheque.totaldescuentos + cheque.totalcortesias;
@@ -916,9 +916,9 @@ namespace mod_add.ViewModels
 
                     cheque.subtotalcondescuento = cheque.subtotal - cheque.descuentoimporte;
 
-                    cheque.totalimpuestod1 = Mat.Redondeo(detRestantes.Sum(x => x.ImporteI1CD));
-                    cheque.totalimpuestod2 = Mat.Redondeo(detRestantes.Sum(x => x.ImporteI2CD));
-                    cheque.totalimpuestod3 = Mat.Redondeo(detRestantes.Sum(x => x.ImporteI3CD));
+                    cheque.totalimpuestod1 = Mat.Redondear(detRestantes.Sum(x => x.ImporteI1CD));
+                    cheque.totalimpuestod2 = Mat.Redondear(detRestantes.Sum(x => x.ImporteI2CD));
+                    cheque.totalimpuestod3 = Mat.Redondear(detRestantes.Sum(x => x.ImporteI3CD));
 
                     cheque.totalimpuesto1 = cheque.totalimpuestod1;
 
@@ -1234,13 +1234,13 @@ namespace mod_add.ViewModels
                     {
                         var chequesDetalle = ChequesDetalle.Where(x => x.foliodet == cheque.folio).ToList();
 
-                        decimal totalConImpuestos_Det = Mat.Redondeo(chequesDetalle.Sum(x => x.ImporteCICD));
+                        decimal totalConImpuestos_Det = Mat.Redondear(chequesDetalle.Sum(x => x.ImporteCICD));
                         decimal descuentoAplicado = (100m - cheque.descuento.Value) / 100m;
-                        importeNuevo += Mat.Redondeo(totalConImpuestos_Det * descuentoAplicado);
+                        importeNuevo += Mat.Redondear(totalConImpuestos_Det * descuentoAplicado);
                     }
                 }
 
-                ImporteNuevo = importeNuevo;
+                ImporteNuevo = Mat.Redondear(importeNuevo, 2);
 
                 Debug.WriteLine($"ImporteAnterior: {ImporteAnterior}, ImporteObjetivo: {ImporteObjetivo}, ImporteNuevo: {ImporteNuevo}");
 
@@ -1472,11 +1472,11 @@ namespace mod_add.ViewModels
                     ChequesDetalle.Add(Funciones.ParseChequeDetalle(det, cheque.TipoAccion, tipoClasificacion));
                 }
 
-                UltimoMovimiento = ChequesDetalle.Where(x => x.TipoAccion != TipoAccion.OMITIR).Max(x => x.movimiento.Value);
-                ImporteAnterior = Cheques.Where(x => x.TipoAccion != TipoAccion.OMITIR).Sum(x => x.total.Value);
-                ImporteObjetivo = ImporteAnterior * (100m - PorcentajeObjetivo) / 100;
+                UltimoMovimiento = Mat.Redondear(ChequesDetalle.Where(x => x.TipoAccion != TipoAccion.OMITIR).Max(x => x.movimiento.Value));
+                ImporteAnterior = Mat.Redondear(Cheques.Where(x => x.TipoAccion != TipoAccion.OMITIR).Sum(x => x.total.Value));
+                ImporteObjetivo = Mat.Redondear(ImporteAnterior * (100m - PorcentajeObjetivo) / 100);
                 NumeroTotalCuentas = Cheques.Count(x => x.TipoAccion != TipoAccion.OMITIR);
-                EfectivoAnterior = Cheques.Where(x => x.TipoAccion != TipoAccion.OMITIR).Sum(x => x.efectivo.Value);
+                EfectivoAnterior = Mat.Redondear(Cheques.Where(x => x.TipoAccion != TipoAccion.OMITIR).Sum(x => x.efectivo.Value));
             }
             catch (Exception ex)
             {
@@ -1514,13 +1514,13 @@ namespace mod_add.ViewModels
                 var fondoTurnos = Turnos.Where(x => x.TipoAccion == TipoAccion.NINGUNO || x.TipoAccion == TipoAccion.ACTUALIZAR).Sum(x => x.fondo.Value);
 
                 NumeroTotalCuentasModificadas = cheques.Count(x => x.TipoAccion == TipoAccion.ACTUALIZAR || x.TipoAccion == TipoAccion.ELIMINAR);
-                Diferencia = ImporteAnterior - ImporteNuevo;
-                PorcentajeDiferencia = Math.Round(Diferencia / ImporteAnterior * 100m, 2, MidpointRounding.AwayFromZero);
-                EfectivoNuevo = cheques
+                Diferencia = Mat.Redondear(ImporteAnterior - ImporteNuevo, 2);
+                PorcentajeDiferencia = Mat.Redondear(Diferencia / ImporteAnterior * 100m, 1);
+                EfectivoNuevo = Mat.Redondear(cheques
                     .Where(x => x.TipoAccion == TipoAccion.NINGUNO || x.TipoAccion == TipoAccion.MANTENER || x.TipoAccion == TipoAccion.ACTUALIZAR)
-                    .Sum(x => x.efectivo.Value);
+                    .Sum(x => (x.efectivo ?? 0)), 2);
 
-                EfectivoCaja = EfectivoNuevo + fondoTurnos;
+                EfectivoCaja = Mat.Redondear(EfectivoNuevo + fondoTurnos);
 
                 foreach (var cheque in cheques)
                 {
@@ -1538,15 +1538,15 @@ namespace mod_add.ViewModels
                         Fecha = cheque.fecha.Value,
                         Cancelado = cheque.cancelado.Value ? TipoLogico.SI : TipoLogico.NO,
                         Facturado = cheque.facturado.Value ? TipoLogico.SI : TipoLogico.NO,
-                        Descuento = cheque.descuento.Value,
-                        TotalOriginal = cheque.TotalAnt,
-                        TotalArticulos = cheque.totalarticulos.Value,
-                        ProductosEliminados = cheque.TotalArticulosEliminados,
-                        TotalConDescuento = totalconDescuento,
-                        Efectivo = cheque.EfectivoAnt,
-                        Tarjeta = cheque.TarjetaAnt,
-                        Vales = cheque.ValesAnt,
-                        Otros = cheque.OtrosAnt,
+                        Descuento = Mat.Redondear(cheque.descuento.Value, 1),
+                        TotalOriginal = Mat.Redondear(cheque.TotalAnt, 2),
+                        TotalArticulos = Mat.Redondear(cheque.totalarticulos.Value, 2),
+                        ProductosEliminados = Mat.Redondear(cheque.TotalArticulosEliminados, 2),
+                        TotalConDescuento = Mat.Redondear(totalconDescuento, 2),
+                        Efectivo = Mat.Redondear(cheque.EfectivoAnt, 2),
+                        Tarjeta = Mat.Redondear(cheque.TarjetaAnt, 2),
+                        Vales = Mat.Redondear(cheque.ValesAnt, 2),
+                        Otros = Mat.Redondear(cheque.OtrosAnt, 2),
                         RealizarAccion = cheque.TipoAccion == TipoAccion.ACTUALIZAR || cheque.TipoAccion == TipoAccion.ELIMINAR,
                         IsEnable = cheque.TipoAccion == TipoAccion.ACTUALIZAR || cheque.TipoAccion == TipoAccion.ELIMINAR,
                     });

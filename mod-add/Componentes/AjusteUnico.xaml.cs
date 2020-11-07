@@ -133,6 +133,8 @@ namespace mod_add.Componentes
                         {
                             MessageBox.Show("Cuenta fue cerrada con multiple forma de pago. Al ajustarse la cuenta se guardará solo con la forma de pago en efectivo.", "Busqueda", MessageBoxButton.OK, MessageBoxImage.Information);
                         }
+
+                        ViewModel.CargarResultados(respuesta);
                         HabilitarComponentes();
                     }
                     else if (respuesta.TipoRespuesta == TipoRespuesta.REGISTRO_NO_ENCONTRADO)
@@ -173,21 +175,28 @@ namespace mod_add.Componentes
         
         private void DetallesCheque_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if (!(DetallesCheque.CurrentColumn is DataGridColumn dataGridColumn)) return;
-
-            string header = dataGridColumn.Header.ToString();
-
-            if (header.Equals("Clave"))
+            try
             {
-                if (!(DetallesCheque.CurrentItem is SR_cheqdet cheqdet)) return;
+                if (!(DetallesCheque.CurrentColumn is DataGridColumn dataGridColumn)) return;
 
-                bool modificador = cheqdet.modificador ?? false;
+                string header = dataGridColumn.Header.ToString();
 
-                if (modificador) return;
+                if (header.Equals("Clave"))
+                {
+                    if (!(DetallesCheque.CurrentItem is SR_cheqdet cheqdet)) return;
 
-                Messenger.Default.Register<SR_productos>(this, ProductoCambio);
-                SeleccionProducto window = new SeleccionProducto();
-                window.ShowDialog();
+                    bool modificador = cheqdet.modificador ?? false;
+
+                    if (modificador) return;
+
+                    Messenger.Default.Register<SR_productos>(this, ProductoCambio);
+                    SeleccionProducto window = new SeleccionProducto();
+                    window.ShowDialog();
+                }
+            }
+            catch
+            {
+
             }
         }
 

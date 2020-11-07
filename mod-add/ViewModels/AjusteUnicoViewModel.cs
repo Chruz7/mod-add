@@ -111,22 +111,6 @@ namespace mod_add.ViewModels
             }
         }
 
-        public void ResgistrarBitacora()
-        {
-            Funciones.RegistrarModificacion(new BitacoraModificacion
-            {
-                TipoAjuste = TipoAjuste.UNICO,
-                FechaProceso = DateTime.Now,
-                FechaInicialVenta = Cheque.fecha.Value,
-                FechaFinalVenta = Cheque.cierre.Value,
-                TotalCuentas = 1,
-                CuentasModificadas = 1,
-                ImporteAnterior = ImporteAnterior,
-                ImporteNuevo = Total,
-                Diferencia = Math.Round(Math.Abs(ImporteAnterior - Total) / ImporteAnterior * 100m, 2, MidpointRounding.AwayFromZero),
-            });
-        }
-
         public void AniadirCliente(SR_clientes cliente)
         {
             Cheque.idcliente = cliente.idcliente;
@@ -260,24 +244,24 @@ namespace mod_add.ViewModels
             //falta validar el redondeo
 
             #region Ajuste del cheque
-            Cheque.nopersonas = Personas;
-            Cheque.propina = Propina;
-            Cheque.descuento = Descuento;
+            //Cheque.nopersonas = Personas;
+            //Cheque.propina = Propina;
+            //Cheque.descuento = Descuento;
             Cheque.totalarticulos = DetallesCheque.Sum(x => x.cantidad.Value);
 
             decimal descuentoAplicado = (100m - Cheque.descuento.Value) / 100m;
             decimal descuento = Cheque.descuento.Value / 100m;
-            decimal totalSinImpuestos_Det = Mat.Redondeo(DetallesCheque.Sum(x => x.ImporteSICD));
-            decimal totalConImpuestos_Det = Mat.Redondeo(DetallesCheque.Sum(x => x.ImporteCICD));
+            decimal totalSinImpuestos_Det = Mat.Redondear(DetallesCheque.Sum(x => x.ImporteSICD));
+            decimal totalConImpuestos_Det = Mat.Redondear(DetallesCheque.Sum(x => x.ImporteCICD));
 
             Cheque.subtotal = totalSinImpuestos_Det;
-            Cheque.total = Mat.Redondeo(totalConImpuestos_Det * descuentoAplicado);
+            Cheque.total = Mat.Redondear(totalConImpuestos_Det * descuentoAplicado);
             
             Cheque.totalconpropina = Cheque.total; // falta validar si la propina se agrega por configuracion
             
             Cheque.totalconcargo = Cheque.total + Cheque.cargo;
             Cheque.totalconpropinacargo = Cheque.total + Cheque.cargo; // falta validar si la propina se agrega por configuracion
-            Cheque.descuentoimporte = Mat.Redondeo(totalSinImpuestos_Det * descuento);
+            Cheque.descuentoimporte = Mat.Redondear(totalSinImpuestos_Det * descuento);
 
             if (FormaPago.tipo == (int)TipoPago.EFECTIVO)
             {
@@ -298,7 +282,7 @@ namespace mod_add.ViewModels
             }
 
 
-            Cheque.totalsindescuento = Mat.Redondeo(DetallesCheque.Sum(x => x.ImporteSISD));
+            Cheque.totalsindescuento = Mat.Redondear(DetallesCheque.Sum(x => x.ImporteSISD));
 
             decimal totalalimentos = 0;
             decimal totalbebidas = 0;
@@ -339,14 +323,14 @@ namespace mod_add.ViewModels
                 }
             }
 
-            Cheque.totalalimentos = Mat.Redondeo(totalalimentos * descuentoAplicado);
-            Cheque.totalbebidas = Mat.Redondeo(totalbebidas * descuentoAplicado);
-            Cheque.totalotros = Mat.Redondeo(totalotros * descuentoAplicado);
+            Cheque.totalalimentos = Mat.Redondear(totalalimentos * descuentoAplicado);
+            Cheque.totalbebidas = Mat.Redondear(totalbebidas * descuentoAplicado);
+            Cheque.totalotros = Mat.Redondear(totalotros * descuentoAplicado);
 
             Cheque.totaldescuentos = Cheque.descuentoimporte;
-            Cheque.totaldescuentoalimentos = Mat.Redondeo(totalalimentosdescuento * descuento);
-            Cheque.totaldescuentobebidas = Mat.Redondeo(totalbebidasdescuento * descuento);
-            Cheque.totaldescuentootros = Mat.Redondeo(totalotrosdescuento * descuento);
+            Cheque.totaldescuentoalimentos = Mat.Redondear(totalalimentosdescuento * descuento);
+            Cheque.totaldescuentobebidas = Mat.Redondear(totalbebidasdescuento * descuento);
+            Cheque.totaldescuentootros = Mat.Redondear(totalotrosdescuento * descuento);
             // las cortesias se mantienen?
 
             Cheque.totaldescuentoycortesia = Cheque.totaldescuentos + Cheque.totalcortesias;
@@ -356,9 +340,9 @@ namespace mod_add.ViewModels
 
             Cheque.subtotalcondescuento = Cheque.subtotal - Cheque.descuentoimporte;
 
-            Cheque.totalimpuestod1 = Mat.Redondeo(DetallesCheque.Sum(x => x.ImporteI1CD));
-            Cheque.totalimpuestod2 = Mat.Redondeo(DetallesCheque.Sum(x => x.ImporteI2CD));
-            Cheque.totalimpuestod3 = Mat.Redondeo(DetallesCheque.Sum(x => x.ImporteI3CD));
+            Cheque.totalimpuestod1 = Mat.Redondear(DetallesCheque.Sum(x => x.ImporteI1CD));
+            Cheque.totalimpuestod2 = Mat.Redondear(DetallesCheque.Sum(x => x.ImporteI2CD));
+            Cheque.totalimpuestod3 = Mat.Redondear(DetallesCheque.Sum(x => x.ImporteI3CD));
 
             Cheque.totalimpuesto1 = Cheque.totalimpuestod1;
 
@@ -379,8 +363,8 @@ namespace mod_add.ViewModels
             }
             #endregion
 
-            Subtotal = Cheque.subtotal.Value;
-            Total = Cheque.total.Value;
+            Subtotal = Mat.Redondear(Cheque.subtotal.Value, 2);
+            Total = Mat.Redondear(Cheque.total.Value, 2);
         }
 
         public Respuesta ObtenerChequeSR()
@@ -412,7 +396,7 @@ namespace mod_add.ViewModels
                         TipoRespuesta = TipoRespuesta.CHEQUE_CANCELADO
                     };
 
-                    var detalles = Cheque.Detalles;
+                    var detalles = Cheque.Detalles.OrderBy(x => x.movimiento).ToList();
 
                     if (detalles.Count == 0) return new Respuesta
                     {
@@ -434,24 +418,24 @@ namespace mod_add.ViewModels
 
                     Chequepago.idformadepago = App.ClavePagoEfectivo;
 
-                    DetallesCheque = new ObservableCollection<SR_cheqdet>(detalles.OrderBy(x => x.movimiento).ToList());
+                    //DetallesCheque = new ObservableCollection<SR_cheqdet>(detalles);
                     UltimoCheqDet = detalles.OrderByDescending(x => x.movimiento).FirstOrDefault();
 
                     if (Cheque.fecha.HasValue) Fecha = Cheque.fecha.Value;
                     Personas = (int)Cheque.nopersonas;
                     ClaveCliente = Cheque.idcliente;
-                    Descuento = Cheque.descuento.Value;
-                    Propina = Cheque.propina.Value;
-                    Subtotal = Cheque.subtotal.Value;
-                    Total = Cheque.total.Value;
-                    ImporteAnterior = Total;
+                    Descuento = (decimal)(float)Cheque.descuento.Value;
+                    Propina = Mat.Redondear(Cheque.propina.Value, 2);
+                    Subtotal = Mat.Redondear(Cheque.subtotal.Value);
+                    Total = Mat.Redondear(Cheque.total.Value);
 
                     ObtenerClienteSR();
 
                     return new Respuesta
                     {
                         TipoRespuesta = TipoRespuesta.HECHO,
-                        MultipleFormaPago = chequespagos.Count > 1
+                        MultipleFormaPago = chequespagos.Count > 1,
+                        Cheqdet = detalles,
                     };
                 }
                 catch (Exception ex)
@@ -462,6 +446,72 @@ namespace mod_add.ViewModels
                         TipoRespuesta = TipoRespuesta.ERROR
                     };
                 }
+            }
+        }
+
+        public void CargarResultados(Respuesta respuesta)
+        {
+            try
+            {
+                foreach (var modelo in respuesta.Cheqdet)
+                {
+                    DetallesCheque.Add(new SR_cheqdet
+                    {
+                        foliodet = modelo.foliodet,
+                        movimiento = modelo.movimiento,
+                        comanda = modelo.comanda,
+                        cantidad = (decimal)(float)modelo.cantidad,
+                        idproducto = modelo.idproducto,
+                        descuento = Math.Round(modelo.descuento ?? 0, 2),
+                        precio = Math.Round(modelo.precio ?? 0, 2),
+                        impuesto1 = modelo.impuesto1,
+                        impuesto2 = modelo.impuesto2,
+                        impuesto3 = modelo.impuesto3,
+                        preciosinimpuestos = modelo.preciosinimpuestos,
+                        tiempo = modelo.tiempo,
+                        hora = modelo.hora,
+                        modificador = modelo.modificador,
+                        mitad = modelo.mitad,
+                        comentario = modelo.comentario,
+                        idestacion = modelo.idestacion,
+                        usuariodescuento = modelo.usuariodescuento,
+                        comentariodescuento = modelo.comentariodescuento,
+                        idtipodescuento = modelo.idtipodescuento,
+                        horaproduccion = modelo.horaproduccion,
+                        idproductocompuesto = modelo.idproductocompuesto,
+                        productocompuestoprincipal = modelo.productocompuestoprincipal,
+                        preciocatalogo = modelo.preciocatalogo,
+                        marcar = modelo.marcar,
+                        idmeseroproducto = modelo.idmeseroproducto,
+                        prioridadproduccion = modelo.prioridadproduccion,
+                        estatuspatin = modelo.estatuspatin,
+                        idcortesia = modelo.idcortesia,
+                        numerotarjeta = modelo.numerotarjeta,
+                        estadomonitor = modelo.estadomonitor,
+                        llavemovto = modelo.llavemovto,
+                        horameserofinalizado = modelo.horameserofinalizado,
+                        meserofinalizado = modelo.meserofinalizado,
+                        sistema_envio = modelo.sistema_envio,
+                        idturno_cierre = modelo.idturno_cierre,
+                        procesado = modelo.procesado,
+                        promovolumen = modelo.promovolumen,
+                        iddispositivo = modelo.iddispositivo,
+                        productsyncidsr = modelo.productsyncidsr,
+                        subtotalsrx = modelo.subtotalsrx,
+                        totalsrx = modelo.totalsrx,
+                        idlistaprecio = modelo.idlistaprecio,
+                        tipocambio = modelo.tipocambio,
+                        idmovtobillar = modelo.idmovtobillar,
+                        impuestoimporte3 = modelo.impuestoimporte3,
+                        estrateca_DiscountCode = modelo.estrateca_DiscountCode,
+                        estrateca_DiscountID = modelo.estrateca_DiscountID,
+                        estrateca_DiscountAmount = modelo.estrateca_DiscountAmount
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"INICIO-ERROR\n{ex}\nFIN-ERROR");
             }
         }
 
@@ -489,7 +539,6 @@ namespace mod_add.ViewModels
         private SR_formasdepago FormaPago { get; set; }
         private SR_chequespagos Chequepago { get; set; }
         private SR_cheqdet UltimoCheqDet { get; set; }
-        private decimal ImporteAnterior { get; set; }
 
         private ObservableCollection<SR_cheqdet> _DetallesCheque;
         public ObservableCollection<SR_cheqdet> DetallesCheque
@@ -551,6 +600,7 @@ namespace mod_add.ViewModels
             get { return _Personas; }
             set
             {
+                if (Cheque != null) Cheque.nopersonas = value;
                 _Personas = value;
                 OnPropertyChanged(nameof(Personas));
             }
@@ -584,6 +634,7 @@ namespace mod_add.ViewModels
             get { return _Descuento; }
             set
             {
+                if (Cheque != null) Cheque.descuento = value;
                 _Descuento = value;
                 OnPropertyChanged(nameof(Descuento));
             }
@@ -595,6 +646,7 @@ namespace mod_add.ViewModels
             get { return _Propina; }
             set
             {
+                if (Cheque != null) Cheque.propina = value;
                 _Propina = value;
                 OnPropertyChanged(nameof(Propina));
             }

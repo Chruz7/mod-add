@@ -90,6 +90,7 @@ namespace mod_add.Componentes
                     ViewModel.CargarResultados();
                     DetalleModificacionCheques.Items.Refresh();
                     HabilitarControles(false);
+                    NuevaBusqueda.IsEnabled = false;
                     Aplicar.IsEnabled = true;
                     Cancelar.IsEnabled = true;
                 }
@@ -133,6 +134,8 @@ namespace mod_add.Componentes
                 App.HabilitarPrincipal();
                 if (respuesta == TipoRespuesta.HECHO)
                 {
+                    NuevaBusqueda.IsEnabled = true;
+                    Cancelar.IsEnabled = false;
                     Aplicar.IsEnabled = false;
                     MessageBox.Show("Se guardaron los cambios correctamente", "Listo", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
@@ -186,6 +189,8 @@ namespace mod_add.Componentes
             CuentaPagadaOtros.IsEnabled = habilitar;
             CuentaFacturada.IsEnabled = habilitar;
             CuentaNotaConsumo.IsEnabled = habilitar;
+            QuitarPropinasManualmente.IsEnabled = habilitar;
+            NoIncluirCuentasReimpresas.IsEnabled = habilitar;
             GenerarVistaPrevia.IsEnabled = habilitar;
         }
 
