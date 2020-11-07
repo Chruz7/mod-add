@@ -122,8 +122,7 @@ namespace mod_add.ViewModels
                         query = $"SELECT CAST(ISNULL(MAX(folio), 0) AS bigint) AS folio FROM {tablaCheques}";
                         long folio = context.Database.SqlQuery<long>(query).Single();
 
-                        query = $"SELECT CAST(ISNULL(MAX(numcheque), 0) AS numeric(8,0)) AS numcheque FROM {tablaCheques}";
-                        decimal numcheque = context.Database.SqlQuery<decimal>(query).Single();
+                        
 
                         //query = $"DBCC CHECKIDENT ({tablaCheques}, RESEED, @{nameof(folio)})";
                         //context.Database.ExecuteSqlCommand(query, new SqlParameter($"{nameof(folio)}", folio));
@@ -134,9 +133,20 @@ namespace mod_add.ViewModels
                         //idturnointerno = idturnointerno > 0 ? idturnointerno + 1 : 0;
                         idturno++;
                         folio = folio > 0 ? folio + 1 : 0;
-                        numcheque++;
 
-                        EnumerarTurnosYFolios(idturno, folio, numcheque);
+                        if (App.ConfiguracionSistema.ModificarVentasReales && Proceso.TipoProceso == TipoProceso.FOLIOS)
+                        {
+                            query = $"SELECT CAST(ISNULL(MAX(numcheque), 0) AS numeric(8,0)) AS numcheque FROM {tablaCheques}";
+                            decimal numcheque = context.Database.SqlQuery<decimal>(query).Single();
+
+                            numcheque++;
+
+                            EnumerarFolios(idturno, folio, numcheque);
+                        }
+                        else
+                        {
+                            EnumerarFolios(idturno, folio);
+                        }
 
                         #region Creacion y actualizacion de registros
                         Debug.WriteLine("Recreando turnos");
@@ -594,9 +604,9 @@ namespace mod_add.ViewModels
             Debug.WriteLine("ELIMINACION-FOLIOS-FIN");
         }
 
-        public void EnumerarTurnosYFolios(long idturno, long folio, decimal numcheque)
+        public void EnumerarFolios(long idturno, long folio, decimal numcheque)
         {
-            Debug.WriteLine("ENUMERCION-ID-TURNOS-INICIO");
+            Debug.WriteLine("ENUMERCION-FOLIOS-INICIO");
 
             try
             {
@@ -630,7 +640,6 @@ namespace mod_add.ViewModels
                         if (cheque.TipoAccion != TipoAccion.ELIMINAR)
                         {
                             Debug.WriteLine($"Folio anterior: {cheque.folio}, folio nuevo: {folio}");
-                            Debug.WriteLine($"Número de cheque anterior: {cheque.numcheque}, Número de cheque nuevo: {numcheque}");
                             cheque.idturno = idturno;
                             cheque.folio = folio;
 
@@ -638,7 +647,10 @@ namespace mod_add.ViewModels
 
                             if (App.ConfiguracionSistema.ModificarVentasReales)
                             {
+                                Debug.WriteLine($"Número de cheque anterior: {cheque.numcheque}, Número de cheque nuevo: {numcheque}");
+
                                 cheque.numcheque = numcheque;
+
                                 if (cheque.folionotadeconsumo > 0) cheque.folionotadeconsumo = numcheque;
 
                                 numcheque++;
@@ -658,7 +670,65 @@ namespace mod_add.ViewModels
             {
                 Debug.WriteLine($"INICIO-ERROR\n{ex}\nFIN-ERROR");
             }
-            Debug.WriteLine("ENUMERCION-ID-TURNOS-FIN");
+            Debug.WriteLine("ENUMERCION-FOLIOS-FIN");
+        }
+
+        public void EnumerarFolios(long idturno, long folio)
+        {
+            Debug.WriteLine("ENUMERCION-FOLIOS-INICIO");
+
+            try
+            {
+                var turnos = Turnos
+                    .OrderBy(x => x.idturno)
+                    .ToList();
+
+                foreach (var turno in turnos)
+                {
+                    var cheques = Cheques
+                        .Where(x => x.idturno.Value == turno.idturno.Value)
+                        .OrderBy(x => x.numcheque.Value)
+                        .ToList();
+
+                    foreach (var cheque in cheques)
+                    {
+                        var chequesDetalle = ChequesDetalle.Where(x => x.foliodet.Value == cheque.folio).ToList();
+
+                        foreach (var det in chequesDetalle)
+                        {
+                            det.foliodet = folio;
+                        }
+
+                        var chequesPago = ChequesPago.Where(x => x.folio == cheque.folio).ToList();
+
+                        foreach (var chequePago in chequesPago)
+                        {
+                            chequePago.folio = folio;
+                        }
+
+                        if (cheque.TipoAccion != TipoAccion.ELIMINAR)
+                        {
+                            Debug.WriteLine($"Folio anterior: {cheque.folio}, folio nuevo: {folio}");
+                            cheque.idturno = idturno;
+                            cheque.folio = folio;
+
+                            folio++;
+                        }
+                    }
+
+                    if (turno.TipoAccion != TipoAccion.ELIMINAR)
+                    {
+                        Debug.WriteLine($"Id turno anterior: {turno.idturno}, id turno nuevo: {idturno}");
+                        turno.idturno = idturno;
+                        idturno++;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"INICIO-ERROR\n{ex}\nFIN-ERROR");
+            }
+            Debug.WriteLine("ENUMERCION-FOLIOS-FIN");
         }
 
         public void ProcesarProductos()
@@ -667,7 +737,10 @@ namespace mod_add.ViewModels
             try
             {
                 Debug.WriteLine("INICIO-ELIMINACION-PRODUTOS");
-                int maxMovimietos = ChequesDetalle.GroupBy(x => x.foliodet.Value).Select(x => x.Count()).Max();
+                int maxMovimietos = ChequesDetalle
+                    .Where(x => !(x.modificador ?? false) && x.TipoAccion == TipoAccion.NINGUNO)
+                    .GroupBy(x => x.foliodet.Value).Select(x => x.Count()).Max();
+
                 int maxIndex = maxMovimietos - 1;
                 Debug.WriteLine($"Indice máximo: {maxIndex}");
                 EliminarProductos(maxIndex, 0, false);
@@ -874,17 +947,22 @@ namespace mod_add.ViewModels
             }
         }
 
-        public bool EliminarProductos(int maxIndex, int index, bool continuaEliminacion)
+        public bool EliminarProductos(int maxIndex, int index, bool continuaEliminacion, int vuelta = 0)
         {
-            Debug.WriteLine($"Indice actual: {index}");
-
             TipoRespuesta ObjetivoAlcanzado = TipoRespuesta.NO;
-
-            if (index == 0)
-                continuaEliminacion = false;
 
             try
             {
+                if (index == 0)
+                {
+                    vuelta++;
+                    Debug.WriteLine($"Vuelta: {vuelta}");
+
+                    continuaEliminacion = false;
+                }
+
+                Debug.WriteLine($"Indice actual: {index}");
+
                 var cheques = Cheques.Where(x => x.TipoAccion == TipoAccion.NINGUNO).ToList();
 
                 foreach (var cheque in cheques)
@@ -896,6 +974,7 @@ namespace mod_add.ViewModels
 
                     if (index >= detalles.Count)
                     {
+                        Debug.WriteLine($"Cuenta {cheque.folio}. Total detalles: {detalles.Count}");
                         continue;
                     }
 
@@ -903,6 +982,7 @@ namespace mod_add.ViewModels
 
                     if (det.TipoAccion == TipoAccion.ELIMINAR)
                     {
+                        Debug.WriteLine($"Cuenta {cheque.folio}. Detalle eliminado");
                         continue;
                     }
 
@@ -974,11 +1054,11 @@ namespace mod_add.ViewModels
 
                     if (index > maxIndex && continuaEliminacion)
                     {
-                        index = 1;
+                        index = 0;
                     }
                     else if (index > maxIndex && !continuaEliminacion)
                     {
-                        Debug.WriteLine("NO hay mas producto para eliminar");
+                        Debug.WriteLine("NO hay mas productos para eliminar");
                         ObjetivoAlcanzado = TipoRespuesta.SI;
                     }
                 }
@@ -990,7 +1070,7 @@ namespace mod_add.ViewModels
 
             if (ObjetivoAlcanzado == TipoRespuesta.NO)
             {
-                return EliminarProductos(maxIndex, index, continuaEliminacion);
+                return EliminarProductos(maxIndex, index, continuaEliminacion, vuelta);
             }
 
             return true;
