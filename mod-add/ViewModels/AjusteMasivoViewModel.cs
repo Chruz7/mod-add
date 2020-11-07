@@ -285,7 +285,7 @@ namespace mod_add.ViewModels
                 parametrosSql[i + 1] = new SqlParameter(nombreParametro, valores[i]);
             }
 
-            query = $"DELETE FROM turnos WHERE idturno IN ({string.Join(",", nombresParametros)}) AND idempresa=@{nameof(App.ClaveEmpresa)}";
+            query = $"DELETE FROM turnosf WHERE idturno IN ({string.Join(",", nombresParametros)}) AND idempresa=@{nameof(App.ClaveEmpresa)}";
             context.Database.ExecuteSqlCommand(query, parametrosSql);
         }
 
