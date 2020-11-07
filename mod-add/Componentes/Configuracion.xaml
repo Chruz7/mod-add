@@ -43,7 +43,7 @@
             ItemsSource="{Binding Condicionales}"
             DisplayMemberPath="Titulo"
             x:Name="ModificarVentasReales"
-            SelectionChanged="ModificarVentasReales_SelectionChanged"/>
+            SelectedItem="{Binding Condicional}"/>
 
         <Label
             Grid.Row="1"

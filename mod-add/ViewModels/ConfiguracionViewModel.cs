@@ -48,7 +48,7 @@ namespace mod_add.ViewModels
                 },
                 new Condicional
                 {
-                    Titulo = "No",
+                    Titulo = "NO",
                     Valor = false
                 }
             };
@@ -58,7 +58,7 @@ namespace mod_add.ViewModels
         {
             var ConfiguracionSistema = _configuracionServicio.ObtenerConfiguracion();
 
-            ModificarVentasReales = ConfiguracionSistema.ModificarVentasReales;
+            Condicional = Condicionales.Find(x => x.Valor == ConfiguracionSistema.ModificarVentasReales);
             MinProductosCuenta = ConfiguracionSistema.MinProductosCuenta;
             EliminarProductosSeleccionados = ConfiguracionSistema.EliminarProductosSeleccionados;
         }
@@ -180,7 +180,7 @@ namespace mod_add.ViewModels
                 try
                 {
                     var configuracion = context.ConfiguracionSistema.FirstOrDefault();
-                    configuracion.ModificarVentasReales = ModificarVentasReales;
+                    configuracion.ModificarVentasReales = Condicional.Valor;
                     configuracion.MinProductosCuenta = MinProductosCuenta;
                     configuracion.EliminarProductosSeleccionados = EliminarProductosSeleccionados;
 
@@ -235,7 +235,20 @@ namespace mod_add.ViewModels
             }
         }
 
-        public bool ModificarVentasReales { get; set; }
+        private Condicional condicional;
+
+        public Condicional Condicional
+        {
+            get { return condicional; }
+            set
+            {
+                condicional = value;
+                OnPropertyChanged(nameof(Condicional));
+            }
+        }
+
+
+        //public bool ModificarVentasReales { get; set; }
 
         private int _MinProductosCuenta;
         public int MinProductosCuenta

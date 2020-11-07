@@ -276,8 +276,8 @@ namespace mod_add.Utils
             {
                 SRLibrary.Utils.Print print = new SRLibrary.Utils.Print();
 
-                print.Print_File(filePathCorte, "", 14, 10, 10);
-                print.Print_File(filePathTarjeta, "", 14, 10, 10);
+                print.Print_File(filePathCorte, "", 0, 8, 8);
+                print.Print_File(filePathTarjeta, "", 0, 8, 8);
             }
         }
 

@@ -151,6 +151,7 @@ namespace mod_add
         public static void IrPrincipal()
         {
             Principal = new Principal();
+            if (Admin) Principal.Title = "Principal - ADMIN";
             Principal.Show();
         }
 

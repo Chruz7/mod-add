@@ -75,5 +75,10 @@ namespace mod_add.Vistas
                 }
             }, System.Threading.CancellationToken.None, TaskContinuationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());
         }
+
+        private void Cerrar_Click(object sender, RoutedEventArgs e)
+        {
+            Close();
+        }
     }
 }

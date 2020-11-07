@@ -1,10 +1,8 @@
 ﻿using mod_add.Enums;
 using mod_add.Helpers;
-using mod_add.Selectores;
 using mod_add.ViewModels;
 using mod_add.Vistas;
 using SRLibrary.SR_DTO;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -32,22 +30,11 @@ namespace mod_add.Componentes
             ViewModel = new ConfiguracionViewModel();
 
             DataContext = ViewModel;
-
-            ModificarVentasReales.SelectedItem = ViewModel.Condicionales.Where(x => x.Valor == ViewModel.ModificarVentasReales).FirstOrDefault();
         }
 
         public void Refrescar()
         {
             ViewModel.Inicializar();
-        }
-
-        private void ModificarVentasReales_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (!(sender is ComboBox comboBox)) return;
-
-            if (!(comboBox.SelectedItem is Condicional condicional)) return;
-
-            ViewModel.ModificarVentasReales = condicional.Valor;
         }
 
         private void EliminarProductosSeleccionados_Checked(object sender, RoutedEventArgs e)
@@ -326,7 +313,7 @@ namespace mod_add.Componentes
 
         private void Cancelar_Click(object sender, RoutedEventArgs e)
         {
-
+            ViewModel.Inicializar();
         }
 
         private void Porcentaje_ValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)

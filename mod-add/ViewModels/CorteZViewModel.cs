@@ -445,11 +445,11 @@ namespace mod_add.ViewModels
 
                         CuentasNormales = cheques.Count(),
                         CuentasCanceladas = cheques.Count(x => x.cancelado.Value),
-                        CuentasConDescuento = cheques.Count(x => x.descuento.Value > 0),
-                        CuentasConCortesia = 0,
+                        CuentasConDescuento = cheques.Count(x => (x.descuento ?? 0) > 0 && (x.descuento ?? 0) < 100),
+                        CuentasConCortesia = cheques.Count(x => (x.descuento ?? 0) == 100),
 
                         CuentaPromedio = cheques.Sum(x => (x.subtotalcondescuento ?? 0)) / cheques.Count(),
-                        ConsumoPromedio = 0,
+                        ConsumoPromedio = cheques.Sum(x => (x.subtotalcondescuento ?? 0)) / cheques.Sum(x => (x.nopersonas ?? 0)),
 
                         Comensales = (int)cheques.Sum(x => x.nopersonas.Value),
 

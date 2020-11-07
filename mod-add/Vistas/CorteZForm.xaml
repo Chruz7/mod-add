@@ -115,6 +115,33 @@
             x:Name="NoConsiderarPropinas"
             IsChecked="{Binding NoConsiderarPropinas}"/>
 
+        <Button
+            Grid.Column="0"
+            Grid.Row="8"
+            VerticalAlignment="Bottom"
+            HorizontalAlignment="Left"
+            Width="100"
+            x:Name="Cerrar"
+            Click="Cerrar_Click">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="30*"/>
+                    <ColumnDefinition Width="70*"/>
+                </Grid.ColumnDefinitions>
+                <Image
+                    Grid.Column="0"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Center"
+                    Source="/mod-add;component/Recursos/Iconos/cancelar.png"/>
+                <TextBlock
+                    Grid.Column="1"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Center"
+                    FontWeight="Bold"
+                    Text="CERRAR"/>
+            </Grid>
+        </Button>
+
         <Grid 
             Grid.Row="6"
             Grid.Column="1">
