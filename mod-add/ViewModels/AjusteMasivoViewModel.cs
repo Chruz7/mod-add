@@ -113,8 +113,8 @@ namespace mod_add.ViewModels
                             tablaTurnos = "turnosf";
                         }
 
-                        //query = $"SELECT CAST(ISNULL(MAX(idturnointerno), 0) AS bigint) AS idturnointerno FROM {tablaTurnos}";
-                        //long idturnointerno = context.Database.SqlQuery<long>(query).Single();
+                        query = $"SELECT CAST(ISNULL(MAX(idturnointerno), 0) AS bigint) AS idturnointerno FROM {tablaTurnos}";
+                        long idturnointerno = context.Database.SqlQuery<long>(query).Single();
 
                         query = $"SELECT CAST(ISNULL(MAX(idturno), 0) AS bigint) AS idturno FROM {tablaTurnos}";
                         long idturno = context.Database.SqlQuery<long>(query).Single();
@@ -122,13 +122,11 @@ namespace mod_add.ViewModels
                         query = $"SELECT CAST(ISNULL(MAX(folio), 0) AS bigint) AS folio FROM {tablaCheques}";
                         long folio = context.Database.SqlQuery<long>(query).Single();
 
-                        
+                        query = $"DBCC CHECKIDENT ({tablaCheques}, RESEED, @{nameof(folio)})";
+                        context.Database.ExecuteSqlCommand(query, new SqlParameter($"{nameof(folio)}", folio));
 
-                        //query = $"DBCC CHECKIDENT ({tablaCheques}, RESEED, @{nameof(folio)})";
-                        //context.Database.ExecuteSqlCommand(query, new SqlParameter($"{nameof(folio)}", folio));
-
-                        //query = $"DBCC CHECKIDENT ({tablaTurnos}, RESEED, @{nameof(idturnointerno)})";
-                        //context.Database.ExecuteSqlCommand(query, new SqlParameter($"{nameof(idturnointerno)}", idturnointerno));
+                        query = $"DBCC CHECKIDENT ({tablaTurnos}, RESEED, @{nameof(idturnointerno)})";
+                        context.Database.ExecuteSqlCommand(query, new SqlParameter($"{nameof(idturnointerno)}", idturnointerno));
 
                         //idturnointerno = idturnointerno > 0 ? idturnointerno + 1 : 0;
                         idturno++;
