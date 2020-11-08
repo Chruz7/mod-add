@@ -21,10 +21,12 @@ namespace mod_add.Componentes
     public partial class AjusteUnico : UserControl
     {
         private readonly AjusteUnicoViewModel ViewModel;
+        private bool Valido { get; set; }
 
         public AjusteUnico()
         {
             InitializeComponent();
+            Valido = true;
             ViewModel = new AjusteUnicoViewModel();
 
             DataContext = ViewModel;
@@ -53,6 +55,12 @@ namespace mod_add.Componentes
 
         private void Aceptar_Click(object sender, RoutedEventArgs e)
         {
+            if (!Valido)
+            {
+                MessageBox.Show("Uno o más campos de la table se encuentran vacíos","Campos vacíos", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
             App.HabilitarPrincipal(false);
 
             TipoRespuesta respuesta = TipoRespuesta.NADA;
@@ -177,6 +185,8 @@ namespace mod_add.Componentes
         {
             try
             {
+                if (!Valido) return;
+
                 if (!(DetallesCheque.CurrentColumn is DataGridColumn dataGridColumn)) return;
 
                 string header = dataGridColumn.Header.ToString();
@@ -202,7 +212,23 @@ namespace mod_add.Componentes
 
         private void DetallesCheque_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
         {
-            DetallesCheque.Dispatcher.BeginInvoke(new Action(() => RefrescarControles()), DispatcherPriority.Background);
+            if (getCurrentCellValue((TextBox)e.EditingElement) == "")
+            {
+                MessageBox.Show("Por favor, rellene el campo", "Campo vacío", MessageBoxButton.OK, MessageBoxImage.Warning);
+                Valido = false;
+                e.Cancel = true;
+            }
+            else
+            {
+                DetallesCheque.Dispatcher.BeginInvoke(new Action(() => RefrescarControles()), DispatcherPriority.Background);
+            }
+
+            //DetallesCheque.Dispatcher.BeginInvoke(new Action(() => RefrescarControles()), DispatcherPriority.Background);
+        }
+
+        private string getCurrentCellValue(TextBox txtCurCell)
+        {
+            return txtCurCell.Text;
         }
 
         private void Button_IsEnabledChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -301,6 +327,7 @@ namespace mod_add.Componentes
                 ViewModel.AjustarCheque();
                 DetallesCheque.Items.Refresh();
                 DetallesCheque.IsReadOnly = false;
+                Valido = true;
             }
             catch
             {
