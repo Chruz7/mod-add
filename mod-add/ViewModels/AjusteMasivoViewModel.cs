@@ -1290,8 +1290,6 @@ namespace mod_add.ViewModels
             EfectivoAnterior = 0m;
             EfectivoNuevo = 0m;
             EfectivoCaja = 0m;
-
-            FechaInicio = new DateTime(2020, 11, 1);
         }
 
         public Respuesta ObtenerChequesSR()

@@ -58,5 +58,14 @@ namespace mod_add.Vistas
         {
             Messenger.Default.Send(Cliente);
         }
+
+        private void QuitarCliente_Click(object sender, RoutedEventArgs e)
+        {
+            Cliente = new SR_clientes
+            {
+                idcliente = ""
+            };
+            Close();
+        }
     }
 }

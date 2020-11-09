@@ -113,10 +113,20 @@ namespace mod_add.ViewModels
 
         public void AniadirCliente(SR_clientes cliente)
         {
-            Cheque.idcliente = cliente.idcliente;
+            if (string.IsNullOrEmpty(cliente.idcliente))
+            {
+                Cheque.idcliente = "";
 
-            ClaveCliente = cliente.idcliente;
-            NombreCliente = cliente.nombre;
+                ClaveCliente = "";
+                NombreCliente = "";
+            }
+            else
+            {
+                Cheque.idcliente = cliente.idcliente;
+
+                ClaveCliente = cliente.idcliente;
+                NombreCliente = cliente.nombre;
+            }
         }
 
         public void AniadirProducto(SR_productos producto)

@@ -16,9 +16,6 @@ namespace mod_add.Vistas
             InitializeComponent();
             ViewModel = new AutenticacionViewModel();
             DataContext = ViewModel;
-#if DEBUG
-            Contrasena.Password = "Ok123456";
-#endif
         }
 
         private void Cancelar_Click(object sender, RoutedEventArgs e)

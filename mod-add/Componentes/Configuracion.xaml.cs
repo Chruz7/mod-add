@@ -20,7 +20,9 @@ namespace mod_add.Componentes
         public Configuracion()
         {
             InitializeComponent();
+            ModificarVentasReales.IsEnabled = false;
             AbrirSeleccionProductos.IsEnabled = false;
+
             Habilitar("P1", false);
             Habilitar("P2", false);
             Habilitar("P3", false);

@@ -51,8 +51,6 @@ namespace mod_add.ViewModels
             NoConsiderarDepositosRetiros = false;
             ConsiderarFondoinicial = false;
             NoConsiderarPropinas = false;
-
-            Fecha = new DateTime(2020, 11, 1);
         }
 
         public Respuesta Generar(TipoDestino tipoDestino)
