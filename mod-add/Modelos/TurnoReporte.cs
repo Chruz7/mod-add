@@ -36,7 +36,7 @@ namespace mod_add.Modelos
         public string Sefectivo { get { return string.Format("{0:C}", efectivo ?? 0); } }
         public string Starjeta { get { return string.Format("{0:C}", tarjeta ?? 0); } }
         public string Svales { get { return string.Format("{0:C}", vales ?? 0); } }
-        public string Sotros { get { return string.Format("{0:C}", credito ?? 0); } }
+        public string Scredito { get { return string.Format("{0:C}", credito ?? 0); } }
         public string STotal { get { return string.Format("{0:C}", Total); } }
         public string SCargo { get { return string.Format("{0:C}", Cargo); } }
         public string SPropina { get { return string.Format("{0:C}", Propina); } }

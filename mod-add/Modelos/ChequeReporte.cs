@@ -210,10 +210,10 @@ namespace mod_add.Modelos
         public string Sfolionotaconsumo { get { return $"{folionotadeconsumo}"; } }
         public string Sfecha { get { return fecha.HasValue ? fecha.ToString() : ""; } }
         public string Simpresiones { get { return impresiones.HasValue && impresiones > 1 ? $"{(int)impresiones}" : ""; } }
-        public string Sreaperturas { get { return reabiertas.HasValue && reabiertas > 0 ? $"{(int)reabiertas}" : ""; } }
+        public string Sreabiertas { get { return (reabiertas ?? 0) > 0 ? $"{(int)reabiertas}" : ""; } }
         public string Sdescuento { get { return descuento.HasValue && descuento > 0 ? string.Format("{0:C}", descuento) : ""; } }
         public string Spropina { get { return propina.HasValue && propina > 0 ? string.Format("{0:C}", propina) : ""; } }
-        public string Simporte { get { return descuento.HasValue && descuento < 100m ? string.Format("{0:C}", total) : "CORTESIA"; } }
+        public string Simporte { get { return (descuento ?? 0) < 100m ? string.Format("{0:C}", total) : "CORTESIA"; } }
         public string Scargo { get { return cargo.HasValue && cargo > 0 ? string.Format("{0:C}", cargo) : ""; } }
         public string Sefectivo { get { return efectivo.HasValue && efectivo > 0 ? string.Format("{0:C}", efectivo) : ""; } }
         public string Starjeta { get { return tarjeta.HasValue && tarjeta > 0 ? string.Format("{0:C}", tarjeta) : ""; } }

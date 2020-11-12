@@ -59,7 +59,43 @@ namespace mod_add.ViewModels
         {
             List<string> campos = new List<string>
             {
-
+                "c.folio",
+                "c.numcheque",
+                "c.fecha",
+                "c.mesa",
+                "c.nopersonas",
+                "c.cancelado",
+                "c.impresiones",
+                "c.descuento",
+                "c.reabiertas",
+                "c.tipodeservicio",
+                "c.idturno",
+                "c.folionotadeconsumo",
+                "c.total",
+                "c.cargo",
+                "c.descuentoimporte",
+                "c.efectivo",
+                "c.tarjeta",
+                "c.vales",
+                "c.otros",
+                "c.propina",
+                "c.tipoventarapida",
+                "c.totalsindescuento",
+                "c.totaldescuentos",
+                "c.totaldescuentoalimentos",
+                "c.totaldescuentobebidas",
+                "c.totaldescuentootros",
+                "c.totalcortesias",
+                "c.totalcortesiaalimentos",
+                "c.totalcortesiabebidas",
+                "c.totalcortesiaotros",
+                "c.totaldescuentoycortesia",
+                "c.totalalimentossindescuentos",
+                "c.totalbebidassindescuentos",
+                "c.totalotrossindescuentos",
+                "c.descuentomonedero",
+                "c.subtotalcondescuento",
+                "td.desc_tipodescuento AS DescripcionTipoDescuento",
             };
 
             return string.Join(",", campos);
@@ -69,7 +105,16 @@ namespace mod_add.ViewModels
         {
             List<string> campos = new List<string>
             {
-
+                "idturno",
+                "fondo",
+                "apertura",
+                "cierre",
+                "idestacion",
+                "cajero",
+                "efectivo",
+                "tarjeta",
+                "vales",
+                "credito",
             };
 
             return string.Join(",", campos);
@@ -79,7 +124,13 @@ namespace mod_add.ViewModels
         {
             List<string> campos = new List<string>
             {
-
+                "cp.folio",
+                "cp.idformadepago",
+                "cp.importe",
+                "cp.propina",
+                "cp.tipodecambio",
+                "cp.referencia",
+                "fp.descripcion AS DescripcionFormaPago",
             };
 
             return string.Join(",", campos);
@@ -124,7 +175,7 @@ namespace mod_add.ViewModels
                     //SR_turnos_DAO turnos_DAO = new SR_turnos_DAO(context, false);
                     //query = $"apertura BETWEEN @{nameof(FechaCorteInicio)} AND @{nameof(FechaCorteCierre)} AND cierre IS NOT NULL AND idempresa=@{nameof(App.ClaveEmpresa)}";
 
-                    query = $"SELECT {CamposTurnos()} FROM turnosf WHERE apertura BETWEEN @{nameof(FechaCorteInicio)} AND @{nameof(FechaCorteCierre)} AND cierre IS NOT NULL AND idempresa=@{nameof(App.ClaveEmpresa)}";
+                    query = $"SELECT {CamposTurnos()} FROM turnos WHERE apertura BETWEEN @{nameof(FechaCorteInicio)} AND @{nameof(FechaCorteCierre)} AND cierre IS NOT NULL AND idempresa=@{nameof(App.ClaveEmpresa)}";
 
                     var turnos = context.Database
                         .SqlQuery<TurnoReporte>(query,
@@ -223,7 +274,7 @@ namespace mod_add.ViewModels
                         parametrosSql[i] = new SqlParameter(nombreParametro, valores[i]);
                     }
 
-                    query = $"SELECT {CamposCheques()} FROM {chequesT} WHERE idturno IN ({string.Join(",", nombresParametros)})";
+                    query = $"SELECT {CamposCheques()} FROM {chequesT} c LEFT JOIN tipodescuento td ON c.idtipodescuento = td.idtipodescuento WHERE idturno IN ({string.Join(",", nombresParametros)})";
 
                     List<ChequeReporte> cheques = context.Database.SqlQuery<ChequeReporte>(query, parametrosSql).ToList();
 
@@ -244,7 +295,7 @@ namespace mod_add.ViewModels
                         parametrosSql[i] = new SqlParameter(nombreParametro, valores[i]);
                     }
 
-                    query = $"SELECT {CamposChequesPagos()} FROM {chequesT} WHERE folio IN ({string.Join(",", nombresParametros)})";
+                    query = $"SELECT {CamposChequesPagos()} FROM {chequespagosT} cp LEFT JOIN formasdepago fp ON cp.idformadepago = fp.idformadepago WHERE folio IN ({string.Join(",", nombresParametros)})";
 
                     List<ChequePagoReporte> chequesPagos = context.Database.SqlQuery<ChequePagoReporte>(query, parametrosSql).ToList();
 
@@ -348,7 +399,7 @@ namespace mod_add.ViewModels
                         $"AND CAST(c.cancelado as int)=0 " +
                         $"AND g.clasificacion=2";
 
-                    float cantidadAlimentos = context.Database.SqlQuery<float>(query,
+                    double cantidadAlimentos = context.Database.SqlQuery<double>(query,
                         new SqlParameter($"{nameof(FechaCorteInicio)}", FechaCorteInicio),
                         new SqlParameter($"{nameof(FechaCorteCierre)}", FechaCorteCierre),
                         new SqlParameter($"{nameof(App.ClaveEmpresa)}", App.ClaveEmpresa))
@@ -371,7 +422,7 @@ namespace mod_add.ViewModels
                         $"AND CAST(c.cancelado as int)=0 " +
                         $"AND g.clasificacion=1";
 
-                    float cantidadBebidas = context.Database.SqlQuery<float>(query,
+                    double cantidadBebidas = context.Database.SqlQuery<double>(query,
                         new SqlParameter($"{nameof(FechaCorteInicio)}", FechaCorteInicio),
                         new SqlParameter($"{nameof(FechaCorteCierre)}", FechaCorteCierre),
                         new SqlParameter($"{nameof(App.ClaveEmpresa)}", App.ClaveEmpresa))
@@ -394,7 +445,7 @@ namespace mod_add.ViewModels
                         $"AND CAST(c.cancelado as int)=0 " +
                         $"AND g.clasificacion=3";
 
-                    float cantidadOtros = context.Database.SqlQuery<float>(query,
+                    double cantidadOtros = context.Database.SqlQuery<double>(query,
                         new SqlParameter($"{nameof(FechaCorteInicio)}", FechaCorteInicio),
                         new SqlParameter($"{nameof(FechaCorteCierre)}", FechaCorteCierre),
                         new SqlParameter($"{nameof(App.ClaveEmpresa)}", App.ClaveEmpresa))
@@ -554,7 +605,7 @@ namespace mod_add.ViewModels
                         CuentasConDescuento = cheques.Count(x => (x.descuento ?? 0) > 0 && (x.descuento ?? 0) < 100),
                         CuentasConDescuentoImporte = cheques.Where(x => (x.descuento ?? 0) > 0 && (x.descuento ?? 0) < 100).Sum(x => x.descuentoimporte ?? 0),
                         CuentasConCortesia = cheques.Count(x => (x.descuento ?? 0) == 100),
-                        CuentasConCortesiaImporte = cheques.Where(x => (x.descuento ?? 0) == 100).Sum(x => x.descuentoimporte ?? 0),
+                        //CuentasConCortesiaImporte = cheques.Where(x => (x.descuento ?? 0) == 100).Sum(x => x.descuentoimporte ?? 0),
 
                         CuentaPromedio = cheques.Sum(x => (x.subtotalcondescuento ?? 0)) / cheques.Count(),
                         ConsumoPromedio = cheques.Sum(x => (x.subtotalcondescuento ?? 0)) / cheques.Sum(x => (x.nopersonas ?? 0)),
@@ -590,7 +641,12 @@ namespace mod_add.ViewModels
                         ConsiderarFondoInicial = considerarFondoinicial,
                     };
 
+                    turno.efectivo = reporte.Efectivo;
+                    turno.Propina = propinasPagadas;
+                    turno.Cargo = reporte.Cargos;
+                    turno.Total = (turno.efectivo ?? 0) + (turno.tarjeta ?? 0) + (turno.vales ?? 0) + (turno.credito ?? 0) - turno.Propina;
 
+                    reporte.CuentasConCortesiaImporte = reporte.Descuentos;
                     reporte.PPorcentajeAlimentos = Math.Round(reporte.PAlimentos / reporte.Subtotal * 100m, 0, MidpointRounding.AwayFromZero);
                     reporte.PPorcentajeBebidas = Math.Round(reporte.PBebidas / reporte.Subtotal * 100m, 0, MidpointRounding.AwayFromZero);
                     reporte.PPorcentajeOtros = Math.Round(reporte.POtros / reporte.Subtotal * 100m, 0, MidpointRounding.AwayFromZero);
