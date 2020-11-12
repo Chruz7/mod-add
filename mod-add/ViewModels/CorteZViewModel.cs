@@ -2,7 +2,6 @@
 using mod_add.Modelos;
 using mod_add.Selectores;
 using mod_add.Utils;
-using SR.Datos;
 using SRLibrary.SR_Context;
 using SRLibrary.SR_DAO;
 using System;
@@ -16,8 +15,11 @@ namespace mod_add.ViewModels
 {
     public class CorteZViewModel : ViewModelBase
     {
+        private readonly GenerarReporte generarReporte;
         public CorteZViewModel()
         {
+            generarReporte = new GenerarReporte();
+
             Fecha = DateTime.Today.AddDays(-1);
             HorarioTurno = $"{App.SRConfiguracion.cortezinicio} - {App.SRConfiguracion.cortezfin}";
 
@@ -51,6 +53,36 @@ namespace mod_add.ViewModels
             NoConsiderarDepositosRetiros = false;
             ConsiderarFondoinicial = false;
             NoConsiderarPropinas = false;
+        }
+
+        private string CamposCheques()
+        {
+            List<string> campos = new List<string>
+            {
+
+            };
+
+            return string.Join(",", campos);
+        }
+
+        private string CamposTurnos()
+        {
+            List<string> campos = new List<string>
+            {
+
+            };
+
+            return string.Join(",", campos);
+        }
+
+        private string CamposChequesPagos()
+        {
+            List<string> campos = new List<string>
+            {
+
+            };
+
+            return string.Join(",", campos);
         }
 
         public Respuesta Generar(TipoDestino tipoDestino)
@@ -87,30 +119,45 @@ namespace mod_add.ViewModels
 
                     string query;
 
-                    List<SR_turnos> turnosf = new List<SR_turnos>();
+
+
+                    //SR_turnos_DAO turnos_DAO = new SR_turnos_DAO(context, false);
+                    //query = $"apertura BETWEEN @{nameof(FechaCorteInicio)} AND @{nameof(FechaCorteCierre)} AND cierre IS NOT NULL AND idempresa=@{nameof(App.ClaveEmpresa)}";
+
+                    query = $"SELECT {CamposTurnos()} FROM turnosf WHERE apertura BETWEEN @{nameof(FechaCorteInicio)} AND @{nameof(FechaCorteCierre)} AND cierre IS NOT NULL AND idempresa=@{nameof(App.ClaveEmpresa)}";
+
+                    var turnos = context.Database
+                        .SqlQuery<TurnoReporte>(query,
+                            new SqlParameter($"{nameof(FechaCorteInicio)}", FechaCorteInicio),
+                            new SqlParameter($"{nameof(FechaCorteCierre)}", FechaCorteCierre),
+                            new SqlParameter($"{nameof(App.ClaveEmpresa)}", App.ClaveEmpresa))
+                        .ToList();
+
+                    if (turnos.Count == 0)
+                    {
+                        return new Respuesta
+                        {
+                            TipoRespuesta = TipoRespuesta.SIN_REGISTROS
+                        };
+                    }
+
+                    List<TurnoReporte> turnosf = new List<TurnoReporte>();
 
                     if (!App.ConfiguracionSistema.ModificarVentasReales)
                     {
-                        SR_turnos_DAO turnosf_DAO = new SR_turnos_DAO(context, true);
-                        query = $"apertura BETWEEN @{nameof(FechaCorteInicio)} AND @{nameof(FechaCorteCierre)} AND cierre IS NOT NULL AND idempresa=@{nameof(App.ClaveEmpresa)}";
+                        //SR_turnos_DAO turnosf_DAO = new SR_turnos_DAO(context, true);
+                        //query = $"apertura BETWEEN @{nameof(FechaCorteInicio)} AND @{nameof(FechaCorteCierre)} AND cierre IS NOT NULL AND idempresa=@{nameof(App.ClaveEmpresa)}";
 
-                        turnosf = turnosf_DAO.Get(query,
-                        new SqlParameter($"{nameof(FechaCorteInicio)}", FechaCorteInicio),
-                        new SqlParameter($"{nameof(FechaCorteCierre)}", FechaCorteCierre),
-                        new SqlParameter($"{nameof(App.ClaveEmpresa)}", App.ClaveEmpresa));
+                        query = $"SELECT {CamposTurnos()} FROM turnosf WHERE apertura BETWEEN @{nameof(FechaCorteInicio)} AND @{nameof(FechaCorteCierre)} AND cierre IS NOT NULL AND idempresa=@{nameof(App.ClaveEmpresa)}";
+                        turnosf = context.Database
+                            .SqlQuery<TurnoReporte>(query,
+                                new SqlParameter($"{nameof(FechaCorteInicio)}", FechaCorteInicio),
+                                new SqlParameter($"{nameof(FechaCorteCierre)}", FechaCorteCierre),
+                                new SqlParameter($"{nameof(App.ClaveEmpresa)}", App.ClaveEmpresa))
+                        .ToList();
                     }
 
-                    SR_turnos_DAO turnos_DAO = new SR_turnos_DAO(context, false);
-                    query = $"apertura BETWEEN @{nameof(FechaCorteInicio)} AND @{nameof(FechaCorteCierre)} AND cierre IS NOT NULL AND idempresa=@{nameof(App.ClaveEmpresa)}";
-
-                    var turnos = turnos_DAO.Get(query,
-                        new SqlParameter($"{nameof(FechaCorteInicio)}", FechaCorteInicio),
-                        new SqlParameter($"{nameof(FechaCorteCierre)}", FechaCorteCierre),
-                        new SqlParameter($"{nameof(App.ClaveEmpresa)}", App.ClaveEmpresa));
-
-                    int registros = App.ConfiguracionSistema.ModificarVentasReales ? turnos.Count : turnosf.Count;
-
-                    if (registros == 0)
+                    if (!App.ConfiguracionSistema.ModificarVentasReales && turnosf.Count == 0)
                     {
                         return new Respuesta
                         {
@@ -142,7 +189,7 @@ namespace mod_add.ViewModels
                     object[] valores;
                     object[] parametrosSql;
 
-                    SR_turnos turno;
+                    TurnoReporte turno;
 
                     if (App.ConfiguracionSistema.ModificarVentasReales)
                     {
@@ -153,17 +200,78 @@ namespace mod_add.ViewModels
                         turno = turnosf[0];
                     }
 
-                    var idsturno = turnos.Select(x => (object)x.idturno).ToArray();
+                    var idsturnor = turnos.Select(x => (object)x.idturno).ToArray();
                     var idsturnof = turnosf.Select(x => (object)x.idturno).ToArray();
+
+                    var idsturnos = App.ConfiguracionSistema.ModificarVentasReales ? idsturnor : idsturnof;
 
                     SR_parametros_DAO parametros_DAO = new SR_parametros_DAO(context);
                     var parametros = parametros_DAO.GetAll().FirstOrDefault();
 
-                    SR_cheques_DAO cheques_DAO = new SR_cheques_DAO(context, !App.ConfiguracionSistema.ModificarVentasReales);
-                    var cheques = cheques_DAO.WhereIn("idturno", App.ConfiguracionSistema.ModificarVentasReales ? idsturno : idsturnof);
+                    //SR_cheques_DAO cheques_DAO = new SR_cheques_DAO(context, !App.ConfiguracionSistema.ModificarVentasReales);
+                    //var cheques = cheques_DAO.WhereIn("idturno", idsturno);
+                    
 
                     nombresParametros.Clear();
-                    valores = cheques.Where(x => !x.cancelado.Value).OrderBy(x => x.folio).Select(x => (object)x.folio).ToArray();
+                    valores = idsturnos;
+                    parametrosSql = new object[valores.Length];
+
+                    for (int i = 0; i < valores.Length; i++)
+                    {
+                        string nombreParametro = $"p{i + 1}";
+                        nombresParametros.Add($"@{nombreParametro}");
+                        parametrosSql[i] = new SqlParameter(nombreParametro, valores[i]);
+                    }
+
+                    query = $"SELECT {CamposCheques()} FROM {chequesT} WHERE idturno IN ({string.Join(",", nombresParametros)})";
+
+                    List<ChequeReporte> cheques = context.Database.SqlQuery<ChequeReporte>(query, parametrosSql).ToList();
+
+                    int cuentasCanceladas = cheques.Count(x => x.cancelado ?? false);
+
+                    cheques = cheques.Where(x => !(x.cancelado ?? false)).OrderBy(x => x.numcheque ?? 0).ToList();
+
+                    var folios = cheques.OrderBy(x => x.folio).Select(x => (object)x.folio).ToArray();
+
+                    nombresParametros.Clear();
+                    valores = folios;
+                    parametrosSql = new object[valores.Length];
+
+                    for (int i = 0; i < valores.Length; i++)
+                    {
+                        string nombreParametro = $"p{i + 1}";
+                        nombresParametros.Add($"@{nombreParametro}");
+                        parametrosSql[i] = new SqlParameter(nombreParametro, valores[i]);
+                    }
+
+                    query = $"SELECT {CamposChequesPagos()} FROM {chequesT} WHERE folio IN ({string.Join(",", nombresParametros)})";
+
+                    List<ChequePagoReporte> chequesPagos = context.Database.SqlQuery<ChequePagoReporte>(query, parametrosSql).ToList();
+
+                    //SR_chequespagos_DAO chequespagos_DAO = new SR_chequespagos_DAO(context, !App.ConfiguracionSistema.ModificarVentasReales);
+                    //var chequespagos = chequespagos_DAO.WhereIn("folio", folios);
+
+
+
+                    //if (ConvertirMonedaExtrangera && (App.SRConfiguracion.vercambiomonex ?? false))
+                    //{
+                    //    foreach (var cheque in cheques)
+                    //    {
+                    //        if ((cheque.cancelado ?? false)) continue;
+
+                    //        query = $"SELECT fp.tipodecambio FROM chequespagos cp inner JOIN formasdepago fp ON cp.idformadepago=fp.idformadepago WHERE cp.importe > 0 AND cp.tipodecambio <> 1 AND fp.tipo=1 and fp.idformadepago=@{nameof(App.SRConfiguracion.vercambioclavemonex)} AND cp.folio=@{nameof(cheque.folio)}";
+                    //        decimal? tipoCambio = context.Database.SqlQuery<decimal?>(query,
+                    //            new SqlParameter($"{nameof(App.SRConfiguracion.vercambioclavemonex)}", App.SRConfiguracion.vercambioclavemonex),
+                    //            new SqlParameter($"{nameof(cheque.folio)}", cheque.folio)).Single();
+
+                    //        if (!tipoCambio.HasValue) continue;
+
+
+                    //    }
+                    //}
+
+                    nombresParametros.Clear();
+                    valores = folios;
                     parametrosSql = new object[valores.Length];
 
                     for (int i = 0; i < valores.Length; i++)
@@ -223,7 +331,7 @@ namespace mod_add.ViewModels
                             .Single();
                     }
 
-                    query = $"SELECT CAST(ISNULL(SUM(cd.cantidad), 0) as decimal(19,2)) as cantidad " +
+                    query = $"SELECT CAST(ISNULL(SUM(cd.cantidad), 0) as float) as cantidad " +
                         $"FROM productos p " +
                         $"INNER JOIN {cheqdetT} cd " +
                         $"ON p.idproducto=cd.idproducto " +
@@ -240,13 +348,13 @@ namespace mod_add.ViewModels
                         $"AND CAST(c.cancelado as int)=0 " +
                         $"AND g.clasificacion=2";
 
-                    decimal cantidadAlimentos = context.Database.SqlQuery<decimal>(query,
+                    float cantidadAlimentos = context.Database.SqlQuery<float>(query,
                         new SqlParameter($"{nameof(FechaCorteInicio)}", FechaCorteInicio),
                         new SqlParameter($"{nameof(FechaCorteCierre)}", FechaCorteCierre),
                         new SqlParameter($"{nameof(App.ClaveEmpresa)}", App.ClaveEmpresa))
                         .Single();
 
-                    query = $"SELECT CAST(ISNULL(SUM(cd.cantidad), 0) as decimal(19,2)) as cantidad " +
+                    query = $"SELECT CAST(ISNULL(SUM(cd.cantidad), 0) as float) as cantidad " +
                         $"FROM productos p " +
                         $"INNER JOIN {cheqdetT} cd " +
                         $"ON p.idproducto=cd.idproducto " +
@@ -263,13 +371,13 @@ namespace mod_add.ViewModels
                         $"AND CAST(c.cancelado as int)=0 " +
                         $"AND g.clasificacion=1";
 
-                    decimal cantidadBebidas = context.Database.SqlQuery<decimal>(query,
+                    float cantidadBebidas = context.Database.SqlQuery<float>(query,
                         new SqlParameter($"{nameof(FechaCorteInicio)}", FechaCorteInicio),
                         new SqlParameter($"{nameof(FechaCorteCierre)}", FechaCorteCierre),
                         new SqlParameter($"{nameof(App.ClaveEmpresa)}", App.ClaveEmpresa))
                         .Single();
 
-                    query = $"SELECT CAST(ISNULL(SUM(cd.cantidad), 0) as decimal(19,2)) as cantidad " +
+                    query = $"SELECT CAST(ISNULL(SUM(cd.cantidad), 0) as float) as cantidad " +
                         $"FROM productos p " +
                         $"INNER JOIN {cheqdetT} cd " +
                         $"ON p.idproducto=cd.idproducto " +
@@ -286,14 +394,14 @@ namespace mod_add.ViewModels
                         $"AND CAST(c.cancelado as int)=0 " +
                         $"AND g.clasificacion=3";
 
-                    decimal cantidadOtros = context.Database.SqlQuery<decimal>(query,
+                    float cantidadOtros = context.Database.SqlQuery<float>(query,
                         new SqlParameter($"{nameof(FechaCorteInicio)}", FechaCorteInicio),
                         new SqlParameter($"{nameof(FechaCorteCierre)}", FechaCorteCierre),
                         new SqlParameter($"{nameof(App.ClaveEmpresa)}", App.ClaveEmpresa))
                         .Single();
 
                     nombresParametros.Clear();
-                    valores = App.ConfiguracionSistema.ModificarVentasReales ? idsturno : idsturnof;
+                    valores = App.ConfiguracionSistema.ModificarVentasReales ? idsturnor : idsturnof;
                     parametrosSql = new object[valores.Length + 1];
                     parametrosSql[0] = new SqlParameter($"{nameof(App.ClaveEmpresa)}", App.ClaveEmpresa);
 
@@ -340,7 +448,7 @@ namespace mod_add.ViewModels
 
 
                     nombresParametros.Clear();
-                    valores = idsturno;
+                    valores = idsturnor;
                     parametrosSql = new object[valores.Length + 1];
                     parametrosSql[0] = new SqlParameter($"{nameof(App.ClaveEmpresa)}", App.ClaveEmpresa);
 
@@ -357,7 +465,7 @@ namespace mod_add.ViewModels
 
 
                     nombresParametros.Clear();
-                    valores = idsturno;
+                    valores = idsturnor;
                     parametrosSql = new object[valores.Length + 1];
                     parametrosSql[0] = new SqlParameter($"{nameof(App.ClaveEmpresa)}", App.ClaveEmpresa);
 
@@ -374,7 +482,7 @@ namespace mod_add.ViewModels
 
 
                     nombresParametros.Clear();
-                    valores = cheques.Where(x => !x.cancelado.Value).OrderBy(x => x.folio).Select(x => (object)x.folio).ToArray();
+                    valores = cheques.OrderBy(x => x.folio).Select(x => (object)x.folio).ToArray();
                     parametrosSql = new object[valores.Length];
 
                     for (int i = 0; i < valores.Length; i++)
@@ -405,34 +513,34 @@ namespace mod_add.ViewModels
                         totalDeclarado -= (turno.fondo ?? 0);
                     }
 
-                    ReporteZ reporte = new ReporteZ
+                    ReporteCorte reporte = new ReporteCorte
                     {
-                        TituloCorteZ = parametros.titulocortez,
+                        TituloCorte = parametros.titulocortez,
                         FolioCorte = turno.idturno.Value,
                         FechaCorteInicio = FechaCorteInicio,
                         FechaCorteCierre = FechaCorteCierre,
 
                         EfectivoInicial = ConsiderarFondoinicial ? turno.fondo.Value : 0,
-                        Efectivo = cheques.Where(x => !x.cancelado.Value).Sum(x => x.efectivo.Value),
-                        Tarjeta = cheques.Where(x => !x.cancelado.Value).Sum(x => x.tarjeta.Value),
-                        Vales = cheques.Where(x => !x.cancelado.Value).Sum(x => x.vales.Value),
-                        Otros = cheques.Where(x => !x.cancelado.Value).Sum(x => x.otros.Value),
+                        Efectivo = cheques.Sum(x => x.efectivo ?? 0),
+                        Tarjeta = cheques.Sum(x => x.tarjeta ?? 0),
+                        Vales = cheques.Sum(x => x.vales ?? 0),
+                        Otros = cheques.Sum(x => x.otros ?? 0),
                         DepositosEfectivo = depositosEfectivo,
                         RetirosEfectivo = retirosEfectivo,
                         PropinasPagadas = propinasPagadas,
 
-                        PAlimentos = cheques.Where(x => !x.cancelado.Value).Sum(x => x.totalalimentossindescuentos.Value),
-                        PCantidadAlimentos = cantidadAlimentos,
-                        PBebidas = cheques.Where(x => !x.cancelado.Value).Sum(x => x.totalbebidassindescuentos.Value),
-                        PCantidadBebidas = cantidadBebidas,
-                        POtros = cheques.Where(x => !x.cancelado.Value).Sum(x => x.totalotrossindescuentos.Value),
-                        PCantidadOtros = cantidadOtros,
+                        PAlimentos = cheques.Sum(x => x.totalalimentossindescuentos ?? 0),
+                        PCantidadAlimentos = (decimal)cantidadAlimentos,
+                        PBebidas = cheques.Sum(x => x.totalbebidassindescuentos ?? 0),
+                        PCantidadBebidas = (decimal)cantidadBebidas,
+                        POtros = cheques.Sum(x => x.totalotrossindescuentos ?? 0),
+                        PCantidadOtros = (decimal)cantidadOtros,
 
-                        Comedor = cheques.Where(x => !x.cancelado.Value && x.tipodeservicio.Value == 1).Sum(x => x.totalsindescuento.Value),
-                        Domicilio = cheques.Where(x => !x.cancelado.Value && x.tipodeservicio.Value == 2).Sum(x => x.totalsindescuento.Value),
-                        Rapido = cheques.Where(x => !x.cancelado.Value && x.tipodeservicio.Value == 3).Sum(x => x.totalsindescuento.Value),
+                        Comedor = cheques.Where(x => (x.tipodeservicio ?? 0) == 1).Sum(x => x.totalsindescuento ?? 0),
+                        Domicilio = cheques.Where(x => (x.tipodeservicio ?? 0) == 2).Sum(x => x.totalsindescuento ?? 0),
+                        Rapido = cheques.Where(x => (x.tipodeservicio ?? 0) == 3).Sum(x => x.totalsindescuento ?? 0),
 
-                        Subtotal = cheques.Sum(x => x.totalsindescuento.Value),
+                        Subtotal = cheques.Sum(x => x.totalsindescuento ?? 0),
                         Descuentos = cheques.Sum(x => (x.totaldescuentoycortesia ?? 0)),
                         VentaNeta = cheques.Sum(x => (x.subtotalcondescuento ?? 0)),
 
@@ -442,16 +550,18 @@ namespace mod_add.ViewModels
                         PropinaFacturada = propinaFacturada,
 
                         CuentasNormales = cheques.Count(),
-                        CuentasCanceladas = cheques.Count(x => x.cancelado.Value),
+                        CuentasCanceladas = cuentasCanceladas,
                         CuentasConDescuento = cheques.Count(x => (x.descuento ?? 0) > 0 && (x.descuento ?? 0) < 100),
+                        CuentasConDescuentoImporte = cheques.Where(x => (x.descuento ?? 0) > 0 && (x.descuento ?? 0) < 100).Sum(x => x.descuentoimporte ?? 0),
                         CuentasConCortesia = cheques.Count(x => (x.descuento ?? 0) == 100),
+                        CuentasConCortesiaImporte = cheques.Where(x => (x.descuento ?? 0) == 100).Sum(x => x.descuentoimporte ?? 0),
 
                         CuentaPromedio = cheques.Sum(x => (x.subtotalcondescuento ?? 0)) / cheques.Count(),
                         ConsumoPromedio = cheques.Sum(x => (x.subtotalcondescuento ?? 0)) / cheques.Sum(x => (x.nopersonas ?? 0)),
 
-                        Comensales = (int)cheques.Sum(x => x.nopersonas.Value),
+                        Comensales = (int)cheques.Sum(x => x.nopersonas ?? 0),
 
-                        Propinas = cheques.Sum(x => x.propina.Value),
+                        Propinas = cheques.Sum(x => x.propina ?? 0),
                         Cargos = cheques.Sum(x => (x.cargo ?? 0)),
                         DescuentoMonedero = cheques.Sum(x => (x.descuentomonedero ?? 0)),
 
@@ -461,10 +571,12 @@ namespace mod_add.ViewModels
                         CortesiaAlimentos = cheques.Sum(x => (x.totalcortesiaalimentos ?? 0)),
                         CortesiaBebidas = cheques.Sum(x => (x.totalcortesiabebidas ?? 0)),
                         CortesiaOtros = cheques.Sum(x => (x.totalcortesiaotros ?? 0)),
+                        TotalCortesias = cheques.Sum(x => x.totalcortesias ?? 0),
 
                         DescuentoAlimentos = cheques.Sum(x => (x.totaldescuentoalimentos ?? 0)),
                         DescuentoBebidas = cheques.Sum(x => (x.totaldescuentobebidas ?? 0)),
                         DescuentoOtros = cheques.Sum(x => (x.totaldescuentootros ?? 0)),
+                        TotalDescuentos = cheques.Sum(x => x.totaldescuentos ?? 0),
 
                         TotalDeclarado = totalDeclarado,
                         AcumuladoMesAnterior = acumuladoMesAnterior,
@@ -478,19 +590,96 @@ namespace mod_add.ViewModels
                         ConsiderarFondoInicial = considerarFondoinicial,
                     };
 
-                    decimal totalTipoProducto = reporte.PAlimentos + reporte.PBebidas + reporte.POtros;
 
-                    reporte.PPorcentajeAlimentos = Math.Round(reporte.PAlimentos / totalTipoProducto * 100m, 0, MidpointRounding.AwayFromZero);
-                    reporte.PPorcentajeBebidas = Math.Round(reporte.PBebidas / totalTipoProducto * 100m, 0, MidpointRounding.AwayFromZero);
-                    reporte.PPorcentajeOtros = Math.Round(reporte.POtros / totalTipoProducto * 100m, 0, MidpointRounding.AwayFromZero);
+                    reporte.PPorcentajeAlimentos = Math.Round(reporte.PAlimentos / reporte.Subtotal * 100m, 0, MidpointRounding.AwayFromZero);
+                    reporte.PPorcentajeBebidas = Math.Round(reporte.PBebidas / reporte.Subtotal * 100m, 0, MidpointRounding.AwayFromZero);
+                    reporte.PPorcentajeOtros = Math.Round(reporte.POtros / reporte.Subtotal * 100m, 0, MidpointRounding.AwayFromZero);
 
-                    decimal totalTipoServicio = reporte.Comedor + reporte.Domicilio + reporte.Rapido;
+                    reporte.ComedorPorcentaje = Math.Round(reporte.Comedor / reporte.Subtotal * 100m, 0, MidpointRounding.AwayFromZero);
+                    reporte.DomicilioPorcentaje = Math.Round(reporte.Domicilio / reporte.Subtotal * 100m, 0, MidpointRounding.AwayFromZero);
+                    reporte.RapidoPorcentaje = Math.Round(reporte.Rapido / reporte.Subtotal * 100m, 0, MidpointRounding.AwayFromZero);
 
-                    reporte.ComedorPorcentaje = Math.Round(reporte.Comedor / totalTipoServicio * 100m, 0, MidpointRounding.AwayFromZero);
-                    reporte.DomicilioPorcentaje = Math.Round(reporte.Domicilio / totalTipoServicio * 100m, 0, MidpointRounding.AwayFromZero);
-                    reporte.RapidoPorcentaje = Math.Round(reporte.Rapido / totalTipoServicio * 100m, 0, MidpointRounding.AwayFromZero);
+                    if (Reporte.TipoReporte == TipoReporte.RESUMIDO)
+                    {
+                        generarReporte.Resumido(reporte, tipoDestino);
+                    }
+                    else
+                    {
+                        //List<ChequeReporte> chequesReporte = new List<ChequeReporte>();
 
-                    GenerarReporte.CorteZ(reporte, tipoDestino);
+                        //foreach (var cheque in cheques)
+                        //{
+                        //    chequesReporte.Add(new ChequeReporte
+                        //    {
+                        //        numcheque = (long)cheque.numcheque,
+                        //        fecha = cheque.fecha,
+                        //        impresiones = (int)(cheque.impresiones ?? 0),
+                        //        reabiertas = (int)(cheque.reabiertas ?? 0),
+                        //        descuento = cheque.descuento ?? 0,
+                        //        propina = cheque.propina ?? 0,
+                        //        total = cheque.total ?? 0,
+                        //        cargo = cheque.cargo ?? 0,
+                        //        efectivo = cheque.efectivo ?? 0,
+                        //        tarjeta = cheque.tarjeta ?? 0,
+                        //        vales = cheque.vales ?? 0,
+                        //        otros = cheque.otros ?? 0
+                        //    });
+                        //}
+                        //reporte.ChequesReporte = chequesReporte;
+                                               
+                        reporte.ChequesReporte = cheques;
+
+                        if (Reporte.TipoReporte == TipoReporte.DETALLADO_VERTICAL || Reporte.TipoReporte == TipoReporte.DETALLADO_HORIZONTAL)
+                        {
+                            reporte.TotalesChequesReporte = new List<ChequeReporte>
+                            {
+                                new ChequeReporte
+                                {
+                                    propina = cheques.Sum(x => x.propina ?? 0),
+                                    total = cheques.Sum(x => x.total ?? 0),
+                                    cargo = cheques.Sum(x => x.cargo ?? 0),
+                                    efectivo = cheques.Sum(x => x.efectivo ?? 0),
+                                    tarjeta = cheques.Sum(x => x.tarjeta ?? 0),
+                                    vales = cheques.Sum(x => x.vales ?? 0),
+                                    otros = cheques.Sum(x => x.otros ?? 0)
+                                }
+                            };
+
+                            reporte.Turnos = new List<TurnoReporte> { turno };
+                        }
+
+                        if (Reporte.TipoReporte == TipoReporte.DETALLADO_VERTICAL)
+                        {
+                            List<VentaRapida> ventasRapidas = cheques
+                                .Where(x => (int)(x.tipodeservicio ?? 0) == 3 && (int)(x.tipoventarapida ?? 0) > 0)
+                                .GroupBy(x => x.tipoventarapida ?? 0, x => x.total ?? 0, (tipoventarapida, total) => new VentaRapida
+                                {
+                                    Descripcion = tipoventarapida == 1 ? "" : (tipoventarapida == 2 ? "" : (tipoventarapida == 3 ? "" : "")),
+                                    Total = total.Sum(x => x)
+                                }).ToList();
+
+                            reporte.VentasRapidas = ventasRapidas;
+
+                            generarReporte.DetalladoVertical(reporte, tipoDestino);
+                        }
+                        else
+                        {
+                            if (Reporte.TipoReporte == TipoReporte.DETALLADO_HORIZONTAL)
+                            {
+                                generarReporte.DetalladoHorizontal(reporte, tipoDestino);
+                            }
+                            else if (Reporte.TipoReporte == TipoReporte.DETALLADO_FORMAS_PAGO)
+                            {
+                                foreach (var cheque in cheques)
+                                {
+                                    cheque.ChequesPagos = chequesPagos.Where(x => x.folio == cheque.folio).ToList();
+                                }
+
+                                generarReporte.DetalladoFormasPago(reporte, tipoDestino);
+                            }
+                        }
+
+                    }
 
                     return new Respuesta
                     {
@@ -508,22 +697,22 @@ namespace mod_add.ViewModels
             }
         }
 
-        private ReporteZ RealizarCorteZ(DateTime FechaCorteInicio, DateTime FechaCorteCierre)
-        {
-            ReporteZ reporte = new ReporteZ();
+        //private ReporteCorte RealizarCorteZ(DateTime FechaCorteInicio, DateTime FechaCorteCierre)
+        //{
+        //    ReporteCorte reporte = new ReporteCorte();
 
-            using (SoftRestaurantDBContext context = new SoftRestaurantDBContext())
-            {
-                SR_turnos_DAO turnos_DAO = new SR_turnos_DAO(context, App.ConfiguracionSistema.ModificarVentasReales);
+        //    using (SoftRestaurantDBContext context = new SoftRestaurantDBContext())
+        //    {
+        //        SR_turnos_DAO turnos_DAO = new SR_turnos_DAO(context, App.ConfiguracionSistema.ModificarVentasReales);
 
-                var turno = turnos_DAO.Get($"apertura BETWEEN @{nameof(FechaCorteInicio)} AND @{nameof(FechaCorteCierre)} AND idempresa=@{nameof(App.ClaveEmpresa)}",
-                            new SqlParameter($"{nameof(FechaCorteInicio)}", FechaCorteInicio),
-                            new SqlParameter($"{nameof(FechaCorteCierre)}", FechaCorteCierre),
-                            new SqlParameter($"{nameof(App.ClaveEmpresa)}", App.ClaveEmpresa)).FirstOrDefault();
-            }
+        //        var turno = turnos_DAO.Get($"apertura BETWEEN @{nameof(FechaCorteInicio)} AND @{nameof(FechaCorteCierre)} AND idempresa=@{nameof(App.ClaveEmpresa)}",
+        //                    new SqlParameter($"{nameof(FechaCorteInicio)}", FechaCorteInicio),
+        //                    new SqlParameter($"{nameof(FechaCorteCierre)}", FechaCorteCierre),
+        //                    new SqlParameter($"{nameof(App.ClaveEmpresa)}", App.ClaveEmpresa)).FirstOrDefault();
+        //    }
 
-            return reporte;
-        }
+        //    return reporte;
+        //}
 
         private DateTime fecha;
         public DateTime Fecha

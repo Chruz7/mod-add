@@ -28,6 +28,11 @@ namespace mod_add.Utils
             return (List<T>)formatter.Deserialize(stream);
         }
 
+        public static string Mayusculas(string texto)
+        {
+            return texto.ToUpper();
+        }
+
 
         public static void RegistrarModificacion(BitacoraModificacion bitacora)
         {

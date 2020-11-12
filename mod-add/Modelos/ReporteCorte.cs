@@ -4,16 +4,20 @@ using System.Linq;
 
 namespace mod_add.Modelos
 {
-    public class ReporteZ
+    public class ReporteCorte
     {
-        public ReporteZ()
+        public ReporteCorte()
         {
             Pagos = new List<Pago>();
             PagosTarjeta = new List<PagoTarjeta>();
             ImpuestosVentas = new List<ImpuestoVenta>();
+            ChequesReporte = new List<ChequeReporte>();
+            TotalesChequesReporte = new List<ChequeReporte>();
+            Turnos = new List<TurnoReporte>();
+            VentasRapidas = new List<VentaRapida>();
         }
 
-        public string TituloCorteZ { get; set; }
+        public string TituloCorte { get; set; }
         public long FolioCorte { get; set; }
         public DateTime FechaCorteInicio { get; set; }
         public DateTime FechaCorteCierre { get; set; }
@@ -98,7 +102,9 @@ namespace mod_add.Modelos
         public int CuentasNormales { get; set; }
         public int CuentasCanceladas { get; set; }
         public int CuentasConDescuento { get; set; }
+        public decimal CuentasConDescuentoImporte { get; set; }
         public int CuentasConCortesia { get; set; }
+        public decimal CuentasConCortesiaImporte { get; set; }
         public decimal CuentaPromedio { get; set; }
         public decimal ConsumoPromedio { get; set; }
         public int Comensales { get; set; }
@@ -110,23 +116,25 @@ namespace mod_add.Modelos
         public decimal CortesiaAlimentos { get; set; }
         public decimal CortesiaBebidas { get; set; }
         public decimal CortesiaOtros { get; set; }
-        public decimal TotalCortesias
-        {
-            get
-            {
-                return CortesiaAlimentos + CortesiaBebidas + CortesiaOtros;
-            }
-        }
+        public decimal TotalCortesias { get; set; }
+        //public decimal TotalCortesias
+        //{
+        //    get
+        //    {
+        //        return CortesiaAlimentos + CortesiaBebidas + CortesiaOtros;
+        //    }
+        //}
         public decimal DescuentoAlimentos { get; set; }
         public decimal DescuentoBebidas { get; set; }
         public decimal DescuentoOtros { get; set; }
-        public decimal TotalDescuentos
-        {
-            get
-            {
-                return DescuentoAlimentos + DescuentoBebidas + DescuentoOtros;
-            }
-        }
+        public decimal TotalDescuentos { get; set; }
+        //public decimal TotalDescuentos
+        //{
+        //    get
+        //    {
+        //        return DescuentoAlimentos + DescuentoBebidas + DescuentoOtros;
+        //    }
+        //}
         public decimal TotalDeclarado { get; set; }
         public decimal SobranteOFaltante
         {
@@ -135,12 +143,21 @@ namespace mod_add.Modelos
                 return TotalDeclarado - SaldoFinal;
             }
         }
+
+        public decimal Dolares { get; set; }
         public decimal AcumuladoMesAnterior { get; set; }
         public decimal AcumuladoMesActual { get; set; }
+
+        
+
+
         public List<Pago> Pagos { get; set; }
         public List<ImpuestoVenta> ImpuestosVentas { get; set; }
         public List<PagoTarjeta> PagosTarjeta { get; set; }
-
+        public List<ChequeReporte> ChequesReporte { get; set; }
+        public List<ChequeReporte> TotalesChequesReporte { get; set; }
+        public List<TurnoReporte> Turnos { get; set; }
+        public List<VentaRapida> VentasRapidas { get; set; }
 
         public bool ConsiderarFondoInicial { get; set; }
         public bool NoConsiderarPropinas { get; set; }

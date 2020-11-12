@@ -3,7 +3,6 @@
     public enum TipoDestino
     {
         IMPRESION,
-        EXPORTAR_TXT,
-        EXPORTAR_EXCEL
+        EXPORTAR
     }
 }

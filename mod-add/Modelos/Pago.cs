@@ -8,5 +8,8 @@
         public decimal importe { get; set; }
         public decimal propina { get; set; }
         public decimal prioridadboton { get; set; }
+
+        public string SImporte { get { return string.Format("{0:C}", importe); } }
+        public string SPropina { get { return string.Format("{0:C}", propina); } }
     }
 }

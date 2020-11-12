@@ -36,8 +36,8 @@ namespace mod_add
             Debug.Listeners.Add(new TextWriterTraceListener(".\\debug.log"));
             Debug.AutoFlush = true;
 
-            bool sinErrores = true;
-            Autenticacion autenticacion = new Autenticacion();
+            //bool sinErrores = true;
+            //Autenticacion autenticacion = new Autenticacion();
 
             Splash splash = new Splash();
             splash.Show();
@@ -117,17 +117,18 @@ namespace mod_add
                 catch (Exception ex)
                 {
                     Debug.WriteLine($"INICIO-ERROR\n{ex}\nFIN-ERROR");
-                    sinErrores = false;
+                    //sinErrores = false;
                 }
 
             }).ContinueWith(task =>
             {
+                IrPrincipal();
                 splash.Close();
 
-                if (sinErrores)
-                    autenticacion.Show();
-                else
-                    autenticacion.Close();
+                //if (sinErrores)
+                //    autenticacion.Show();
+                //else
+                //    autenticacion.Close();
             }, System.Threading.CancellationToken.None, TaskContinuationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());
         }
 

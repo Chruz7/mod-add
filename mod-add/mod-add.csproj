@@ -44,6 +44,9 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="BouncyCastle.Crypto, Version=1.8.6.0, Culture=neutral, PublicKeyToken=0e99375e54769942">
+      <HintPath>..\packages\BouncyCastle.1.8.6.1\lib\BouncyCastle.Crypto.dll</HintPath>
+    </Reference>
     <Reference Include="DocumentFormat.OpenXml">
       <HintPath>..\..\..\..\Downloads\DocumentFormat.OpenXml.dll</HintPath>
     </Reference>
@@ -52,6 +55,15 @@
     </Reference>
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.4.4\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="Handlebars, Version=1.11.5.0, Culture=neutral, PublicKeyToken=22225d0bf33cd661, processorArchitecture=MSIL">
+      <HintPath>..\packages\Handlebars.Net.1.11.5\lib\net452\Handlebars.dll</HintPath>
+    </Reference>
+    <Reference Include="itextsharp, Version=5.5.13.2, Culture=neutral, PublicKeyToken=8354ae6d2174ddca, processorArchitecture=MSIL">
+      <HintPath>..\packages\iTextSharp.5.5.13.2\lib\itextsharp.dll</HintPath>
+    </Reference>
+    <Reference Include="itextsharp.xmlworker, Version=5.5.13.2, Culture=neutral, PublicKeyToken=8354ae6d2174ddca, processorArchitecture=MSIL">
+      <HintPath>..\packages\itextsharp.xmlworker.5.5.13.2\lib\itextsharp.xmlworker.dll</HintPath>
     </Reference>
     <Reference Include="SpreadsheetLight, Version=3.4.4.0, Culture=neutral, PublicKeyToken=32fbb46dc1730c57, processorArchitecture=MSIL">
       <HintPath>..\packages\SpreadsheetLight.3.4.4\lib\SpreadsheetLight.dll</HintPath>
@@ -121,10 +133,14 @@
     <Compile Include="Enums\TipoReporte.cs" />
     <Compile Include="Enums\TipoRespuesta.cs" />
     <Compile Include="Helpers\Messenger.cs" />
+    <Compile Include="Modelos\ChequePagoReporte.cs" />
+    <Compile Include="Modelos\ChequeReporte.cs" />
     <Compile Include="Modelos\ImpuestoVenta.cs" />
     <Compile Include="Modelos\Pago.cs" />
     <Compile Include="Modelos\PagoTarjeta.cs" />
-    <Compile Include="Modelos\ReporteZ.cs" />
+    <Compile Include="Modelos\ReporteCorte.cs" />
+    <Compile Include="Modelos\TurnoReporte.cs" />
+    <Compile Include="Modelos\VentaRapida.cs" />
     <Compile Include="Selectores\Condicional.cs" />
     <Compile Include="Selectores\Proceso.cs" />
     <Compile Include="Selectores\Reporte.cs" />
@@ -332,6 +348,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Recursos\Iconos\monitor.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="ModelosPerzonalizados\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

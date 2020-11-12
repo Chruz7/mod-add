@@ -18,7 +18,7 @@ namespace mod_add.Vistas
             InitializeComponent();
 
             Fecha.DisplayDateEnd = DateTime.Today.AddDays(-1);
-            Reportes.IsEnabled = false;
+            //Reportes.IsEnabled = false;
 
             ViewModel = new CorteZViewModel();
             DataContext = ViewModel;
@@ -31,12 +31,12 @@ namespace mod_add.Vistas
 
         private void ExportarTXT_Click(object sender, RoutedEventArgs e)
         {
-            Generar(TipoDestino.EXPORTAR_TXT);
+            Generar(TipoDestino.EXPORTAR);
         }
 
         private void ExportarExcel_Click(object sender, RoutedEventArgs e)
         {
-            Generar(TipoDestino.EXPORTAR_EXCEL);
+            //
         }
 
         private void Generar(TipoDestino tipoDestino)
