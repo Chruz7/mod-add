@@ -69,21 +69,21 @@ namespace mod_add.Utils
                 string css = @File.ReadAllText(rutaCss);
 
                 #region Cheques
-                string source = "{{#CHEQUESREPORTE}}<tr>{{>CHEQUEREPORTE}}</tr>{{/CHEQUESREPORTE}}";
+                string source = "{{#CHEQUESREPORTE}}<tr class=\"fila\">{{>CHEQUEREPORTE}}</tr>{{/CHEQUESREPORTE}}";
 
                 string partialSource =
-                    "<td class=\"cnt info p-4\">{{Snumcheque}}</td> " +
-                    "<td class=\"cnt info p-4\">{{Sfecha}}</td>" +
-                    "<td class=\"cnt info p-4\">{{Simpresiones}}</td>" +
-                    "<td class=\"cnt info p-4\">{{Sreabiertas}}</td>" +
-                    "<td class=\"cnt info p-4\">{{Sdescuento}}</td>" +
-                    "<td class=\"der info p-4\">{{Spropina}}</td>" +
-                    "<td class=\"der info p-4\">{{Simporte}}</td>" +
-                    "<td class=\"der info p-4\">{{Scargo}}</td>" +
-                    "<td class=\"der info p-4\">{{Sefectivo}}</td>" +
-                    "<td class=\"der info p-4\">{{Starjeta}}</td>" +
-                    "<td class=\"der info p-4\">{{Svales}}</td>" +
-                    "<td class=\"der info p-4\">{{Sotros}}</td>";
+                    "<td class=\"info text-center\">{{Snumcheque}}</td> " +
+                    "<td class=\"info text-center\">{{Sfecha}}</td>" +
+                    "<td class=\"info text-center\">{{Simpresiones}}</td>" +
+                    "<td class=\"info text-center\">{{Sreabiertas}}</td>" +
+                    "<td class=\"info text-center\">{{Sdescuento}}</td>" +
+                    "<td class=\"info text-right\">{{Spropina}}</td>" +
+                    "<td class=\"info text-right\">{{Simporte}}</td>" +
+                    "<td class=\"info text-right\">{{Scargo}}</td>" +
+                    "<td class=\"info text-right\">{{Sefectivo}}</td>" +
+                    "<td class=\"info text-right\">{{Starjeta}}</td>" +
+                    "<td class=\"info text-right\">{{Svales}}</td>" +
+                    "<td class=\"info text-right\">{{Sotros}}</td>";
 
                 Handlebars.RegisterTemplate("CHEQUEREPORTE", partialSource);
 
@@ -98,10 +98,10 @@ namespace mod_add.Utils
                 #endregion
 
                 #region Pago ventas
-                source = "{{#PAGOS}}<tr>{{>PAGO}}</tr>{{/PAGOS}}";
+                source = "{{#PAGOS}}<tr class=\"fila\">{{>PAGO}}</tr>{{/PAGOS}}";
                 partialSource =
-                    "<td style=\"width: 60%;\">{{descripcion}}</td>" +
-                    "<td style=\"width: 40%;\">{{SImporte}}</td>";
+                    "<td>{{descripcion}}</td>" +
+                    "<td>{{SImporte}}</td>";
 
                 Handlebars.RegisterTemplate("PAGO", partialSource);
 
@@ -118,10 +118,10 @@ namespace mod_add.Utils
                 #region Pago propinas
                 var pagoPropinas = reporte.Pagos.Where(x => x.propina > 0).ToList();
 
-                source = "{{#PAGOPROPINAS}}<tr>{{> PAGOPROPINA}}</tr>{{/PAGOPROPINAS}}";
+                source = "{{#PAGOPROPINAS}}<tr class=\"fila\">{{> PAGOPROPINA}}</tr>{{/PAGOPROPINAS}}";
                 partialSource =
-                    "<td style=\"width: 60%;\">{{descripcion}}</td>" +
-                    "<td style=\"width: 40%;\">{{SPropina}}</td>";
+                    "<td>{{descripcion}}</td>" +
+                    "<td>{{SPropina}}</td>";
 
                 Handlebars.RegisterTemplate("PAGOPROPINA", partialSource);
 
@@ -136,18 +136,18 @@ namespace mod_add.Utils
                 #endregion
 
                 #region Turnos
-                source = "{{#TURNOS}}<tr>{{> TURNO}}</tr>{{/TURNOS}}";
+                source = "{{#TURNOS}}<tr class=\"fila\">{{> TURNO}}</tr>{{/TURNOS}}";
                 partialSource =
-                    "<td style=\"width: 10%;\">{{idestacion}}</td>" +
-                    "<td style=\"width: 16%;\">{{Sapertura}}</td>" +
-                    "<td style=\"width: 16%;\">{{Scierre}}</td>" +
-                    "<td style=\"width: 8%;\">{{STotal}}</td>" +
-                    "<td style=\"width: 8%;\">{{SCargo}}</td>" +
-                    "<td style=\"width: 8%;\">{{Sefectivo}}</td>" +
-                    "<td style=\"width: 8%;\">{{Starjeta}}</td>" +
-                    "<td style=\"width: 8%;\">{{Svales}}</td>" +
-                    "<td style=\"width: 8%;\">{{SPropina}}</td>" +
-                    "<td style=\"width: 8%;\">{{Sotros}}</td>";
+                    "<td>{{idestacion}}</td>" +
+                    "<td>{{Sapertura}}</td>" +
+                    "<td>{{Scierre}}</td>" +
+                    "<td>{{STotal}}</td>" +
+                    "<td>{{SCargo}}</td>" +
+                    "<td>{{Sefectivo}}</td>" +
+                    "<td>{{Starjeta}}</td>" +
+                    "<td>{{Svales}}</td>" +
+                    "<td>{{SPropina}}</td>" +
+                    "<td>{{Sotros}}</td>";
 
                 Handlebars.RegisterTemplate("TURNO", partialSource);
 
@@ -162,10 +162,10 @@ namespace mod_add.Utils
                 #endregion
 
                 #region Ventas Rapidas
-                source = "{{#VENTASRAPIDAS}}<tr>{{> VENTARAPIDA}}</tr>{{/VENTASRAPIDAS}}";
+                source = "{{#VENTASRAPIDAS}}<tr class=\"fila\">{{> VENTARAPIDA}}</tr>{{/VENTASRAPIDAS}}";
                 partialSource =
-                    "<td style=\"width: 60%;\">{{Descripcion}}</td>" +
-                    "<td class\"text-right\" style=\"width: 40%;\">{{STotal}}</td>";
+                    "<td>{{Descripcion}}</td>" +
+                    "<td class\"text-right\">{{STotal}}</td>";
 
                 Handlebars.RegisterTemplate("VENTARAPIDA", partialSource);
 
@@ -180,20 +180,20 @@ namespace mod_add.Utils
                 #endregion
 
                 #region Totales cheques
-                source = "{{#TOTALESCHEQUESREPORTE}}<tr>{{> TOTALCHEQUEREPORTE}}</tr>{{/TOTALESCHEQUESREPORTE}}";
+                source = "{{#TOTALESCHEQUESREPORTE}}<tr class=\"fila\">{{> TOTALCHEQUEREPORTE}}</tr>{{/TOTALESCHEQUESREPORTE}}";
                 partialSource =
-                    "<td class=\"P-4\"></td> " +
-                    "<td class=\"P-4\"></td>" +
-                    "<td class=\"P-4\"></td>" +
-                    "<td class=\"P-4\"></td>" +
-                    "<td class=\"P-4\"></td>" +
-                    "<td class=\"P-4\">{{Spropina}}</td>" +
-                    "<td class=\"P-4\">{{Simporte}}</td>" +
-                    "<td class=\"P-4\">{{Scargo}}</td>" +
-                    "<td class=\"P-4\">{{Sefectivo}}</td>" +
-                    "<td class=\"P-4\">{{Starjeta}}</td>" +
-                    "<td class=\"P-4\">{{Svales}}</td>" +
-                    "<td class=\"P-4\">{{Scredito}}</td>";
+                    "<td></td> " +
+                    "<td></td>" +
+                    "<td></td>" +
+                    "<td></td>" +
+                    "<td></td>" +
+                    "<td>{{Spropina}}</td>" +
+                    "<td>{{Simporte}}</td>" +
+                    "<td>{{Scargo}}</td>" +
+                    "<td>{{Sefectivo}}</td>" +
+                    "<td>{{Starjeta}}</td>" +
+                    "<td>{{Svales}}</td>" +
+                    "<td>{{Scredito}}</td>";
 
                 Handlebars.RegisterTemplate("TOTALCHEQUEREPORTE", partialSource);
 
@@ -316,7 +316,8 @@ namespace mod_add.Utils
 
                 StringReader sr = new StringReader(HtmlInstance.ToString());
 
-                Document pdfDoc = new Document(PageSize.LETTER, 30f, 30f, 30f, 60f);
+                Document pdfDoc = new Document(PageSize.LETTER, 20f, 20f, 30f, 30f);
+                pdfDoc.SetPageSize(PageSize.A4.Rotate());
 
                 using (MemoryStream memoryStream = new MemoryStream())
                 {
@@ -371,21 +372,25 @@ namespace mod_add.Utils
                 string css = @File.ReadAllText(rutaCss);
 
                 #region Cheques
-                string source = "{{#CHEQUESREPORTE}}<tr>{{>CHEQUEREPORTE}}</tr>{{/CHEQUESREPORTE}}";
+                string source = "{{#CHEQUESREPORTE}}<tr class=\"fila\">{{>CHEQUEREPORTE}}</tr>{{/CHEQUESREPORTE}}";
 
                 string partialSource =
-                    "<td class=\"cnt info p-4\">{{Snumcheque}}</td> " +
-                    "<td class=\"cnt info p-4\">{{Sfecha}}</td>" +
-                    "<td class=\"cnt info p-4\">{{Simpresiones}}</td>" +
-                    "<td class=\"cnt info p-4\">{{Sreabiertas}}</td>" +
-                    "<td class=\"cnt info p-4\">{{Sdescuento}}</td>" +
-                    "<td class=\"der info p-4\">{{Spropina}}</td>" +
-                    "<td class=\"der info p-4\">{{Simporte}}</td>" +
-                    "<td class=\"der info p-4\">{{Scargo}}</td>" +
-                    "<td class=\"der info p-4\">{{Sefectivo}}</td>" +
-                    "<td class=\"der info p-4\">{{Starjeta}}</td>" +
-                    "<td class=\"der info p-4\">{{Svales}}</td>" +
-                    "<td class=\"der info p-4\">{{Sotros}}</td>";
+                    "<td class=\"info text-center\">{{Snumcheque2}}</td>" +
+                    "<td class=\"info text-center\">{{Sfolionotadeconsumo}}</td>" +
+                    "<td class=\"info text-center\">{{Sfecha}}</td>" +
+                    "<td class=\"info text-center\">{{Simpresiones}}</td>" +
+                    "<td class=\"info text-center\">{{Sreabiertas}}</td>" +
+                    "<td class=\"info\">{{mesa}}</td>" +
+                    "<td class=\"info text-center\">{{idtipodescuento}}</td>" +
+                    "<td class=\"info text-center\">{{Sdescuento}}</td>" +
+                    "<td class=\"info text-center\">{{Stotaldescuentoycortesia}}</td>" +
+                    "<td class=\"info text-right\">{{Spropina}}</td>" +
+                    "<td class=\"info text-right\">{{Simporte}}</td>" +
+                    "<td class=\"info text-right\">{{Scargo}}</td>" +
+                    "<td class=\"info text-right\">{{Sefectivo}}</td>" +
+                    "<td class=\"info text-right\">{{Starjeta}}</td>" +
+                    "<td class=\"info text-right\">{{Svales}}</td>" +
+                    "<td class=\"info text-right\">{{Sotros}}</td>";
 
                 Handlebars.RegisterTemplate("CHEQUEREPORTE", partialSource);
 
@@ -400,10 +405,10 @@ namespace mod_add.Utils
                 #endregion
 
                 #region Pago ventas
-                source = "{{#PAGOS}}<tr>{{>PAGO}}</tr>{{/PAGOS}}";
+                source = "{{#PAGOS}}<tr class=\"fila\">{{>PAGO}}</tr>{{/PAGOS}}";
                 partialSource =
-                    "<td style=\"width: 60%;\">{{descripcion}}</td>" +
-                    "<td style=\"width: 40%;\">{{SImporte}}</td>";
+                    "<td>{{descripcion}}</td>" +
+                    "<td>{{SImporte}}</td>";
 
                 Handlebars.RegisterTemplate("PAGO", partialSource);
 
@@ -420,10 +425,10 @@ namespace mod_add.Utils
                 #region Pago propinas
                 var pagoPropinas = reporte.Pagos.Where(x => x.propina > 0).ToList();
 
-                source = "{{#PAGOPROPINAS}}<tr>{{> PAGOPROPINA}}</tr>{{/PAGOPROPINAS}}";
+                source = "{{#PAGOPROPINAS}}<tr class=\"fila\">{{> PAGOPROPINA}}</tr>{{/PAGOPROPINAS}}";
                 partialSource =
-                    "<td style=\"width: 60%;\">{{descripcion}}</td>" +
-                    "<td style=\"width: 40%;\">{{SPropina}}</td>";
+                    "<td>{{descripcion}}</td>" +
+                    "<td>{{SPropina}}</td>";
 
                 Handlebars.RegisterTemplate("PAGOPROPINA", partialSource);
 
@@ -438,18 +443,20 @@ namespace mod_add.Utils
                 #endregion
 
                 #region Turnos
-                source = "{{#TURNOS}}<tr>{{> TURNO}}</tr>{{/TURNOS}}";
+                source = "{{#TURNOS}}<tr class=\"fila\">{{> TURNO}}</tr>{{/TURNOS}}";
                 partialSource =
-                    "<td style=\"width: 10%;\">{{idestacion}}</td>" +
-                    "<td style=\"width: 16%;\">{{Sapertura}}</td>" +
-                    "<td style=\"width: 16%;\">{{Scierre}}</td>" +
-                    "<td style=\"width: 8%;\">{{STotal}}</td>" +
-                    "<td style=\"width: 8%;\">{{SCargo}}</td>" +
-                    "<td style=\"width: 8%;\">{{Sefectivo}}</td>" +
-                    "<td style=\"width: 8%;\">{{Starjeta}}</td>" +
-                    "<td style=\"width: 8%;\">{{Svales}}</td>" +
-                    "<td style=\"width: 8%;\">{{SPropina}}</td>" +
-                    "<td style=\"width: 8%;\">{{Sotros}}</td>";
+                    "<td>{{idestacion}}</td>" +
+                    "<td>{{cajero}}</td>" +
+                    "<td>{{Sapertura}}</td>" +
+                    "<td>{{Scierre}}</td>" +
+                    "<td>{{STotal}}</td>" +
+                    "<td>{{SCargo}}</td>" +
+                    "<td>{{Sefectivo}}</td>" +
+                    "<td>{{Starjeta}}</td>" +
+                    "<td>{{Svales}}</td>" +
+                    "<td>{{SPropina}}</td>" +
+                    "<td>{{Scredito}}</td>" +
+                    "<td>{{idturno}}</td>";
 
                 Handlebars.RegisterTemplate("TURNO", partialSource);
 
@@ -464,10 +471,10 @@ namespace mod_add.Utils
                 #endregion
 
                 #region Ventas Rapidas
-                source = "{{#VENTASRAPIDAS}}<tr>{{> VENTARAPIDA}}</tr>{{/VENTASRAPIDAS}}";
+                source = "{{#VENTASRAPIDAS}}<tr class=\"fila\">{{> VENTARAPIDA}}</tr>{{/VENTASRAPIDAS}}";
                 partialSource =
-                    "<td style=\"width: 60%;\">{{Descripcion}}</td>" +
-                    "<td class\"text-right\" style=\"width: 40%;\">{{STotal}}</td>";
+                    "<td>{{Descripcion}}</td>" +
+                    "<td class\"text-right\">{{STotal}}</td>";
 
                 Handlebars.RegisterTemplate("VENTARAPIDA", partialSource);
 
@@ -482,20 +489,24 @@ namespace mod_add.Utils
                 #endregion
 
                 #region Totales cheques
-                source = "{{#TOTALESCHEQUESREPORTE}}<tr>{{> TOTALCHEQUEREPORTE}}</tr>{{/TOTALESCHEQUESREPORTE}}";
+                source = "{{#TOTALESCHEQUESREPORTE}}<tr class=\"fila\">{{> TOTALCHEQUEREPORTE}}</tr>{{/TOTALESCHEQUESREPORTE}}";
                 partialSource =
-                    "<td class=\"P-4\"></td> " +
-                    "<td class=\"P-4\"></td>" +
-                    "<td class=\"P-4\"></td>" +
-                    "<td class=\"P-4\"></td>" +
-                    "<td class=\"P-4\"></td>" +
-                    "<td class=\"P-4\">{{Spropina}}</td>" +
-                    "<td class=\"P-4\">{{Simporte}}</td>" +
-                    "<td class=\"P-4\">{{Scargo}}</td>" +
-                    "<td class=\"P-4\">{{Sefectivo}}</td>" +
-                    "<td class=\"P-4\">{{Starjeta}}</td>" +
-                    "<td class=\"P-4\">{{Svales}}</td>" +
-                    "<td class=\"P-4\">{{Scredito}}</td>";
+                    "<td></td>" +
+                    "<td></td>" +
+                    "<td></td>" +
+                    "<td></td>" +
+                    "<td></td>" +
+                    "<td></td>" +
+                    "<td></td>" +
+                    "<td></td>" +
+                    "<td class=\"text-right\">{{Stotaldescuentoycortesia}}</td>" +
+                    "<td class=\"text-right\">{{Spropina}}</td>" +
+                    "<td class=\"text-right\">{{Simporte}}</td>" +
+                    "<td class=\"text-right\">{{Scargo}}</td>" +
+                    "<td class=\"text-right\">{{Sefectivo}}</td>" +
+                    "<td class=\"text-right\">{{Starjeta}}</td>" +
+                    "<td class=\"text-right\">{{Svales}}</td>" +
+                    "<td class=\"text-right\">{{Sotros}}</td>";
 
                 Handlebars.RegisterTemplate("TOTALCHEQUEREPORTE", partialSource);
 
@@ -618,7 +629,8 @@ namespace mod_add.Utils
 
                 StringReader sr = new StringReader(HtmlInstance.ToString());
 
-                Document pdfDoc = new Document(PageSize.LETTER, 30f, 30f, 30f, 60f);
+                Document pdfDoc = new Document(PageSize.LETTER, 20f, 20f, 30f, 30f);
+                pdfDoc.SetPageSize(PageSize.A4.Rotate());
 
                 using (MemoryStream memoryStream = new MemoryStream())
                 {
@@ -673,21 +685,21 @@ namespace mod_add.Utils
                 string css = @File.ReadAllText(rutaCss);
 
                 #region Cheques
-                string source = "{{#CHEQUESREPORTE}}<tr>{{>CHEQUEREPORTE}}</tr>{{/CHEQUESREPORTE}}";
+                string source = "{{#CHEQUESREPORTE}}<tr class=\"fila\">{{>CHEQUEREPORTE}}</tr>{{/CHEQUESREPORTE}}";
 
                 string partialSource =
-                    "<td class=\"cnt info p-4\">{{Snumcheque}}</td> " +
-                    "<td class=\"cnt info p-4\">{{Sfecha}}</td>" +
-                    "<td class=\"cnt info p-4\">{{Simpresiones}}</td>" +
-                    "<td class=\"cnt info p-4\">{{Sreabiertas}}</td>" +
-                    "<td class=\"cnt info p-4\">{{Sdescuento}}</td>" +
-                    "<td class=\"der info p-4\">{{Spropina}}</td>" +
-                    "<td class=\"der info p-4\">{{Simporte}}</td>" +
-                    "<td class=\"der info p-4\">{{Scargo}}</td>" +
-                    "<td class=\"der info p-4\">{{Sefectivo}}</td>" +
-                    "<td class=\"der info p-4\">{{Starjeta}}</td>" +
-                    "<td class=\"der info p-4\">{{Svales}}</td>" +
-                    "<td class=\"der info p-4\">{{Sotros}}</td>";
+                    "<td class=\"info text-center\">{{Snumcheque}}</td>" +
+                    "<td class=\"info text-center\">{{Sfecha}}</td>" +
+                    "<td class=\"info text-center\">{{Simpresiones}}</td>" +
+                    "<td class=\"info text-center\">{{Sreabiertas}}</td>" +
+                    "<td class=\"info text-center\">{{Sdescuento}}</td>" +
+                    "<td class=\"info text-right\">{{Spropina}}</td>" +
+                    "<td class=\"info text-right\">{{Simporte}}</td>" +
+                    "<td class=\"info text-right\">{{Scargo}}</td>" +
+                    "<td class=\"info text-right\">{{Sefectivo}}</td>" +
+                    "<td class=\"info text-right\">{{Starjeta}}</td>" +
+                    "<td class=\"info text-right\">{{Svales}}</td>" +
+                    "<td class=\"info text-right\">{{Sotros}}</td>";
 
                 Handlebars.RegisterTemplate("CHEQUEREPORTE", partialSource);
 
@@ -702,10 +714,10 @@ namespace mod_add.Utils
                 #endregion
 
                 #region Pago ventas
-                source = "{{#PAGOS}}<tr>{{>PAGO}}</tr>{{/PAGOS}}";
+                source = "{{#PAGOS}}<tr class=\"fila\">{{>PAGO}}</tr>{{/PAGOS}}";
                 partialSource =
-                    "<td style=\"width: 60%;\">{{descripcion}}</td>" +
-                    "<td style=\"width: 40%;\">{{SImporte}}</td>";
+                    "<td>{{descripcion}}</td>" +
+                    "<td>{{SImporte}}</td>";
 
                 Handlebars.RegisterTemplate("PAGO", partialSource);
 
@@ -722,10 +734,10 @@ namespace mod_add.Utils
                 #region Pago propinas
                 var pagoPropinas = reporte.Pagos.Where(x => x.propina > 0).ToList();
 
-                source = "{{#PAGOPROPINAS}}<tr>{{> PAGOPROPINA}}</tr>{{/PAGOPROPINAS}}";
+                source = "{{#PAGOPROPINAS}}<tr class=\"fila\">{{> PAGOPROPINA}}</tr>{{/PAGOPROPINAS}}";
                 partialSource =
-                    "<td style=\"width: 60%;\">{{descripcion}}</td>" +
-                    "<td style=\"width: 40%;\">{{SPropina}}</td>";
+                    "<td>{{descripcion}}</td>" +
+                    "<td>{{SPropina}}</td>";
 
                 Handlebars.RegisterTemplate("PAGOPROPINA", partialSource);
 
@@ -740,18 +752,18 @@ namespace mod_add.Utils
                 #endregion
 
                 #region Turnos
-                source = "{{#TURNOS}}<tr>{{> TURNO}}</tr>{{/TURNOS}}";
+                source = "{{#TURNOS}}<tr class=\"fila\">{{> TURNO}}</tr>{{/TURNOS}}";
                 partialSource =
-                    "<td style=\"width: 10%;\">{{idestacion}}</td>" +
-                    "<td style=\"width: 16%;\">{{Sapertura}}</td>" +
-                    "<td style=\"width: 16%;\">{{Scierre}}</td>" +
-                    "<td style=\"width: 8%;\">{{STotal}}</td>" +
-                    "<td style=\"width: 8%;\">{{SCargo}}</td>" +
-                    "<td style=\"width: 8%;\">{{Sefectivo}}</td>" +
-                    "<td style=\"width: 8%;\">{{Starjeta}}</td>" +
-                    "<td style=\"width: 8%;\">{{Svales}}</td>" +
-                    "<td style=\"width: 8%;\">{{SPropina}}</td>" +
-                    "<td style=\"width: 8%;\">{{Scredito}}</td>";
+                    "<td>{{idestacion}}</td>" +
+                    "<td>{{Sapertura}}</td>" +
+                    "<td>{{Scierre}}</td>" +
+                    "<td>{{STotal}}</td>" +
+                    "<td>{{SCargo}}</td>" +
+                    "<td>{{Sefectivo}}</td>" +
+                    "<td>{{Starjeta}}</td>" +
+                    "<td>{{Svales}}</td>" +
+                    "<td>{{SPropina}}</td>" +
+                    "<td>{{Scredito}}</td>";
 
                 Handlebars.RegisterTemplate("TURNO", partialSource);
 
@@ -766,10 +778,10 @@ namespace mod_add.Utils
                 #endregion
 
                 #region Ventas Rapidas
-                source = "{{#VENTASRAPIDAS}}<tr>{{> VENTARAPIDA}}</tr>{{/VENTASRAPIDAS}}";
+                source = "{{#VENTASRAPIDAS}}<tr class=\"fila\">{{> VENTARAPIDA}}</tr>{{/VENTASRAPIDAS}}";
                 partialSource =
-                    "<td style=\"width: 60%;\">{{Descripcion}}</td>" +
-                    "<td class\"text-right\" style=\"width: 40%;\">{{STotal}}</td>";
+                    "<td>{{Descripcion}}</td>" +
+                    "<td class\"text-right\">{{STotal}}</td>";
 
                 Handlebars.RegisterTemplate("VENTARAPIDA", partialSource);
 
@@ -784,20 +796,20 @@ namespace mod_add.Utils
                 #endregion
 
                 #region Totales cheques
-                source = "{{#TOTALESCHEQUESREPORTE}}<tr>{{> TOTALCHEQUEREPORTE}}</tr>{{/TOTALESCHEQUESREPORTE}}";
+                source = "{{#TOTALESCHEQUESREPORTE}}<tr class=\"fila\">{{> TOTALCHEQUEREPORTE}}</tr>{{/TOTALESCHEQUESREPORTE}}";
                 partialSource =
-                    "<td class=\"P-4\"></td> " +
-                    "<td class=\"P-4\"></td>" +
-                    "<td class=\"P-4\"></td>" +
-                    "<td class=\"P-4\"></td>" +
-                    "<td class=\"P-4\"></td>" +
-                    "<td class=\"P-4\">{{Spropina}}</td>" +
-                    "<td class=\"P-4\">{{Simporte}}</td>" +
-                    "<td class=\"P-4\">{{Scargo}}</td>" +
-                    "<td class=\"P-4\">{{Sefectivo}}</td>" +
-                    "<td class=\"P-4\">{{Starjeta}}</td>" +
-                    "<td class=\"P-4\">{{Svales}}</td>" +
-                    "<td class=\"P-4\">{{Scredito}}</td>";
+                    "<td></td>" +
+                    "<td></td>" +
+                    "<td></td>" +
+                    "<td></td>" +
+                    "<td></td>" +
+                    "<td class=\"text-right\">{{Spropina}}</td>" +
+                    "<td class=\"text-right\">{{Simporte}}</td>" +
+                    "<td class=\"text-right\">{{Scargo}}</td>" +
+                    "<td class=\"text-right\">{{Sefectivo}}</td>" +
+                    "<td class=\"text-right\">{{Starjeta}}</td>" +
+                    "<td class=\"text-right\">{{Svales}}</td>" +
+                    "<td class=\"text-right\">{{Sotros}}</td>";
 
                 Handlebars.RegisterTemplate("TOTALCHEQUEREPORTE", partialSource);
 
@@ -911,7 +923,7 @@ namespace mod_add.Utils
 
                 StringReader sr = new StringReader(HtmlInstance.ToString());
 
-                Document pdfDoc = new Document(PageSize.LETTER, 30f, 30f, 30f, 60f);
+                Document pdfDoc = new Document(PageSize.LETTER, 30f, 30f, 20f, 20f);
 
                 using (MemoryStream memoryStream = new MemoryStream())
                 {

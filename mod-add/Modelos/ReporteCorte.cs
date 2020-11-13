@@ -148,9 +148,6 @@ namespace mod_add.Modelos
         public decimal AcumuladoMesAnterior { get; set; }
         public decimal AcumuladoMesActual { get; set; }
 
-        
-
-
         public List<Pago> Pagos { get; set; }
         public List<ImpuestoVenta> ImpuestosVentas { get; set; }
         public List<PagoTarjeta> PagosTarjeta { get; set; }

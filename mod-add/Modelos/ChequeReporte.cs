@@ -8,6 +8,7 @@ namespace mod_add.Modelos
         public ChequeReporte()
         {
             ChequesPagos = new List<ChequePagoReporte>();
+            Totales = false;
         }
 
         public long folio { get; set; }
@@ -41,7 +42,7 @@ namespace mod_add.Modelos
         //public decimal? cambiorepartidor { get; set; }
         //public string usuariodescuento { get; set; }
         //public DateTime? fechacancelado { get; set; }
-        //public string idtipodescuento { get; set; }
+        public string idtipodescuento { get; set; }
         //public string numerotarjeta { get; set; }
         public decimal? folionotadeconsumo { get; set; }
         //public bool? notadeconsumo { get; set; }
@@ -204,20 +205,24 @@ namespace mod_add.Modelos
         //public string campoadicional2 { get; set; }
         public string DescripcionTipoDescuento { get; set; }
 
+        public bool Totales { get; set; }
+
         public List<ChequePagoReporte> ChequesPagos { get; set; }
 
         public string Snumcheque { get { return $"{numcheque}"; } }
-        public string Sfolionotaconsumo { get { return $"{folionotadeconsumo}"; } }
+        public string Snumcheque2 { get { return $"{numcheque}".PadLeft(8, '0'); } }
+        public string Sfolionotadeconsumo { get { return (folionotadeconsumo ?? 0) > 0 ? $"{folionotadeconsumo}" : ""; } }
         public string Sfecha { get { return fecha.HasValue ? fecha.ToString() : ""; } }
-        public string Simpresiones { get { return impresiones.HasValue && impresiones > 1 ? $"{(int)impresiones}" : ""; } }
+        public string Simpresiones { get { return (impresiones ?? 0) > 1 ? $"{(int)impresiones}" : ""; } }
         public string Sreabiertas { get { return (reabiertas ?? 0) > 0 ? $"{(int)reabiertas}" : ""; } }
-        public string Sdescuento { get { return descuento.HasValue && descuento > 0 ? string.Format("{0:C}", descuento) : ""; } }
-        public string Spropina { get { return propina.HasValue && propina > 0 ? string.Format("{0:C}", propina) : ""; } }
-        public string Simporte { get { return (descuento ?? 0) < 100m ? string.Format("{0:C}", total) : "CORTESIA"; } }
-        public string Scargo { get { return cargo.HasValue && cargo > 0 ? string.Format("{0:C}", cargo) : ""; } }
-        public string Sefectivo { get { return efectivo.HasValue && efectivo > 0 ? string.Format("{0:C}", efectivo) : ""; } }
-        public string Starjeta { get { return tarjeta.HasValue && tarjeta > 0 ? string.Format("{0:C}", tarjeta) : ""; } }
-        public string Svales { get { return vales.HasValue && vales > 0 ? string.Format("{0:C}", vales) : ""; } }
-        public string Sotros { get { return otros.HasValue && otros > 0 ? string.Format("{0:C}", otros) : ""; } }
+        public string Sdescuento { get { return  (descuento ?? 0) > 0 ? string.Format("{0:C}", descuento) : ""; } }
+        public string Stotaldescuentoycortesia { get { return (totaldescuentoycortesia ?? 0) > 0 || Totales ? string.Format("{0:C}", totaldescuentoycortesia ?? 0) : ""; } }
+        public string Spropina { get { return (propina ?? 0) > 0 || Totales ? string.Format("{0:C}", propina ?? 0) : ""; } }
+        public string Simporte { get { return (descuento ?? 0) < 100 || Totales ? string.Format("{0:C}", total ?? 0) : "CORTESIA"; } }
+        public string Scargo { get { return (cargo ?? 0) > 0 || Totales ? string.Format("{0:C}", cargo ?? 0) : ""; } }
+        public string Sefectivo { get { return (efectivo ?? 0) > 0 || Totales ? string.Format("{0:C}", efectivo ?? 0) : ""; } }
+        public string Starjeta { get { return (tarjeta ?? 0) > 0 || Totales ? string.Format("{0:C}", tarjeta ?? 0) : ""; } }
+        public string Svales { get { return (vales ?? 0) > 0 || Totales ? string.Format("{0:C}", vales ?? 0) : ""; } }
+        public string Sotros { get { return (otros ?? 0) > 0 || Totales ? string.Format("{0:C}", otros ?? 0) : ""; } }
     }
 }

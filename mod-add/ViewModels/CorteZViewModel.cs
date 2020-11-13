@@ -70,6 +70,7 @@ namespace mod_add.ViewModels
                 "c.reabiertas",
                 "c.tipodeservicio",
                 "c.idturno",
+                "c.idtipodescuento",
                 "c.folionotadeconsumo",
                 "c.total",
                 "c.cargo",
@@ -691,6 +692,8 @@ namespace mod_add.ViewModels
                             {
                                 new ChequeReporte
                                 {
+                                    Totales = true,
+                                    totaldescuentoycortesia = cheques.Sum(x => x.totaldescuentoycortesia ?? 0),
                                     propina = cheques.Sum(x => x.propina ?? 0),
                                     total = cheques.Sum(x => x.total ?? 0),
                                     cargo = cheques.Sum(x => x.cargo ?? 0),
