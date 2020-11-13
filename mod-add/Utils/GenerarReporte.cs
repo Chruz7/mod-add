@@ -317,7 +317,7 @@ namespace mod_add.Utils
                 StringReader sr = new StringReader(HtmlInstance.ToString());
 
                 Document pdfDoc = new Document(PageSize.LETTER, 20f, 20f, 30f, 30f);
-                pdfDoc.SetPageSize(PageSize.A4.Rotate());
+                pdfDoc.SetPageSize(PageSize.LETTER.Rotate());
 
                 using (MemoryStream memoryStream = new MemoryStream())
                 {
@@ -630,7 +630,7 @@ namespace mod_add.Utils
                 StringReader sr = new StringReader(HtmlInstance.ToString());
 
                 Document pdfDoc = new Document(PageSize.LETTER, 20f, 20f, 30f, 30f);
-                pdfDoc.SetPageSize(PageSize.A4.Rotate());
+                pdfDoc.SetPageSize(PageSize.LETTER.Rotate());
 
                 using (MemoryStream memoryStream = new MemoryStream())
                 {
