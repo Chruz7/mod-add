@@ -60,18 +60,18 @@ namespace mod_add.ViewModels
             List<string> campos = new List<string>
             {
                 "c.folio",
-                "c.numcheque",
+                "CAST(c.numcheque AS Decimal) as numcheque",
                 "c.fecha",
                 "c.mesa",
-                "c.nopersonas",
+                "CAST(c.nopersonas AS Decimal) as nopersonas",
                 "c.cancelado",
-                "c.impresiones",
+                "CAST(c.impresiones AS Decimal) as impresiones",
                 "c.descuento",
-                "c.reabiertas",
-                "c.tipodeservicio",
-                "c.idturno",
+                "CAST(c.reabiertas AS Decimal) as reabiertas",
+                "CAST(c.tipodeservicio AS Decimal) as tipodeservicio",
+                "CAST(c.idturno AS Decimal) as idturno",
                 "c.idtipodescuento",
-                "c.folionotadeconsumo",
+                "CAST(c.folionotadeconsumo AS Decimal) as folionotadeconsumo",
                 "c.total",
                 "c.cargo",
                 "c.descuentoimporte",
@@ -125,7 +125,7 @@ namespace mod_add.ViewModels
         {
             List<string> campos = new List<string>
             {
-                "cp.folio",
+                "CAST(cp.folio AS bigint) AS folio",
                 "cp.idformadepago",
                 "cp.importe",
                 "cp.propina",
