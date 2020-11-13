@@ -335,7 +335,7 @@ namespace mod_add.Utils
 
                     pdfDoc.Close();
                     var nombre_archivo = Path.Combine(PathDetalladoFormasPago, $"{reporte.FolioCorte}-detallado-formas-de-pago.pdf");
-                    byte[] bytes = memoryStream.ToArray();
+                    byte[] bytes = AddPageNumbers(memoryStream.ToArray(), false);
                     memoryStream.Close();
                     var fs = new FileStream(nombre_archivo, FileMode.Create, FileAccess.Write);
                     fs.Write(bytes, 0, bytes.Length);
@@ -635,7 +635,6 @@ namespace mod_add.Utils
                 using (MemoryStream memoryStream = new MemoryStream())
                 {
                     PdfWriter writer = PdfWriter.GetInstance(pdfDoc, memoryStream);
-
                     pdfDoc.Open();
 
                     using (var cssMemoryStream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(css)))
@@ -648,7 +647,7 @@ namespace mod_add.Utils
 
                     pdfDoc.Close();
                     var nombre_archivo = Path.Combine(PathDetalladoHorizontal, $"{reporte.FolioCorte}-detallado-horizontal.pdf");
-                    byte[] bytes = memoryStream.ToArray();
+                    byte[] bytes = AddPageNumbers(memoryStream.ToArray(), false);
                     memoryStream.Close();
                     var fs = new FileStream(nombre_archivo, FileMode.Create, FileAccess.Write);
                     fs.Write(bytes, 0, bytes.Length);
@@ -670,6 +669,68 @@ namespace mod_add.Utils
             {
                 Debug.WriteLine($"INICIO-ERROR\n{ex}\nFIN-ERROR");
             }
+        }
+
+        public static byte[] AddPageNumbers(byte[] pdf, bool orientacionVertical = true)
+        {
+            MemoryStream ms = new MemoryStream();
+            // we create a reader for a certain document
+            PdfReader reader = new PdfReader(pdf);
+            // we retrieve the total number of pages
+            int n = reader.NumberOfPages;
+            // we retrieve the size of the first page
+            Rectangle psize = reader.GetPageSizeWithRotation(1);
+
+            // step 1: creation of a document-object
+            Document document = new Document(reader.GetPageSizeWithRotation(1));
+
+            //if (orientacionVertical)
+            //{
+            //    document = new Document(psize, 30, 30, 20, 20);
+            //}
+            //else
+            //{
+            //    document = new Document(psize, 20, 20, 30, 30);
+            //    //document.SetPageSize(PageSize.A4.Rotate());
+            //}
+
+            // step 2: we create a writer that listens to the document
+            PdfWriter writer = PdfWriter.GetInstance(document, ms);
+            // step 3: we open the document
+
+            document.Open();
+            // step 4: we add content
+            PdfContentByte cb = writer.DirectContent;
+
+            int p = 0;
+            for (int page = 1; page <= reader.NumberOfPages; page++)
+            {
+                document.NewPage();
+                p++;
+
+                PdfImportedPage importedPage = writer.GetImportedPage(reader, page);
+                //cb.AddTemplate(importedPage, 0, 0);
+
+                int rotation = reader.GetPageRotation(page);
+
+                if (rotation == 90 || rotation == 270)
+                {
+                    cb.AddTemplate(importedPage, 0, -1f, 1f, 0, 0, reader.GetPageSizeWithRotation(page).Height);
+                }
+                else
+                {
+                    cb.AddTemplate(importedPage, 1f, 0, 0, 1f, 0, 0);
+                }
+
+                BaseFont bf = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.CP1252, BaseFont.NOT_EMBEDDED);
+                cb.BeginText();
+                cb.SetFontAndSize(bf, 6);
+                cb.ShowTextAligned(PdfContentByte.ALIGN_LEFT, $"PAG. {p}", psize.Width - (orientacionVertical ? 50 : 40), orientacionVertical ? 20 : 30, 0);
+                cb.EndText();
+            }
+            // step 5: we close the document
+            document.Close();
+            return ms.ToArray();
         }
 
         public void DetalladoVertical(ReporteCorte reporte, TipoDestino tipoDestino)
@@ -941,7 +1002,7 @@ namespace mod_add.Utils
 
                     pdfDoc.Close();
                     var nombre_archivo = Path.Combine(PathDetalladoVertical, $"{reporte.FolioCorte}-detallado-vertical.pdf");
-                    byte[] bytes = memoryStream.ToArray();
+                    byte[] bytes = AddPageNumbers(memoryStream.ToArray());
                     memoryStream.Close();
                     var fs = new FileStream(nombre_archivo, FileMode.Create, FileAccess.Write);
                     fs.Write(bytes, 0, bytes.Length);
