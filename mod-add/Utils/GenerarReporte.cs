@@ -135,77 +135,6 @@ namespace mod_add.Utils
                 var pagoPropinasTemplate = template3(data3);
                 #endregion
 
-                #region Turnos
-                source = "{{#TURNOS}}<tr class=\"fila\">{{> TURNO}}</tr>{{/TURNOS}}";
-                partialSource =
-                    "<td>{{idestacion}}</td>" +
-                    "<td>{{Sapertura}}</td>" +
-                    "<td>{{Scierre}}</td>" +
-                    "<td>{{STotal}}</td>" +
-                    "<td>{{SCargo}}</td>" +
-                    "<td>{{Sefectivo}}</td>" +
-                    "<td>{{Starjeta}}</td>" +
-                    "<td>{{Svales}}</td>" +
-                    "<td>{{SPropina}}</td>" +
-                    "<td>{{Sotros}}</td>";
-
-                Handlebars.RegisterTemplate("TURNO", partialSource);
-
-                var template4 = Handlebars.Compile(source);
-
-                var data4 = new
-                {
-                    reporte.Turnos
-                };
-
-                var turnosTemplate = template4(data4);
-                #endregion
-
-                #region Ventas Rapidas
-                source = "{{#VENTASRAPIDAS}}<tr class=\"fila\">{{> VENTARAPIDA}}</tr>{{/VENTASRAPIDAS}}";
-                partialSource =
-                    "<td>{{Descripcion}}</td>" +
-                    "<td class\"text-right\">{{STotal}}</td>";
-
-                Handlebars.RegisterTemplate("VENTARAPIDA", partialSource);
-
-                var template5 = Handlebars.Compile(source);
-
-                var data5 = new
-                {
-                    reporte.VentasRapidas
-                };
-
-                var ventasrapidasTemplate = template5(data5);
-                #endregion
-
-                #region Totales cheques
-                source = "{{#TOTALESCHEQUESREPORTE}}<tr class=\"fila\">{{> TOTALCHEQUEREPORTE}}</tr>{{/TOTALESCHEQUESREPORTE}}";
-                partialSource =
-                    "<td></td> " +
-                    "<td></td>" +
-                    "<td></td>" +
-                    "<td></td>" +
-                    "<td></td>" +
-                    "<td>{{Spropina}}</td>" +
-                    "<td>{{Simporte}}</td>" +
-                    "<td>{{Scargo}}</td>" +
-                    "<td>{{Sefectivo}}</td>" +
-                    "<td>{{Starjeta}}</td>" +
-                    "<td>{{Svales}}</td>" +
-                    "<td>{{Scredito}}</td>";
-
-                Handlebars.RegisterTemplate("TOTALCHEQUEREPORTE", partialSource);
-
-                var template6 = Handlebars.Compile(source);
-
-                var data6 = new
-                {
-                    reporte.TotalesChequesReporte
-                };
-
-                var totaleschequesreporteTemplate = template6(data6);
-                #endregion
 
                 var HtmlTemplate = html;
                 var HtmlInstance = HtmlTemplate
@@ -228,32 +157,22 @@ namespace mod_add.Utils
                     .Replace("[[FECHA-CORTE-CIERRE]]", reporte.FechaCorteCierre.ToString("dd/MM/yyyy hh:mm:ss tt"))
                     .Replace("[[FOLIO-CORTE]]", reporte.FolioCorte.ToString())
 
-                    .Replace("[[CHEQUESREPORTE]]", chequesReporteTemplate) // CUENTAS
+                    .Replace("[[CHEQUESREPORTE]]", chequesReporteTemplate) //DETALLES
 
-                    .Replace("[[TOTALESCHEQUESREPORTE]]", totaleschequesreporteTemplate) // TOTALES CUENTAS
-
-                    .Replace($"[[{nameof(reporte.CuentasNormales).ToUpper()}]]", $"{reporte.CuentasNormales}") //CUENTAS
-                    .Replace($"[[{nameof(reporte.CuentasCanceladas).ToUpper()}]]", $"{reporte.CuentasCanceladas}")
-                    .Replace($"[[{nameof(reporte.CuentasConDescuento).ToUpper()}]]", $"{reporte.CuentasConDescuento}")
-                    .Replace($"[[{nameof(reporte.CuentasConDescuentoImporte).ToUpper()}]]", string.Format("{0:C}", reporte.CuentasConDescuentoImporte))
-                    .Replace($"[[{nameof(reporte.CuentasConCortesia).ToUpper()}]]", $"{reporte.CuentasConCortesia}")
-                    .Replace($"[[{nameof(reporte.CuentasConCortesiaImporte).ToUpper()}]]", string.Format("{0:C}", reporte.CuentasConCortesiaImporte))
-                    .Replace($"[[{nameof(reporte.CuentaPromedio).ToUpper()}]]", string.Format("{0:C}", reporte.CuentaPromedio))
-                    .Replace($"[[{nameof(reporte.Comensales).ToUpper()}]]", $"{reporte.Comensales}")
-                    .Replace($"[[{nameof(reporte.ConsumoPromedio).ToUpper()}]]", string.Format("{0:C}", reporte.ConsumoPromedio))
-                    .Replace($"[[{nameof(reporte.Propinas).ToUpper()}]]", string.Format("{0:C}", reporte.Propinas))
-                    .Replace($"[[{nameof(reporte.Cargos).ToUpper()}]]", string.Format("{0:C}", reporte.Cargos))
-                    .Replace($"[[{nameof(reporte.DescuentoMonedero).ToUpper()}]]", string.Format("{0:C}", reporte.DescuentoMonedero))
-                    .Replace($"[[{nameof(reporte.FolioInicial).ToUpper()}]]", $"{reporte.FolioInicial}")
-                    .Replace($"[[{nameof(reporte.FolioFinal).ToUpper()}]]", $"{reporte.FolioFinal}")
-
-                    .Replace("[[TOTALPROPINA]]", string.Format("{0:C}", reporte.ChequesReporte.Sum(x => x.propina))) //TOTALES EN CUENTAS
-                    .Replace("[[TOTALIMPORTE]]", string.Format("{0:C}", reporte.ChequesReporte.Sum(x => x.total)))
-                    .Replace("[[TOTALCARGO]]", string.Format("{0:C}", reporte.ChequesReporte.Sum(x => x.cargo)))
-                    .Replace("[[TOTALEFECTIVO]]", string.Format("{0:C}", reporte.ChequesReporte.Sum(x => x.efectivo)))
-                    .Replace("[[TOTALTARJETA]]", string.Format("{0:C}", reporte.ChequesReporte.Sum(x => x.tarjeta)))
-                    .Replace("[[TOTALVALES]]", string.Format("{0:C}", reporte.ChequesReporte.Sum(x => x.vales)))
-                    .Replace("[[TOTALOTROS]]", string.Format("{0:C}", reporte.ChequesReporte.Sum(x => x.otros)))
+                    .Replace("[[CUENTASNORMALES]]", $"{reporte.CuentasNormales}") //CUENTAS
+                    .Replace("[[CUENTASCANCELADAS]]", $"{reporte.CuentasCanceladas}")
+                    .Replace("[[CUENTASCONDESCUENTO]]", $"{reporte.CuentasConDescuento}")
+                    .Replace("[[CUENTASCONDESCUENTOIMPORTE]]", string.Format("{0:C}", reporte.CuentasConDescuentoImporte))
+                    .Replace("[[CUENTASCONCORTESIA]]", $"{reporte.CuentasConCortesia}")
+                    .Replace("[[CUENTASCONCORTESIAIMPORTE]]", string.Format("{0:C}", reporte.CuentasConCortesiaImporte))
+                    .Replace("[[CUENTAPROMEDIO]]", string.Format("{0:C}", reporte.CuentaPromedio))
+                    .Replace("[[COMENSALES]]", $"{reporte.Comensales}")
+                    .Replace("[[CONSUMOPROMEDIO]]", string.Format("{0:C}", reporte.ConsumoPromedio))
+                    .Replace("[[PROPINAS]]", string.Format("{0:C}", reporte.Propinas))
+                    .Replace("[[CARGOS]]", string.Format("{0:C}", reporte.Cargos))
+                    .Replace("[[DESCUENTOMONEDERO]]", string.Format("{0:C}", reporte.DescuentoMonedero))
+                    .Replace("[[FOLIOINICIAL]]", $"{reporte.FolioInicial}")
+                    .Replace("[[FOLIOFINAL]]", $"{reporte.FolioFinal}")
 
                     .Replace($"[[{nameof(reporte.VentaFacturada).ToUpper()}]]", string.Format("{0:C}", reporte.VentaFacturada)) // FACTURAS
                     .Replace($"[[{nameof(reporte.PropinaFacturada).ToUpper()}]]", string.Format("{0:C}", reporte.PropinaFacturada))
@@ -269,6 +188,7 @@ namespace mod_add.Utils
                     .Replace($"[[{nameof(reporte.RetirosEfectivo).ToUpper()}]]", string.Format("{0:C}", reporte.RetirosEfectivo))
                     .Replace($"[[{nameof(reporte.PropinasPagadas).ToUpper()}]]", string.Format("{0:C}", reporte.PropinasPagadas))
                     .Replace($"[[{nameof(reporte.SaldoFinal).ToUpper()}]]", string.Format("{0:C}", reporte.SaldoFinal))
+                    .Replace($"[[{nameof(reporte.EfectivoFinal).ToUpper()}]]", string.Format("{0:C}", reporte.EfectivoFinal))
                     .Replace($"[[{nameof(reporte.Dolares).ToUpper()}]]", string.Format("{0:C}", reporte.Dolares))
                     .Replace($"[[{nameof(reporte.TotalDeclarado).ToUpper()}]]", string.Format("{0:C}", reporte.TotalDeclarado))
                     .Replace("[[SOBRANTE]]", reporte.SobranteOFaltante > 0 ? string.Format("{0:C}", reporte.SobranteOFaltante) : "")
@@ -309,9 +229,6 @@ namespace mod_add.Utils
                     .Replace($"[[{nameof(reporte.ImpuestoTotal).ToUpper()}]]", string.Format("{0:C}", reporte.ImpuestoTotal))
                     .Replace($"[[{nameof(reporte.VentasConImpuesto).ToUpper()}]]", string.Format("{0:C}", reporte.VentasConImpuesto))
 
-                    .Replace("[[VENTASRAPIDAS]]", ventasrapidasTemplate) // TURNOS
-
-                    .Replace("[[TURNOS]]", turnosTemplate) // TURNOS
                     ;
 
                 StringReader sr = new StringReader(HtmlInstance.ToString());
@@ -363,8 +280,6 @@ namespace mod_add.Utils
         {
             try
             {
-                DateTime fecha = DateTime.Now;
-
                 var rutaHtml = Path.Combine(PathEjecuccion, @".\plantillas\corte-detallado-horizontal.html");
                 var rutaCss = Path.Combine(PathEjecuccion, @".\plantillas\estilos.css");
 
@@ -522,8 +437,8 @@ namespace mod_add.Utils
 
                 var HtmlTemplate = html;
                 var HtmlInstance = HtmlTemplate
-                    .Replace("[[FECHA]]", fecha.ToShortDateString()) //HEADER PAGINA
-                    .Replace("[[HORA]]", fecha.ToString("hh:mm:ss tt").ToUpper())
+                    .Replace("[[FECHA]]", reporte.SoloFecha) //HEADER PAGINA
+                    .Replace("[[HORA]]", reporte.SoloHora)
                     .Replace("[[NOMBRE-COMERCIAL]]", NombreComercial)
                     .Replace("[[RAZON-SOCIAL]]", RazonSocial)
                     .Replace("[[RFC]]", RFC)
@@ -537,36 +452,28 @@ namespace mod_add.Utils
                     .Replace("[[CIUDAD-SUCURSAL]]", CiudadSucursal)
                     .Replace("[[ESTADO-SUCURSAL]]", EstadoSucursal)
                     .Replace("[[TITULO-CORTE-Z]]", reporte.TituloCorte)
-                    .Replace("[[FECHA-CORTE-INICIO]]", reporte.FechaCorteInicio.ToString("dd/MM/yyyy hh:mm:ss tt"))
-                    .Replace("[[FECHA-CORTE-CIERRE]]", reporte.FechaCorteCierre.ToString("dd/MM/yyyy hh:mm:ss tt"))
-                    .Replace("[[FOLIO-CORTE]]", reporte.FolioCorte.ToString())
+                    .Replace("[[FECHA-CORTE-INICIO]]", reporte.SFechaCorteInicio)
+                    .Replace("[[FECHA-CORTE-CIERRE]]", reporte.SFechaCorteCierre)
+                    .Replace("[[FOLIO-CORTE]]", reporte.SFolioCorte)
 
-                    .Replace("[[CHEQUESREPORTE]]", chequesReporteTemplate) // CUENTAS
+                    .Replace("[[CHEQUESREPORTE]]", chequesReporteTemplate) // DETALLES
 
                     .Replace("[[TOTALESCHEQUESREPORTE]]", totaleschequesreporteTemplate) // TOTALES CUENTAS
 
-                    .Replace($"[[{nameof(reporte.CuentasNormales).ToUpper()}]]", $"{reporte.CuentasNormales}") //CUENTAS
-                    .Replace($"[[{nameof(reporte.CuentasCanceladas).ToUpper()}]]", $"{reporte.CuentasCanceladas}")
-                    .Replace($"[[{nameof(reporte.CuentasConDescuento).ToUpper()}]]", $"{reporte.CuentasConDescuento}")
-                    .Replace($"[[{nameof(reporte.CuentasConDescuentoImporte).ToUpper()}]]", string.Format("{0:C}", reporte.CuentasConDescuentoImporte))
-                    .Replace($"[[{nameof(reporte.CuentasConCortesia).ToUpper()}]]", $"{reporte.CuentasConCortesia}")
-                    .Replace($"[[{nameof(reporte.CuentasConCortesiaImporte).ToUpper()}]]", string.Format("{0:C}", reporte.CuentasConCortesiaImporte))
-                    .Replace($"[[{nameof(reporte.CuentaPromedio).ToUpper()}]]", string.Format("{0:C}", reporte.CuentaPromedio))
-                    .Replace($"[[{nameof(reporte.Comensales).ToUpper()}]]", $"{reporte.Comensales}")
-                    .Replace($"[[{nameof(reporte.ConsumoPromedio).ToUpper()}]]", string.Format("{0:C}", reporte.ConsumoPromedio))
-                    .Replace($"[[{nameof(reporte.Propinas).ToUpper()}]]", string.Format("{0:C}", reporte.Propinas))
-                    .Replace($"[[{nameof(reporte.Cargos).ToUpper()}]]", string.Format("{0:C}", reporte.Cargos))
-                    .Replace($"[[{nameof(reporte.DescuentoMonedero).ToUpper()}]]", string.Format("{0:C}", reporte.DescuentoMonedero))
-                    .Replace($"[[{nameof(reporte.FolioInicial).ToUpper()}]]", $"{reporte.FolioInicial}")
-                    .Replace($"[[{nameof(reporte.FolioFinal).ToUpper()}]]", $"{reporte.FolioFinal}")
-
-                    .Replace("[[TOTALPROPINA]]", string.Format("{0:C}", reporte.ChequesReporte.Sum(x => x.propina))) //TOTALES EN CUENTAS
-                    .Replace("[[TOTALIMPORTE]]", string.Format("{0:C}", reporte.ChequesReporte.Sum(x => x.total)))
-                    .Replace("[[TOTALCARGO]]", string.Format("{0:C}", reporte.ChequesReporte.Sum(x => x.cargo)))
-                    .Replace("[[TOTALEFECTIVO]]", string.Format("{0:C}", reporte.ChequesReporte.Sum(x => x.efectivo)))
-                    .Replace("[[TOTALTARJETA]]", string.Format("{0:C}", reporte.ChequesReporte.Sum(x => x.tarjeta)))
-                    .Replace("[[TOTALVALES]]", string.Format("{0:C}", reporte.ChequesReporte.Sum(x => x.vales)))
-                    .Replace("[[TOTALOTROS]]", string.Format("{0:C}", reporte.ChequesReporte.Sum(x => x.otros)))
+                    .Replace("[[CUENTASNORMALES]]", $"{reporte.CuentasNormales}") //CUENTAS
+                    .Replace("[[CUENTASCANCELADAS]]", $"{reporte.CuentasCanceladas}")
+                    .Replace("[[CUENTASCONDESCUENTO]]", $"{reporte.CuentasConDescuento}")
+                    .Replace("[[CUENTASCONDESCUENTOIMPORTE]]", string.Format("{0:C}", reporte.CuentasConDescuentoImporte))
+                    .Replace("[[CUENTASCONCORTESIA]]", $"{reporte.CuentasConCortesia}")
+                    .Replace("[[CUENTASCONCORTESIAIMPORTE]]", string.Format("{0:C}", reporte.CuentasConCortesiaImporte))
+                    .Replace("[[CUENTAPROMEDIO]]", string.Format("{0:C}", reporte.CuentaPromedio))
+                    .Replace("[[COMENSALES]]", $"{reporte.Comensales}")
+                    .Replace("[[CONSUMOPROMEDIO]]", string.Format("{0:C}", reporte.ConsumoPromedio))
+                    .Replace("[[PROPINAS]]", string.Format("{0:C}", reporte.Propinas))
+                    .Replace("[[CARGOS]]", string.Format("{0:C}", reporte.Cargos))
+                    .Replace("[[DESCUENTOMONEDERO]]", string.Format("{0:C}", reporte.DescuentoMonedero))
+                    .Replace("[[FOLIOINICIAL]]", $"{reporte.FolioInicial}")
+                    .Replace("[[FOLIOFINAL]]", $"{reporte.FolioFinal}")
 
                     .Replace($"[[{nameof(reporte.VentaFacturada).ToUpper()}]]", string.Format("{0:C}", reporte.VentaFacturada)) // FACTURAS
                     .Replace($"[[{nameof(reporte.PropinaFacturada).ToUpper()}]]", string.Format("{0:C}", reporte.PropinaFacturada))
@@ -582,6 +489,7 @@ namespace mod_add.Utils
                     .Replace($"[[{nameof(reporte.RetirosEfectivo).ToUpper()}]]", string.Format("{0:C}", reporte.RetirosEfectivo))
                     .Replace($"[[{nameof(reporte.PropinasPagadas).ToUpper()}]]", string.Format("{0:C}", reporte.PropinasPagadas))
                     .Replace($"[[{nameof(reporte.SaldoFinal).ToUpper()}]]", string.Format("{0:C}", reporte.SaldoFinal))
+                    .Replace($"[[{nameof(reporte.EfectivoFinal).ToUpper()}]]", string.Format("{0:C}", reporte.EfectivoFinal))
                     .Replace($"[[{nameof(reporte.Dolares).ToUpper()}]]", string.Format("{0:C}", reporte.Dolares))
                     .Replace($"[[{nameof(reporte.TotalDeclarado).ToUpper()}]]", string.Format("{0:C}", reporte.TotalDeclarado))
                     .Replace("[[SOBRANTE]]", reporte.SobranteOFaltante > 0 ? string.Format("{0:C}", reporte.SobranteOFaltante) : "")
@@ -670,75 +578,11 @@ namespace mod_add.Utils
                 Debug.WriteLine($"INICIO-ERROR\n{ex}\nFIN-ERROR");
             }
         }
-
-        public static byte[] AddPageNumbers(byte[] pdf, bool orientacionVertical = true)
-        {
-            MemoryStream ms = new MemoryStream();
-            // we create a reader for a certain document
-            PdfReader reader = new PdfReader(pdf);
-            // we retrieve the total number of pages
-            int n = reader.NumberOfPages;
-            // we retrieve the size of the first page
-            Rectangle psize = reader.GetPageSizeWithRotation(1);
-
-            // step 1: creation of a document-object
-            Document document = new Document(reader.GetPageSizeWithRotation(1));
-
-            //if (orientacionVertical)
-            //{
-            //    document = new Document(psize, 30, 30, 20, 20);
-            //}
-            //else
-            //{
-            //    document = new Document(psize, 20, 20, 30, 30);
-            //    //document.SetPageSize(PageSize.A4.Rotate());
-            //}
-
-            // step 2: we create a writer that listens to the document
-            PdfWriter writer = PdfWriter.GetInstance(document, ms);
-            // step 3: we open the document
-
-            document.Open();
-            // step 4: we add content
-            PdfContentByte cb = writer.DirectContent;
-
-            int p = 0;
-            for (int page = 1; page <= reader.NumberOfPages; page++)
-            {
-                document.NewPage();
-                p++;
-
-                PdfImportedPage importedPage = writer.GetImportedPage(reader, page);
-                //cb.AddTemplate(importedPage, 0, 0);
-
-                int rotation = reader.GetPageRotation(page);
-
-                if (rotation == 90 || rotation == 270)
-                {
-                    cb.AddTemplate(importedPage, 0, -1f, 1f, 0, 0, reader.GetPageSizeWithRotation(page).Height);
-                }
-                else
-                {
-                    cb.AddTemplate(importedPage, 1f, 0, 0, 1f, 0, 0);
-                }
-
-                BaseFont bf = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.CP1252, BaseFont.NOT_EMBEDDED);
-                cb.BeginText();
-                cb.SetFontAndSize(bf, 6);
-                cb.ShowTextAligned(PdfContentByte.ALIGN_LEFT, $"PAG. {p}", psize.Width - (orientacionVertical ? 50 : 40), orientacionVertical ? 20 : 30, 0);
-                cb.EndText();
-            }
-            // step 5: we close the document
-            document.Close();
-            return ms.ToArray();
-        }
-
+        
         public void DetalladoVertical(ReporteCorte reporte, TipoDestino tipoDestino)
         {
             try
             {
-                DateTime fecha = DateTime.Now;
-
                 var rutaHtml = Path.Combine(PathEjecuccion, @".\plantillas\corte-detallado-vertical.html");
                 var rutaCss = Path.Combine(PathEjecuccion, @".\plantillas\estilos.css");
 
@@ -886,8 +730,8 @@ namespace mod_add.Utils
 
                 var HtmlTemplate = html;
                 var HtmlInstance = HtmlTemplate
-                    .Replace("[[FECHA]]", fecha.ToShortDateString()) //HEADER PAGINA
-                    .Replace("[[HORA]]", fecha.ToString("hh:mm:ss tt").ToUpper())
+                    .Replace("[[FECHA]]", reporte.SoloFecha) //HEADER PAGINA
+                    .Replace("[[HORA]]", reporte.SoloHora)
                     .Replace("[[NOMBRE-COMERCIAL]]", NombreComercial)
                     .Replace("[[RAZON-SOCIAL]]", RazonSocial)
                     .Replace("[[RFC]]", RFC)
@@ -901,36 +745,28 @@ namespace mod_add.Utils
                     .Replace("[[CIUDAD-SUCURSAL]]", CiudadSucursal)
                     .Replace("[[ESTADO-SUCURSAL]]", EstadoSucursal)
                     .Replace("[[TITULO-CORTE-Z]]", reporte.TituloCorte)
-                    .Replace("[[FECHA-CORTE-INICIO]]", reporte.FechaCorteInicio.ToString("dd/MM/yyyy hh:mm:ss tt"))
-                    .Replace("[[FECHA-CORTE-CIERRE]]", reporte.FechaCorteCierre.ToString("dd/MM/yyyy hh:mm:ss tt"))
-                    .Replace("[[FOLIO-CORTE]]", reporte.FolioCorte.ToString())
+                    .Replace("[[FECHA-CORTE-INICIO]]", reporte.SFechaCorteInicio)
+                    .Replace("[[FECHA-CORTE-CIERRE]]", reporte.SFechaCorteCierre)
+                    .Replace("[[FOLIO-CORTE]]", reporte.SFolioCorte)
 
-                    .Replace("[[CHEQUESREPORTE]]", chequesReporteTemplate) // CUENTAS
+                    .Replace("[[CHEQUESREPORTE]]", chequesReporteTemplate) // DETALLES
 
                     .Replace("[[TOTALESCHEQUESREPORTE]]", totaleschequesreporteTemplate) // TOTALES CUENTAS
 
-                    .Replace($"[[{nameof(reporte.CuentasNormales).ToUpper()}]]", $"{reporte.CuentasNormales}") //CUENTAS
-                    .Replace($"[[{nameof(reporte.CuentasCanceladas).ToUpper()}]]", $"{reporte.CuentasCanceladas}")
-                    .Replace($"[[{nameof(reporte.CuentasConDescuento).ToUpper()}]]", $"{reporte.CuentasConDescuento}")
-                    .Replace($"[[{nameof(reporte.CuentasConDescuentoImporte).ToUpper()}]]", string.Format("{0:C}", reporte.CuentasConDescuentoImporte))
-                    .Replace($"[[{nameof(reporte.CuentasConCortesia).ToUpper()}]]", $"{reporte.CuentasConCortesia}")
-                    .Replace($"[[{nameof(reporte.CuentasConCortesiaImporte).ToUpper()}]]", string.Format("{0:C}", reporte.CuentasConCortesiaImporte))
-                    .Replace($"[[{nameof(reporte.CuentaPromedio).ToUpper()}]]", string.Format("{0:C}", reporte.CuentaPromedio))
-                    .Replace($"[[{nameof(reporte.Comensales).ToUpper()}]]", $"{reporte.Comensales}")
-                    .Replace($"[[{nameof(reporte.ConsumoPromedio).ToUpper()}]]", string.Format("{0:C}", reporte.ConsumoPromedio))
-                    .Replace($"[[{nameof(reporte.Propinas).ToUpper()}]]", string.Format("{0:C}", reporte.Propinas))
-                    .Replace($"[[{nameof(reporte.Cargos).ToUpper()}]]", string.Format("{0:C}", reporte.Cargos))
-                    .Replace($"[[{nameof(reporte.DescuentoMonedero).ToUpper()}]]", string.Format("{0:C}", reporte.DescuentoMonedero))
-                    .Replace($"[[{nameof(reporte.FolioInicial).ToUpper()}]]", $"{reporte.FolioInicial}")
-                    .Replace($"[[{nameof(reporte.FolioFinal).ToUpper()}]]", $"{reporte.FolioFinal}")
-
-                    .Replace("[[TOTALPROPINA]]", string.Format("{0:C}", reporte.ChequesReporte.Sum(x => x.propina))) //TOTALES EN CUENTAS
-                    .Replace("[[TOTALIMPORTE]]", string.Format("{0:C}", reporte.ChequesReporte.Sum(x => x.total)))
-                    .Replace("[[TOTALCARGO]]", string.Format("{0:C}", reporte.ChequesReporte.Sum(x => x.cargo)))
-                    .Replace("[[TOTALEFECTIVO]]", string.Format("{0:C}", reporte.ChequesReporte.Sum(x => x.efectivo)))
-                    .Replace("[[TOTALTARJETA]]", string.Format("{0:C}", reporte.ChequesReporte.Sum(x => x.tarjeta)))
-                    .Replace("[[TOTALVALES]]", string.Format("{0:C}", reporte.ChequesReporte.Sum(x => x.vales)))
-                    .Replace("[[TOTALOTROS]]", string.Format("{0:C}", reporte.ChequesReporte.Sum(x => x.otros)))
+                    .Replace("[[CUENTASNORMALES]]", $"{reporte.CuentasNormales}") //CUENTAS
+                    .Replace("[[CUENTASCANCELADAS]]", $"{reporte.CuentasCanceladas}")
+                    .Replace("[[CUENTASCONDESCUENTO]]", $"{reporte.CuentasConDescuento}")
+                    .Replace("[[CUENTASCONDESCUENTOIMPORTE]]", string.Format("{0:C}", reporte.CuentasConDescuentoImporte))
+                    .Replace("[[CUENTASCONCORTESIA]]", $"{reporte.CuentasConCortesia}")
+                    .Replace("[[CUENTASCONCORTESIAIMPORTE]]", string.Format("{0:C}", reporte.CuentasConCortesiaImporte))
+                    .Replace("[[CUENTAPROMEDIO]]", string.Format("{0:C}", reporte.CuentaPromedio))
+                    .Replace("[[COMENSALES]]", $"{reporte.Comensales}")
+                    .Replace("[[CONSUMOPROMEDIO]]", string.Format("{0:C}", reporte.ConsumoPromedio))
+                    .Replace("[[PROPINAS]]", string.Format("{0:C}", reporte.Propinas))
+                    .Replace("[[CARGOS]]", string.Format("{0:C}", reporte.Cargos))
+                    .Replace("[[DESCUENTOMONEDERO]]", string.Format("{0:C}", reporte.DescuentoMonedero))
+                    .Replace("[[FOLIOINICIAL]]", $"{reporte.FolioInicial}")
+                    .Replace("[[FOLIOFINAL]]", $"{reporte.FolioFinal}")
 
                     .Replace($"[[{nameof(reporte.VentaFacturada).ToUpper()}]]", string.Format("{0:C}", reporte.VentaFacturada)) // FACTURAS
                     .Replace($"[[{nameof(reporte.PropinaFacturada).ToUpper()}]]", string.Format("{0:C}", reporte.PropinaFacturada))
@@ -946,6 +782,7 @@ namespace mod_add.Utils
                     .Replace($"[[{nameof(reporte.RetirosEfectivo).ToUpper()}]]", string.Format("{0:C}", reporte.RetirosEfectivo))
                     .Replace($"[[{nameof(reporte.PropinasPagadas).ToUpper()}]]", string.Format("{0:C}", reporte.PropinasPagadas))
                     .Replace($"[[{nameof(reporte.SaldoFinal).ToUpper()}]]", string.Format("{0:C}", reporte.SaldoFinal))
+                    .Replace($"[[{nameof(reporte.EfectivoFinal).ToUpper()}]]", string.Format("{0:C}", reporte.EfectivoFinal))
                     .Replace($"[[{nameof(reporte.Dolares).ToUpper()}]]", string.Format("{0:C}", reporte.Dolares))
                     .Replace($"[[{nameof(reporte.TotalDeclarado).ToUpper()}]]", string.Format("{0:C}", reporte.TotalDeclarado))
                     .Replace("[[SOBRANTE]]", reporte.SobranteOFaltante > 0 ? string.Format("{0:C}", reporte.SobranteOFaltante) : "")
@@ -1363,6 +1200,68 @@ namespace mod_add.Utils
             if (texto.Length > columnas) return texto;
 
             return texto;
+        }
+
+        public static byte[] AddPageNumbers(byte[] pdf, bool orientacionVertical = true)
+        {
+            MemoryStream ms = new MemoryStream();
+            // we create a reader for a certain document
+            PdfReader reader = new PdfReader(pdf);
+            // we retrieve the total number of pages
+            int n = reader.NumberOfPages;
+            // we retrieve the size of the first page
+            Rectangle psize = reader.GetPageSizeWithRotation(1);
+
+            // step 1: creation of a document-object
+            Document document = new Document(reader.GetPageSizeWithRotation(1));
+
+            //if (orientacionVertical)
+            //{
+            //    document = new Document(psize, 30, 30, 20, 20);
+            //}
+            //else
+            //{
+            //    document = new Document(psize, 20, 20, 30, 30);
+            //    //document.SetPageSize(PageSize.A4.Rotate());
+            //}
+
+            // step 2: we create a writer that listens to the document
+            PdfWriter writer = PdfWriter.GetInstance(document, ms);
+            // step 3: we open the document
+
+            document.Open();
+            // step 4: we add content
+            PdfContentByte cb = writer.DirectContent;
+
+            int p = 0;
+            for (int page = 1; page <= reader.NumberOfPages; page++)
+            {
+                document.NewPage();
+                p++;
+
+                PdfImportedPage importedPage = writer.GetImportedPage(reader, page);
+                //cb.AddTemplate(importedPage, 0, 0);
+
+                int rotation = reader.GetPageRotation(page);
+
+                if (rotation == 90 || rotation == 270)
+                {
+                    cb.AddTemplate(importedPage, 0, -1f, 1f, 0, 0, reader.GetPageSizeWithRotation(page).Height);
+                }
+                else
+                {
+                    cb.AddTemplate(importedPage, 1f, 0, 0, 1f, 0, 0);
+                }
+
+                BaseFont bf = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.CP1252, BaseFont.NOT_EMBEDDED);
+                cb.BeginText();
+                cb.SetFontAndSize(bf, 6);
+                cb.ShowTextAligned(PdfContentByte.ALIGN_LEFT, $"PAG. {p}", psize.Width - (orientacionVertical ? 50 : 40), orientacionVertical ? 20 : 30, 0);
+                cb.EndText();
+            }
+            // step 5: we close the document
+            document.Close();
+            return ms.ToArray();
         }
     }
 

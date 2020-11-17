@@ -149,7 +149,7 @@ namespace mod_add.Componentes
         private void Cancelar_Click(object sender, RoutedEventArgs e)
         {
             ViewModel.InicializarControles();
-            GenerarVistaPrevia.IsEnabled = false;
+            GenerarVistaPrevia.IsEnabled = true;
             Aplicar.IsEnabled = false;
             Cancelar.IsEnabled = false;
         }

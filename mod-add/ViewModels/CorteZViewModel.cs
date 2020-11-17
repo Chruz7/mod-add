@@ -567,6 +567,7 @@ namespace mod_add.ViewModels
 
                     ReporteCorte reporte = new ReporteCorte
                     {
+                        Fecha = DateTime.Now,
                         TituloCorte = parametros.titulocortez,
                         FolioCorte = turno.idturno.Value,
                         FechaCorteInicio = FechaCorteInicio,
@@ -582,11 +583,11 @@ namespace mod_add.ViewModels
                         PropinasPagadas = propinasPagadas,
 
                         PAlimentos = cheques.Sum(x => x.totalalimentossindescuentos ?? 0),
-                        PCantidadAlimentos = (decimal)cantidadAlimentos,
+                        PCantidadAlimentos = cantidadAlimentos,
                         PBebidas = cheques.Sum(x => x.totalbebidassindescuentos ?? 0),
-                        PCantidadBebidas = (decimal)cantidadBebidas,
+                        PCantidadBebidas = cantidadBebidas,
                         POtros = cheques.Sum(x => x.totalotrossindescuentos ?? 0),
-                        PCantidadOtros = (decimal)cantidadOtros,
+                        PCantidadOtros = cantidadOtros,
 
                         Comedor = cheques.Where(x => (x.tipodeservicio ?? 0) == 1).Sum(x => x.totalsindescuento ?? 0),
                         Domicilio = cheques.Where(x => (x.tipodeservicio ?? 0) == 2).Sum(x => x.totalsindescuento ?? 0),
@@ -606,7 +607,7 @@ namespace mod_add.ViewModels
                         CuentasConDescuento = cheques.Count(x => (x.descuento ?? 0) > 0 && (x.descuento ?? 0) < 100),
                         CuentasConDescuentoImporte = cheques.Where(x => (x.descuento ?? 0) > 0 && (x.descuento ?? 0) < 100).Sum(x => x.descuentoimporte ?? 0),
                         CuentasConCortesia = cheques.Count(x => (x.descuento ?? 0) == 100),
-                        //CuentasConCortesiaImporte = cheques.Where(x => (x.descuento ?? 0) == 100).Sum(x => x.descuentoimporte ?? 0),
+                        CuentasConCortesiaImporte = cheques.Sum(x => x.totalcortesias ?? 0),
 
                         CuentaPromedio = cheques.Sum(x => (x.subtotalcondescuento ?? 0)) / cheques.Count(),
                         ConsumoPromedio = cheques.Sum(x => (x.subtotalcondescuento ?? 0)) / cheques.Sum(x => (x.nopersonas ?? 0)),
@@ -647,7 +648,6 @@ namespace mod_add.ViewModels
                     turno.Cargo = reporte.Cargos;
                     turno.Total = (turno.efectivo ?? 0) + (turno.tarjeta ?? 0) + (turno.vales ?? 0) + (turno.credito ?? 0) - turno.Propina;
 
-                    reporte.CuentasConCortesiaImporte = reporte.Descuentos;
                     reporte.PPorcentajeAlimentos = Math.Round(reporte.PAlimentos / reporte.Subtotal * 100m, 0, MidpointRounding.AwayFromZero);
                     reporte.PPorcentajeBebidas = Math.Round(reporte.PBebidas / reporte.Subtotal * 100m, 0, MidpointRounding.AwayFromZero);
                     reporte.PPorcentajeOtros = Math.Round(reporte.POtros / reporte.Subtotal * 100m, 0, MidpointRounding.AwayFromZero);
