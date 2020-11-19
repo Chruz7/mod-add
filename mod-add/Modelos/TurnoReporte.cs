@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 
 namespace mod_add.Modelos
 {
@@ -29,8 +30,17 @@ namespace mod_add.Modelos
         //public bool? eliminartemporalesencierre { get; set; }
         //public string idmesero { get; set; }
 
-        public string Sapertura { get { return apertura.HasValue ? apertura.Value.ToString("dd/MM/yyyy hh:mm:ss tt") : ""; } }
-        public string Scierre { get { return cierre.HasValue ? cierre.Value.ToString("dd/MM/yyyy hh:mm:ss tt") : ""; } }
+        public string Sapertura { get { return apertura.HasValue ? apertura.Value.ToString("dd/MM/yyyy hh:mm:ss tt", CultureInfo.CreateSpecificCulture("US")) : ""; } }
+        public string Scierre 
+        { 
+            get 
+            { 
+                if (apertura.HasValue && cierre.HasValue && apertura.Value.Day == cierre.Value.Day)
+                    return cierre.HasValue ? cierre.Value.ToString("hh:mm:ss tt", CultureInfo.CreateSpecificCulture("US")) : "";
+
+                return cierre.HasValue ? cierre.Value.ToString("dd/MM/yyyy hh:mm:ss tt", CultureInfo.CreateSpecificCulture("US")) : ""; 
+            } 
+        }
         public string Sidturno { get { return $"{idturno}"; } }
         public string Sfondo { get { return string.Format("{0:C}", fondo ?? 0); } }
         public string Sefectivo { get { return string.Format("{0:C}", efectivo ?? 0); } }

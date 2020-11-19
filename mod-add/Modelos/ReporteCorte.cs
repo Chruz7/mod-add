@@ -16,10 +16,11 @@ namespace mod_add.Modelos
             TotalesChequesReporte = new List<ChequeReporte>();
             Turnos = new List<TurnoReporte>();
             VentasRapidas = new List<VentaRapida>();
+            CuentasPorCobrar = new List<CuentaPorCobrar>();
         }
         public DateTime Fecha { get; set; }
         public string SoloFecha { get { return Fecha.ToString("dd/MM/yyyy"); } }
-        public string SoloHora { get { return FechaCorteInicio.ToString("hh:mm:ss tt", CultureInfo.CreateSpecificCulture("US")); } }
+        public string SoloHora { get { return Fecha.ToString("hh:mm:ss tt", CultureInfo.CreateSpecificCulture("US")); } }
         public string TituloCorte { get; set; }
         public long FolioCorte { get; set; }
         public string SFolioCorte { get { return $"{FolioCorte}"; } }
@@ -28,7 +29,7 @@ namespace mod_add.Modelos
         public DateTime FechaCorteCierre { get; set; }
         public string SFechaCorteCierre { get { return FechaCorteCierre.ToString("dd/MM/yyyy hh:mm:ss tt", CultureInfo.CreateSpecificCulture("US")); } }
         public decimal EfectivoInicial { get; set; }
-        public string SEfectivoInicial { get { return string.Format("{0:C}", EfectivoInicial); } }
+        public string SEfectivoInicial { get { return ConsiderarFondoInicial ? string.Format("{0:C}", EfectivoInicial) : ""; } }
         public decimal Efectivo { get; set; }
         public string SEfectivo { get { return string.Format("{0:C}", Efectivo); } }
         public decimal Tarjeta { get; set; }
@@ -78,24 +79,33 @@ namespace mod_add.Modelos
         public decimal PAlimentos { get; set; }
         public string SPAlimentos { get { return string.Format("{0:C}", PAlimentos); } }
         public double PCantidadAlimentos { get; set; }
+        public string SPCantidadAlimentos { get { return $"{PCantidadAlimentos}"; } }
         public decimal PPorcentajeAlimentos { get; set; }
+        public string SPPorcentajeAlimentos { get { return $"{PPorcentajeAlimentos}%"; } }
         public decimal PBebidas { get; set; }
         public string SPBebidas { get { return string.Format("{0:C}", PBebidas); } }
         public double PCantidadBebidas { get; set; }
+        public string SPCantidadBebidas { get { return $"{PCantidadBebidas}"; } }
         public decimal PPorcentajeBebidas { get; set; }
+        public string SPPorcentajeBebidas { get { return $"{PPorcentajeBebidas}%"; } }
         public decimal POtros { get; set; }
         public string SPOtros { get { return string.Format("{0:C}", POtros); } }
         public double PCantidadOtros { get; set; }
+        public string SPCantidadOtros { get { return $"{PCantidadOtros}"; } }
         public decimal PPorcentajeOtros { get; set; }
+        public string SPPorcentajeOtros { get { return $"{PPorcentajeOtros}%"; } }
         public decimal Comedor { get; set; }
         public string SComedor { get { return string.Format("{0:C}", Comedor); } }
         public decimal ComedorPorcentaje { get; set; }
+        public string SComedorPorcentaje { get { return $"{ComedorPorcentaje} %"; } }
         public decimal Domicilio { get; set; }
         public string SDomicilio { get { return string.Format("{0:C}", Domicilio); } }
         public decimal DomicilioPorcentaje { get; set; }
+        public string SDomicilioPorcentaje { get { return $"{DomicilioPorcentaje} %"; } }
         public decimal Rapido { get; set; }
         public string SRapido { get { return string.Format("{0:C}", Rapido); } }
         public decimal RapidoPorcentaje { get; set; }
+        public string SRapidoPorcentaje { get { return $"{RapidoPorcentaje} %"; } }
         public decimal Subtotal { get; set; }
         public string SSubtotal { get { return string.Format("{0:C}", Subtotal); } }
         public decimal Descuentos { get; set; }
@@ -113,9 +123,9 @@ namespace mod_add.Modelos
         public decimal VentasConImpuesto { get; set; }
         public string SVentasConImpuesto { get { return string.Format("{0:C}", VentasConImpuesto); } }
         public decimal VentaFacturada { get; set; }
-        public string SVentaFacturada { get { return string.Format("{0:C}", VentaFacturada); } }
+        public string SVentaFacturada { get { return ReporteFiscal ? "" : string.Format("{0:C}", VentaFacturada); } }
         public decimal PropinaFacturada { get; set; }
-        public string SPropinaFacturada { get { return string.Format("{0:C}", PropinaFacturada); } }
+        public string SPropinaFacturada { get { return ReporteFiscal ? "" : string.Format("{0:C}", PropinaFacturada); } }
         public decimal Facturado
         {
             get
@@ -123,7 +133,7 @@ namespace mod_add.Modelos
                 return VentaFacturada + PropinaFacturada;
             }
         }
-        public string SFacturado { get { return string.Format("{0:C}", Facturado); } }
+        public string SFacturado { get { return ReporteFiscal ? "" : string.Format("{0:C}", Facturado); } }
         public decimal VentaNoFacturada
         {
             get
@@ -131,13 +141,17 @@ namespace mod_add.Modelos
                 return VentasConImpuesto - Facturado;
             }
         }
-        public string SVentaNoFacturada { get { return string.Format("{0:C}", VentaNoFacturada); } }
+        public string SVentaNoFacturada { get { return ReporteFiscal ? "" : string.Format("{0:C}", VentaNoFacturada); } }
         public int CuentasNormales { get; set; }
+        public string SCuentasNormales { get { return $"{CuentasNormales}"; } }
         public int CuentasCanceladas { get; set; }
+        public string SCuentasCanceladas { get { return $"{CuentasCanceladas}"; } }
         public int CuentasConDescuento { get; set; }
+        public string SCuentasConDescuento { get { return $"{CuentasConDescuento}"; } }
         public decimal CuentasConDescuentoImporte { get; set; }
         public string SCuentasConDescuentoImporte { get { return string.Format("{0:C}", CuentasConDescuentoImporte); } }
         public int CuentasConCortesia { get; set; }
+        public string SCuentasConCortesia { get { return $"{CuentasConCortesia}"; } }
         public decimal CuentasConCortesiaImporte { get; set; }
         public string SCuentasConCortesiaImporte { get { return string.Format("{0:C}", CuentasConCortesiaImporte); } }
         public decimal CuentaPromedio { get; set; }
@@ -145,6 +159,7 @@ namespace mod_add.Modelos
         public decimal ConsumoPromedio { get; set; }
         public string SConsumoPromedio { get { return string.Format("{0:C}", ConsumoPromedio); } }
         public int Comensales { get; set; }
+        public string SComensales { get { return $"{Comensales}"; } }
         public decimal Propinas { get; set; }
         public string SPropinas { get { return string.Format("{0:C}", Propinas); } }
         public decimal Cargos { get; set; }
@@ -152,7 +167,9 @@ namespace mod_add.Modelos
         public decimal DescuentoMonedero { get; set; }
         public string SDescuentoMonedero { get { return string.Format("{0:C}", DescuentoMonedero); } }
         public int FolioInicial { get; set; }
+        public string SFolioInicial { get { return $"{FolioInicial}"; } }
         public int FolioFinal { get; set; }
+        public string SFolioFinal { get { return $"{FolioFinal}"; } }
         public decimal CortesiaAlimentos { get; set; }
         public string SCortesiaAlimentos { get { return string.Format("{0:C}", CortesiaAlimentos); } }
         public decimal CortesiaBebidas { get; set; }
@@ -170,7 +187,7 @@ namespace mod_add.Modelos
         public decimal TotalDescuentos { get; set; }
         public string STotalDescuentos { get { return string.Format("{0:C}", TotalDescuentos); } }
         public decimal TotalDeclarado { get; set; }
-        public string STotalDeslarado { get { return string.Format("{0:C}", TotalDeclarado); } }
+        public string STotalDeclarado { get { return string.Format("{0:C}", TotalDeclarado); } }
         public decimal SobranteOFaltante
         {
             get
@@ -178,7 +195,7 @@ namespace mod_add.Modelos
                 return TotalDeclarado - SaldoFinal;
             }
         }
-        public string SSobrate { get { return SobranteOFaltante > 0 ? string.Format("{0:C}", SobranteOFaltante) : ""; } }
+        public string SSobrante { get { return SobranteOFaltante > 0 ? string.Format("{0:C}", SobranteOFaltante) : ""; } }
         public string SFaltante { get { return SobranteOFaltante < 0 ? string.Format("{0:C}", SobranteOFaltante * -1) : ""; } }
         public decimal Dolares { get; set; }
         public string SDolares { get { return string.Format("{0:C}", Dolares); } }
@@ -194,9 +211,11 @@ namespace mod_add.Modelos
         public List<ChequeReporte> TotalesChequesReporte { get; set; }
         public List<TurnoReporte> Turnos { get; set; }
         public List<VentaRapida> VentasRapidas { get; set; }
+        public List<CuentaPorCobrar> CuentasPorCobrar { get; set; }
 
         public bool ConsiderarFondoInicial { get; set; }
         public bool NoConsiderarPropinas { get; set; }
         public bool NoConsiderarDepositosRetiros { get; set; }
+        public bool ReporteFiscal { get; set; }
     }
 }

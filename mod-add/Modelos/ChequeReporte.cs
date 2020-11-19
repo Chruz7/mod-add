@@ -1,4 +1,5 @@
-﻿using System;
+﻿using mod_add.Utils;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 
@@ -15,10 +16,10 @@ namespace mod_add.Modelos
         public long folio { get; set; }
         //public string seriefolio { get; set; }
         public decimal? numcheque { get; set; }
-        public DateTime? fecha { get; set; }
+        //public DateTime? fecha { get; set; }
         //public DateTime? salidarepartidor { get; set; }
         //public DateTime? arriborepartidor { get; set; }
-        //public DateTime? cierre { get; set; }
+        public DateTime? cierre { get; set; }
         public string mesa { get; set; }
         public decimal? nopersonas { get; set; }
         //public string idmesero { get; set; }
@@ -213,10 +214,10 @@ namespace mod_add.Modelos
         public string Snumcheque { get { return $"{numcheque}"; } }
         public string Snumcheque2 { get { return $"{numcheque}".PadLeft(8, '0'); } }
         public string Sfolionotadeconsumo { get { return (folionotadeconsumo ?? 0) > 0 ? $"{folionotadeconsumo}" : ""; } }
-        public string Sfecha { get { return fecha.HasValue ? fecha.Value.ToString("dd/MM/yyyy hh:mm:ss tt", CultureInfo.CreateSpecificCulture("US")) : ""; } }
+        public string Scierre { get { return cierre.HasValue ? cierre.Value.ToString("dd/MM/yyyy hh:mm:ss tt", CultureInfo.CreateSpecificCulture("US")) : ""; } }
         public string Simpresiones { get { return (impresiones ?? 0) > 1 ? $"{(int)impresiones}" : ""; } }
         public string Sreabiertas { get { return (reabiertas ?? 0) > 0 ? $"{(int)reabiertas}" : ""; } }
-        public string Sdescuento { get { return  (descuento ?? 0) > 0 ? string.Format("{0:C}", descuento) : ""; } }
+        public string Sdescuento { get { return  (descuento ?? 0) > 0 ? $"{(double)Mat.Redondear(descuento.Value, 2)} %" : ""; } }
         public string Stotaldescuentoycortesia { get { return (totaldescuentoycortesia ?? 0) > 0 || Totales ? string.Format("{0:C}", totaldescuentoycortesia ?? 0) : ""; } }
         public string Spropina { get { return (propina ?? 0) > 0 || Totales ? string.Format("{0:C}", propina ?? 0) : ""; } }
         public string Simporte { get { return (descuento ?? 0) < 100 || Totales ? string.Format("{0:C}", total ?? 0) : "CORTESIA"; } }

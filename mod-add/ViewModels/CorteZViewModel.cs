@@ -53,6 +53,9 @@ namespace mod_add.ViewModels
             NoConsiderarDepositosRetiros = false;
             ConsiderarFondoinicial = false;
             NoConsiderarPropinas = false;
+
+            Fecha = new DateTime(2020, 10, 31);
+            Reporte = Reportes.Find(x => x.TipoReporte == TipoReporte.DETALLADO_HORIZONTAL);
         }
 
         private string CamposCheques()
@@ -61,7 +64,7 @@ namespace mod_add.ViewModels
             {
                 "c.folio",
                 "CAST(c.numcheque AS Decimal) as numcheque",
-                "c.fecha",
+                "c.cierre",
                 "c.mesa",
                 "CAST(c.nopersonas AS Decimal) as nopersonas",
                 "c.cancelado",
@@ -638,9 +641,11 @@ namespace mod_add.ViewModels
                         Pagos = pagos,
                         ImpuestosVentas = impuestosVentas,
                         PagosTarjeta = pagosTarjeta,
+
                         NoConsiderarDepositosRetiros = NoConsiderarDepositosRetiros,
                         NoConsiderarPropinas = NoConsiderarPropinas,
-                        ConsiderarFondoInicial = considerarFondoinicial,
+                        ConsiderarFondoInicial = ConsiderarFondoinicial,
+                        ReporteFiscal = !App.ConfiguracionSistema.ModificarVentasReales,
                     };
 
                     turno.efectivo = reporte.Efectivo;
@@ -719,13 +724,13 @@ namespace mod_add.ViewModels
 
                             reporte.VentasRapidas = ventasRapidas;
 
-                            generarReporte.DetalladoVertical(reporte, tipoDestino);
+                            generarReporte.DetalladoVerticalPDF(reporte, tipoDestino);
                         }
                         else
                         {
                             if (Reporte.TipoReporte == TipoReporte.DETALLADO_HORIZONTAL)
                             {
-                                generarReporte.DetalladoHorizontal(reporte, tipoDestino);
+                                generarReporte.DetalladoHorizontalPDF(reporte, tipoDestino);
                             }
                             else if (Reporte.TipoReporte == TipoReporte.DETALLADO_FORMAS_PAGO)
                             {
@@ -734,7 +739,7 @@ namespace mod_add.ViewModels
                                     cheque.ChequesPagos = chequesPagos.Where(x => x.folio == cheque.folio).ToList();
                                 }
 
-                                generarReporte.DetalladoFormasPago(reporte, tipoDestino);
+                                generarReporte.DetalladoFormasPagoPDF(reporte, tipoDestino);
                             }
                         }
 
