@@ -61,8 +61,6 @@ namespace mod_add.Utils
         {
             try
             {
-                DateTime fecha = DateTime.Now;
-
                 var rutaHtml = Path.Combine(PathEjecuccion, @".\plantillas\corte-detallado-formas-de-pago.html");
                 var rutaCss = Path.Combine(PathEjecuccion, @".\plantillas\estilos.css");
 
@@ -73,11 +71,15 @@ namespace mod_add.Utils
                 string source = "{{#CHEQUESREPORTE}}<tr class=\"fila\">{{>CHEQUEREPORTE}}</tr>{{/CHEQUESREPORTE}}";
 
                 string partialSource =
-                    "<td class=\"info text-center\">{{Snumcheque}}</td> " +
-                    "<td class=\"info text-center\">{{Sfecha}}</td>" +
+                    "<td class=\"info text-center\">{{Snumcheque2}}</td>" +
+                    "<td class=\"info text-center\">{{Sfolionotadeconsumo}}</td>" +
+                    "<td class=\"info text-center\">{{Scierre}}</td>" +
                     "<td class=\"info text-center\">{{Simpresiones}}</td>" +
                     "<td class=\"info text-center\">{{Sreabiertas}}</td>" +
+                    "<td class=\"info\">{{mesa}}</td>" +
+                    "<td class=\"info text-center\">{{idtipodescuento}}</td>" +
                     "<td class=\"info text-center\">{{Sdescuento}}</td>" +
+                    "<td class=\"info text-center\">{{Stotaldescuentoycortesia}}</td>" +
                     "<td class=\"info text-right\">{{Spropina}}</td>" +
                     "<td class=\"info text-right\">{{Simporte}}</td>" +
                     "<td class=\"info text-right\">{{Scargo}}</td>" +
@@ -99,9 +101,24 @@ namespace mod_add.Utils
                 #endregion
 
                 #region Pago ventas
+                var pagos = reporte.Pagos;
+
+                if (pagos.Count < 10)
+                {
+                    int items = pagos.Count;
+
+                    for (int i = 0; i < 10 - items; i++)
+                    {
+                        pagos.Add(new Pago
+                        {
+                            Relleno = true
+                        });
+                    }
+                }
+
                 source = "{{#PAGOS}}<tr class=\"fila\">{{>PAGO}}</tr>{{/PAGOS}}";
                 partialSource =
-                    "<td>{{descripcion}}</td>" +
+                    "<td>{{Descripcion}}</td>" +
                     "<td>{{SImporte}}</td>";
 
                 Handlebars.RegisterTemplate("PAGO", partialSource);
@@ -110,7 +127,7 @@ namespace mod_add.Utils
 
                 var data2 = new
                 {
-                    reporte.Pagos
+                    pagos
                 };
 
                 var pagoVentasTemplate = template2(data2);
@@ -119,9 +136,22 @@ namespace mod_add.Utils
                 #region Pago propinas
                 var pagoPropinas = reporte.Pagos.Where(x => x.propina > 0).ToList();
 
+                if (pagoPropinas.Count < 5)
+                {
+                    int items = pagoPropinas.Count;
+
+                    for (int i = 0; i < 5 - items; i++)
+                    {
+                        pagoPropinas.Add(new Pago
+                        {
+                            Relleno = true
+                        });
+                    }
+                }
+
                 source = "{{#PAGOPROPINAS}}<tr class=\"fila\">{{> PAGOPROPINA}}</tr>{{/PAGOPROPINAS}}";
                 partialSource =
-                    "<td>{{descripcion}}</td>" +
+                    "<td>{{Descripcion}}</td>" +
                     "<td>{{SPropina}}</td>";
 
                 Handlebars.RegisterTemplate("PAGOPROPINA", partialSource);
@@ -136,11 +166,43 @@ namespace mod_add.Utils
                 var pagoPropinasTemplate = template3(data3);
                 #endregion
 
+                #region Cuentas por cobrar
+                var cuentasPorCobrar = reporte.CuentasPorCobrar;
+
+                if (cuentasPorCobrar.Count < 3)
+                {
+                    int items = 3 - cuentasPorCobrar.Count;
+
+                    for (int i = 0; i < items; i++)
+                    {
+                        cuentasPorCobrar.Add(new CuentaPorCobrar
+                        {
+                            Relleno = true
+                        });
+                    }
+                }
+
+                source = "{{#CUENTASPORCOBRAR}}<tr class=\"fila\">{{>CUENTAPORCOBRAR}}</tr>{{/CUENTASPORCOBRAR}}";
+                partialSource =
+                    "<td>{{SDescripcion}}</td>" +
+                    "<td>{{SImporte}}</td>";
+
+                Handlebars.RegisterTemplate("CUENTAPORCOBRAR", partialSource);
+
+                var template7 = Handlebars.Compile(source);
+
+                var data7 = new
+                {
+                    cuentasPorCobrar
+                };
+
+                var cuentasPorCobrarTemplate = template7(data7);
+                #endregion
 
                 var HtmlTemplate = html;
                 var HtmlInstance = HtmlTemplate
-                    .Replace("[[FECHA]]", fecha.ToShortDateString()) //HEADER PAGINA
-                    .Replace("[[HORA]]", fecha.ToString("hh:mm:ss tt").ToUpper())
+                    .Replace("[[FECHA]]", reporte.SoloFecha) //HEADER PAGINA
+                    .Replace("[[HORA]]", reporte.SoloHora)
                     .Replace("[[NOMBRE-COMERCIAL]]", NombreComercial)
                     .Replace("[[RAZON-SOCIAL]]", RazonSocial)
                     .Replace("[[RFC]]", RFC)
@@ -154,11 +216,11 @@ namespace mod_add.Utils
                     .Replace("[[CIUDAD-SUCURSAL]]", CiudadSucursal)
                     .Replace("[[ESTADO-SUCURSAL]]", EstadoSucursal)
                     .Replace("[[TITULO-CORTE-Z]]", reporte.TituloCorte)
-                    .Replace("[[FECHA-CORTE-INICIO]]", reporte.FechaCorteInicio.ToString("dd/MM/yyyy hh:mm:ss tt"))
-                    .Replace("[[FECHA-CORTE-CIERRE]]", reporte.FechaCorteCierre.ToString("dd/MM/yyyy hh:mm:ss tt"))
-                    .Replace("[[FOLIO-CORTE]]", reporte.FolioCorte.ToString())
+                    .Replace("[[FECHA-CORTE-INICIO]]", reporte.SFechaCorteInicio)
+                    .Replace("[[FECHA-CORTE-CIERRE]]", reporte.SFechaCorteCierre)
+                    .Replace("[[FOLIO-CORTE]]", reporte.SFolioCorte)
 
-                    .Replace("[[CHEQUESREPORTE]]", chequesReporteTemplate) //DETALLES
+                    .Replace("[[CHEQUESREPORTE]]", chequesReporteTemplate) // DETALLES
 
                     .Replace("[[CUENTASNORMALES]]", $"{reporte.CuentasNormales}") //CUENTAS
                     .Replace("[[CUENTASCANCELADAS]]", $"{reporte.CuentasCanceladas}")
@@ -170,66 +232,60 @@ namespace mod_add.Utils
                     .Replace("[[COMENSALES]]", $"{reporte.Comensales}")
                     .Replace("[[CONSUMOPROMEDIO]]", string.Format("{0:C}", reporte.ConsumoPromedio))
                     .Replace("[[PROPINAS]]", string.Format("{0:C}", reporte.Propinas))
-                    .Replace("[[CARGOS]]", string.Format("{0:C}", reporte.Cargos))
-                    .Replace("[[DESCUENTOMONEDERO]]", string.Format("{0:C}", reporte.DescuentoMonedero))
                     .Replace("[[FOLIOINICIAL]]", $"{reporte.FolioInicial}")
                     .Replace("[[FOLIOFINAL]]", $"{reporte.FolioFinal}")
 
-                    .Replace($"[[{nameof(reporte.VentaFacturada).ToUpper()}]]", string.Format("{0:C}", reporte.VentaFacturada)) // FACTURAS
-                    .Replace($"[[{nameof(reporte.PropinaFacturada).ToUpper()}]]", string.Format("{0:C}", reporte.PropinaFacturada))
-                    .Replace($"[[{nameof(reporte.Facturado).ToUpper()}]]", string.Format("{0:C}", reporte.Facturado))
-                    .Replace($"[[{nameof(reporte.VentaNoFacturada).ToUpper()}]]", string.Format("{0:C}", reporte.VentaNoFacturada))
+                    .Replace("[[VENTAFACTURADA]]", reporte.SVentaFacturada) // FACTURAS
+                    .Replace("[[PROPINAFACTURADA]]", reporte.SPropinaFacturada)
+                    .Replace("[[FACTURADO]]", reporte.SFacturado)
+                    .Replace("[[VENTANOFACTURADA]]", reporte.SVentaNoFacturada)
 
-                    .Replace($"[[{nameof(reporte.EfectivoInicial).ToUpper()}]]", string.Format("{0:C}", reporte.EfectivoInicial)) // CAJA
-                    .Replace($"[[{nameof(reporte.Efectivo).ToUpper()}]]", string.Format("{0:C}", reporte.Efectivo))
-                    .Replace($"[[{nameof(reporte.Tarjeta).ToUpper()}]]", string.Format("{0:C}", reporte.Tarjeta))
-                    .Replace($"[[{nameof(reporte.Vales).ToUpper()}]]", string.Format("{0:C}", reporte.Vales))
-                    .Replace($"[[{nameof(reporte.Otros).ToUpper()}]]", string.Format("{0:C}", reporte.Otros))
-                    .Replace($"[[{nameof(reporte.DepositosEfectivo).ToUpper()}]]", string.Format("{0:C}", reporte.DepositosEfectivo))
-                    .Replace($"[[{nameof(reporte.RetirosEfectivo).ToUpper()}]]", string.Format("{0:C}", reporte.RetirosEfectivo))
-                    .Replace($"[[{nameof(reporte.PropinasPagadas).ToUpper()}]]", string.Format("{0:C}", reporte.PropinasPagadas))
-                    .Replace($"[[{nameof(reporte.SaldoFinal).ToUpper()}]]", string.Format("{0:C}", reporte.SaldoFinal))
-                    .Replace($"[[{nameof(reporte.EfectivoFinal).ToUpper()}]]", string.Format("{0:C}", reporte.EfectivoFinal))
-                    .Replace($"[[{nameof(reporte.Dolares).ToUpper()}]]", string.Format("{0:C}", reporte.Dolares))
-                    .Replace($"[[{nameof(reporte.TotalDeclarado).ToUpper()}]]", string.Format("{0:C}", reporte.TotalDeclarado))
-                    .Replace("[[SOBRANTE]]", reporte.SobranteOFaltante > 0 ? string.Format("{0:C}", reporte.SobranteOFaltante) : "")
-                    .Replace("[[FALTANTE]]", reporte.SobranteOFaltante < 0 ? string.Format("{0:C}", reporte.SobranteOFaltante * -1) : "")
+                    .Replace("[[EFECTIVOINICIAL]]", reporte.SEfectivoInicial) // CAJA
+                    .Replace("[[EFECTIVO]]", reporte.SEfectivo)
+                    .Replace("[[TARJETA]]", reporte.STarjeta)
+                    .Replace("[[VALES]]", reporte.SVales)
+                    .Replace("[[OTROS]]", reporte.SOtros)
+                    .Replace("[[DEPOSITOSEFECTIVO]]", reporte.SDepositosEfectivo)
+                    .Replace("[[RETIROSEFECTIVO]]", reporte.SRetirosEfectivo)
+                    .Replace("[[PROPINASPAGADAS]]", reporte.SPropinasPagadas)
+                    .Replace("[[SALDOFINAL]]", reporte.SSaldoFinal)
+                    .Replace("[[EFECTIVOFINAL]]", reporte.SEfectivoFinal)
+                    .Replace("[[DOLARES]]", reporte.SDolares)
 
                     .Replace("[[PAGOS]]", pagoVentasTemplate) // FORMA DE PAGO VENTAS
-
                     .Replace("[[PAGOPROPINAS]]", pagoPropinasTemplate) // FORMA DE PAGO PROPINAS
-                    .Replace($"[[{nameof(reporte.TotalFormasPagoPropinas).ToUpper()}]]", string.Format("{0:C}", reporte.TotalFormasPagoPropinas))
+                    .Replace("[[TOTALFORMASPAGOPROPINAS]]", reporte.STotalFormasPagoPropinas)
 
-                    .Replace($"[[{nameof(reporte.CortesiaAlimentos).ToUpper()}]]", string.Format("{0:C}", reporte.CortesiaAlimentos)) // CORTESIAS Y DESCUENTOS
-                    .Replace($"[[{nameof(reporte.CortesiaBebidas).ToUpper()}]]", string.Format("{0:C}", reporte.CortesiaBebidas))
-                    .Replace($"[[{nameof(reporte.CortesiaOtros).ToUpper()}]]", string.Format("{0:C}", reporte.CortesiaOtros))
-                    .Replace($"[[{nameof(reporte.TotalCortesias).ToUpper()}]]", string.Format("{0:C}", reporte.TotalCortesias))
-                    .Replace($"[[{nameof(reporte.DescuentoAlimentos).ToUpper()}]]", string.Format("{0:C}", reporte.DescuentoAlimentos))
-                    .Replace($"[[{nameof(reporte.DescuentoBebidas).ToUpper()}]]", string.Format("{0:C}", reporte.DescuentoBebidas))
-                    .Replace($"[[{nameof(reporte.DescuentoOtros).ToUpper()}]]", string.Format("{0:C}", reporte.DescuentoOtros))
-                    .Replace($"[[{nameof(reporte.TotalDescuentos).ToUpper()}]]", string.Format("{0:C}", reporte.TotalDescuentos))
-                    .Replace($"[[{nameof(reporte.Descuentos).ToUpper()}]]", string.Format("{0:C}", reporte.Descuentos))
+                    .Replace("[[CORTESIAALIMENTOS]]", reporte.SCortesiaAlimentos) // CORTESIAS Y DESCUENTOS
+                    .Replace("[[CORTESIABEBIDAS]]", reporte.SCortesiaBebidas)
+                    .Replace("[[CORTESIAOTROS]]", reporte.SCortesiaOtros)
+                    .Replace("[[TOTALCORTESIAS]]", reporte.STotalCortesias)
+                    .Replace("[[DESCUENTOALIMENTOS]]", reporte.SDescuentoAlimentos)
+                    .Replace("[[DESCUENTOBEBIDAS]]", reporte.SDescuentoBebidas)
+                    .Replace("[[DESCUENTOOTROS]]", reporte.SDescuentoOtros)
+                    .Replace("[[TOTALDESCUENTOS]]", reporte.STotalDescuentos)
+                    .Replace("[[DESCUENTOS]]", reporte.SDescuentos)
+                    .Replace("[[CUENTASPORCOBRAR]]", cuentasPorCobrarTemplate) //CUENTAS POR COBRAR
 
-                    .Replace($"[[{nameof(reporte.PAlimentos).ToUpper()}]]", string.Format("{0:C}", reporte.PAlimentos)) //VANTAS POR TIPO DE PRODUCTO
-                    .Replace($"[[{nameof(reporte.PPorcentajeAlimentos).ToUpper()}]]", $"{reporte.PPorcentajeAlimentos}")
-                    .Replace($"[[{nameof(reporte.PBebidas).ToUpper()}]]", string.Format("{0:C}", reporte.PBebidas))
-                    .Replace($"[[{nameof(reporte.PPorcentajeBebidas).ToUpper()}]]", $"{reporte.PPorcentajeBebidas}")
-                    .Replace($"[[{nameof(reporte.POtros).ToUpper()}]]", string.Format("{0:C}", reporte.POtros))
-                    .Replace($"[[{nameof(reporte.PPorcentajeOtros).ToUpper()}]]", $"{reporte.PPorcentajeOtros}")
+                    .Replace("[[PALIMENTOS]]", reporte.SPAlimentos) //VANTAS POR TIPO DE PRODUCTO
+                    .Replace("[[PPORCENTAJEALIMENTOS]]", reporte.SPPorcentajeAlimentos)
+                    .Replace("[[PBEBIDAS]]", reporte.SPBebidas)
+                    .Replace("[[PPORCENTAJEBEBIDAS]]", reporte.SPPorcentajeBebidas)
+                    .Replace("[[POTROS]]", reporte.SPOtros)
+                    .Replace("[[PPORCENTAJEOTROS]]", reporte.SPPorcentajeOtros)
 
-                    .Replace($"[[{nameof(reporte.Comedor).ToUpper()}]]", string.Format("{0:C}", reporte.Comedor)) //VENTAS POR TIPO DE SERVICIO
-                    .Replace($"[[{nameof(reporte.ComedorPorcentaje).ToUpper()}]]", $"{reporte.ComedorPorcentaje}")
-                    .Replace($"[[{nameof(reporte.Domicilio).ToUpper()}]]", string.Format("{0:C}", reporte.Domicilio))
-                    .Replace($"[[{nameof(reporte.DomicilioPorcentaje).ToUpper()}]]", $"{reporte.DomicilioPorcentaje}")
-                    .Replace($"[[{nameof(reporte.Rapido).ToUpper()}]]", string.Format("{0:C}", reporte.Rapido))
-                    .Replace($"[[{nameof(reporte.RapidoPorcentaje).ToUpper()}]]", $"{reporte.RapidoPorcentaje}")
+                    .Replace("[[COMEDOR]]", reporte.SComedor) //VENTAS POR TIPO DE SERVICIO
+                    .Replace("[[COMEDORPORCENTAJE]]", reporte.SComedorPorcentaje)
+                    .Replace("[[DOMICILIO]]", reporte.SDomicilio)
+                    .Replace("[[DOMICILIOPORCENTAJE]]", reporte.SDomicilioPorcentaje)
+                    .Replace("[[RAPIDO]]", reporte.SRapido)
+                    .Replace("[[RAPIDOPORCENTAJE]]", reporte.SRapidoPorcentaje)
 
-                    .Replace($"[[{nameof(reporte.Subtotal).ToUpper()}]]", string.Format("{0:C}", reporte.Subtotal))
-                    .Replace($"[[{nameof(reporte.Descuentos).ToUpper()}]]", string.Format("{0:C}", reporte.Descuentos))
-                    .Replace($"[[{nameof(reporte.VentaNeta).ToUpper()}]]", string.Format("{0:C}", reporte.VentaNeta))
-                    .Replace($"[[{nameof(reporte.ImpuestoTotal).ToUpper()}]]", string.Format("{0:C}", reporte.ImpuestoTotal))
-                    .Replace($"[[{nameof(reporte.VentasConImpuesto).ToUpper()}]]", string.Format("{0:C}", reporte.VentasConImpuesto))
-
+                    .Replace("[[SUBTOTAL]]", reporte.SSubtotal)
+                    .Replace("[[DESCUENTOS]]", reporte.SDescuentos)
+                    .Replace("[[VENTANETA]]", reporte.SVentaNeta)
+                    .Replace("[[IMPUESTOTOTAL]]", reporte.SImpuestoTotal)
+                    .Replace("[[VENTASCONIMPUESTO]]", reporte.SVentasConImpuesto)
                     ;
 
                 StringReader sr = new StringReader(HtmlInstance.ToString());
@@ -240,7 +296,6 @@ namespace mod_add.Utils
                 using (MemoryStream memoryStream = new MemoryStream())
                 {
                     PdfWriter writer = PdfWriter.GetInstance(pdfDoc, memoryStream);
-
                     pdfDoc.Open();
 
                     using (var cssMemoryStream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(css)))
@@ -252,7 +307,7 @@ namespace mod_add.Utils
                     }
 
                     pdfDoc.Close();
-                    var nombre_archivo = Path.Combine(PathDetalladoFormasPago, $"{reporte.FolioCorte}-detallado-formas-de-pago.pdf");
+                    var nombre_archivo = Path.Combine(PathDetalladoHorizontal, $"CorteDetForPag_{reporte.FolioCorte}.pdf");
                     byte[] bytes = AddPageNumbers(memoryStream.ToArray(), false);
                     memoryStream.Close();
                     var fs = new FileStream(nombre_archivo, FileMode.Create, FileAccess.Write);
@@ -267,7 +322,7 @@ namespace mod_add.Utils
                     {
                         Impresion.Print_File(nombre_archivo, "", 0, 8, 8);
 
-                        //File.Delete(nombre_archivo);
+                        File.Delete(nombre_archivo);
                     }
                 }
             }
@@ -412,39 +467,6 @@ namespace mod_add.Utils
                 };
 
                 var turnosTemplate = template4(data4);
-                #endregion
-
-                #region Ventas Rapidas
-                var ventasRapidas = reporte.VentasRapidas;
-
-                if (ventasRapidas.Count < 3)
-                {
-                    int items = ventasRapidas.Count;
-
-                    for (int i = 0; i < 3 - items; i++)
-                    {
-                        ventasRapidas.Add(new VentaRapida
-                        {
-                            Relleno = true
-                        });
-                    }
-                }
-
-                source = "{{#VENTASRAPIDAS}}<tr class=\"fila\">{{> VENTARAPIDA}}</tr>{{/VENTASRAPIDAS}}";
-                partialSource =
-                    "<td>{{SDescripcion}}</td>" +
-                    "<td class\"text-right\">{{STotal}}</td>";
-
-                Handlebars.RegisterTemplate("VENTARAPIDA", partialSource);
-
-                var template5 = Handlebars.Compile(source);
-
-                var data5 = new
-                {
-                    reporte.VentasRapidas
-                };
-
-                var ventasrapidasTemplate = template5(data5);
                 #endregion
 
                 #region Totales cheques
@@ -624,7 +646,7 @@ namespace mod_add.Utils
                     }
 
                     pdfDoc.Close();
-                    var nombre_archivo = Path.Combine(PathDetalladoHorizontal, $"{reporte.FolioCorte}-detallado-horizontal.pdf");
+                    var nombre_archivo = Path.Combine(PathDetalladoHorizontal, $"CorteDetHor_{reporte.FolioCorte}.pdf");
                     byte[] bytes = AddPageNumbers(memoryStream.ToArray(), false);
                     memoryStream.Close();
                     var fs = new FileStream(nombre_archivo, FileMode.Create, FileAccess.Write);
@@ -639,7 +661,7 @@ namespace mod_add.Utils
                     {
                         Impresion.Print_File(nombre_archivo, "", 0, 8, 8);
 
-                        //File.Delete(nombre_archivo);
+                        File.Delete(nombre_archivo);
                     }
                 }
             }
@@ -946,7 +968,7 @@ namespace mod_add.Utils
                     }
 
                     pdfDoc.Close();
-                    var nombre_archivo = Path.Combine(PathDetalladoVertical, $"{reporte.FolioCorte}-detallado-vertical.pdf");
+                    var nombre_archivo = Path.Combine(PathDetalladoVertical, $"CorteDetVer_{reporte.FolioCorte}.pdf");
                     byte[] bytes = AddPageNumbers(memoryStream.ToArray());
                     memoryStream.Close();
                     var fs = new FileStream(nombre_archivo, FileMode.Create, FileAccess.Write);
@@ -961,7 +983,7 @@ namespace mod_add.Utils
                     {
                         Impresion.Print_File(nombre_archivo, "", 0, 8, 8);
 
-                        //File.Delete(nombre_archivo);
+                        File.Delete(nombre_archivo);
                     }
                 }
             }

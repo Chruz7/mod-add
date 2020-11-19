@@ -49,7 +49,7 @@ namespace mod_add.ViewModels
 
             Reporte = Reportes.Find(x => x.TipoReporte == TipoReporte.RESUMIDO);
 
-            ConvertirMonedaExtrangera = true;
+            ConvertirMonedaExtranjera = true;
             NoConsiderarDepositosRetiros = false;
             ConsiderarFondoinicial = false;
             NoConsiderarPropinas = false;
@@ -646,6 +646,7 @@ namespace mod_add.ViewModels
                         NoConsiderarPropinas = NoConsiderarPropinas,
                         ConsiderarFondoInicial = ConsiderarFondoinicial,
                         ReporteFiscal = !App.ConfiguracionSistema.ModificarVentasReales,
+                        FiltroTurno = true,
                     };
 
                     turno.efectivo = reporte.Efectivo;
@@ -667,28 +668,6 @@ namespace mod_add.ViewModels
                     }
                     else
                     {
-                        //List<ChequeReporte> chequesReporte = new List<ChequeReporte>();
-
-                        //foreach (var cheque in cheques)
-                        //{
-                        //    chequesReporte.Add(new ChequeReporte
-                        //    {
-                        //        numcheque = (long)cheque.numcheque,
-                        //        fecha = cheque.fecha,
-                        //        impresiones = (int)(cheque.impresiones ?? 0),
-                        //        reabiertas = (int)(cheque.reabiertas ?? 0),
-                        //        descuento = cheque.descuento ?? 0,
-                        //        propina = cheque.propina ?? 0,
-                        //        total = cheque.total ?? 0,
-                        //        cargo = cheque.cargo ?? 0,
-                        //        efectivo = cheque.efectivo ?? 0,
-                        //        tarjeta = cheque.tarjeta ?? 0,
-                        //        vales = cheque.vales ?? 0,
-                        //        otros = cheque.otros ?? 0
-                        //    });
-                        //}
-                        //reporte.ChequesReporte = chequesReporte;
-                                               
                         reporte.ChequesReporte = cheques;
 
                         if (Reporte.TipoReporte == TipoReporte.DETALLADO_VERTICAL || Reporte.TipoReporte == TipoReporte.DETALLADO_HORIZONTAL)
@@ -761,23 +740,6 @@ namespace mod_add.ViewModels
             }
         }
 
-        //private ReporteCorte RealizarCorteZ(DateTime FechaCorteInicio, DateTime FechaCorteCierre)
-        //{
-        //    ReporteCorte reporte = new ReporteCorte();
-
-        //    using (SoftRestaurantDBContext context = new SoftRestaurantDBContext())
-        //    {
-        //        SR_turnos_DAO turnos_DAO = new SR_turnos_DAO(context, App.ConfiguracionSistema.ModificarVentasReales);
-
-        //        var turno = turnos_DAO.Get($"apertura BETWEEN @{nameof(FechaCorteInicio)} AND @{nameof(FechaCorteCierre)} AND idempresa=@{nameof(App.ClaveEmpresa)}",
-        //                    new SqlParameter($"{nameof(FechaCorteInicio)}", FechaCorteInicio),
-        //                    new SqlParameter($"{nameof(FechaCorteCierre)}", FechaCorteCierre),
-        //                    new SqlParameter($"{nameof(App.ClaveEmpresa)}", App.ClaveEmpresa)).FirstOrDefault();
-        //    }
-
-        //    return reporte;
-        //}
-
         private DateTime fecha;
         public DateTime Fecha
         {
@@ -824,14 +786,14 @@ namespace mod_add.ViewModels
         }
 
 
-        private bool convertirMonedaExtrangera;
-        public bool ConvertirMonedaExtrangera
+        private bool convertirMonedaExtranjera;
+        public bool ConvertirMonedaExtranjera
         {
-            get { return convertirMonedaExtrangera; }
+            get { return convertirMonedaExtranjera; }
             set
             {
-                convertirMonedaExtrangera = value;
-                OnPropertyChanged(nameof(ConvertirMonedaExtrangera));
+                convertirMonedaExtranjera = value;
+                OnPropertyChanged(nameof(ConvertirMonedaExtranjera));
             }
         }
 

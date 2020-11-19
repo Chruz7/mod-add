@@ -84,9 +84,9 @@
             Grid.Column="1"
             VerticalAlignment="Center"
             HorizontalAlignment="Left"
-            Content="Convertir moneda extrangera"
-            x:Name="ConvertirMonedaExtrangera"
-            IsChecked="{Binding ConvertirMonedaExtrangera}"/>
+            Content="Convertir moneda extranjera"
+            x:Name="ConvertirMonedaExtranjera"
+            IsChecked="{Binding ConvertirMonedaExtranjera}"/>
 
         <CheckBox
             Grid.Row="1"

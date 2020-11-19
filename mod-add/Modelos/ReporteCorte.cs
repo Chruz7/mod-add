@@ -217,5 +217,6 @@ namespace mod_add.Modelos
         public bool NoConsiderarPropinas { get; set; }
         public bool NoConsiderarDepositosRetiros { get; set; }
         public bool ReporteFiscal { get; set; }
+        public bool FiltroTurno { get; set; }
     }
 }
