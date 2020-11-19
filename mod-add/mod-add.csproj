@@ -130,6 +130,7 @@
     <Compile Include="Componentes\Configuracion.xaml.cs">
       <DependentUpon>Configuracion.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Enums\TipoCorte.cs" />
     <Compile Include="Enums\TipoDestino.cs" />
     <Compile Include="Enums\TipoReporte.cs" />
     <Compile Include="Enums\TipoRespuesta.cs" />

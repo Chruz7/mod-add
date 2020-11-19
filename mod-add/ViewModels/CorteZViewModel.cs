@@ -16,12 +16,31 @@ namespace mod_add.ViewModels
     public class CorteZViewModel : ViewModelBase
     {
         private readonly GenerarReporte generarReporte;
-        public CorteZViewModel()
+        public CorteZViewModel(TipoCorte tipoCorte)
         {
             generarReporte = new GenerarReporte();
 
-            Fecha = DateTime.Today.AddDays(-1);
-            HorarioTurno = $"{App.SRConfiguracion.cortezinicio} - {App.SRConfiguracion.cortezfin}";
+            if (App.SRConfiguracion.CorteInicio > App.SRConfiguracion.CorteCierre)
+            {
+                FechaInicio = DateTime.Today.AddDays(-1);
+            }
+            else
+            {
+                FechaInicio = DateTime.Today;
+            }
+
+            AjustarFechaCierre();
+            CorteInicio = FechaInicio.AddSeconds(App.SRConfiguracion.CorteInicio.TotalSeconds);
+            CorteCierre = FechaCierre.AddSeconds(App.SRConfiguracion.CorteCierre.TotalSeconds);
+
+            if (tipoCorte == TipoCorte.PERIODO)
+            {
+                HorarioTurno = "";
+            }
+            else if (tipoCorte == TipoCorte.TURNO)
+            {
+                HorarioTurno = $"{App.SRConfiguracion.cortezinicio} - {App.SRConfiguracion.cortezfin}";
+            }
 
             Reportes = new List<Reporte>
             {
@@ -53,9 +72,18 @@ namespace mod_add.ViewModels
             NoConsiderarDepositosRetiros = false;
             ConsiderarFondoinicial = false;
             NoConsiderarPropinas = false;
+        }
 
-            Fecha = new DateTime(2020, 10, 31);
-            Reporte = Reportes.Find(x => x.TipoReporte == TipoReporte.DETALLADO_HORIZONTAL);
+        public void AjustarFechaCierre()
+        {
+            if (App.SRConfiguracion.CorteInicio > App.SRConfiguracion.CorteCierre)
+            {
+                FechaCierre = FechaInicio.AddDays(1);
+            }
+            else
+            {
+                FechaCierre = FechaInicio;
+            }
         }
 
         private string CamposCheques()
@@ -146,8 +174,8 @@ namespace mod_add.ViewModels
             {
                 try
                 {
-                    DateTime FechaCorteInicio = Fecha.AddSeconds(App.SRConfiguracion.CorteInicio.TotalSeconds);
-                    DateTime FechaCorteCierre = Fecha.AddSeconds(App.SRConfiguracion.CorteCierre.TotalSeconds);
+                    DateTime FechaCorteInicio = FechaInicio.AddSeconds(App.SRConfiguracion.CorteInicio.TotalSeconds);
+                    DateTime FechaCorteCierre = FechaInicio.AddSeconds(App.SRConfiguracion.CorteCierre.TotalSeconds);
 
                     if (App.SRConfiguracion.CorteInicio > App.SRConfiguracion.CorteCierre)
                     {
@@ -740,14 +768,49 @@ namespace mod_add.ViewModels
             }
         }
 
-        private DateTime fecha;
-        public DateTime Fecha
+        private DateTime corteInicio;
+
+        public DateTime CorteInicio
         {
-            get { return fecha; }
+            get { return corteInicio; }
             set
             {
-                fecha = value;
-                OnPropertyChanged(nameof(Fecha));
+                corteInicio = value;
+                OnPropertyChanged(nameof(CorteInicio));
+            }
+        }
+
+        private DateTime corteCierre;
+
+        public DateTime CorteCierre
+        {
+            get { return corteCierre; }
+            set
+            {
+                corteCierre = value;
+                OnPropertyChanged(nameof(CorteCierre));
+            }
+        }
+
+        private DateTime fechaInicio;
+        public DateTime FechaInicio
+        {
+            get { return fechaInicio; }
+            set
+            {
+                fechaInicio = value;
+                OnPropertyChanged(nameof(FechaInicio));
+            }
+        }
+
+        private DateTime fechaCierre;
+        public DateTime FechaCierre
+        {
+            get { return fechaCierre; }
+            set
+            {
+                fechaCierre = value;
+                OnPropertyChanged(nameof(FechaCierre));
             }
         }
 

@@ -4,6 +4,7 @@ using mod_add.ViewModels;
 using System;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace mod_add.Vistas
 {
@@ -13,14 +14,31 @@ namespace mod_add.Vistas
     public partial class CorteZForm : Window
     {
         private readonly CorteZViewModel ViewModel;
-        public CorteZForm()
+        private TipoCorte TipoCorte { get; set; }
+        public CorteZForm(TipoCorte tipoCorte)
         {
             InitializeComponent();
+            TipoCorte = tipoCorte;
+            
+            if (TipoCorte == TipoCorte.TURNO)
+            {
+                LabelFechaInicio.Content = "Fecha:";
+                CorteInicio.Visibility = Visibility.Collapsed;
+                LabelFechaCierre.Visibility = Visibility.Collapsed;
+                FechaCierre.Visibility = Visibility.Collapsed;
+                CorteCierre.Visibility = Visibility.Collapsed;
+                HorarioTurno.Visibility = Visibility.Visible;
 
-            Fecha.DisplayDateEnd = DateTime.Today.AddDays(-1);
-            //Reportes.IsEnabled = false;
+                FechaInicio.DisplayDateEnd = DateTime.Today.AddDays(-1);
+            }
+            if (TipoCorte == TipoCorte.PERIODO)
+            {
+                FechaInicio.DisplayDateEnd = DateTime.Today;
+            }
 
-            ViewModel = new CorteZViewModel();
+            FechaCierre.DisplayDateEnd = DateTime.Today;
+
+            ViewModel = new CorteZViewModel(tipoCorte);
             DataContext = ViewModel;
         }
 
@@ -36,12 +54,24 @@ namespace mod_add.Vistas
 
         private void ExportarExcel_Click(object sender, RoutedEventArgs e)
         {
-            //
+            string t = ViewModel.FechaInicio.ToString() + "\n";
+
+            t += ViewModel.CorteInicio.ToString() + "\n";
+            t += ViewModel.FechaCierre.ToString() + "\n";
+            t += ViewModel.CorteCierre.ToString() + "\n";
+            t += "\n";
+
+            t += ViewModel.FechaInicio.AddSeconds(ViewModel.CorteInicio.TimeOfDay.TotalSeconds).ToString() + "\n";
+            t += ViewModel.FechaCierre.AddSeconds(ViewModel.CorteCierre.TimeOfDay.TotalSeconds).ToString() + "\n";
+            MessageBox.Show(t);
         }
 
         private void Generar(TipoDestino tipoDestino)
         {
+            if (!Validar()) return;
+
             App.HabilitarPrincipal(false);
+            IsEnabled = false;
 
             Respuesta respuesta = new Respuesta
             {
@@ -60,6 +90,7 @@ namespace mod_add.Vistas
             {
                 loading.Close();
                 App.HabilitarPrincipal();
+                IsEnabled = true;
 
                 if (respuesta.TipoRespuesta == TipoRespuesta.FECHA_INACCESIBLE)
                 {
@@ -79,6 +110,61 @@ namespace mod_add.Vistas
         private void Cerrar_Click(object sender, RoutedEventArgs e)
         {
             Close();
+        }
+
+        private void Reportes_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (!(sender is ComboBox comboBox)) return;
+
+            if (!(comboBox.SelectedItem is Reporte reporte)) return;
+
+            ExportarExcel.IsEnabled = (reporte.TipoReporte == TipoReporte.DETALLADO_VERTICAL || reporte.TipoReporte == TipoReporte.DETALLADO_HORIZONTAL);
+        }
+
+        private void Button_IsEnabledChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (!(sender is Button button)) return;
+
+            if (!(button.Content is Grid grid)) return;
+
+            if (button.IsEnabled)
+                grid.Children[0].Opacity = 1d;
+            else
+                grid.Children[0].Opacity = 0.5d;
+        }
+
+        private void FechaInicio_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (TipoCorte == TipoCorte.TURNO)
+            {
+                ViewModel.AjustarFechaCierre();
+            }
+            if (TipoCorte == TipoCorte.PERIODO)
+            {
+                FechaCierre.DisplayDateStart = ViewModel.FechaInicio;
+            }
+        }
+
+        private void FechaCierre_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (TipoCorte == TipoCorte.PERIODO)
+            {
+                FechaInicio.DisplayDateEnd = ViewModel.FechaCierre;
+            }
+        }
+
+        public bool Validar()
+        {
+            var corteInicio = ViewModel.FechaInicio.AddSeconds(ViewModel.CorteInicio.TimeOfDay.TotalSeconds);
+            var corteCierre = ViewModel.FechaCierre.AddSeconds(ViewModel.CorteCierre.TimeOfDay.TotalSeconds);
+
+            if (corteInicio > corteCierre)
+            {
+                MessageBox.Show("La fecha de inicio no puede ser mayor a la fecha de cierre", "Fecha inicio", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return false;
+            }
+
+            return true;
         }
     }
 }

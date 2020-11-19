@@ -1,4 +1,5 @@
 ﻿using mod_add.Componentes;
+using mod_add.Enums;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -17,7 +18,6 @@ namespace mod_add.Vistas
         public Principal()
         {
             InitializeComponent();
-            AbrirFormCortePeriodo.Visibility = Visibility.Collapsed;
             AbrirFormReimpresionFolios.Visibility = Visibility.Collapsed;
         }
 
@@ -35,9 +35,21 @@ namespace mod_add.Vistas
             CargarComponente(AjusteMasivo);
         }
 
+        private void AbrirFormCortePeriodo_Click(object sender, RoutedEventArgs e)
+        {
+            CorteZForm form = new CorteZForm(TipoCorte.PERIODO)
+            {
+                Title = "Corte por periódo"
+            };
+            form.ShowDialog();
+        }
+
         private void AbrirFormCorteZ_Click(object sender, RoutedEventArgs e)
         {
-            CorteZForm form = new CorteZForm();
+            CorteZForm form = new CorteZForm(TipoCorte.TURNO)
+            {
+                Title = "Corte Z"
+            };
             form.ShowDialog();
         }
 
@@ -54,8 +66,6 @@ namespace mod_add.Vistas
             Configuracion.Refrescar();
             CargarComponente(Configuracion);
         }
-
-        
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
