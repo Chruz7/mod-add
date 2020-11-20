@@ -1,4 +1,5 @@
-﻿using System;
+﻿using mod_add.Enums;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -23,7 +24,7 @@ namespace mod_add.Modelos
         public string SoloHora { get { return Fecha.ToString("hh:mm:ss tt", CultureInfo.CreateSpecificCulture("US")); } }
         public string TituloCorte { get; set; }
         public long FolioCorte { get; set; }
-        public string SFolioCorte { get { return $"{FolioCorte}"; } }
+        public string SFolioCorte { get { return TipoCorte == TipoCorte.TURNO ? $"FOLIO {TituloCorte}: {FolioCorte}" : ""; } }
         public DateTime FechaCorteInicio { get; set; }
         public string SFechaCorteInicio { get { return FechaCorteInicio.ToString("dd/MM/yyyy hh:mm:ss tt", CultureInfo.CreateSpecificCulture("US")); } }
         public DateTime FechaCorteCierre { get; set; }
@@ -187,7 +188,7 @@ namespace mod_add.Modelos
         public decimal TotalDescuentos { get; set; }
         public string STotalDescuentos { get { return string.Format("{0:C}", TotalDescuentos); } }
         public decimal TotalDeclarado { get; set; }
-        public string STotalDeclarado { get { return string.Format("{0:C}", TotalDeclarado); } }
+        public string STotalDeclarado { get { return !ReporteFiscal ? string.Format("{0:C}", TotalDeclarado) : ""; } }
         public decimal SobranteOFaltante
         {
             get
@@ -195,8 +196,8 @@ namespace mod_add.Modelos
                 return TotalDeclarado - SaldoFinal;
             }
         }
-        public string SSobrante { get { return SobranteOFaltante > 0 ? string.Format("{0:C}", SobranteOFaltante) : ""; } }
-        public string SFaltante { get { return SobranteOFaltante < 0 ? string.Format("{0:C}", SobranteOFaltante * -1) : ""; } }
+        public string SSobrante { get { return SobranteOFaltante > 0 && !ReporteFiscal ? string.Format("{0:C}", SobranteOFaltante) : ""; } }
+        public string SFaltante { get { return SobranteOFaltante < 0 && !ReporteFiscal ? string.Format("{0:C}", SobranteOFaltante * -1) : ""; } }
         public decimal Dolares { get; set; }
         public string SDolares { get { return string.Format("{0:C}", Dolares); } }
         public decimal AcumuladoMesAnterior { get; set; }
@@ -213,10 +214,11 @@ namespace mod_add.Modelos
         public List<VentaRapida> VentasRapidas { get; set; }
         public List<CuentaPorCobrar> CuentasPorCobrar { get; set; }
 
+        public TipoCorte TipoCorte { get; set; }
+        public TipoDestino TipoDestino { get; set; }
         public bool ConsiderarFondoInicial { get; set; }
         public bool NoConsiderarPropinas { get; set; }
         public bool NoConsiderarDepositosRetiros { get; set; }
         public bool ReporteFiscal { get; set; }
-        public bool FiltroTurno { get; set; }
     }
 }

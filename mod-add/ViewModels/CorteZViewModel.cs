@@ -16,8 +16,10 @@ namespace mod_add.ViewModels
     public class CorteZViewModel : ViewModelBase
     {
         private readonly GenerarReporte generarReporte;
+        private TipoCorte TipoCorte { get; set; }
         public CorteZViewModel(TipoCorte tipoCorte)
         {
+            TipoCorte = tipoCorte;
             generarReporte = new GenerarReporte();
 
             if (App.SRConfiguracion.CorteInicio > App.SRConfiguracion.CorteCierre)
@@ -174,13 +176,8 @@ namespace mod_add.ViewModels
             {
                 try
                 {
-                    DateTime FechaCorteInicio = FechaInicio.AddSeconds(App.SRConfiguracion.CorteInicio.TotalSeconds);
-                    DateTime FechaCorteCierre = FechaInicio.AddSeconds(App.SRConfiguracion.CorteCierre.TotalSeconds);
-
-                    if (App.SRConfiguracion.CorteInicio > App.SRConfiguracion.CorteCierre)
-                    {
-                        FechaCorteCierre = FechaCorteCierre.AddDays(1);
-                    }
+                    DateTime FechaCorteInicio = FechaInicio.AddSeconds(CorteInicio.TimeOfDay.TotalSeconds);
+                    DateTime FechaCorteCierre = FechaCierre.AddSeconds(CorteCierre.TimeOfDay.TotalSeconds);
 
                     if (!Funciones.ValidarMesBusqueda(App.MesesValidos, FechaCorteInicio))
                     {
@@ -209,14 +206,14 @@ namespace mod_add.ViewModels
 
                     query = $"SELECT {CamposTurnos()} FROM turnos WHERE apertura BETWEEN @{nameof(FechaCorteInicio)} AND @{nameof(FechaCorteCierre)} AND cierre IS NOT NULL AND idempresa=@{nameof(App.ClaveEmpresa)}";
 
-                    var turnos = context.Database
+                    var turnosR = context.Database
                         .SqlQuery<TurnoReporte>(query,
                             new SqlParameter($"{nameof(FechaCorteInicio)}", FechaCorteInicio),
                             new SqlParameter($"{nameof(FechaCorteCierre)}", FechaCorteCierre),
                             new SqlParameter($"{nameof(App.ClaveEmpresa)}", App.ClaveEmpresa))
                         .ToList();
 
-                    if (turnos.Count == 0)
+                    if (turnosR.Count == 0)
                     {
                         return new Respuesta
                         {
@@ -224,7 +221,7 @@ namespace mod_add.ViewModels
                         };
                     }
 
-                    List<TurnoReporte> turnosf = new List<TurnoReporte>();
+                    List<TurnoReporte> turnosF = new List<TurnoReporte>();
 
                     if (!App.ConfiguracionSistema.ModificarVentasReales)
                     {
@@ -232,7 +229,7 @@ namespace mod_add.ViewModels
                         //query = $"apertura BETWEEN @{nameof(FechaCorteInicio)} AND @{nameof(FechaCorteCierre)} AND cierre IS NOT NULL AND idempresa=@{nameof(App.ClaveEmpresa)}";
 
                         query = $"SELECT {CamposTurnos()} FROM turnosf WHERE apertura BETWEEN @{nameof(FechaCorteInicio)} AND @{nameof(FechaCorteCierre)} AND cierre IS NOT NULL AND idempresa=@{nameof(App.ClaveEmpresa)}";
-                        turnosf = context.Database
+                        turnosF = context.Database
                             .SqlQuery<TurnoReporte>(query,
                                 new SqlParameter($"{nameof(FechaCorteInicio)}", FechaCorteInicio),
                                 new SqlParameter($"{nameof(FechaCorteCierre)}", FechaCorteCierre),
@@ -240,7 +237,7 @@ namespace mod_add.ViewModels
                         .ToList();
                     }
 
-                    if (!App.ConfiguracionSistema.ModificarVentasReales && turnosf.Count == 0)
+                    if (!App.ConfiguracionSistema.ModificarVentasReales && turnosF.Count == 0)
                     {
                         return new Respuesta
                         {
@@ -272,19 +269,21 @@ namespace mod_add.ViewModels
                     object[] valores;
                     object[] parametrosSql;
 
-                    TurnoReporte turno;
+                    //TurnoReporte turno;
 
-                    if (App.ConfiguracionSistema.ModificarVentasReales)
-                    {
-                        turno = turnos[0];
-                    }
-                    else
-                    {
-                        turno = turnosf[0];
-                    }
+                    //if (App.ConfiguracionSistema.ModificarVentasReales)
+                    //{
+                    //    turno = turnos[0];
+                    //}
+                    //else
+                    //{
+                    //    turno = turnosf[0];
+                    //}
 
-                    var idsturnor = turnos.Select(x => (object)x.idturno).ToArray();
-                    var idsturnof = turnosf.Select(x => (object)x.idturno).ToArray();
+                    List<TurnoReporte> turnos = App.ConfiguracionSistema.ModificarVentasReales ? turnosR : turnosF;
+
+                    var idsturnor = turnosR.Select(x => (object)x.idturno).ToArray();
+                    var idsturnof = turnosF.Select(x => (object)x.idturno).ToArray();
 
                     var idsturnos = App.ConfiguracionSistema.ModificarVentasReales ? idsturnor : idsturnof;
 
@@ -589,22 +588,25 @@ namespace mod_add.ViewModels
 
                     List<ImpuestoVenta> impuestosVentas = context.Database.SqlQuery<ImpuestoVenta>(query, parametrosSql).ToList();
 
-                    decimal totalDeclarado = (turno.efectivo ?? 0) + (turno.tarjeta ?? 0) + (turno.vales ?? 0) + (turno.credito ?? 0);
+                    decimal totalDeclarado = turnos.Sum(x => (x.efectivo ?? 0) + (x.tarjeta ?? 0) + (x.vales ?? 0) + (x.credito ?? 0));
+                    decimal efectivoInicial = 0;
 
-                    if (!ConsiderarFondoinicial)
+                    if (ConsiderarFondoinicial)
                     {
-                        totalDeclarado -= (turno.fondo ?? 0);
+                        efectivoInicial = turnos.Sum(x => x.fondo ?? 0);
                     }
+
+                    totalDeclarado -= efectivoInicial;
 
                     ReporteCorte reporte = new ReporteCorte
                     {
                         Fecha = DateTime.Now,
                         TituloCorte = parametros.titulocortez,
-                        FolioCorte = turno.idturno.Value,
+                        FolioCorte =  TipoCorte == TipoCorte.TURNO ? turnos[0].idturno.Value : 0,
                         FechaCorteInicio = FechaCorteInicio,
                         FechaCorteCierre = FechaCorteCierre,
 
-                        EfectivoInicial = ConsiderarFondoinicial ? turno.fondo.Value : 0,
+                        EfectivoInicial = efectivoInicial,
                         Efectivo = cheques.Sum(x => x.efectivo ?? 0),
                         Tarjeta = cheques.Sum(x => x.tarjeta ?? 0),
                         Vales = cheques.Sum(x => x.vales ?? 0),
@@ -674,13 +676,17 @@ namespace mod_add.ViewModels
                         NoConsiderarPropinas = NoConsiderarPropinas,
                         ConsiderarFondoInicial = ConsiderarFondoinicial,
                         ReporteFiscal = !App.ConfiguracionSistema.ModificarVentasReales,
-                        FiltroTurno = true,
+                        TipoCorte = TipoCorte,
+                        TipoDestino = tipoDestino,
                     };
 
-                    turno.efectivo = reporte.Efectivo;
-                    turno.Propina = propinasPagadas;
-                    turno.Cargo = reporte.Cargos;
-                    turno.Total = (turno.efectivo ?? 0) + (turno.tarjeta ?? 0) + (turno.vales ?? 0) + (turno.credito ?? 0) - turno.Propina;
+                    if (TipoCorte == TipoCorte.TURNO)
+                    {
+                        turnos[0].efectivo = reporte.Efectivo;
+                        turnos[0].Propina = propinasPagadas;
+                        turnos[0].Cargo = reporte.Cargos;
+                        turnos[0].Total = turnos.Sum(x => (x.efectivo ?? 0) + (x.tarjeta ?? 0) + (x.vales ?? 0) + (x.credito ?? 0) - x.Propina);
+                    }
 
                     reporte.PPorcentajeAlimentos = Math.Round(reporte.PAlimentos / reporte.Subtotal * 100m, 0, MidpointRounding.AwayFromZero);
                     reporte.PPorcentajeBebidas = Math.Round(reporte.PBebidas / reporte.Subtotal * 100m, 0, MidpointRounding.AwayFromZero);
@@ -716,7 +722,7 @@ namespace mod_add.ViewModels
                                 }
                             };
 
-                            reporte.Turnos = new List<TurnoReporte> { turno };
+                            reporte.Turnos = turnos;
                         }
 
                         if (Reporte.TipoReporte == TipoReporte.DETALLADO_VERTICAL)
@@ -731,13 +737,13 @@ namespace mod_add.ViewModels
 
                             reporte.VentasRapidas = ventasRapidas;
 
-                            generarReporte.DetalladoVerticalPDF(reporte, tipoDestino);
+                            generarReporte.DetalladoVerticalPDF(reporte);
                         }
                         else
                         {
                             if (Reporte.TipoReporte == TipoReporte.DETALLADO_HORIZONTAL)
                             {
-                                generarReporte.DetalladoHorizontalPDF(reporte, tipoDestino);
+                                generarReporte.DetalladoHorizontalPDF(reporte);
                             }
                             else if (Reporte.TipoReporte == TipoReporte.DETALLADO_FORMAS_PAGO)
                             {
@@ -746,7 +752,7 @@ namespace mod_add.ViewModels
                                     cheque.ChequesPagos = chequesPagos.Where(x => x.folio == cheque.folio).ToList();
                                 }
 
-                                generarReporte.DetalladoFormasPagoPDF(reporte, tipoDestino);
+                                generarReporte.DetalladoFormasPagoPDF(reporte);
                             }
                         }
 

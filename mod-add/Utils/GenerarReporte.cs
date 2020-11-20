@@ -8,6 +8,7 @@ using mod_add.Modelos;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing.Printing;
 using System.IO;
 using System.Linq;
 
@@ -57,7 +58,7 @@ namespace mod_add.Utils
             EstadoSucursal = ConfiguracionLocalServicio.ReadSetting("ESTADO-SUCURSAL");
         }
 
-        public void DetalladoFormasPagoPDF(ReporteCorte reporte, TipoDestino tipoDestino)
+        public void DetalladoFormasPagoPDF(ReporteCorte reporte)
         {
             try
             {
@@ -218,7 +219,7 @@ namespace mod_add.Utils
                     .Replace("[[TITULO-CORTE-Z]]", reporte.TituloCorte)
                     .Replace("[[FECHA-CORTE-INICIO]]", reporte.SFechaCorteInicio)
                     .Replace("[[FECHA-CORTE-CIERRE]]", reporte.SFechaCorteCierre)
-                    .Replace("[[FOLIO-CORTE]]", reporte.SFolioCorte)
+                    .Replace("[[FOLIO]]", reporte.SFolioCorte)
 
                     .Replace("[[CHEQUESREPORTE]]", chequesReporteTemplate) // DETALLES
 
@@ -314,13 +315,14 @@ namespace mod_add.Utils
                     fs.Write(bytes, 0, bytes.Length);
                     fs.Close();
 
-                    if (tipoDestino == TipoDestino.EXPORTAR)
+                    if (reporte.TipoDestino == TipoDestino.EXPORTAR)
                     {
                         Process.Start("file://" + nombre_archivo);
                     }
-                    else if (tipoDestino == TipoDestino.IMPRESION)
+                    else if (reporte.TipoDestino == TipoDestino.IMPRESION)
                     {
-                        Impresion.Print_File(nombre_archivo, "", 0, 8, 8);
+                        //IMPRESION
+                        PrinterSettings printer = new PrinterSettings();
 
                         File.Delete(nombre_archivo);
                     }
@@ -332,7 +334,7 @@ namespace mod_add.Utils
             }
         }
 
-        public void DetalladoHorizontalPDF(ReporteCorte reporte, TipoDestino tipoDestino)
+        public void DetalladoHorizontalPDF(ReporteCorte reporte)
         {
             try
             {
@@ -341,6 +343,20 @@ namespace mod_add.Utils
 
                 string html = @File.ReadAllText(rutaHtml);
                 string css = @File.ReadAllText(rutaCss);
+
+                string accionTabla = "";
+                string accionContenedor = "";
+
+                if (reporte.TipoCorte == TipoCorte.PERIODO)
+                {
+                    accionTabla = "tabla-oculta";
+                    accionContenedor = "contenedor-oculto";
+                }
+                else if (reporte.TipoCorte == TipoCorte.TURNO)
+                {
+                    accionTabla = "tabla-visible";
+                    accionContenedor = "contenedor-visible";
+                }
 
                 #region Cheques
                 string source = "{{#CHEQUESREPORTE}}<tr class=\"fila\">{{>CHEQUEREPORTE}}</tr>{{/CHEQUESREPORTE}}";
@@ -442,31 +458,34 @@ namespace mod_add.Utils
                 #endregion
 
                 #region Turnos
-                source = "{{#TURNOS}}<tr class=\"fila\">{{> TURNO}}</tr>{{/TURNOS}}";
-                partialSource =
-                    "<td>{{idestacion}}</td>" +
-                    "<td>{{cajero}}</td>" +
-                    "<td>{{Sapertura}}</td>" +
-                    "<td>{{Scierre}}</td>" +
-                    "<td>{{STotal}}</td>" +
-                    "<td>{{SCargo}}</td>" +
-                    "<td>{{Sefectivo}}</td>" +
-                    "<td>{{Starjeta}}</td>" +
-                    "<td>{{Svales}}</td>" +
-                    "<td>{{SPropina}}</td>" +
-                    "<td>{{Scredito}}</td>" +
-                    "<td>{{idturno}}</td>";
+                string turnosTemplate = "";
 
-                Handlebars.RegisterTemplate("TURNO", partialSource);
-
-                var template4 = Handlebars.Compile(source);
-
-                var data4 = new
+                if (reporte.TipoCorte == TipoCorte.TURNO)
                 {
-                    reporte.Turnos
-                };
+                    source = "{{#TURNOS}}<tr class=\"fila\">{{> TURNO}}</tr>{{/TURNOS}}";
+                    partialSource =
+                        "<td>{{idestacion}}</td>" +
+                        "<td>{{Sapertura}}</td>" +
+                        "<td>{{Scierre}}</td>" +
+                        "<td>{{STotal}}</td>" +
+                        "<td>{{SCargo}}</td>" +
+                        "<td>{{Sefectivo}}</td>" +
+                        "<td>{{Starjeta}}</td>" +
+                        "<td>{{Svales}}</td>" +
+                        "<td>{{SPropina}}</td>" +
+                        "<td>{{Scredito}}</td>";
 
-                var turnosTemplate = template4(data4);
+                    Handlebars.RegisterTemplate("TURNO", partialSource);
+
+                    var template4 = Handlebars.Compile(source);
+
+                    var data4 = new
+                    {
+                        reporte.Turnos
+                    };
+
+                    turnosTemplate = template4(data4);
+                }
                 #endregion
 
                 #region Totales cheques
@@ -553,7 +572,7 @@ namespace mod_add.Utils
                     .Replace("[[TITULO-CORTE-Z]]", reporte.TituloCorte)
                     .Replace("[[FECHA-CORTE-INICIO]]", reporte.SFechaCorteInicio)
                     .Replace("[[FECHA-CORTE-CIERRE]]", reporte.SFechaCorteCierre)
-                    .Replace("[[FOLIO-CORTE]]", reporte.SFolioCorte)
+                    .Replace("[[FOLIO]]", reporte.SFolioCorte)
 
                     .Replace("[[CHEQUESREPORTE]]", chequesReporteTemplate) // DETALLES
 
@@ -625,6 +644,8 @@ namespace mod_add.Utils
                     .Replace("[[VENTASCONIMPUESTO]]", reporte.SVentasConImpuesto)
 
                     .Replace("[[TURNOS]]", turnosTemplate) // TURNOS
+                    .Replace("[[ACCIONTABLA]]", accionTabla)
+                    .Replace("[[ACCIONCONTENEDOR]]", accionContenedor)
                     ;
 
                 StringReader sr = new StringReader(HtmlInstance.ToString());
@@ -653,13 +674,13 @@ namespace mod_add.Utils
                     fs.Write(bytes, 0, bytes.Length);
                     fs.Close();
 
-                    if (tipoDestino == TipoDestino.EXPORTAR)
+                    if (reporte.TipoDestino == TipoDestino.EXPORTAR)
                     {
                         Process.Start("file://" + nombre_archivo);
                     }
-                    else if (tipoDestino == TipoDestino.IMPRESION)
+                    else if (reporte.TipoDestino == TipoDestino.IMPRESION)
                     {
-                        Impresion.Print_File(nombre_archivo, "", 0, 8, 8);
+                        //IMPRESION
 
                         File.Delete(nombre_archivo);
                     }
@@ -671,7 +692,7 @@ namespace mod_add.Utils
             }
         }
         
-        public void DetalladoVerticalPDF(ReporteCorte reporte, TipoDestino tipoDestino)
+        public void DetalladoVerticalPDF(ReporteCorte reporte)
         {
             try
             {
@@ -680,6 +701,20 @@ namespace mod_add.Utils
 
                 string html = @File.ReadAllText(rutaHtml);
                 string css = @File.ReadAllText(rutaCss);
+
+                string accionTabla = "";
+                string accionContenedor = "";
+
+                if (reporte.TipoCorte == TipoCorte.PERIODO)
+                {
+                    accionTabla = "tabla-oculta";
+                    accionContenedor = "contenedor-oculto";
+                }
+                else if (reporte.TipoCorte == TipoCorte.TURNO)
+                {
+                    accionTabla = "tabla-visible";
+                    accionContenedor = "contenedor-visible";
+                }
 
                 #region Cheques
                 string source = "{{#CHEQUESREPORTE}}<tr class=\"fila-detalle\">{{>CHEQUEREPORTE}}</tr>{{/CHEQUESREPORTE}}";
@@ -778,29 +813,34 @@ namespace mod_add.Utils
                 #endregion
 
                 #region Turnos
-                source = "{{#TURNOS}}<tr class=\"fila\">{{> TURNO}}</tr>{{/TURNOS}}";
-                partialSource =
-                    "<td>{{idestacion}}</td>" +
-                    "<td>{{Sapertura}}</td>" +
-                    "<td>{{Scierre}}</td>" +
-                    "<td>{{STotal}}</td>" +
-                    "<td>{{SCargo}}</td>" +
-                    "<td>{{Sefectivo}}</td>" +
-                    "<td>{{Starjeta}}</td>" +
-                    "<td>{{Svales}}</td>" +
-                    "<td>{{SPropina}}</td>" +
-                    "<td>{{Scredito}}</td>";
+                string turnosTemplate = "";
 
-                Handlebars.RegisterTemplate("TURNO", partialSource);
-
-                var template4 = Handlebars.Compile(source);
-
-                var data4 = new
+                if (reporte.TipoCorte == TipoCorte.TURNO)
                 {
-                    reporte.Turnos
-                };
+                    source = "{{#TURNOS}}<tr class=\"fila\">{{> TURNO}}</tr>{{/TURNOS}}";
+                    partialSource =
+                        "<td>{{idestacion}}</td>" +
+                        "<td>{{Sapertura}}</td>" +
+                        "<td>{{Scierre}}</td>" +
+                        "<td>{{STotal}}</td>" +
+                        "<td>{{SCargo}}</td>" +
+                        "<td>{{Sefectivo}}</td>" +
+                        "<td>{{Starjeta}}</td>" +
+                        "<td>{{Svales}}</td>" +
+                        "<td>{{SPropina}}</td>" +
+                        "<td>{{Scredito}}</td>";
 
-                var turnosTemplate = template4(data4);
+                    Handlebars.RegisterTemplate("TURNO", partialSource);
+
+                    var template4 = Handlebars.Compile(source);
+
+                    var data4 = new
+                    {
+                        reporte.Turnos
+                    };
+
+                    turnosTemplate = template4(data4);
+                }
                 #endregion
 
                 #region Ventas Rapidas
@@ -879,7 +919,7 @@ namespace mod_add.Utils
                     .Replace("[[TITULO-CORTE-Z]]", reporte.TituloCorte)
                     .Replace("[[FECHA-CORTE-INICIO]]", reporte.SFechaCorteInicio)
                     .Replace("[[FECHA-CORTE-CIERRE]]", reporte.SFechaCorteCierre)
-                    .Replace("[[FOLIO-CORTE]]", reporte.SFolioCorte)
+                    .Replace("[[FOLIO]]", reporte.SFolioCorte)
 
                     .Replace("[[CHEQUESREPORTE]]", chequesReporteTemplate) // DETALLES
 
@@ -947,6 +987,8 @@ namespace mod_add.Utils
                     .Replace("[[VENTASRAPIDAS]]", ventasrapidasTemplate) // VENTAS RAPIDAS
 
                     .Replace("[[TURNOS]]", turnosTemplate) // TURNOS
+                    .Replace("[[ACCIONTABLA]]", accionTabla)
+                    .Replace("[[ACCIONCONTENEDOR]]", accionContenedor)
                     ;
 
                 StringReader sr = new StringReader(HtmlInstance.ToString());
@@ -975,13 +1017,13 @@ namespace mod_add.Utils
                     fs.Write(bytes, 0, bytes.Length);
                     fs.Close();
 
-                    if (tipoDestino == TipoDestino.EXPORTAR)
+                    if (reporte.TipoDestino == TipoDestino.EXPORTAR)
                     {
                         Process.Start("file://" + nombre_archivo);
                     }
-                    else if (tipoDestino == TipoDestino.IMPRESION)
+                    else if (reporte.TipoDestino == TipoDestino.IMPRESION)
                     {
-                        Impresion.Print_File(nombre_archivo, "", 0, 8, 8);
+                        //IMPRESION
 
                         File.Delete(nombre_archivo);
                     }
