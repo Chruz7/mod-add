@@ -24,7 +24,8 @@ namespace mod_add.Modelos
         public string SoloHora { get { return Fecha.ToString("hh:mm:ss tt", CultureInfo.CreateSpecificCulture("US")); } }
         public string TituloCorte { get; set; }
         public long FolioCorte { get; set; }
-        public string SFolioCorte { get { return TipoCorte == TipoCorte.TURNO ? $"FOLIO {TituloCorte}: {FolioCorte}" : ""; } }
+        public string SFolioCorte { get { return FolioCorte > 0 ? $"{FolioCorte}" : "";  } }
+        public string SEncabezadoFolio { get { return TipoCorte == TipoCorte.TURNO ? $"FOLIO {TituloCorte}: {FolioCorte}" : ""; } }
         public DateTime FechaCorteInicio { get; set; }
         public string SFechaCorteInicio { get { return FechaCorteInicio.ToString("dd/MM/yyyy hh:mm:ss tt", CultureInfo.CreateSpecificCulture("US")); } }
         public DateTime FechaCorteCierre { get; set; }

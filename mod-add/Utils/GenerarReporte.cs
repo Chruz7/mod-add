@@ -62,8 +62,8 @@ namespace mod_add.Utils
         {
             try
             {
-                var rutaHtml = Path.Combine(PathEjecuccion, @".\plantillas\corte-detallado-formas-de-pago.html");
-                var rutaCss = Path.Combine(PathEjecuccion, @".\plantillas\estilos.css");
+                var rutaHtml = Path.Combine(PathEjecuccion, "plantillas", "corte-detallado-formas-de-pago.html");
+                var rutaCss = Path.Combine(PathEjecuccion, "plantillas", "estilos.css");
 
                 string html = @File.ReadAllText(rutaHtml);
                 string css = @File.ReadAllText(rutaCss);
@@ -219,22 +219,22 @@ namespace mod_add.Utils
                     .Replace("[[TITULO-CORTE-Z]]", reporte.TituloCorte)
                     .Replace("[[FECHA-CORTE-INICIO]]", reporte.SFechaCorteInicio)
                     .Replace("[[FECHA-CORTE-CIERRE]]", reporte.SFechaCorteCierre)
-                    .Replace("[[FOLIO]]", reporte.SFolioCorte)
+                    .Replace("[[FOLIO]]", reporte.SEncabezadoFolio)
 
                     .Replace("[[CHEQUESREPORTE]]", chequesReporteTemplate) // DETALLES
 
-                    .Replace("[[CUENTASNORMALES]]", $"{reporte.CuentasNormales}") //CUENTAS
-                    .Replace("[[CUENTASCANCELADAS]]", $"{reporte.CuentasCanceladas}")
-                    .Replace("[[CUENTASCONDESCUENTO]]", $"{reporte.CuentasConDescuento}")
-                    .Replace("[[CUENTASCONDESCUENTOIMPORTE]]", string.Format("{0:C}", reporte.CuentasConDescuentoImporte))
-                    .Replace("[[CUENTASCONCORTESIA]]", $"{reporte.CuentasConCortesia}")
-                    .Replace("[[CUENTASCONCORTESIAIMPORTE]]", string.Format("{0:C}", reporte.CuentasConCortesiaImporte))
-                    .Replace("[[CUENTAPROMEDIO]]", string.Format("{0:C}", reporte.CuentaPromedio))
-                    .Replace("[[COMENSALES]]", $"{reporte.Comensales}")
-                    .Replace("[[CONSUMOPROMEDIO]]", string.Format("{0:C}", reporte.ConsumoPromedio))
-                    .Replace("[[PROPINAS]]", string.Format("{0:C}", reporte.Propinas))
-                    .Replace("[[FOLIOINICIAL]]", $"{reporte.FolioInicial}")
-                    .Replace("[[FOLIOFINAL]]", $"{reporte.FolioFinal}")
+                    .Replace("[[CUENTASNORMALES]]", reporte.SCuentasNormales) //CUENTAS
+                    .Replace("[[CUENTASCANCELADAS]]", reporte.SCuentasCanceladas)
+                    .Replace("[[CUENTASCONDESCUENTO]]", reporte.SCuentasConDescuento)
+                    .Replace("[[CUENTASCONDESCUENTOIMPORTE]]", reporte.SCuentasConDescuentoImporte)
+                    .Replace("[[CUENTASCONCORTESIA]]", reporte.SCuentasConCortesia)
+                    .Replace("[[CUENTASCONCORTESIAIMPORTE]]", reporte.SCuentasConCortesiaImporte)
+                    .Replace("[[CUENTAPROMEDIO]]", reporte.SCuentaPromedio)
+                    .Replace("[[COMENSALES]]", reporte.SComensales)
+                    .Replace("[[CONSUMOPROMEDIO]]", reporte.SConsumoPromedio)
+                    .Replace("[[PROPINAS]]", reporte.SPropinas)
+                    .Replace("[[FOLIOINICIAL]]", reporte.SFolioInicial)
+                    .Replace("[[FOLIOFINAL]]", reporte.SFolioFinal)
 
                     .Replace("[[VENTAFACTURADA]]", reporte.SVentaFacturada) // FACTURAS
                     .Replace("[[PROPINAFACTURADA]]", reporte.SPropinaFacturada)
@@ -308,7 +308,7 @@ namespace mod_add.Utils
                     }
 
                     pdfDoc.Close();
-                    var nombre_archivo = Path.Combine(PathDetalladoHorizontal, $"CorteDetForPag_{reporte.FolioCorte}.pdf");
+                    var nombre_archivo = Path.Combine(PathDetalladoHorizontal, $"CorteDetForPag{reporte.SFolioCorte}.pdf");
                     byte[] bytes = AddPageNumbers(memoryStream.ToArray(), false);
                     memoryStream.Close();
                     var fs = new FileStream(nombre_archivo, FileMode.Create, FileAccess.Write);
@@ -338,25 +338,11 @@ namespace mod_add.Utils
         {
             try
             {
-                var rutaHtml = Path.Combine(PathEjecuccion, @".\plantillas\corte-detallado-horizontal.html");
-                var rutaCss = Path.Combine(PathEjecuccion, @".\plantillas\estilos.css");
+                var rutaHtml = Path.Combine(PathEjecuccion, "plantillas", $"corte-detallado-horizontal({reporte.TipoCorte}).html");
+                var rutaCss = Path.Combine(PathEjecuccion, "plantillas", "estilos.css");
 
                 string html = @File.ReadAllText(rutaHtml);
                 string css = @File.ReadAllText(rutaCss);
-
-                string accionTabla = "";
-                string accionContenedor = "";
-
-                if (reporte.TipoCorte == TipoCorte.PERIODO)
-                {
-                    accionTabla = "tabla-oculta";
-                    accionContenedor = "contenedor-oculto";
-                }
-                else if (reporte.TipoCorte == TipoCorte.TURNO)
-                {
-                    accionTabla = "tabla-visible";
-                    accionContenedor = "contenedor-visible";
-                }
 
                 #region Cheques
                 string source = "{{#CHEQUESREPORTE}}<tr class=\"fila\">{{>CHEQUEREPORTE}}</tr>{{/CHEQUESREPORTE}}";
@@ -572,24 +558,24 @@ namespace mod_add.Utils
                     .Replace("[[TITULO-CORTE-Z]]", reporte.TituloCorte)
                     .Replace("[[FECHA-CORTE-INICIO]]", reporte.SFechaCorteInicio)
                     .Replace("[[FECHA-CORTE-CIERRE]]", reporte.SFechaCorteCierre)
-                    .Replace("[[FOLIO]]", reporte.SFolioCorte)
+                    .Replace("[[FOLIO]]", reporte.SEncabezadoFolio)
 
                     .Replace("[[CHEQUESREPORTE]]", chequesReporteTemplate) // DETALLES
 
                     .Replace("[[TOTALESCHEQUESREPORTE]]", totaleschequesreporteTemplate) // TOTALES CUENTAS
 
-                    .Replace("[[CUENTASNORMALES]]", $"{reporte.CuentasNormales}") //CUENTAS
-                    .Replace("[[CUENTASCANCELADAS]]", $"{reporte.CuentasCanceladas}")
-                    .Replace("[[CUENTASCONDESCUENTO]]", $"{reporte.CuentasConDescuento}")
-                    .Replace("[[CUENTASCONDESCUENTOIMPORTE]]", string.Format("{0:C}", reporte.CuentasConDescuentoImporte))
-                    .Replace("[[CUENTASCONCORTESIA]]", $"{reporte.CuentasConCortesia}")
-                    .Replace("[[CUENTASCONCORTESIAIMPORTE]]", string.Format("{0:C}", reporte.CuentasConCortesiaImporte))
-                    .Replace("[[CUENTAPROMEDIO]]", string.Format("{0:C}", reporte.CuentaPromedio))
-                    .Replace("[[COMENSALES]]", $"{reporte.Comensales}")
-                    .Replace("[[CONSUMOPROMEDIO]]", string.Format("{0:C}", reporte.ConsumoPromedio))
-                    .Replace("[[PROPINAS]]", string.Format("{0:C}", reporte.Propinas))
-                    .Replace("[[FOLIOINICIAL]]", $"{reporte.FolioInicial}")
-                    .Replace("[[FOLIOFINAL]]", $"{reporte.FolioFinal}")
+                    .Replace("[[CUENTASNORMALES]]", reporte.SCuentasNormales) //CUENTAS
+                    .Replace("[[CUENTASCANCELADAS]]", reporte.SCuentasCanceladas)
+                    .Replace("[[CUENTASCONDESCUENTO]]", reporte.SCuentasConDescuento)
+                    .Replace("[[CUENTASCONDESCUENTOIMPORTE]]", reporte.SCuentasConDescuentoImporte)
+                    .Replace("[[CUENTASCONCORTESIA]]", reporte.SCuentasConCortesia)
+                    .Replace("[[CUENTASCONCORTESIAIMPORTE]]", reporte.SCuentasConCortesiaImporte)
+                    .Replace("[[CUENTAPROMEDIO]]", reporte.SCuentaPromedio)
+                    .Replace("[[COMENSALES]]", reporte.SComensales)
+                    .Replace("[[CONSUMOPROMEDIO]]", reporte.SConsumoPromedio)
+                    .Replace("[[PROPINAS]]", reporte.SPropinas)
+                    .Replace("[[FOLIOINICIAL]]", reporte.SFolioInicial)
+                    .Replace("[[FOLIOFINAL]]", reporte.SFolioFinal)
 
                     .Replace("[[VENTAFACTURADA]]", reporte.SVentaFacturada) // FACTURAS
                     .Replace("[[PROPINAFACTURADA]]", reporte.SPropinaFacturada)
@@ -644,8 +630,6 @@ namespace mod_add.Utils
                     .Replace("[[VENTASCONIMPUESTO]]", reporte.SVentasConImpuesto)
 
                     .Replace("[[TURNOS]]", turnosTemplate) // TURNOS
-                    .Replace("[[ACCIONTABLA]]", accionTabla)
-                    .Replace("[[ACCIONCONTENEDOR]]", accionContenedor)
                     ;
 
                 StringReader sr = new StringReader(HtmlInstance.ToString());
@@ -667,7 +651,7 @@ namespace mod_add.Utils
                     }
 
                     pdfDoc.Close();
-                    var nombre_archivo = Path.Combine(PathDetalladoHorizontal, $"CorteDetHor_{reporte.FolioCorte}.pdf");
+                    var nombre_archivo = Path.Combine(PathDetalladoHorizontal, $"CorteDetHor{reporte.SFolioCorte}.pdf");
                     byte[] bytes = AddPageNumbers(memoryStream.ToArray(), false);
                     memoryStream.Close();
                     var fs = new FileStream(nombre_archivo, FileMode.Create, FileAccess.Write);
@@ -696,25 +680,11 @@ namespace mod_add.Utils
         {
             try
             {
-                var rutaHtml = Path.Combine(PathEjecuccion, @".\plantillas\corte-detallado-vertical.html");
-                var rutaCss = Path.Combine(PathEjecuccion, @".\plantillas\estilos.css");
+                var rutaHtml = Path.Combine(PathEjecuccion, "plantillas", $"corte-detallado-vertical({reporte.TipoCorte}).html");
+                var rutaCss = Path.Combine(PathEjecuccion, "plantillas", "estilos.css");
 
                 string html = @File.ReadAllText(rutaHtml);
                 string css = @File.ReadAllText(rutaCss);
-
-                string accionTabla = "";
-                string accionContenedor = "";
-
-                if (reporte.TipoCorte == TipoCorte.PERIODO)
-                {
-                    accionTabla = "tabla-oculta";
-                    accionContenedor = "contenedor-oculto";
-                }
-                else if (reporte.TipoCorte == TipoCorte.TURNO)
-                {
-                    accionTabla = "tabla-visible";
-                    accionContenedor = "contenedor-visible";
-                }
 
                 #region Cheques
                 string source = "{{#CHEQUESREPORTE}}<tr class=\"fila-detalle\">{{>CHEQUEREPORTE}}</tr>{{/CHEQUESREPORTE}}";
@@ -919,26 +889,26 @@ namespace mod_add.Utils
                     .Replace("[[TITULO-CORTE-Z]]", reporte.TituloCorte)
                     .Replace("[[FECHA-CORTE-INICIO]]", reporte.SFechaCorteInicio)
                     .Replace("[[FECHA-CORTE-CIERRE]]", reporte.SFechaCorteCierre)
-                    .Replace("[[FOLIO]]", reporte.SFolioCorte)
+                    .Replace("[[FOLIO]]", reporte.SEncabezadoFolio)
 
                     .Replace("[[CHEQUESREPORTE]]", chequesReporteTemplate) // DETALLES
 
                     .Replace("[[TOTALESCHEQUESREPORTE]]", totaleschequesreporteTemplate) // TOTALES CUENTAS
 
-                    .Replace("[[CUENTASNORMALES]]", $"{reporte.CuentasNormales}") //CUENTAS
-                    .Replace("[[CUENTASCANCELADAS]]", $"{reporte.CuentasCanceladas}")
-                    .Replace("[[CUENTASCONDESCUENTO]]", $"{reporte.CuentasConDescuento}")
-                    .Replace("[[CUENTASCONDESCUENTOIMPORTE]]", string.Format("{0:C}", reporte.CuentasConDescuentoImporte))
-                    .Replace("[[CUENTASCONCORTESIA]]", $"{reporte.CuentasConCortesia}")
-                    .Replace("[[CUENTASCONCORTESIAIMPORTE]]", string.Format("{0:C}", reporte.CuentasConCortesiaImporte))
-                    .Replace("[[CUENTAPROMEDIO]]", string.Format("{0:C}", reporte.CuentaPromedio))
-                    .Replace("[[COMENSALES]]", $"{reporte.Comensales}")
-                    .Replace("[[CONSUMOPROMEDIO]]", string.Format("{0:C}", reporte.ConsumoPromedio))
-                    .Replace("[[PROPINAS]]", string.Format("{0:C}", reporte.Propinas))
-                    .Replace("[[CARGOS]]", string.Format("{0:C}", reporte.Cargos))
-                    .Replace("[[DESCUENTOMONEDERO]]", string.Format("{0:C}", reporte.DescuentoMonedero))
-                    .Replace("[[FOLIOINICIAL]]", $"{reporte.FolioInicial}")
-                    .Replace("[[FOLIOFINAL]]", $"{reporte.FolioFinal}")
+                    .Replace("[[CUENTASNORMALES]]", reporte.SCuentasNormales) //CUENTAS
+                    .Replace("[[CUENTASCANCELADAS]]", reporte.SCuentasCanceladas)
+                    .Replace("[[CUENTASCONDESCUENTO]]", reporte.SCuentasConDescuento)
+                    .Replace("[[CUENTASCONDESCUENTOIMPORTE]]", reporte.SCuentasConDescuentoImporte)
+                    .Replace("[[CUENTASCONCORTESIA]]", reporte.SCuentasConCortesia)
+                    .Replace("[[CUENTASCONCORTESIAIMPORTE]]", reporte.SCuentasConCortesiaImporte)
+                    .Replace("[[CUENTAPROMEDIO]]", reporte.SCuentaPromedio)
+                    .Replace("[[COMENSALES]]", reporte.SComensales)
+                    .Replace("[[CONSUMOPROMEDIO]]", reporte.SConsumoPromedio)
+                    .Replace("[[PROPINAS]]", reporte.SPropinas)
+                    .Replace("[[CARGOS]]", reporte.SCargos)
+                    .Replace("[[DESCUENTOMONEDERO]]", reporte.SDescuentoMonedero)
+                    .Replace("[[FOLIOINICIAL]]", reporte.SFolioInicial)
+                    .Replace("[[FOLIOFINAL]]", reporte.SFolioFinal)
 
                     .Replace("[[VENTAFACTURADA]]", reporte.SVentaFacturada) // FACTURAS
                     .Replace("[[PROPINAFACTURADA]]", reporte.SPropinaFacturada)
@@ -987,8 +957,6 @@ namespace mod_add.Utils
                     .Replace("[[VENTASRAPIDAS]]", ventasrapidasTemplate) // VENTAS RAPIDAS
 
                     .Replace("[[TURNOS]]", turnosTemplate) // TURNOS
-                    .Replace("[[ACCIONTABLA]]", accionTabla)
-                    .Replace("[[ACCIONCONTENEDOR]]", accionContenedor)
                     ;
 
                 StringReader sr = new StringReader(HtmlInstance.ToString());
@@ -1010,7 +978,7 @@ namespace mod_add.Utils
                     }
 
                     pdfDoc.Close();
-                    var nombre_archivo = Path.Combine(PathDetalladoVertical, $"CorteDetVer_{reporte.FolioCorte}.pdf");
+                    var nombre_archivo = Path.Combine(PathDetalladoVertical, $"CorteDetVer{reporte.SFolioCorte}.pdf");
                     byte[] bytes = AddPageNumbers(memoryStream.ToArray());
                     memoryStream.Close();
                     var fs = new FileStream(nombre_archivo, FileMode.Create, FileAccess.Write);
