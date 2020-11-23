@@ -11,5 +11,9 @@ namespace mod_add.Modelos
         public int porcentaje { get; set; }
         public decimal impuesto { get; set; }
         public decimal venta { get; set; }
+
+        public string Sporcentaje { get { return $"{porcentaje}%"; } }
+        public string  Simpuesto { get { return string.Format("{0:C}", impuesto); } }
+        public string  Sventa { get { return string.Format("{0:C}", venta); } }
     }
 }

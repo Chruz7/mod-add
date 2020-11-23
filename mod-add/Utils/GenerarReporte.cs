@@ -17,6 +17,7 @@ namespace mod_add.Utils
     public class GenerarReporte
     {
         public string PathEjecuccion { get; set; }
+        public string PathResumido { get; set; }
         public string PathDetalladoVertical { get; set; }
         public string PathDetalladoHorizontal { get; set; }
         public string PathDetalladoFormasPago { get; set; }
@@ -40,6 +41,7 @@ namespace mod_add.Utils
         {
             Impresion = new SRLibrary.Utils.Print();
             PathEjecuccion = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+            PathResumido = ConfiguracionLocalServicio.ReadSetting("PATH-RESUMIDO");
             PathDetalladoVertical = ConfiguracionLocalServicio.ReadSetting("PATH-DETALLADO-VERTICAL");
             PathDetalladoHorizontal = ConfiguracionLocalServicio.ReadSetting("PATH-DETALLADO-HORIZONTAL");
             PathDetalladoFormasPago = ConfiguracionLocalServicio.ReadSetting("PATH-DETALLADO-FORMAS-PAGO");
@@ -1006,8 +1008,8 @@ namespace mod_add.Utils
         public void Resumido(ReporteCorte reporte, TipoDestino tipoDestino)
         {
             List<string> lineas = new List<string>();
-            string filePathCorte = Path.Combine(PathEjecuccion, "corte.txt");
-            string filePathTarjeta = Path.Combine(PathEjecuccion, "tarjeta.txt");
+            string filePathCorte = Path.Combine(PathResumido, $"corte{reporte.SFolioCorte}.txt");
+            string filePathTarjeta = Path.Combine(PathResumido, $"tarjeta{reporte.SFolioCorte}.txt");
 
             List<string> multilineas = new List<string>();
 
@@ -1033,31 +1035,20 @@ namespace mod_add.Utils
             }
 
             lineas.Add("");
-            lineas.Add($"{reporte.TituloCorte}");
-            lineas.Add(string.Format("DEL {0}", reporte.FechaCorteInicio.ToString("dd/MM/yyyy")));
+            lineas.Add(reporte.TituloCorte);
+            lineas.Add($"DEL {reporte.SSoloFechaCorteInicio}");
             lineas.Add("");
-            lineas.Add($"FOLIO {reporte.TituloCorte}: {reporte.FolioCorte}");
+            lineas.Add(reporte.SEncabezadoFolio);
             lineas.Add(Relleno('='));
             lineas.Add(Centrado("CAJA"));
-
-            if (reporte.ConsiderarFondoInicial)
-                lineas.Add(Relleno(40, new Division("+ EFECTIVO INICIAL:", 20), new Division(string.Format("{0:C}", reporte.EfectivoInicial))));
-
-            lineas.Add(Relleno(40, new Division("+ EFECTIVO:", 20), new Division(string.Format("{0:C}", reporte.Efectivo))));
-            lineas.Add(Relleno(40, new Division("+ TARJETA:", 20), new Division(string.Format("{0:C}", reporte.Tarjeta))));
-            lineas.Add(Relleno(40, new Division("+ VALES:", 20), new Division(string.Format("{0:C}", reporte.Vales))));
-            lineas.Add(Relleno(40, new Division("+ OTROS:", 20), new Division(string.Format("{0:C}", reporte.Otros))));
-
-            if (!reporte.NoConsiderarDepositosRetiros)
-            {
-                lineas.Add(Relleno(40, new Division("+ DEPÓSITOS EFECTIVO:", 20), new Division(string.Format("{0:C}", reporte.DepositosEfectivo))));
-                lineas.Add(Relleno(40, new Division("- RETIROS EFECTIVO:", 20), new Division(string.Format("{0:C}", reporte.RetirosEfectivo))));
-            }
-
-            if (!reporte.NoConsiderarPropinas)
-                lineas.Add(Relleno(40, new Division("- PROPINAS PAGADAS:", 20), new Division(string.Format("{0:C}", reporte.PropinasPagadas))));
-
-
+            lineas.Add(Relleno(40, new Division("+ EFECTIVO INICIAL:", 20), new Division(reporte.SEfectivoInicial)));
+            lineas.Add(Relleno(40, new Division("+ EFECTIVO:", 20), new Division(reporte.SEfectivo)));
+            lineas.Add(Relleno(40, new Division("+ TARJETA:", 20), new Division(reporte.STarjeta)));
+            lineas.Add(Relleno(40, new Division("+ VALES:", 20), new Division(reporte.SVales)));
+            lineas.Add(Relleno(40, new Division("+ OTROS:", 20), new Division(reporte.SOtros)));
+            lineas.Add(Relleno(40, new Division("+ DEPÓSITOS EFECTIVO:", 20), new Division(reporte.SDepositosEfectivo)));
+            lineas.Add(Relleno(40, new Division("- RETIROS EFECTIVO:", 20), new Division(reporte.SRetirosEfectivo)));
+            lineas.Add(Relleno(40, new Division("- PROPINAS PAGADAS:", 20), new Division(reporte.SPropinasPagadas)));
             lineas.Add(Relleno(40, new Division("", 20), new Division("____________")));
             lineas.Add(Relleno(40, new Division("= SALDO FINAL:", 20), new Division(string.Format("{0:C}", reporte.SaldoFinal))));
             lineas.Add(Relleno(40, new Division("  EFECTIVO FINAL:", 20), new Division(string.Format("{0:C}", reporte.EfectivoFinal))));
@@ -1067,30 +1058,28 @@ namespace mod_add.Utils
 
             foreach (var pago in reporte.Pagos)
             {
-                lineas.Add(Relleno(40, new Division(pago.descripcion, 24), new Division(string.Format("{0:C}", pago.importe))));
+                lineas.Add(Relleno(40, new Division(pago.descripcion, 24), new Division(pago.SImporte)));
             }
 
             lineas.Add(Relleno('-'));
-            lineas.Add(string.Format("TOTAL FORMAS DE PAGO VENTAS: {0:C}", reporte.TotalFormasPagoVentas));
+            lineas.Add($"TOTAL FORMAS DE PAGO VENTAS: {reporte.STotalFormasPagoVentas}");
 
-            if (!reporte.NoConsiderarPropinas)
+            lineas.Add("");
+            lineas.Add("");
+            lineas.Add("");
+            lineas.Add("");
+            lineas.Add("");
+            lineas.Add(Centrado("FORMA DE PAGO PROPINA"));
+
+            var pagosPropina = reporte.Pagos.Where(x => x.propina > 0).ToList();
+
+            foreach (var pago in pagosPropina)
             {
-                lineas.Add("");
-                lineas.Add("");
-                lineas.Add("");
-                lineas.Add("");
-                lineas.Add("");
-                lineas.Add(Centrado("FORMA DE PAGO PROPINA"));
-
-                var pagosPropina = reporte.Pagos.Where(x => x.propina > 0).ToList();
-                foreach (var pago in pagosPropina)
-                {
-                    lineas.Add(Relleno(40, new Division(pago.descripcion, 24), new Division(string.Format("{0:C}", pago.propina))));
-                }
-
-                lineas.Add(Relleno('-'));
-                lineas.Add(string.Format("TOTAL FORMAS DE PAGO PROPINA: {0:C}", reporte.TotalFormasPagoPropinas));
+                lineas.Add(Relleno(40, new Division(pago.descripcion, 24), new Division(pago.SPropina)));
             }
+
+            lineas.Add(Relleno('-'));
+            lineas.Add($"TOTAL FORMAS DE PAGO PROPINA: {reporte.STotalFormasPagoPropinas}");
 
             lineas.Add("");
             lineas.Add("");
@@ -1104,104 +1093,103 @@ namespace mod_add.Utils
             lineas.Add(
                 Relleno(40, 
                 new Division("ALIMENTOS:", 17), 
-                new Division(string.Format("{0:C}", reporte.PAlimentos), 15), 
-                new Division($"({reporte.PPorcentajeAlimentos}%) {reporte.PCantidadAlimentos}"))
+                new Division(reporte.SPAlimentos, 15), 
+                new Division($"({reporte.SPPorcentajeAlimentos}) {reporte.SPCantidadAlimentos}"))
             );
             lineas.Add(
                 Relleno(40,
                 new Division("BEBIDAS:", 17),
-                new Division(string.Format("{0:C}", reporte.PBebidas), 15),
-                new Division($"({reporte.PPorcentajeBebidas}%) {reporte.PCantidadBebidas}"))
+                new Division(reporte.SPBebidas, 15),
+                new Division($"({reporte.SPPorcentajeBebidas}) {reporte.SPCantidadBebidas}"))
             );
             lineas.Add(
                 Relleno(40,
                 new Division("OTROS:", 17),
-                new Division(string.Format("{0:C}", reporte.POtros), 15),
-                new Division($"({reporte.PPorcentajeOtros}%) {reporte.PCantidadOtros}"))
+                new Division(reporte.SPOtros, 15),
+                new Division($"({reporte.SPPorcentajeOtros}) {reporte.SPCantidadOtros}"))
             );
             lineas.Add(Centrado("POR TIPO DE SERVICIO"));
             lineas.Add(
                 Relleno(40,
                 new Division("COMEDOR:", 17),
-                new Division(string.Format("{0:C}", reporte.Comedor), 15),
-                new Division($"({reporte.ComedorPorcentaje} %)"))
+                new Division(reporte.SComedor, 15),
+                new Division($"({reporte.SComedorPorcentaje})"))
             );
             lineas.Add(
                 Relleno(40,
                 new Division("DOMICILIO:", 17),
-                new Division(string.Format("{0:C}", reporte.Domicilio), 15),
-                new Division($"({reporte.DomicilioPorcentaje} %)"))
+                new Division(reporte.SDomicilio, 15),
+                new Division($"({reporte.SDomicilioPorcentaje})"))
             );
             lineas.Add(
                 Relleno(40,
                 new Division("RAPIDO:", 17),
-                new Division(string.Format("{0:C}", reporte.Rapido), 15),
-                new Division($"({reporte.Rapido} %)"))
+                new Division(reporte.SRapido, 15),
+                new Division($"({reporte.SRapidoPorcentaje})"))
             );
             lineas.Add(Relleno(40, new Division("", 17), new Division("______________")));
-            lineas.Add(Relleno(40, new Division(" SUBTOTAL    :", 17), new Division(string.Format("{0:C}", reporte.Subtotal))));
-            lineas.Add(Relleno(40, new Division("-DESCUENTOS  :", 17), new Division(string.Format("{0:C}", reporte.Descuentos))));
-            lineas.Add(Relleno(40, new Division(" VENTA NETA  :", 17), new Division(string.Format("{0:C}", reporte.VentaNeta))));
+            lineas.Add(Relleno(40, new Division(" SUBTOTAL    :", 17), new Division(reporte.SSubtotal)));
+            lineas.Add(Relleno(40, new Division("-DESCUENTOS  :", 17), new Division(reporte.SDescuentos)));
+            lineas.Add(Relleno(40, new Division(" VENTA NETA  :", 17), new Division(reporte.SVentaNeta)));
             lineas.Add(Relleno(40, new Division("", 17), new Division("______________")));
 
             foreach (var impuestoVenta in reporte.ImpuestosVentas)
             {
                 lineas.Add(Relleno(40, 
                     new Division("VENTA", 8), 
-                    new Division($"{impuestoVenta.porcentaje}%:".PadLeft(5, ' '), 9), 
-                    new Division(string.Format("{0:C}", impuestoVenta.venta))));
+                    new Division($"{impuestoVenta.Sporcentaje}:".PadLeft(5, ' '), 9), 
+                    new Division(impuestoVenta.Sventa)));
                 lineas.Add(Relleno(40,
                     new Division("IMPUESTO", 8),
-                    new Division($"{impuestoVenta.porcentaje}%:".PadLeft(5, ' '), 9),
-                    new Division(string.Format("{0:C}", impuestoVenta.impuesto))));
+                    new Division($"{impuestoVenta.Sporcentaje}:".PadLeft(5, ' '), 9),
+                    new Division(impuestoVenta.Simpuesto)));
             }
 
             lineas.Add("");
-            lineas.Add(Relleno(40, new Division("IMPUESTOS TOTAL:", 17), new Division(string.Format("{0:C}", reporte.ImpuestoTotal))));
+            lineas.Add(Relleno(40, new Division("IMPUESTOS TOTAL:", 17), new Division(reporte.SImpuestoTotal)));
             lineas.Add(Relleno(40, new Division("", 17), new Division("______________")));
-            lineas.Add(Relleno(40, new Division("VENTAS CON IMP.:", 17), new Division(string.Format("{0:C}", reporte.VentasConImpuesto))));
+            lineas.Add(Relleno(40, new Division("VENTAS CON IMP.:", 17), new Division(reporte.SVentasConImpuesto)));
             lineas.Add(Relleno(40, new Division("", 17), new Division("==============")));
             lineas.Add("");
-            lineas.Add(Relleno(40, new Division("VENTA FACTURADA:", 18), new Division(string.Format("{0:C}", reporte.VentaFacturada))));
-            lineas.Add(Relleno(40, new Division("PROPINA FACTURADA:", 18), new Division(string.Format("{0:C}", reporte.PropinaFacturada))));
+            lineas.Add(Relleno(40, new Division("VENTA FACTURADA:", 18), new Division(reporte.SVentaFacturada)));
+            lineas.Add(Relleno(40, new Division("PROPINA FACTURADA:", 18), new Division(reporte.SPropinaFacturada)));
             lineas.Add(Relleno(40, new Division("", 18), new Division("______________")));
-            lineas.Add(Relleno(40, new Division("FACTURADO:", 18), new Division(string.Format("{0:C}", reporte.Facturado))));
-            lineas.Add(Relleno(40, new Division("VENTA NO FACTURADA:", 18), new Division(string.Format("{0:C}", reporte.VentaNoFacturada))));
+            lineas.Add(Relleno(40, new Division("FACTURADO:", 18), new Division(reporte.SFacturado)));
+            lineas.Add(Relleno(40, new Division("VENTA NO FACTURADA:", 18), new Division(reporte.SVentaNoFacturada)));
             lineas.Add("");
             lineas.Add("");
             lineas.Add("");
             lineas.Add("");
             lineas.Add("");
             lineas.Add(Relleno('='));
-            lineas.Add(Relleno(40, new Division("CUENTAS NORMALES", 22), new Division(":", 2), new Division($"{reporte.CuentasNormales}")));
-            lineas.Add(Relleno(40, new Division("CUENTAS CANCELADAS", 22), new Division(":", 2), new Division($"{reporte.CuentasCanceladas}")));
-            lineas.Add(Relleno(40, new Division("CUENTAS CON DESCUENTO", 22), new Division(":", 2), new Division($"{reporte.CuentasConDescuento}")));
-            lineas.Add(Relleno(40, new Division("CUENTAS CON CORTESIA", 22), new Division(":", 2), new Division($"{reporte.CuentasConCortesia}")));
-            lineas.Add(Relleno(40, new Division("CUENTA PROMEDIO", 22), new Division(":", 2), new Division(string.Format("{0:C}", reporte.CuentaPromedio))));
-            lineas.Add(Relleno(40, new Division("CONSUMO PROMEDIO", 22), new Division(":", 2), new Division(string.Format("{0:C}", reporte.ConsumoPromedio))));
-            lineas.Add(Relleno(40, new Division("COMENSALES", 22), new Division(":", 2), new Division($"{reporte.Comensales}")));
+            lineas.Add(Relleno(40, new Division("CUENTAS NORMALES", 22), new Division(":", 2), new Division(reporte.SCuentasNormales)));
+            lineas.Add(Relleno(40, new Division("CUENTAS CANCELADAS", 22), new Division(":", 2), new Division(reporte.SCuentasCanceladas)));
+            lineas.Add(Relleno(40, new Division("CUENTAS CON DESCUENTO", 22), new Division(":", 2), new Division(reporte.SCuentasConDescuento)));
+            lineas.Add(Relleno(40, new Division("CUENTAS CON CORTESIA", 22), new Division(":", 2), new Division(reporte.SCuentasConCortesia)));
+            lineas.Add(Relleno(40, new Division("CUENTA PROMEDIO", 22), new Division(":", 2), new Division(reporte.SCuentaPromedio)));
+            lineas.Add(Relleno(40, new Division("CONSUMO PROMEDIO", 22), new Division(":", 2), new Division(reporte.SConsumoPromedio)));
+            lineas.Add(Relleno(40, new Division("COMENSALES", 22), new Division(":", 2), new Division(reporte.SComensales)));
 
-            if (!reporte.NoConsiderarPropinas)
-                lineas.Add(Relleno(40, new Division("PROPINAS", 22), new Division(":", 2), new Division(string.Format("{0:C}", reporte.Propinas))));
+            lineas.Add(Relleno(40, new Division("PROPINAS", 22), new Division(":", 2), new Division(reporte.SPropinas)));
 
-            lineas.Add(Relleno(40, new Division("CARGOS", 22), new Division(":", 2), new Division(string.Format("{0:C}", reporte.Cargos))));
-            lineas.Add(Relleno(40, new Division("DESCUENTO MONEDERO", 22), new Division(":", 2), new Division(string.Format("{0:C}", reporte.DescuentoMonedero))));
-            lineas.Add(Relleno(40, new Division("FOLIO INICIAL", 22), new Division(":", 2), new Division($"{reporte.FolioInicial}")));
-            lineas.Add(Relleno(40, new Division("FOLIO FINAL", 22), new Division(":", 2), new Division($"{reporte.FolioFinal}")));
-            lineas.Add(Relleno(40, new Division("CORTESIA ALIMENTOS", 22), new Division(":", 2), new Division(string.Format("{0:C}", reporte.CortesiaAlimentos))));
-            lineas.Add(Relleno(40, new Division("CORTESIA BEBIDAS", 22), new Division(":", 2), new Division(string.Format("{0:C}", reporte.CortesiaBebidas))));
-            lineas.Add(Relleno(40, new Division("CORTESIA OTROS", 22), new Division(":", 2), new Division(string.Format("{0:C}", reporte.CortesiaOtros))));
+            lineas.Add(Relleno(40, new Division("CARGOS", 22), new Division(":", 2), new Division(reporte.SCargos)));
+            lineas.Add(Relleno(40, new Division("DESCUENTO MONEDERO", 22), new Division(":", 2), new Division(reporte.SDescuentoMonedero)));
+            lineas.Add(Relleno(40, new Division("FOLIO INICIAL", 22), new Division(":", 2), new Division(reporte.SFolioInicial)));
+            lineas.Add(Relleno(40, new Division("FOLIO FINAL", 22), new Division(":", 2), new Division(reporte.SFolioFinal)));
+            lineas.Add(Relleno(40, new Division("CORTESIA ALIMENTOS", 22), new Division(":", 2), new Division(reporte.SCortesiaAlimentos)));
+            lineas.Add(Relleno(40, new Division("CORTESIA BEBIDAS", 22), new Division(":", 2), new Division(reporte.SCortesiaBebidas)));
+            lineas.Add(Relleno(40, new Division("CORTESIA OTROS", 22), new Division(":", 2), new Division(reporte.SCortesiaOtros)));
             lineas.Add(Relleno(40, new Division("", 23), new Division("______________")));
-            lineas.Add(Relleno(40, new Division("TOTAL CORTESIAS", 22), new Division(":", 2), new Division(string.Format("{0:C}", reporte.TotalCortesias))));
-            lineas.Add(Relleno(40, new Division("DESCUENTO ALIMENTOS", 22), new Division(":", 2), new Division(string.Format("{0:C}", reporte.DescuentoAlimentos))));
-            lineas.Add(Relleno(40, new Division("DESCUENTO BEBIDAS", 22), new Division(":", 2), new Division(string.Format("{0:C}", reporte.DescuentoBebidas))));
-            lineas.Add(Relleno(40, new Division("DESCUENTO OTROS", 22), new Division(":", 2), new Division(string.Format("{0:C}", reporte.DescuentoOtros))));
+            lineas.Add(Relleno(40, new Division("TOTAL CORTESIAS", 22), new Division(":", 2), new Division(reporte.STotalCortesias)));
+            lineas.Add(Relleno(40, new Division("DESCUENTO ALIMENTOS", 22), new Division(":", 2), new Division(reporte.SDescuentoAlimentos)));
+            lineas.Add(Relleno(40, new Division("DESCUENTO BEBIDAS", 22), new Division(":", 2), new Division(reporte.SDescuentoBebidas)));
+            lineas.Add(Relleno(40, new Division("DESCUENTO OTROS", 22), new Division(":", 2), new Division(reporte.SDescuentoOtros)));
             lineas.Add(Relleno(40, new Division("", 23), new Division("______________")));
-            lineas.Add(Relleno(40, new Division("TOTAL DESCUENTOS", 22), new Division(":", 2), new Division(string.Format("{0:C}", reporte.TotalDescuentos))));
-            lineas.Add(Relleno(40, new Division("TOTAL DECLARADO", 22), new Division(":", 2), new Division(string.Format("{0:C}", reporte.TotalDeclarado))));
-            lineas.Add(Relleno(40, new Division("SOBRANTE O FALTANTE", 22), new Division(":", 2), new Division(string.Format("{0:C}", reporte.SobranteOFaltante))));
-            lineas.Add(Relleno(40, new Division("ACUMULADO MES ANTERIOR", 22), new Division(":", 2), new Division(string.Format("{0:C}", reporte.AcumuladoMesAnterior))));
-            lineas.Add(Relleno(40, new Division("ACUMULADO MES ACTUAL", 22), new Division(":", 2), new Division(string.Format("{0:C}", reporte.AcumuladoMesActual))));
+            lineas.Add(Relleno(40, new Division("TOTAL DESCUENTOS", 22), new Division(":", 2), new Division(reporte.STotalDescuentos)));
+            lineas.Add(Relleno(40, new Division("TOTAL DECLARADO", 22), new Division(":", 2), new Division(reporte.STotalDeclarado)));
+            lineas.Add(Relleno(40, new Division("SOBRANTE O FALTANTE", 22), new Division(":", 2), new Division(reporte.SSobranteOFaltante)));
+            lineas.Add(Relleno(40, new Division("ACUMULADO MES ANTERIOR", 22), new Division(":", 2), new Division(reporte.SAcumuladoMesAnterior)));
+            lineas.Add(Relleno(40, new Division("ACUMULADO MES ACTUAL", 22), new Division(":", 2), new Division(reporte.SAcumuladoMesActual)));
             lineas.Add("");
             lineas.Add("");
             lineas.Add(Relleno('_', 15));
@@ -1214,8 +1202,8 @@ namespace mod_add.Utils
             lineas.Clear();
             lineas.Add("MOVIMIENTOS DE TARJETAS DE CREDITO");
             lineas.Add("");
-            lineas.Add(string.Format("DEL {0}", reporte.FechaCorteInicio.ToString("dd/MM/yyyy hh:mm:ss tt")));
-            lineas.Add(string.Format(" AL {0}", reporte.FechaCorteCierre.ToString("dd/MM/yyyy hh:mm:ss tt")));
+            lineas.Add($"DEL {reporte.SFechaCorteInicio}");
+            lineas.Add($" AL {reporte.SFechaCorteCierre}");
             lineas.Add(Relleno('='));
             lineas.Add("");
             lineas.Add("");
@@ -1226,10 +1214,10 @@ namespace mod_add.Utils
                 lineas.Add(
                     Relleno(40, 
                     new Division(" "),
-                    new Division($"{pagoTarjeta.numcheque}", 9),
+                    new Division(pagoTarjeta.Snumcheque, 9),
                     new Division(pagoTarjeta.descripcion, 12), 
                     new Division(" "),
-                    new Division(string.Format("{0:C}", reporte.NoConsiderarPropinas ? pagoTarjeta.importe : pagoTarjeta.Cargo))));
+                    new Division(pagoTarjeta.SCargo)));
             }
 
             lineas.Add("");
@@ -1240,17 +1228,9 @@ namespace mod_add.Utils
             foreach (var pago in pagos)
             {
                 lineas.Add(pago.descripcion);
-                lineas.Add(Relleno(40, new Division("VENTAS:", 10), new Division(string.Format("{0:C}", pago.importe))));
-
-                if (reporte.NoConsiderarPropinas)
-                {
-                    lineas.Add(Relleno(40, new Division("TOTAL:", 10), new Division(string.Format("{0:C}", pago.importe))));
-                }
-                else
-                {
-                    lineas.Add(Relleno(40, new Division("PROPINAS:", 10), new Division(string.Format("{0:C}", pago.propina))));
-                    lineas.Add(Relleno(40, new Division("TOTAL:", 10), new Division(string.Format("{0:C}", pago.importe + pago.propina))));
-                }
+                lineas.Add(Relleno(40, new Division("VENTAS:", 10), new Division(pago.SImporte)));
+                lineas.Add(Relleno(40, new Division("PROPINAS:", 10), new Division(pago.SPropina)));
+                lineas.Add(Relleno(40, new Division("TOTAL:", 10), new Division(pago.STotal)));
 
                 lineas.Add(Relleno('-'));
             }
@@ -1266,6 +1246,9 @@ namespace mod_add.Utils
             {
                 Impresion.Print_File(filePathCorte, "", 0, 8, 8);
                 Impresion.Print_File(filePathTarjeta, "", 0, 8, 8);
+
+                File.Delete(filePathCorte);
+                File.Delete(filePathTarjeta);
             }
         }
 
@@ -1312,6 +1295,7 @@ namespace mod_add.Utils
             //result = result.PadRight(result.Length + derecha, caracterRelleno);
             return result;
         }
+
         private string Relleno(char caracterRelleno = ' ', int columnas = 40)
         {
             return "".PadRight(columnas, caracterRelleno);

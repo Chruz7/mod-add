@@ -28,8 +28,10 @@ namespace mod_add.Modelos
         public string SEncabezadoFolio { get { return TipoCorte == TipoCorte.TURNO ? $"FOLIO {TituloCorte}: {FolioCorte}" : ""; } }
         public DateTime FechaCorteInicio { get; set; }
         public string SFechaCorteInicio { get { return FechaCorteInicio.ToString("dd/MM/yyyy hh:mm:ss tt", CultureInfo.CreateSpecificCulture("US")); } }
+        public string SSoloFechaCorteInicio { get { return FechaCorteInicio.ToString("dd/MM/yyyy"); } }
         public DateTime FechaCorteCierre { get; set; }
         public string SFechaCorteCierre { get { return FechaCorteCierre.ToString("dd/MM/yyyy hh:mm:ss tt", CultureInfo.CreateSpecificCulture("US")); } }
+        public string SSoloFechaCorteCierre { get { return FechaCorteCierre.ToString("dd/MM/yyyy"); } }
         public decimal EfectivoInicial { get; set; }
         public string SEfectivoInicial { get { return ConsiderarFondoInicial ? string.Format("{0:C}", EfectivoInicial) : ""; } }
         public decimal Efectivo { get; set; }
@@ -197,6 +199,7 @@ namespace mod_add.Modelos
                 return TotalDeclarado - SaldoFinal;
             }
         }
+        public string SSobranteOFaltante { get { return string.Format("{0:C}", SobranteOFaltante); } }
         public string SSobrante { get { return SobranteOFaltante > 0 && !ReporteFiscal ? string.Format("{0:C}", SobranteOFaltante) : ""; } }
         public string SFaltante { get { return SobranteOFaltante < 0 && !ReporteFiscal ? string.Format("{0:C}", SobranteOFaltante * -1) : ""; } }
         public decimal Dolares { get; set; }
