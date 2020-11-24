@@ -398,9 +398,9 @@ namespace mod_add.ViewModels
 
                     cheque.desc_imp_original = cheque.desc_imp_original;
 
-                    cheque.cambio = cheque.CambioAnt;
-                    cheque.cambiorepartidor = cheque.CambioRepartidorAnt;
-
+                    //cheque.cambio = cheque.CambioAnt;
+                    //cheque.cambiorepartidor = cheque.CambioRepartidorAnt;
+                    cheque.modificado = 0;
 
                     if (Proceso.TipoProceso == TipoProceso.FOLIOS)
                     {
@@ -922,8 +922,9 @@ namespace mod_add.ViewModels
 
                     cheque.desc_imp_original = cheque.descuentoimporte;
 
-                    cheque.cambio = 0; // como se debe ajustar el cambio si es efectivo? - por el momento queda en ceros
-                    cheque.cambiorepartidor = 0;
+                    //cheque.cambio = 0; // como se debe ajustar el cambio si es efectivo? - por el momento queda en ceros
+                    //cheque.cambiorepartidor = 0;
+                    cheque.modificado = 1;
                     #endregion
 
                     #region Ajuste del cheque pago

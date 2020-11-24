@@ -358,8 +358,9 @@ namespace mod_add.ViewModels
 
             Cheque.desc_imp_original = Cheque.descuentoimporte;
 
-            Cheque.cambio = 0; // como se debe ajustar el cambio si es efectivo? - por el momento queda en ceros
-            Cheque.cambiorepartidor = 0;
+            //Cheque.cambio = 0; // como se debe ajustar el cambio si es efectivo? - por el momento queda en ceros
+            //Cheque.cambiorepartidor = 0;
+            Cheque.modificado = 1;
 
             //falta ajustar mas campos del cheque
             #endregion
