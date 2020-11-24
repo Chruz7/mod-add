@@ -774,6 +774,78 @@ namespace mod_add.ViewModels
             }
         }
 
+        public Respuesta GenerarExcel()
+        {
+            using (SoftRestaurantDBContext context = new SoftRestaurantDBContext())
+            {
+                try
+                {
+                    DateTime FechaCorteInicio = FechaInicio.AddSeconds(CorteInicio.TimeOfDay.TotalSeconds);
+                    DateTime FechaCorteCierre = FechaCierre.AddSeconds(CorteCierre.TimeOfDay.TotalSeconds);
+
+                    if (!Funciones.ValidarMesBusqueda(App.MesesValidos, FechaCorteInicio))
+                    {
+                        return new Respuesta
+                        {
+                            TipoRespuesta = TipoRespuesta.FECHA_INACCESIBLE,
+                            Mensaje = FechaCorteInicio.ToString("MMMM yyyy", CultureInfo.CreateSpecificCulture("es"))
+                        };
+                    }
+
+                    if (!Funciones.ValidarMesBusqueda(App.MesesValidos, FechaCorteCierre))
+                    {
+                        return new Respuesta
+                        {
+                            TipoRespuesta = TipoRespuesta.FECHA_INACCESIBLE,
+                            Mensaje = FechaCorteCierre.ToString("MMMM yyyy", CultureInfo.CreateSpecificCulture("es"))
+                        };
+                    }
+
+                    string query;
+
+                    string Tturnos = App.ConfiguracionSistema.ModificarVentasReales ? "turnos" : "turnosf";
+
+                    query = $"SELECT {CamposTurnos()} FROM {Tturnos} WHERE apertura BETWEEN @{nameof(FechaCorteInicio)} AND @{nameof(FechaCorteCierre)} AND cierre IS NOT NULL AND idempresa=@{nameof(App.ClaveEmpresa)}";
+
+                    var turnos = context.Database
+                        .SqlQuery<TurnoReporte>(query,
+                            new SqlParameter($"{nameof(FechaCorteInicio)}", FechaCorteInicio),
+                            new SqlParameter($"{nameof(FechaCorteCierre)}", FechaCorteCierre),
+                            new SqlParameter($"{nameof(App.ClaveEmpresa)}", App.ClaveEmpresa))
+                        .ToList();
+
+                    if (turnos.Count == 0)
+                    {
+                        return new Respuesta
+                        {
+                            TipoRespuesta = TipoRespuesta.SIN_REGISTROS
+                        };
+                    }
+
+                    var idsturno = turnos.Select(x => (object)x.idturno).ToArray();
+
+                    SR_cheques_DAO cheques_DAO = new SR_cheques_DAO(context, !App.ConfiguracionSistema.ModificarVentasReales);
+                    var cheques = cheques_DAO.WhereIn("idturno", idsturno);
+
+                    Exportar exportar = new Exportar();
+                    exportar.DetallesCuentas(Reporte.TipoReporte, FechaCorteInicio, FechaCorteCierre, cheques);
+
+                    return new Respuesta
+                    {
+                        TipoRespuesta = TipoRespuesta.HECHO
+                    };
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"INICIO-ERROR\n{ex}\nFIN-ERROR");
+                    return new Respuesta
+                    {
+                        TipoRespuesta = TipoRespuesta.ERROR
+                    };
+                }
+            }
+        }
+
         private DateTime corteInicio;
 
         public DateTime CorteInicio

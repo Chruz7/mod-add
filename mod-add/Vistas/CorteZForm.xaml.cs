@@ -54,16 +54,43 @@ namespace mod_add.Vistas
 
         private void ExportarExcel_Click(object sender, RoutedEventArgs e)
         {
-            string t = ViewModel.FechaInicio.ToString() + "\n";
+            if (!Validar()) return;
 
-            t += ViewModel.CorteInicio.ToString() + "\n";
-            t += ViewModel.FechaCierre.ToString() + "\n";
-            t += ViewModel.CorteCierre.ToString() + "\n";
-            t += "\n";
+            App.HabilitarPrincipal(false);
+            IsEnabled = false;
 
-            t += ViewModel.FechaInicio.AddSeconds(ViewModel.CorteInicio.TimeOfDay.TotalSeconds).ToString() + "\n";
-            t += ViewModel.FechaCierre.AddSeconds(ViewModel.CorteCierre.TimeOfDay.TotalSeconds).ToString() + "\n";
-            MessageBox.Show(t);
+            Respuesta respuesta = new Respuesta
+            {
+                TipoRespuesta = TipoRespuesta.NADA
+            };
+
+            LoadingWindow loading = new LoadingWindow();
+            loading.AgregarMensaje("Generando reporte");
+            loading.Show();
+
+            Task.Factory.StartNew(() =>
+            {
+                respuesta = ViewModel.GenerarExcel();
+
+            }).ContinueWith(task =>
+            {
+                loading.Close();
+                App.HabilitarPrincipal();
+                IsEnabled = true;
+
+                if (respuesta.TipoRespuesta == TipoRespuesta.FECHA_INACCESIBLE)
+                {
+                    MessageBox.Show($"No cuenta con la licencia para generar reportes en el mes de {respuesta.Mensaje}", "Busqueda", MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
+                else if (respuesta.TipoRespuesta == TipoRespuesta.SIN_REGISTROS)
+                {
+                    MessageBox.Show("No hay información para generar el reporte", "Busqueda", MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
+                else if (respuesta.TipoRespuesta == TipoRespuesta.ERROR)
+                {
+                    MessageBox.Show("Hubo un error al intentar generar el reporte", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }, System.Threading.CancellationToken.None, TaskContinuationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());
         }
 
         private void Generar(TipoDestino tipoDestino)

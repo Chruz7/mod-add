@@ -34,7 +34,8 @@ namespace mod_add.ViewModels
 
         public TipoRespuesta ExportarExcel()
         {
-            var respuesta = Exportar.Excel(BitacoraModificaciones);
+            Exportar exportar = new Exportar();
+            var respuesta = exportar.BicatoraExcel(BitacoraModificaciones);
 
             return respuesta;
         }
