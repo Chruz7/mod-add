@@ -130,8 +130,11 @@
     <Compile Include="Componentes\Configuracion.xaml.cs">
       <DependentUpon>Configuracion.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Enums\TipoBusquedaCuenta.cs" />
+    <Compile Include="Enums\TipoBusquedaRegistro.cs" />
     <Compile Include="Enums\TipoCorte.cs" />
     <Compile Include="Enums\TipoDestino.cs" />
+    <Compile Include="Enums\TipoImpresionCuenta.cs" />
     <Compile Include="Enums\TipoReporte.cs" />
     <Compile Include="Enums\TipoRespuesta.cs" />
     <Compile Include="Helpers\Messenger.cs" />
@@ -142,9 +145,13 @@
     <Compile Include="Modelos\Pago.cs" />
     <Compile Include="Modelos\PagoTarjeta.cs" />
     <Compile Include="Modelos\ReporteCorte.cs" />
+    <Compile Include="Modelos\ReporteFolios.cs" />
     <Compile Include="Modelos\TurnoReporte.cs" />
     <Compile Include="Modelos\VentaRapida.cs" />
+    <Compile Include="Selectores\BusquedaCuenta.cs" />
+    <Compile Include="Selectores\BusquedaRegistro.cs" />
     <Compile Include="Selectores\Condicional.cs" />
+    <Compile Include="Selectores\ImpresionCuenta.cs" />
     <Compile Include="Selectores\Proceso.cs" />
     <Compile Include="Selectores\Reporte.cs" />
     <Compile Include="Selectores\Respuesta.cs" />
@@ -163,6 +170,7 @@
     <Compile Include="ViewModels\CorteZViewModel.cs" />
     <Compile Include="ViewModels\EliminarProductosViewModel.cs" />
     <Compile Include="ViewModels\LicenciaViewModel.cs" />
+    <Compile Include="ViewModels\ReimpresionFoliosViewModel.cs" />
     <Compile Include="ViewModels\SeleccionClienteViewModel.cs" />
     <Compile Include="ViewModels\SeleccionGrupoViewModel.cs" />
     <Compile Include="ViewModels\SeleccionProductoViewModel.cs" />
@@ -184,6 +192,9 @@
     </Compile>
     <Compile Include="Vistas\Principal.xaml.cs">
       <DependentUpon>Principal.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Vistas\ReimpresionFoliosForm.xaml.cs">
+      <DependentUpon>ReimpresionFoliosForm.xaml</DependentUpon>
     </Compile>
     <Compile Include="Vistas\SeleccionClientes.xaml.cs">
       <DependentUpon>SeleccionClientes.xaml</DependentUpon>
@@ -249,6 +260,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Vistas\Principal.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Vistas\ReimpresionFoliosForm.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -354,6 +369,12 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ModelosPerzonalizados\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Recursos\Iconos\limpiar.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Recursos\Iconos\lista.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

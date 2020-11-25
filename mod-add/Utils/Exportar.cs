@@ -1,6 +1,6 @@
-﻿using mod_add.Datos.Modelos;
-using mod_add.Enums;
+﻿using mod_add.Enums;
 using SpreadsheetLight;
+using SpreadsheetLight.Charts;
 using SR.Datos;
 using SRLibrary.SR_DTO;
 using System;
@@ -15,11 +15,14 @@ namespace mod_add.Utils
         public string PathBitacora { get; set; }
         public string PathDetalladoVertical { get; set; }
         public string PathDetalladoHorizontal { get; set; }
+        private SLDocument SLDoc { get; set; }
         public Exportar()
         {
             PathBitacora = ConfiguracionLocalServicio.ReadSetting("PATH-BITACORA");
             PathDetalladoVertical = ConfiguracionLocalServicio.ReadSetting("PATH-DETALLADO-VERTICAL");
             PathDetalladoHorizontal = ConfiguracionLocalServicio.ReadSetting("PATH-DETALLADO-HORIZONTAL");
+
+            SLDoc = new SLDocument();
         }
 
         public TipoRespuesta BicatoraExcel(List<SR_bitacorafiscal> bitacora)
@@ -31,71 +34,72 @@ namespace mod_add.Utils
 
             try
             {
-                SLDocument sl = new SLDocument();
+                //SLStyle styleColumn = SLDoc.CreateStyle();
+                //styleColumn.SetHorizontalAlignment(DocumentFormat.OpenXml.Spreadsheet.HorizontalAlignmentValues.Center);
+                //styleColumn.SetVerticalAlignment(DocumentFormat.OpenXml.Spreadsheet.VerticalAlignmentValues.Center);
+                //styleColumn.SetWrapText(true);
 
-                SLStyle styleColumn = sl.CreateStyle();
-                styleColumn.SetHorizontalAlignment(DocumentFormat.OpenXml.Spreadsheet.HorizontalAlignmentValues.Center);
-                styleColumn.SetVerticalAlignment(DocumentFormat.OpenXml.Spreadsheet.VerticalAlignmentValues.Center);
-                styleColumn.SetWrapText(true);
+                //SLStyle styleColumn2 = SLDoc.CreateStyle();
+                //styleColumn2.SetHorizontalAlignment(DocumentFormat.OpenXml.Spreadsheet.HorizontalAlignmentValues.Right);
+                //styleColumn2.SetWrapText(true);
 
-                SLStyle styleColumn2 = sl.CreateStyle();
-                styleColumn2.SetHorizontalAlignment(DocumentFormat.OpenXml.Spreadsheet.HorizontalAlignmentValues.Right);
-                styleColumn2.SetWrapText(true);
+                //SLDoc.SetColumnStyle(1, styleColumn);
+                //SLDoc.SetColumnStyle(2, styleColumn);
+                //SLDoc.SetColumnStyle(3, styleColumn);
+                //SLDoc.SetColumnStyle(4, styleColumn);
+                //SLDoc.SetColumnStyle(5, styleColumn);
+                //SLDoc.SetColumnStyle(9, styleColumn);
 
-                sl.SetColumnStyle(1, styleColumn);
-                sl.SetColumnStyle(2, styleColumn);
-                sl.SetColumnStyle(3, styleColumn);
-                sl.SetColumnStyle(4, styleColumn);
-                sl.SetColumnStyle(5, styleColumn);
-                sl.SetColumnStyle(9, styleColumn);
+                //styleColumn.FormatCode = "#,##0.00";
+                //SLDoc.SetColumnStyle(8, styleColumn);
 
-                styleColumn.FormatCode = "#,##0.00";
-                sl.SetColumnStyle(8, styleColumn);
+                //styleColumn2.FormatCode = "#,##0.0000";
+                //SLDoc.SetColumnStyle(6, styleColumn2);
+                //SLDoc.SetColumnStyle(7, styleColumn2);
 
-                styleColumn2.FormatCode = "#,##0.0000";
-                sl.SetColumnStyle(6, styleColumn2);
-                sl.SetColumnStyle(7, styleColumn2);
+                //SLDoc.SetCellStyle(1, 6, styleColumn);
+                //SLDoc.SetCellStyle(1, 7, styleColumn);
 
-                sl.SetCellStyle(1, 6, styleColumn);
-                sl.SetCellStyle(1, 7, styleColumn);
+                SLDoc.SetColumnWidth(1, 24);
+                SLDoc.SetColumnWidth(2, 24);
+                SLDoc.SetColumnWidth(3, 24);
+                SLDoc.SetColumnWidth(4, 15);
+                SLDoc.SetColumnWidth(5, 15);
+                SLDoc.SetColumnWidth(6, 15);
+                SLDoc.SetColumnWidth(7, 15);
+                SLDoc.SetColumnWidth(8, 15);
+                SLDoc.SetColumnWidth(9, 15);
 
-                sl.SetColumnWidth(1, 24);
-                sl.SetColumnWidth(2, 24);
-                sl.SetColumnWidth(3, 24);
-                sl.SetColumnWidth(4, 15);
-                sl.SetColumnWidth(5, 15);
-                sl.SetColumnWidth(6, 15);
-                sl.SetColumnWidth(7, 15);
-                sl.SetColumnWidth(8, 15);
-                sl.SetColumnWidth(9, 15);
-
-                sl.SetCellValue(1, 1, "FECHA DE PROCESO");
-                sl.SetCellValue(1, 2, "FECHA INICIAL (VENTA)");
-                sl.SetCellValue(1, 3, "FECHA FINAL (VENTA)");
-                sl.SetCellValue(1, 4, $"TOTAL CUENTAS");
-                sl.SetCellValue(1, 5, "CUENTAS MODIFICADAS");
-                sl.SetCellValue(1, 6, "IMPORTE ANTERIOR");
-                sl.SetCellValue(1, 7, "IMPORTE NUEVO");
-                sl.SetCellValue(1, 8, "DIFERENCIA %");
-                sl.SetCellValue(1, 9, "TIPO DE ELIMINACION");
+                SLDoc.SetCellValue(1, 1, "FECHA DE PROCESO");
+                SLDoc.SetCellValue(1, 2, "FECHA INICIAL (VENTA)");
+                SLDoc.SetCellValue(1, 3, "FECHA FINAL (VENTA)");
+                SLDoc.SetCellValue(1, 4, $"TOTAL CUENTAS");
+                SLDoc.SetCellValue(1, 5, "CUENTAS MODIFICADAS");
+                SLDoc.SetCellValue(1, 6, "IMPORTE ANTERIOR");
+                SLDoc.SetCellValue(1, 7, "IMPORTE NUEVO");
+                SLDoc.SetCellValue(1, 8, "DIFERENCIA %");
+                SLDoc.SetCellValue(1, 9, "TIPO DE ELIMINACION");
                 //sl.SetCellValue(1, 10, "MODO DE ELIMINACION");
 
-                int i = 2;
+                SLStyle styleDateTime = SLDoc.CreateStyle();
+                styleDateTime.FormatCode = "dd/MM/yyyy HH:mm";
+
+                int i = 1;
                 foreach (var resgitro in bitacora)
                 {
-                    sl.SetCellValue(i, 1, resgitro.fecha.Value.ToString());
-                    sl.SetCellValue(i, 2, resgitro.fechainicial.Value.ToString());
-                    sl.SetCellValue(i, 3, resgitro.fechafinal.Value.ToString());
-                    sl.SetCellValue(i, 4, resgitro.cuentastotal.Value);
-                    sl.SetCellValue(i, 5, resgitro.cuentasmodificadas.Value);
-                    sl.SetCellValue(i, 6, resgitro.importeanterior.Value);
-                    sl.SetCellValue(i, 7, resgitro.importenuevo.Value);
-                    sl.SetCellValue(i, 8, resgitro.diferencia.Value);
-                    sl.SetCellValue(i, 9, resgitro.tipo);
-                    //sl.SetCellValue(i, 10, resgitro.tipo);
                     i++;
+                    SetDateTime(i, 1, resgitro.fecha, styleDateTime);
+                    SetDateTime(i, 2, resgitro.fechainicial, styleDateTime);
+                    SetDateTime(i, 3, resgitro.fechafinal, styleDateTime);
+                    SLDoc.SetCellValue(i, 4, resgitro.cuentastotal ?? 0);
+                    SLDoc.SetCellValue(i, 5, resgitro.cuentasmodificadas ?? 0);
+                    SLDoc.SetCellValue(i, 6, resgitro.importeanterior ?? 0);
+                    SLDoc.SetCellValue(i, 7, resgitro.importenuevo ?? 0);
+                    SLDoc.SetCellValue(i, 8, resgitro.diferencia ?? 0);
+                    SLDoc.SetCellValue(i, 9, resgitro.tipo);
+                    //SLDoc.SetCellValue(i, 10, resgitro);
                 }
-                sl.SaveAs(pathArchivo);
+                SLDoc.SaveAs(pathArchivo);
 
                 return TipoRespuesta.HECHO;
             }
@@ -106,12 +110,10 @@ namespace mod_add.Utils
             }
         }
 
-        public void DetallesCuentas(TipoReporte tipoReporte, DateTime fechaInicial, DateTime fechaFinal, List<SR_cheques> cheques)
+        public void DetallesCuentas(TipoReporte tipoReporte, TipoCorte tipoCorte, DateTime fechaInicial, DateTime fechaFinal, List<SR_cheques> cheques)
         {
             try
             {
-                SLDocument sl = new SLDocument();
-
                 List<string> columnas = new List<string>
                 {
                     "folio",
@@ -217,7 +219,7 @@ namespace mod_add.Utils
                     "numerocuenta",
                     "codigo_unico_af",
                     "modificado",
-                    "EnviadoRW",
+                    "enviadorw",
                     "usuarioapertura",
                     "autorizacionfolio",
                     "fechalimiteemision",
@@ -228,225 +230,236 @@ namespace mod_add.Utils
                     "titulartarjetamonedero",
                     "saldoanteriormonedero",
                     "ncf",
-                    "idformadepagoDescuento",
+                    "idformadepagodescuento",
                     "titulartarjetamonederodescuento",
                     "surveycode",
-                    "TKC_Authorization",
-                    "TKC_Cupon",
-                    "TKC_ExpirationDate",
-                    "TKC_Recompensa",
+                    "tkc_authorization",
+                    "tkc_cupon",
+                    "tkc_expirationdate",
+                    "tkc_recompensa",
                     "campoadicional2",
                     "campoadicional3",
-                    "estrateca_CardNumber",
-                    "estrateca_VoucherText",
+                    "estrateca_cardnumber",
                     "campoadicional4",
                     "campoadicional5",
-                    "sacoa_CardNumber",
+                    "sacoa_cardnumber",
                     "sacoa_credits",
-                    "estrateca_TypeDisccount",
-                    "estrateca_DiscountCode",
-                    "estrateca_DiscountID",
-                    "estrateca_DiscountAmount",
+                    "estrateca_typedisccount",
+                    "estrateca_discountcode",
+                    "estrateca_discountid",
+                    "estrateca_discountamount",
                     "desc_imp_original",
                     "donativo",
                     "totalcondonativo",
                     "totalconpropinacargodonativo",
-                    "orderreference",
                     "appname",
                     "paymentproviderid",
                     "paymentprovider",
-                    "ChangeStatusSRX",
+                    "changestatussrx",
+                    "datedownload",
+                    "empaquetado",
+                    "status_domicilio",
+                    "asignacion",
+                    "enviopagado",
+                    "sl_cupon_descuento",
+                    "sl_tipo_cupon",
+                    "sl_importe_descuento",
+                    "tuki_cardnumber",
+                    "tuki_accumulatedpoints",
+                    "tuki_currentpoints",
+                    "sl_num_cupones",
+                    "totalimportedescuentos",
                 };
 
                 int icolumna = 0;
                 foreach (var columna in columnas)
                 {
                     icolumna++;
-                    sl.SetCellValue(1, icolumna, columna);
+                    SLDoc.SetCellValue(1, icolumna, columna);
                 }
 
                 int ifila = 1;
+
+                SLStyle styleDateTime = SLDoc.CreateStyle();
+                styleDateTime.FormatCode = "dd/MM/yyyy HH:mm";
+
                 foreach (var cheque in cheques)
                 {
                     ifila++;
 
-                    sl.SetCellValue(ifila, 1, cheque.folio);
-                    sl.SetCellValue(ifila, 2, cheque.seriefolio);
-                    sl.SetCellValue(ifila, 3, (long)(cheque.numcheque ?? 0));
-                    sl.SetCellValue(ifila, 4, FechaToString(cheque.fecha));
-                    sl.SetCellValue(ifila, 5, FechaToString(cheque.salidarepartidor));
-                    sl.SetCellValue(ifila, 6, FechaToString(cheque.arriborepartidor));
-                    sl.SetCellValue(ifila, 7, FechaToString(cheque.cierre));
-                    sl.SetCellValue(ifila, 8, cheque.mesa);
-                    sl.SetCellValue(ifila, 9, (int)(cheque.nopersonas ?? 0));
-                    sl.SetCellValue(ifila, 10, cheque.idmesero);
-                    sl.SetCellValue(ifila, 11, BooleanToString(cheque.pagado));
-                    sl.SetCellValue(ifila, 12, BooleanToString(cheque.cancelado));
-                    sl.SetCellValue(ifila, 13, BooleanToString(cheque.impreso));
-                    sl.SetCellValue(ifila, 14, (int)(cheque.impresiones ?? 0));
-                    sl.SetCellValue(ifila, 15, (cheque.cambio ?? 0));
-                    sl.SetCellValue(ifila, 16, (cheque.descuento ?? 0));
-                    sl.SetCellValue(ifila, 17, (cheque.reabiertas ?? 0));
-                    sl.SetCellValue(ifila, 18, cheque.razoncancelado);
-                    sl.SetCellValue(ifila, 19, (cheque.orden ?? 0));
-                    sl.SetCellValue(ifila, 20, BooleanToString(cheque.facturado));
-                    sl.SetCellValue(ifila, 21, cheque.idcliente);
-                    sl.SetCellValue(ifila, 22, cheque.idarearestaurant);
-                    sl.SetCellValue(ifila, 23, cheque.claveempresav);
-                    sl.SetCellValue(ifila, 24, (int)(cheque.tipodeservicio ?? 0));
-                    sl.SetCellValue(ifila, 25, (long)(cheque.idturno ?? 0));
-                    sl.SetCellValue(ifila, 26, cheque.usuariocancelo);
-                    sl.SetCellValue(ifila, 27, cheque.comentariodescuento);
-                    sl.SetCellValue(ifila, 28, cheque.estacion);
-                    sl.SetCellValue(ifila, 29, (cheque.cambiorepartidor ?? 0));
-                    sl.SetCellValue(ifila, 30, cheque.usuariodescuento);
-                    sl.SetCellValue(ifila, 31, FechaToString(cheque.fechacancelado));
-                    sl.SetCellValue(ifila, 32, cheque.idtipodescuento);
-                    sl.SetCellValue(ifila, 33, cheque.numerotarjeta);
-                    sl.SetCellValue(ifila, 34, (long)(cheque.folionotadeconsumo ?? 0));
-                    sl.SetCellValue(ifila, 35, BooleanToString(cheque.notadeconsumo));
-                    sl.SetCellValue(ifila, 36, BooleanToString(cheque.propinapagada));
-                    sl.SetCellValue(ifila, 37, (long)(cheque.propinafoliomovtocaja ?? 0));
-                    sl.SetCellValue(ifila, 38, (decimal)(cheque.puntosmonederogenerados ?? 0));
-                    sl.SetCellValue(ifila, 39, (int)(cheque.propinaincluida ?? 0));
-                    sl.SetCellValue(ifila, 40, cheque.tarjetadescuento);
-                    sl.SetCellValue(ifila, 41, (decimal)(cheque.porcentajefac ?? 0));
-                    sl.SetCellValue(ifila, 42, BooleanToString(cheque.propinamanual));
-                    sl.SetCellValue(ifila, 43, cheque.usuariopago);
-                    sl.SetCellValue(ifila, 44, cheque.idclientefacturacion);
-                    sl.SetCellValue(ifila, 45, BooleanToString(cheque.cuentaenuso));
-                    sl.SetCellValue(ifila, 46, cheque.observaciones);
-                    sl.SetCellValue(ifila, 47, cheque.idclientedomicilio);
-                    sl.SetCellValue(ifila, 48, cheque.iddireccion);
-                    sl.SetCellValue(ifila, 49, cheque.telefonousadodomicilio);
-                    sl.SetCellValue(ifila, 50, (decimal)(cheque.totalarticulos ?? 0));
-                    sl.SetCellValue(ifila, 51, (decimal)(cheque.subtotal ?? 0));
-                    sl.SetCellValue(ifila, 52, (decimal)(cheque.subtotalsinimpuestos ?? 0));
-                    sl.SetCellValue(ifila, 53, (decimal)(cheque.total ?? 0));
-                    sl.SetCellValue(ifila, 54, (decimal)(cheque.totalconpropina ?? 0));
-                    sl.SetCellValue(ifila, 55, (decimal)(cheque.totalimpuesto1 ?? 0));
-                    sl.SetCellValue(ifila, 56, (decimal)(cheque.cargo ?? 0));
-                    sl.SetCellValue(ifila, 57, (decimal)(cheque.totalconcargo ?? 0));
-                    sl.SetCellValue(ifila, 58, (decimal)(cheque.totalconpropinacargo ?? 0));
-                    sl.SetCellValue(ifila, 59, (decimal)(cheque.descuentoimporte ?? 0));
-                    sl.SetCellValue(ifila, 60, (decimal)(cheque.efectivo ?? 0));
-                    sl.SetCellValue(ifila, 61, (decimal)(cheque.tarjeta ?? 0));
-                    sl.SetCellValue(ifila, 62, (decimal)(cheque.vales ?? 0));
-                    sl.SetCellValue(ifila, 63, (decimal)(cheque.otros ?? 0));
-                    sl.SetCellValue(ifila, 64, (decimal)(cheque.propina ?? 0));
-                    sl.SetCellValue(ifila, 65, (decimal)(cheque.propinatarjeta ?? 0));
-                    sl.SetCellValue(ifila, 66, cheque.campoadicional1);
-                    sl.SetCellValue(ifila, 67, cheque.idreservacion);
-                    sl.SetCellValue(ifila, 68, cheque.idcomisionista);
-                    sl.SetCellValue(ifila, 69, (decimal)(cheque.importecomision ?? 0));
-                    sl.SetCellValue(ifila, 70, BooleanToString(cheque.comisionpagada));
-                    sl.SetCellValue(ifila, 71, FechaToString(cheque.fechapagocomision));
-                    sl.SetCellValue(ifila, 72, (int)(cheque.foliopagocomision ?? 0));
-                    sl.SetCellValue(ifila, 73, (int)(cheque.tipoventarapida ?? 0));
-                    sl.SetCellValue(ifila, 74, BooleanToString(cheque.callcenter));
-                    sl.SetCellValue(ifila, 75, (long)(cheque.idordencompra ?? 0));
-                    sl.SetCellValue(ifila, 76, cheque.idempresa);
-                    sl.SetCellValue(ifila, 77, (decimal)(cheque.totalsindescuento ?? 0));
-                    sl.SetCellValue(ifila, 78, (decimal)(cheque.totalalimentos ?? 0));
-                    sl.SetCellValue(ifila, 79, (decimal)(cheque.totalbebidas ?? 0));
-                    sl.SetCellValue(ifila, 80, (decimal)(cheque.totalotros ?? 0));
-                    sl.SetCellValue(ifila, 81, (decimal)(cheque.totaldescuentos ?? 0));
-                    sl.SetCellValue(ifila, 82, (decimal)(cheque.totaldescuentoalimentos ?? 0));
-                    sl.SetCellValue(ifila, 83, (decimal)(cheque.totaldescuentobebidas ?? 0));
-                    sl.SetCellValue(ifila, 84, (decimal)(cheque.totaldescuentootros ?? 0));
-                    sl.SetCellValue(ifila, 85, (decimal)(cheque.totalcortesias ?? 0));
-                    sl.SetCellValue(ifila, 86, (decimal)(cheque.totalcortesiaalimentos ?? 0));
-                    sl.SetCellValue(ifila, 87, (decimal)(cheque.totalcortesiabebidas ?? 0));
-                    sl.SetCellValue(ifila, 88, (decimal)(cheque.totalcortesiaotros ?? 0));
-                    sl.SetCellValue(ifila, 89, (decimal)(cheque.totaldescuentoycortesia ?? 0));
-                    sl.SetCellValue(ifila, 90, (decimal)(cheque.totalalimentossindescuentos ?? 0));
-                    sl.SetCellValue(ifila, 91, (decimal)(cheque.totalbebidassindescuentos ?? 0));
-                    sl.SetCellValue(ifila, 92, (decimal)(cheque.totalotrossindescuentos ?? 0));
-                    sl.SetCellValue(ifila, 93, (decimal)(cheque.descuentocriterio ?? 0));
-                    sl.SetCellValue(ifila, 94, (decimal)(cheque.descuentomonedero ?? 0));
-                    sl.SetCellValue(ifila, 95, cheque.idmenucomedor);
-                    sl.SetCellValue(ifila, 96, (decimal)(cheque.subtotalcondescuento ?? 0));
-                    sl.SetCellValue(ifila, 97, (decimal)(cheque.comisionpax ?? 0));
-                    sl.SetCellValue(ifila, 98, BooleanToString(cheque.procesadointerfaz));
-                    sl.SetCellValue(ifila, 99, BooleanToString(cheque.domicilioprogramado));
-                    sl.SetCellValue(ifila, 100, FechaToString(cheque.fechadomicilioprogramado));
-                    sl.SetCellValue(ifila, 101, cheque.numerocuenta);
-                    sl.SetCellValue(ifila, 102, cheque.codigo_unico_af);
-                    sl.SetCellValue(ifila, 103, (int)(cheque.modificado ?? 0));
-                    sl.SetCellValue(ifila, 104, BooleanToString(cheque.EnviadoRW));
-                    sl.SetCellValue(ifila, 105, cheque.usuarioapertura);
-                    sl.SetCellValue(ifila, 106, cheque.autorizacionfolio);
-                    sl.SetCellValue(ifila, 107, FechaToString(cheque.fechalimiteemision));
-                    sl.SetCellValue(ifila, 108, cheque.totalimpuestod1);
-                    sl.SetCellValue(ifila, 109, cheque.totalimpuestod2);
-                    sl.SetCellValue(ifila, 110, cheque.totalimpuestod3);
-                    sl.SetCellValue(ifila, 111, cheque.idmotivocancela);
-                    sl.SetCellValue(ifila, 112, cheque.titulartarjetamonedero);
-                    sl.SetCellValue(ifila, 113, (decimal)(cheque.saldoanteriormonedero ?? 0));
-                    sl.SetCellValue(ifila, 114, cheque.ncf);
-                    sl.SetCellValue(ifila, 115, cheque.idformadepagoDescuento);
-                    sl.SetCellValue(ifila, 116, cheque.titulartarjetamonederodescuento);
-                    sl.SetCellValue(ifila, 117, cheque.surveycode);
-                    sl.SetCellValue(ifila, 118, cheque.TKC_Authorization);
-                    sl.SetCellValue(ifila, 119, cheque.TKC_Cupon);
-                    sl.SetCellValue(ifila, 120, cheque.TKC_ExpirationDate);
-                    sl.SetCellValue(ifila, 121, cheque.TKC_Recompensa);
-                    sl.SetCellValue(ifila, 122, cheque.campoadicional2);
-                    sl.SetCellValue(ifila, 123, cheque.campoadicional3);
-                    sl.SetCellValue(ifila, 124, cheque.estrateca_CardNumber);
-                    sl.SetCellValue(ifila, 125, cheque.estrateca_VoucherText);
-                    sl.SetCellValue(ifila, 126, cheque.campoadicional4);
-                    sl.SetCellValue(ifila, 127, cheque.campoadicional5);
-                    sl.SetCellValue(ifila, 128, cheque.sacoa_CardNumber);
-                    sl.SetCellValue(ifila, 129, cheque.sacoa_credits);
-                    sl.SetCellValue(ifila, 130, cheque.estrateca_TypeDisccount);
-                    sl.SetCellValue(ifila, 131, cheque.estrateca_DiscountCode);
-                    sl.SetCellValue(ifila, 132, cheque.estrateca_DiscountID);
-                    sl.SetCellValue(ifila, 133, cheque.estrateca_DiscountAmount);
-                    sl.SetCellValue(ifila, 134, (decimal)(cheque.desc_imp_original ?? 0));
-                    sl.SetCellValue(ifila, 135, cheque.donativo);
-                    sl.SetCellValue(ifila, 136, cheque.totalcondonativo);
-                    sl.SetCellValue(ifila, 137, cheque.totalconpropinacargodonativo);
-                    sl.SetCellValue(ifila, 138, cheque.orderreference);
-                    sl.SetCellValue(ifila, 139, cheque.appname);
-                    sl.SetCellValue(ifila, 140, cheque.paymentproviderid);
-                    sl.SetCellValue(ifila, 141, cheque.paymentprovider);
-                    sl.SetCellValue(ifila, 142, BooleanToString(cheque.ChangeStatusSRX));
-                    //sl.SetCellValue(ifila, 143, cheque.DateDownload);
-                    //sl.SetCellValue(ifila, 144, cheque.empaquetado);
-                    //sl.SetCellValue(ifila, 145, cheque.status_domicilio);
-                    //sl.SetCellValue(ifila, 146, cheque.asignacion);
-                    //sl.SetCellValue(ifila, 147, cheque.enviopagado);
-                    //sl.SetCellValue(ifila, 148, cheque.sl_cupon_descuento);
-                    //sl.SetCellValue(ifila, 149, cheque.sl_tipo_cupon);
-                    //sl.SetCellValue(ifila, 150, cheque.sl_importe_descuento);
-                    //sl.SetCellValue(ifila, 151, cheque.TUKI_CardNumber);
-                    //sl.SetCellValue(ifila, 152, cheque.TUKI_AccumulatedPoints);
-                    //sl.SetCellValue(ifila, 153, cheque.TUKI_CurrentPoints);
-                    //sl.SetCellValue(ifila, 154, cheque.sl_num_cupones);
+                    SLDoc.SetCellValue(ifila, 1, cheque.folio);
+                    SLDoc.SetCellValue(ifila, 2, cheque.seriefolio);
+                    SLDoc.SetCellValue(ifila, 3, (cheque.numcheque ?? 0));
+                    SetDateTime(ifila, 4, cheque.fecha, styleDateTime);
+                    SetDateTime(ifila, 5, cheque.salidarepartidor, styleDateTime);
+                    SetDateTime(ifila, 6, cheque.arriborepartidor, styleDateTime);
+                    SetDateTime(ifila, 7, cheque.cierre, styleDateTime);
+                    SLDoc.SetCellValue(ifila, 8, cheque.mesa);
+                    SLDoc.SetCellValue(ifila, 9, (cheque.nopersonas ?? 0));
+                    SLDoc.SetCellValue(ifila, 10, cheque.idmesero);
+                    SetBoolean(ifila, 11, cheque.pagado);
+                    SetBoolean(ifila, 12, cheque.cancelado);
+                    SetBoolean(ifila, 13, cheque.impreso);
+                    SLDoc.SetCellValue(ifila, 14, (cheque.impresiones ?? 0));
+                    SLDoc.SetCellValue(ifila, 15, (cheque.cambio ?? 0));
+                    SLDoc.SetCellValue(ifila, 16, (cheque.descuento ?? 0));
+                    SLDoc.SetCellValue(ifila, 17, (cheque.reabiertas ?? 0));
+                    SLDoc.SetCellValue(ifila, 18, cheque.razoncancelado);
+                    SLDoc.SetCellValue(ifila, 19, (cheque.orden ?? 0));
+                    SetBoolean(ifila, 20, cheque.facturado);
+                    SLDoc.SetCellValue(ifila, 21, cheque.idcliente);
+                    SLDoc.SetCellValue(ifila, 22, cheque.idarearestaurant);
+                    SLDoc.SetCellValue(ifila, 23, cheque.idempresa);
+                    SLDoc.SetCellValue(ifila, 24, (cheque.tipodeservicio ?? 0));
+                    SLDoc.SetCellValue(ifila, 25, (cheque.idturno ?? 0));
+                    SLDoc.SetCellValue(ifila, 26, cheque.usuariocancelo);
+                    SLDoc.SetCellValue(ifila, 27, cheque.comentariodescuento);
+                    SLDoc.SetCellValue(ifila, 28, cheque.estacion);
+                    SLDoc.SetCellValue(ifila, 29, (cheque.cambiorepartidor ?? 0));
+                    SLDoc.SetCellValue(ifila, 30, cheque.usuariodescuento);
+                    SetDateTime(ifila, 31, cheque.fechacancelado, styleDateTime);
+                    SLDoc.SetCellValue(ifila, 32, cheque.idtipodescuento);
+                    SLDoc.SetCellValue(ifila, 33, cheque.numerotarjeta);
+                    SLDoc.SetCellValue(ifila, 34, (cheque.folionotadeconsumo ?? 0));
+                    SetBoolean(ifila, 35, cheque.notadeconsumo);
+                    SetBoolean(ifila, 36, cheque.propinapagada);
+                    SLDoc.SetCellValue(ifila, 37, (cheque.propinafoliomovtocaja ?? 0));
+                    SLDoc.SetCellValue(ifila, 38, (cheque.puntosmonederogenerados ?? 0));
+                    SLDoc.SetCellValue(ifila, 39, (cheque.propinaincluida ?? 0));
+                    SLDoc.SetCellValue(ifila, 40, cheque.tarjetadescuento);
+                    SLDoc.SetCellValue(ifila, 41, (cheque.porcentajefac ?? 0));
+                    SLDoc.SetCellValue(ifila, 42, cheque.usuariopago);
+                    SetBoolean(ifila, 43, cheque.propinamanual);
+                    SLDoc.SetCellValue(ifila, 44, cheque.observaciones);
+                    SLDoc.SetCellValue(ifila, 45, cheque.idclientedomicilio);
+                    SLDoc.SetCellValue(ifila, 46, cheque.iddireccion);
+                    SLDoc.SetCellValue(ifila, 47, cheque.idclientefacturacion);
+                    SLDoc.SetCellValue(ifila, 48, cheque.telefonousadodomicilio);
+                    SLDoc.SetCellValue(ifila, 49, (cheque.totalarticulos ?? 0));
+                    SLDoc.SetCellValue(ifila, 50, (cheque.subtotal ?? 0));
+                    SLDoc.SetCellValue(ifila, 51, (cheque.subtotalsinimpuestos ?? 0));
+                    SLDoc.SetCellValue(ifila, 52, (cheque.total ?? 0));
+                    SLDoc.SetCellValue(ifila, 53, (cheque.totalconpropina ?? 0));
+                    SLDoc.SetCellValue(ifila, 54, (cheque.totalimpuesto1 ?? 0));
+                    SLDoc.SetCellValue(ifila, 55, (cheque.cargo ?? 0));
+                    SLDoc.SetCellValue(ifila, 56, (cheque.totalconcargo ?? 0));
+                    SLDoc.SetCellValue(ifila, 57, (cheque.totalconpropinacargo ?? 0));
+                    SLDoc.SetCellValue(ifila, 58, (cheque.descuentoimporte ?? 0));
+                    SLDoc.SetCellValue(ifila, 59, (cheque.efectivo ?? 0));
+                    SLDoc.SetCellValue(ifila, 60, (cheque.tarjeta ?? 0));
+                    SLDoc.SetCellValue(ifila, 61, (cheque.vales ?? 0));
+                    SLDoc.SetCellValue(ifila, 62, (cheque.otros ?? 0));
+                    SLDoc.SetCellValue(ifila, 63, (cheque.propina ?? 0));
+                    SLDoc.SetCellValue(ifila, 64, (cheque.propinatarjeta ?? 0));
+                    SLDoc.SetCellValue(ifila, 65, cheque.campoadicional1);
+                    SLDoc.SetCellValue(ifila, 66, cheque.idreservacion);
+                    SLDoc.SetCellValue(ifila, 67, cheque.idcomisionista);
+                    SLDoc.SetCellValue(ifila, 68, (cheque.importecomision ?? 0));
+                    SetBoolean(ifila, 69, cheque.comisionpagada);
+                    SetDateTime(ifila, 70, cheque.fechapagocomision, styleDateTime);
+                    SLDoc.SetCellValue(ifila, 71, (cheque.foliopagocomision ?? 0));
+                    SLDoc.SetCellValue(ifila, 72, (cheque.tipoventarapida ?? 0));
+                    SetBoolean(ifila, 73, cheque.callcenter);
+                    SLDoc.SetCellValue(ifila, 74, (cheque.idordencompra ?? 0));
+                    SLDoc.SetCellValue(ifila, 75, (cheque.totalsindescuento ?? 0));
+                    SLDoc.SetCellValue(ifila, 76, (cheque.totalalimentos ?? 0));
+                    SLDoc.SetCellValue(ifila, 77, (cheque.totalbebidas ?? 0));
+                    SLDoc.SetCellValue(ifila, 78, (cheque.totalotros ?? 0));
+                    SLDoc.SetCellValue(ifila, 79, (cheque.totaldescuentos ?? 0));
+                    SLDoc.SetCellValue(ifila, 80, (cheque.totaldescuentoalimentos ?? 0));
+                    SLDoc.SetCellValue(ifila, 81, (cheque.totaldescuentobebidas ?? 0));
+                    SLDoc.SetCellValue(ifila, 82, (cheque.totaldescuentootros ?? 0));
+                    SLDoc.SetCellValue(ifila, 83, (cheque.totalcortesias ?? 0));
+                    SLDoc.SetCellValue(ifila, 84, (cheque.totalcortesiaalimentos ?? 0));
+                    SLDoc.SetCellValue(ifila, 85, (cheque.totalcortesiabebidas ?? 0));
+                    SLDoc.SetCellValue(ifila, 86, (cheque.totalcortesiaotros ?? 0));
+                    SLDoc.SetCellValue(ifila, 87, (cheque.totaldescuentoycortesia ?? 0));
+                    SLDoc.SetCellValue(ifila, 88, (cheque.totalalimentossindescuentos ?? 0));
+                    SLDoc.SetCellValue(ifila, 89, (cheque.totalbebidassindescuentos ?? 0));
+                    SLDoc.SetCellValue(ifila, 90, (cheque.totalotrossindescuentos ?? 0));
+                    SLDoc.SetCellValue(ifila, 91, (cheque.descuentocriterio ?? 0));
+                    SLDoc.SetCellValue(ifila, 92, (cheque.descuentomonedero ?? 0));
+                    SLDoc.SetCellValue(ifila, 93, cheque.idmenucomedor);
+                    SLDoc.SetCellValue(ifila, 94, (cheque.subtotalcondescuento ?? 0));
+                    SLDoc.SetCellValue(ifila, 95, (cheque.comisionpax ?? 0));
+                    SetBoolean(ifila, 96, cheque.procesadointerfaz);
+                    SetBoolean(ifila, 97, cheque.domicilioprogramado);
+                    SetDateTime(ifila, 98, cheque.fechadomicilioprogramado, styleDateTime);
+                    SLDoc.SetCellValue(ifila, 99, cheque.ncf);
+                    SLDoc.SetCellValue(ifila, 100, cheque.numerocuenta);
+                    SLDoc.SetCellValue(ifila, 101, cheque.codigo_unico_af);
+                    SetBoolean(ifila, 102, cheque.EnviadoRW);
+                    SLDoc.SetCellValue(ifila, 103, cheque.usuarioapertura);
+                    SLDoc.SetCellValue(ifila, 104, cheque.titulartarjetamonedero);
+                    SLDoc.SetCellValue(ifila, 105, (cheque.saldoanteriormonedero ?? 0));
+                    SLDoc.SetCellValue(ifila, 106, cheque.autorizacionfolio);
+                    SetDateTime(ifila, 107, cheque.fechalimiteemision, styleDateTime);
+                    SLDoc.SetCellValue(ifila, 108, cheque.totalimpuestod1);
+                    SLDoc.SetCellValue(ifila, 109, cheque.totalimpuestod2);
+                    SLDoc.SetCellValue(ifila, 110, cheque.totalimpuestod3);
+                    SLDoc.SetCellValue(ifila, 111, cheque.idmotivocancela);
+                    SLDoc.SetCellValue(ifila, 112, cheque.idformadepagoDescuento);
+                    SLDoc.SetCellValue(ifila, 113, cheque.titulartarjetamonederodescuento);
+                    SLDoc.SetCellValue(ifila, 114, cheque.surveycode);
+                    SLDoc.SetCellValue(ifila, 115, cheque.TKC_Authorization);
+                    SLDoc.SetCellValue(ifila, 116, cheque.TKC_Cupon);
+                    SLDoc.SetCellValue(ifila, 117, cheque.TKC_ExpirationDate);
+                    SLDoc.SetCellValue(ifila, 118, cheque.TKC_Recompensa);
+                    SLDoc.SetCellValue(ifila, 119, cheque.campoadicional3);
+                    SLDoc.SetCellValue(ifila, 120, cheque.estrateca_CardNumber);
+                    SLDoc.SetCellValue(ifila, 121, cheque.campoadicional4);
+                    SLDoc.SetCellValue(ifila, 122, cheque.campoadicional5);
+                    SLDoc.SetCellValue(ifila, 123, cheque.sacoa_CardNumber);
+                    SLDoc.SetCellValue(ifila, 124, cheque.sacoa_credits);
+                    SLDoc.SetCellValue(ifila, 125, cheque.estrateca_TypeDisccount);
+                    SLDoc.SetCellValue(ifila, 126, cheque.estrateca_DiscountCode);
+                    SLDoc.SetCellValue(ifila, 127, cheque.estrateca_DiscountID);
+                    SLDoc.SetCellValue(ifila, 128, cheque.estrateca_DiscountAmount);
+                    SLDoc.SetCellValue(ifila, 129, (cheque.desc_imp_original ?? 0));
+                    SLDoc.SetCellValue(ifila, 130, cheque.donativo);
+                    SLDoc.SetCellValue(ifila, 131, cheque.totalcondonativo);
+                    SLDoc.SetCellValue(ifila, 132, cheque.totalconpropinacargodonativo);
+                    SLDoc.SetCellValue(ifila, 133, cheque.appname);
+                    SLDoc.SetCellValue(ifila, 134, cheque.paymentproviderid);
+                    SLDoc.SetCellValue(ifila, 135, cheque.paymentprovider);
+                    SetBoolean(ifila, 136, cheque.ChangeStatusSRX);
+                    SLDoc.SetCellValue(ifila, 137, cheque.claveempresav);
+                    SetBoolean(ifila, 138, cheque.cuentaenuso);
+                    SLDoc.SetCellValue(ifila, 139, (cheque.modificado ?? 0));
+                    SLDoc.SetCellValue(ifila, 140, cheque.campoadicional2);
+                    SetDateTime(ifila, 141, cheque.DateDownload, styleDateTime);
+                    SetDateTime(ifila, 142, cheque.empaquetado, styleDateTime);
+                    SLDoc.SetCellValue(ifila, 143, (cheque.status_domicilio ?? 0));
+                    SetDateTime(ifila, 144, cheque.asignacion, styleDateTime);
+                    SetBoolean(ifila, 145, cheque.enviopagado);
+                    SLDoc.SetCellValue(ifila, 146, cheque.sl_cupon_descuento);
+                    SLDoc.SetCellValue(ifila, 147, cheque.sl_tipo_cupon);
+                    SLDoc.SetCellValue(ifila, 148, (cheque.sl_importe_descuento ?? 0));
+                    SLDoc.SetCellValue(ifila, 149, cheque.TUKI_CardNumber);
+                    SLDoc.SetCellValue(ifila, 150, (cheque.TUKI_AccumulatedPoints ?? 0));
+                    SLDoc.SetCellValue(ifila, 151, (cheque.TUKI_CurrentPoints ?? 0));
+                    SLDoc.SetCellValue(ifila, 152, (cheque.sl_num_cupones ?? 0));
+                    SLDoc.SetCellValue(ifila, 153, (cheque.totalsindescuento ?? 0));
                 }
 
-                string pathArchivo = "";
-
+                string path = "";
                 string textoFecha = "";
 
-                if (fechaInicial.Date == fechaFinal.Date)
+                if (tipoCorte == TipoCorte.TURNO)
                     textoFecha = fechaInicial.ToString("yyyy-MM-dd");
-                else
+                else if (tipoCorte == TipoCorte.PERIODO)
                     textoFecha = fechaInicial.ToString("yyyy-MM-dd") + "_al_" + fechaFinal.ToString("yyyy-MM-dd");
 
                 if (tipoReporte == TipoReporte.DETALLADO_VERTICAL)
-                {
-                    pathArchivo = Path.Combine(PathDetalladoVertical, $"corte_de_cajax_{textoFecha}.xlsx");
-                }
+                    path = PathDetalladoVertical;
                 else if (tipoReporte == TipoReporte.DETALLADO_HORIZONTAL)
-                {
-                    pathArchivo = Path.Combine(PathDetalladoHorizontal, $"corte_de_cajax_{textoFecha}.xlsx");
-                }
-                    
-                sl.SaveAs(pathArchivo);
+                    path = PathDetalladoHorizontal;
 
-                Process.Start(pathArchivo);
+                string pathArchivo = Path.Combine(PathDetalladoVertical, $"corte_de_cajax_{textoFecha}.xlsx");
+
+                SLDoc.SaveAs(path);
+
+                Process.Start(path);
             }
             catch (Exception ex)
             {
@@ -454,19 +467,33 @@ namespace mod_add.Utils
             }
         }
 
-        private string BooleanToString(bool? valor)
+        private void SetBoolean(int row, int column, bool? value, string textTrue = "VERDADERO", string textFalse = "FALSO")
         {
-            return (valor ?? false) ? "VERDADERO" : "FALSO";
+            SLDoc.SetCellValue(row, column, (value ?? false) ? textTrue : textFalse);
         }
 
-        private string BooleanToString(bool valor)
+        private void SetBoolean(int row, int column, bool value, string textTrue = "VERDADERO", string textFalse = "FALSO")
         {
-            return valor ? "VERDADERO" : "FALSO";
+            SLDoc.SetCellValue(row, column, value ? textTrue : textFalse);
         }
 
-        private string FechaToString(DateTime? fecha)
+        private void SetDateTime(int row, int column, DateTime? datetime, SLStyle style, string textDefault = "  -   -  : :")
         {
-            return fecha.HasValue ? fecha.Value.ToString("dd/MM/yyyy HH:mm") : "  -   -  : :";
+            if (datetime.HasValue)
+            {
+                SLDoc.SetCellStyle(row, column, style);
+                SLDoc.SetCellValue(row, column, datetime.Value);
+            }
+            else
+            {
+                SLDoc.SetCellValue(row, column, textDefault);
+            }
+        }
+
+        private void SetDateTime(int row, int column, DateTime datetime, SLStyle style)
+        {
+            SLDoc.SetCellStyle(row, column, style);
+            SLDoc.SetCellValue(row, column, datetime);
         }
     }
 }

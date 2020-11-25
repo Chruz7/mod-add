@@ -1,0 +1,331 @@
+﻿<Window x:Class="mod_add.Vistas.ReimpresionFoliosForm"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:mod_add.Vistas" 
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        mc:Ignorable="d"
+        Title="Reimpresión de folios de cuentas pagadas"
+        Height="650"
+        Width="400"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="CanMinimize">
+    <Grid Margin="0,5,0,5">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="20*"/>
+            <ColumnDefinition Width="30*"/>
+            <ColumnDefinition Width="50*"/>
+        </Grid.ColumnDefinitions>
+
+        <Label
+            Grid.Row="0"
+            Grid.Column="0"
+            Content="Imprimir:"
+            Target="{Binding ElementName=ImpresionCuentas}"/>
+        <ComboBox
+            Grid.Row="0"
+            Grid.Column="1"
+            Grid.ColumnSpan="2"
+            VerticalAlignment="Center"
+            Margin="5,0,5,0"
+            ItemsSource="{Binding ImpresionCuentas}"
+            DisplayMemberPath="DisplayText"
+            x:Name="ImpresionCuentas"
+            SelectedItem="{Binding ImpresionCuenta}"/>
+
+        <Label
+            Grid.Row="1"
+            Grid.Column="0"
+            Grid.ColumnSpan="2"
+            Content="Buscar folios en:"
+            Target="{Binding ElementName=BusquedaCuentas}"/>
+        <ComboBox
+            Grid.Row="2"
+            Grid.Column="0"
+            Grid.ColumnSpan="2"
+            VerticalAlignment="Center"
+            Margin="5,0,5,0"
+            ItemsSource="{Binding BusquedaCuentas}"
+            DisplayMemberPath="DisplayText"
+            x:Name="BusquedaCuentas"
+            SelectedItem="{Binding BusquedaCuenta}"/>
+
+        <Label
+            Grid.Row="1"
+            Grid.Column="2"
+            Content="Buscar registros:"
+            Target="{Binding ElementName=BusquedaRegistros}"/>
+        <ComboBox
+            Grid.Row="2"
+            Grid.Column="2"
+            VerticalAlignment="Center"
+            Margin="5,0,5,0"
+            ItemsSource="{Binding BusquedaRegistros}"
+            DisplayMemberPath="DisplayText"
+            x:Name="BusquedaRegistros"
+            SelectedItem="{Binding BusquedaRegistro}"
+            SelectionChanged="BusquedaRegistros_SelectionChanged"/>
+
+        <Label
+            Grid.Row="3"
+            Grid.Column="0"
+            Grid.ColumnSpan="2"
+            Content="Del:"
+            Target="{Binding ElementName=FechaInicio}"/>
+        <DatePicker
+            Grid.Row="4"
+            Grid.Column="0"
+            Grid.ColumnSpan="2"
+            VerticalAlignment="Center"
+            Margin="5,0,5,0"
+            x:Name="FechaInicio"
+            DisplayDateStart="2000,1,1"
+            SelectedDate="{Binding FechaInicio}"
+            SelectedDateChanged="FechaInicio_SelectedDateChanged">
+            <DatePicker.Resources>
+                <Style TargetType="{x:Type DatePickerTextBox}">
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate>
+                                <TextBox
+                                    IsReadOnly="True"
+                                    x:Name="PART_TextBox"
+                                    Text="{Binding Path=SelectedDate,StringFormat='dd/MM/yyyy',RelativeSource={RelativeSource AncestorType={x:Type DatePicker}}}" />
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </DatePicker.Resources>
+        </DatePicker>
+        <xctk:LongUpDown
+            Grid.Row="4"
+            Grid.Column="0"
+            Grid.ColumnSpan="2"
+            VerticalAlignment="Center"
+            Margin="5,0,5,0"
+            Visibility="Collapsed"
+            x:Name="FolioMin"
+            Minimum="0"
+            Value="{Binding FolioMin}"/>
+        
+        <xctk:TimePicker
+            Grid.Row="5"
+            Grid.Column="0"
+            Grid.ColumnSpan="2"
+            VerticalAlignment="Center"
+            Margin="5,0,5,0"
+            x:Name="HoraInicio"
+            Value="{Binding HoraInicio}"/>
+
+        <Label
+            Grid.Row="3"
+            Grid.Column="2"
+            Content="Al:"
+            Target="{Binding ElementName=FechaCierre}"/>
+        <DatePicker
+            Grid.Row="4"
+            Grid.Column="2"
+            VerticalAlignment="Center"
+            Margin="5,0,5,0"
+            x:Name="FechaCierre"
+            DisplayDateStart="2000,1,1"
+            SelectedDate="{Binding FechaCierre}"
+            SelectedDateChanged="FechaCierre_SelectedDateChanged">
+            <DatePicker.Resources>
+                <Style TargetType="{x:Type DatePickerTextBox}">
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate>
+                                <TextBox
+                                    IsReadOnly="True"
+                                    x:Name="PART_TextBox"
+                                    Text="{Binding Path=SelectedDate,StringFormat='dd/MM/yyyy',RelativeSource={RelativeSource AncestorType={x:Type DatePicker}}}" />
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </DatePicker.Resources>
+        </DatePicker>
+        <xctk:LongUpDown
+            Grid.Row="4"
+            Grid.Column="2"
+            VerticalAlignment="Center"
+            Margin="5,0,5,0"
+            Visibility="Collapsed"
+            x:Name="FolioMax"
+            Minimum="0"
+            Value="{Binding FolioMax}"/>
+
+        <xctk:TimePicker
+            Grid.Row="5"
+            Grid.Column="2"
+            VerticalAlignment="Center"
+            Margin="5,0,5,0"
+            x:Name="HoraCierre"
+            Value="{Binding HoraCierre}"/>
+
+        <Grid
+            Grid.Row="7"
+            Grid.Column="0"
+            Grid.ColumnSpan="4">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="20*"/>
+                <RowDefinition Height="20*"/>
+                <RowDefinition Height="10*"/>
+                <RowDefinition Height="10*"/>
+                <RowDefinition Height="20*"/>
+                <RowDefinition Height="20*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="60*"/>
+                <ColumnDefinition Width="40*"/>
+            </Grid.ColumnDefinitions>
+            <DataGrid
+                Grid.Row="0"
+                Grid.RowSpan="6"
+                Grid.Column="0"
+                Name="Cheques"
+                Margin="5,0,5,0"
+                ItemsSource="{Binding Cheques}"
+                Style="{DynamicResource DataGridStyle1}">
+                <DataGrid.Columns>
+                    <DataGridTextColumn
+                        Header="Folio cuenta"
+                        Binding="{Binding numcheque}"/>
+                    <DataGridTextColumn
+                        Header="Modificado"
+                        Binding="{Binding Smodificado}"/>
+                </DataGrid.Columns>
+            </DataGrid>
+
+            <Button
+                Grid.Row="0"
+                Grid.Column="1"
+                Margin="5"
+                Padding="0"
+                x:Name="ListarFolios"
+                Click="ListarFolios_Click"
+                IsEnabledChanged="Button_IsEnabledChanged">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="70*"/>
+                        <RowDefinition Height="30*"/>
+                    </Grid.RowDefinitions>
+                    <Image
+                        Grid.Row="0"
+                        Source="/mod-add;component/Recursos/Iconos/lista.png"/>
+                    <TextBlock
+                        Grid.Row="1"
+                        TextWrapping="Wrap"
+                        TextAlignment="Center"
+                        Text="Listar folios"/>
+                </Grid>
+            </Button>
+
+            <Button
+                Grid.Row="1"
+                Grid.Column="1"
+                Margin="5"
+                Padding="0"
+                x:Name="LimpiarLista"
+                Click="LimpiarLista_Click"
+                IsEnabledChanged="Button_IsEnabledChanged">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="70*"/>
+                        <RowDefinition Height="30*"/>
+                    </Grid.RowDefinitions>
+                    <Image
+                        Grid.Row="0"
+                        Source="/mod-add;component/Recursos/Iconos/limpiar.png"/>
+                    <TextBlock
+                        Grid.Row="1"
+                        TextWrapping="Wrap"
+                        TextAlignment="Center"
+                        Text="Limpiar lista"/>
+                </Grid>
+            </Button>
+            
+            <CheckBox
+                Grid.Row="2"
+                Grid.Column="1"
+                VerticalAlignment="Center"
+                Margin="5,0,5,0"
+                x:Name="ImprimirSoloModificados"
+                IsChecked="{Binding ImprimirSoloModificados}">
+                <TextBlock Text="Imprimir solo modificados" TextWrapping="Wrap"/>
+            </CheckBox>
+
+            <CheckBox
+                Grid.Row="3"
+                Grid.Column="1"
+                VerticalAlignment="Center"
+                Margin="5,0,5,0"
+                x:Name="ImprimirEnArchivo"
+                IsChecked="{Binding ImprimirEnArchivo}">
+                <TextBlock Text="Imprimir en archivo" TextWrapping="Wrap"/>
+            </CheckBox>
+
+            <Button
+                Grid.Row="4"
+                Grid.Column="1"
+                Margin="5"
+                Padding="0"
+                x:Name="Imprimir"
+                Click="Imprimir_Click"
+                IsEnabledChanged="Button_IsEnabledChanged">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="70*"/>
+                        <RowDefinition Height="30*"/>
+                    </Grid.RowDefinitions>
+                    <Image
+                        Grid.Row="0"
+                        Source="/mod-add;component/Recursos/Iconos/imprimir.png"/>
+                    <TextBlock
+                        Grid.Row="1"
+                        TextWrapping="Wrap"
+                        TextAlignment="Center"
+                        Text="Imprimir"/>
+                </Grid>
+            </Button>
+
+            <Button
+                Grid.Column="1"
+                Grid.Row="6"
+                Margin="5"
+                x:Name="Cerrar"
+                Click="Cerrar_Click"
+                IsEnabledChanged="Button_IsEnabledChanged">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="30*"/>
+                        <ColumnDefinition Width="70*"/>
+                    </Grid.ColumnDefinitions>
+                    <Image
+                        Grid.Column="0"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
+                        Source="/mod-add;component/Recursos/Iconos/cancelar.png"/>
+                    <TextBlock
+                        Grid.Column="1"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
+                        FontWeight="Bold"
+                        Text="CERRAR"/>
+                </Grid>
+            </Button>
+        </Grid>
+    </Grid>
+</Window>

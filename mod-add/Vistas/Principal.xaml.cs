@@ -18,7 +18,6 @@ namespace mod_add.Vistas
         public Principal()
         {
             InitializeComponent();
-            AbrirFormReimpresionFolios.Visibility = Visibility.Collapsed;
         }
 
         private void AbrirAjusteUnico_Click(object sender, RoutedEventArgs e)
@@ -50,6 +49,12 @@ namespace mod_add.Vistas
             {
                 Title = "Corte Z"
             };
+            form.ShowDialog();
+        }
+
+        private void AbrirFormReimpresionFolios_Click(object sender, RoutedEventArgs e)
+        {
+            ReimpresionFoliosForm form = new ReimpresionFoliosForm();
             form.ShowDialog();
         }
 

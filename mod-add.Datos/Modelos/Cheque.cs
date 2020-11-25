@@ -49,343 +49,145 @@ namespace mod_add.Datos.Modelos
         public decimal CambioRepartidorAnt { get; set; }
         public decimal IdTurnoAnt { get; set; }
 
-        //public long folio { get; set; }
-        //public string seriefolio { get; set; }
-        //public decimal? numcheque { get; set; }
-        //public DateTime? fecha { get; set; }
-        //public DateTime? salidarepartidor { get; set; }
-        //public DateTime? arriborepartidor { get; set; }
-        //public DateTime? cierre { get; set; }
-        //public string mesa { get; set; }
-        //public decimal? nopersonas { get; set; }
-        //public string idmesero { get; set; }
-        //public bool? pagado { get; set; }
-        //public bool? cancelado { get; set; }
-        //public bool? impreso { get; set; }
-        //public decimal? impresiones { get; set; }
-        //public decimal? cambio { get; set; }
-        //public decimal? descuento { get; set; }
-        //public decimal? reabiertas { get; set; }
-        ////public int? reabiertas_f { get; set; }
-        //public string razoncancelado { get; set; }
-        //public decimal? orden { get; set; }
-        ////public long? orden_f { get; set; }
-        //public bool? facturado { get; set; }
-        //public string idcliente { get; set; }
-        //public string idarearestaurant { get; set; }
-        //public string idempresa { get; set; }
-        //public decimal? tipodeservicio { get; set; }
-        ////public int? tipodeservicio_f { get; set; }
-        //public decimal? idturno { get; set; }
-        ////public long? idturno_f { get; set; }
-        //public string usuariocancelo { get; set; }
-        //public string comentariodescuento { get; set; }
-        //public string estacion { get; set; }
-        //public decimal? cambiorepartidor { get; set; }
-        //public string usuariodescuento { get; set; }
-        //public DateTime? fechacancelado { get; set; }
-        //public string idtipodescuento { get; set; }
-        //public string numerotarjeta { get; set; }
-        //public decimal? folionotadeconsumo { get; set; }
-        ////public long? folionotadeconsumo_f { get; set; }
-        //public bool? notadeconsumo { get; set; }
-        //public bool? propinapagada { get; set; }
-        //public decimal? propinafoliomovtocaja { get; set; }
-        ////public long? propinafoliomovtocaja_f { get; set; }
-        //public decimal? puntosmonederogenerados { get; set; }
-        //public decimal? propinaincluida { get; set; }
-        //public string tarjetadescuento { get; set; }
-        //public decimal? porcentajefac { get; set; }
-        //public string usuariopago { get; set; }
-        //public bool? propinamanual { get; set; }
-        //public string observaciones { get; set; }
-        //public string idclientedomicilio { get; set; }
-        //public string iddireccion { get; set; }
-        //public string idclientefacturacion { get; set; }
-        //public string telefonousadodomicilio { get; set; }
-        //public decimal? totalarticulos { get; set; }
-        //public decimal? subtotal { get; set; }
-        //public decimal? subtotalsinimpuestos { get; set; }
-        //public decimal? total { get; set; }
-        //public decimal? totalconpropina { get; set; }
-        //public decimal? totalsinimpuestos { get; set; }
-        //public decimal? totalsindescuentosinimpuesto { get; set; }
-        //public decimal? totalimpuesto1 { get; set; }
-        //public decimal? totalalimentosconimpuestos { get; set; }
-        //public decimal? totalbebidasconimpuestos { get; set; }
-        //public decimal? totalotrosconimpuestos { get; set; }
-        //public decimal? totalalimentossinimpuestos { get; set; }
-        //public decimal? totalbebidassinimpuestos { get; set; }
-        //public decimal? totalotrossinimpuestos { get; set; }
-        //public decimal? totaldescuentossinimpuestos { get; set; }
-        //public decimal? totaldescuentosconimpuestos { get; set; }
-        //public decimal? totaldescuentoalimentosconimpuesto { get; set; }
-        //public decimal? totaldescuentobebidasconimpuesto { get; set; }
-        //public decimal? totaldescuentootrosconimpuesto { get; set; }
-        //public decimal? totaldescuentoalimentossinimpuesto { get; set; }
-        //public decimal? totaldescuentobebidassinimpuesto { get; set; }
-        //public decimal? totaldescuentootrossinimpuesto { get; set; }
-        //public decimal? totalcortesiassinimpuestos { get; set; }
-        //public decimal? totalcortesiasconimpuestos { get; set; }
-        //public decimal? totalcortesiaalimentosconimpuesto { get; set; }
-        //public decimal? totalcortesiabebidasconimpuesto { get; set; }
-        //public decimal? totalcortesiaotrosconimpuesto { get; set; }
-        //public decimal? totalcortesiaalimentossinimpuesto { get; set; }
-        //public decimal? totalcortesiabebidassinimpuesto { get; set; }
-        //public decimal? totalcortesiaotrossinimpuesto { get; set; }
-        //public decimal? totaldescuentoycortesiasinimpuesto { get; set; }
-        //public decimal? totaldescuentoycortesiaconimpuesto { get; set; }
-        //public decimal? cargo { get; set; }
-        //public decimal? totalconcargo { get; set; }
-        //public decimal? totalconpropinacargo { get; set; }
-        //public decimal? descuentoimporte { get; set; }
-        //public decimal? efectivo { get; set; }
-        //public decimal? tarjeta { get; set; }
-        //public decimal? vales { get; set; }
-        //public decimal? otros { get; set; }
-        //public decimal? propina { get; set; }
-        //public decimal? propinatarjeta { get; set; }
-        //public decimal? totalalimentossinimpuestossindescuentos { get; set; }
-        //public decimal? totalbebidassinimpuestossindescuentos { get; set; }
-        //public decimal? totalotrossinimpuestossindescuentos { get; set; }
-        //public string campoadicional1 { get; set; }
-        //public string idreservacion { get; set; }
-        //public string idcomisionista { get; set; }
-        //public decimal? importecomision { get; set; }
-        //public bool? comisionpagada { get; set; }
-        //public DateTime? fechapagocomision { get; set; }
-        //public decimal? foliopagocomision { get; set; }
-        //public decimal? tipoventarapida { get; set; }
-        //public bool? callcenter { get; set; }
-        //public long? idordencompra { get; set; }
-        //public decimal? totalsindescuento { get; set; }
-        //public decimal? totalalimentos { get; set; }
-        //public decimal? totalbebidas { get; set; }
-        //public decimal? totalotros { get; set; }
-        //public decimal? totaldescuentos { get; set; }
-        //public decimal? totaldescuentoalimentos { get; set; }
-        //public decimal? totaldescuentobebidas { get; set; }
-        //public decimal? totaldescuentootros { get; set; }
-        //public decimal? totalcortesias { get; set; }
-        //public decimal? totalcortesiaalimentos { get; set; }
-        //public decimal? totalcortesiabebidas { get; set; }
-        //public decimal? totalcortesiaotros { get; set; }
-        //public decimal? totaldescuentoycortesia { get; set; }
-        //public decimal? totalalimentossindescuentos { get; set; }
-        //public decimal? totalbebidassindescuentos { get; set; }
-        //public decimal? totalotrossindescuentos { get; set; }
-        //public decimal? descuentocriterio { get; set; }
-        //public decimal? descuentomonedero { get; set; }
-        //public string idmenucomedor { get; set; }
-        //public decimal? subtotalcondescuento { get; set; }
-        //public decimal? comisionpax { get; set; }
-        //public bool? procesadointerfaz { get; set; }
-        //public bool? domicilioprogramado { get; set; }
-        //public DateTime? fechadomicilioprogramado { get; set; }
-        //public bool? enviado { get; set; }
-        //public string ncf { get; set; }
-        //public string numerocuenta { get; set; }
-        //public string codigo_unico_af { get; set; }
-        //public int? estatushub { get; set; }
-        //public decimal? idfoliohub { get; set; }
-        //public bool? EnviadoRW { get; set; }
-        //public string usuarioapertura { get; set; }
-        //public string titulartarjetamonedero { get; set; }
-        //public decimal? saldoanteriormonedero { get; set; }
-        //public string autorizacionfolio { get; set; }
-        //public DateTime? fechalimiteemision { get; set; }
-        //public decimal totalimpuestod1 { get; set; }
-        //public decimal totalimpuestod2 { get; set; }
-        //public decimal totalimpuestod3 { get; set; }
-        //public string idmotivocancela { get; set; }
-        //public int? sistema_envio { get; set; }
-        //public string idformadepagoDescuento { get; set; }
-        //public string titulartarjetamonederodescuento { get; set; }
-        //public long? foliotempcheques { get; set; }
-        //public int? c_iddispositivo { get; set; }
-        //public string surveycode { get; set; }
-        //public string salerestaurantid { get; set; }
-        //public DateTime? timemarktoconfirmed { get; set; }
-        //public DateTime? timemarktodelivery { get; set; }
-        //public DateTime? timemarktodeliveryarrive { get; set; }
-        //public int? esalestatus { get; set; }
-        //public int? statusSR { get; set; }
-        //public string paymentreference { get; set; }
-        //public decimal? deliverycharge { get; set; }
-        //public bool? comandaimpresa { get; set; }
-        //public int? foodorder { get; set; }
-        //public decimal? cashpaymentwith { get; set; }
-        //public int? intentoEnvioAF { get; set; }
-        //public int? paymentmethod_id { get; set; }
-        //public string TKC_Token { get; set; }
-        //public string TKC_Transaction { get; set; }
-        //public string TKC_Authorization { get; set; }
-        //public string TKC_Cupon { get; set; }
-        //public string TKC_ExpirationDate { get; set; }
-        //public decimal TKC_Recompensa { get; set; }
-        //public string campoadicional3 { get; set; }
-        //public string estrateca_CardNumber { get; set; }
-        //public string estrateca_VoucherText { get; set; }
-        //public string campoadicional4 { get; set; }
-        //public string campoadicional5 { get; set; }
-        //public string sacoa_CardNumber { get; set; }
-        //public decimal sacoa_credits { get; set; }
-        //public string estrateca_TypeDisccount { get; set; }
-        //public string estrateca_DiscountCode { get; set; }
-        //public string estrateca_DiscountID { get; set; }
-        //public decimal estrateca_DiscountAmount { get; set; }
-        //public decimal? desc_imp_original { get; set; }
-        //public decimal donativo { get; set; }
-        //public decimal totalcondonativo { get; set; }
-        //public decimal totalconpropinacargodonativo { get; set; }
-        //public string orderreference { get; set; }
-        //public string appname { get; set; }
-        //public string paymentproviderid { get; set; }
-        //public string paymentprovider { get; set; }
-        //public bool? ChangeStatusSRX { get; set; }
-        //public string claveempresav { get; set; }
-        //public bool? cuentaenuso { get; set; }
-        //public decimal? modificado { get; set; }
-        //public string campoadicional2 { get; set; }
         public long folio { get; set; }
         public string seriefolio { get; set; }
-        public Nullable<decimal> numcheque { get; set; }
-        public Nullable<System.DateTime> fecha { get; set; }
-        public Nullable<System.DateTime> salidarepartidor { get; set; }
-        public Nullable<System.DateTime> arriborepartidor { get; set; }
-        public Nullable<System.DateTime> cierre { get; set; }
+        public decimal? numcheque { get; set; }
+        public DateTime? fecha { get; set; }
+        public DateTime? salidarepartidor { get; set; }
+        public DateTime? arriborepartidor { get; set; }
+        public DateTime? cierre { get; set; }
         public string mesa { get; set; }
-        public Nullable<decimal> nopersonas { get; set; }
+        public decimal? nopersonas { get; set; }
         public string idmesero { get; set; }
-        public Nullable<bool> pagado { get; set; }
-        public Nullable<bool> cancelado { get; set; }
-        public Nullable<bool> impreso { get; set; }
-        public Nullable<decimal> impresiones { get; set; }
-        public Nullable<decimal> cambio { get; set; }
-        public Nullable<decimal> descuento { get; set; }
-        public Nullable<decimal> reabiertas { get; set; }
+        public bool? pagado { get; set; }
+        public bool? cancelado { get; set; }
+        public bool? impreso { get; set; }
+        public decimal? impresiones { get; set; }
+        public decimal? cambio { get; set; }
+        public decimal? descuento { get; set; }
+        public decimal? reabiertas { get; set; }
         public string razoncancelado { get; set; }
-        public Nullable<decimal> orden { get; set; }
-        public Nullable<bool> facturado { get; set; }
+        public decimal? orden { get; set; }
+        public bool? facturado { get; set; }
         public string idcliente { get; set; }
         public string idarearestaurant { get; set; }
         public string idempresa { get; set; }
-        public Nullable<decimal> tipodeservicio { get; set; }
-        public Nullable<decimal> idturno { get; set; }
+        public decimal? tipodeservicio { get; set; }
+        public decimal? idturno { get; set; }
         public string usuariocancelo { get; set; }
         public string comentariodescuento { get; set; }
         public string estacion { get; set; }
-        public Nullable<decimal> cambiorepartidor { get; set; }
+        public decimal? cambiorepartidor { get; set; }
         public string usuariodescuento { get; set; }
-        public Nullable<System.DateTime> fechacancelado { get; set; }
+        public DateTime? fechacancelado { get; set; }
         public string idtipodescuento { get; set; }
         public string numerotarjeta { get; set; }
-        public Nullable<decimal> folionotadeconsumo { get; set; }
-        public Nullable<bool> notadeconsumo { get; set; }
-        public Nullable<bool> propinapagada { get; set; }
-        public Nullable<decimal> propinafoliomovtocaja { get; set; }
-        public Nullable<decimal> puntosmonederogenerados { get; set; }
-        public Nullable<decimal> propinaincluida { get; set; }
+        public decimal? folionotadeconsumo { get; set; }
+        public bool? notadeconsumo { get; set; }
+        public bool? propinapagada { get; set; }
+        public decimal? propinafoliomovtocaja { get; set; }
+        public decimal? puntosmonederogenerados { get; set; }
+        public decimal? propinaincluida { get; set; }
         public string tarjetadescuento { get; set; }
-        public Nullable<decimal> porcentajefac { get; set; }
+        public decimal? porcentajefac { get; set; }
         public string usuariopago { get; set; }
-        public Nullable<bool> propinamanual { get; set; }
+        public bool? propinamanual { get; set; }
         public string observaciones { get; set; }
         public string idclientedomicilio { get; set; }
         public string iddireccion { get; set; }
         public string idclientefacturacion { get; set; }
         public string telefonousadodomicilio { get; set; }
-        public Nullable<decimal> totalarticulos { get; set; }
-        public Nullable<decimal> subtotal { get; set; }
-        public Nullable<decimal> subtotalsinimpuestos { get; set; }
-        public Nullable<decimal> total { get; set; }
-        public Nullable<decimal> totalconpropina { get; set; }
-        public Nullable<decimal> totalsinimpuestos { get; set; }
-        public Nullable<decimal> totalsindescuentosinimpuesto { get; set; }
-        public Nullable<decimal> totalimpuesto1 { get; set; }
-        public Nullable<decimal> totalalimentosconimpuestos { get; set; }
-        public Nullable<decimal> totalbebidasconimpuestos { get; set; }
-        public Nullable<decimal> totalotrosconimpuestos { get; set; }
-        public Nullable<decimal> totalalimentossinimpuestos { get; set; }
-        public Nullable<decimal> totalbebidassinimpuestos { get; set; }
-        public Nullable<decimal> totalotrossinimpuestos { get; set; }
-        public Nullable<decimal> totaldescuentossinimpuestos { get; set; }
-        public Nullable<decimal> totaldescuentosconimpuestos { get; set; }
-        public Nullable<decimal> totaldescuentoalimentosconimpuesto { get; set; }
-        public Nullable<decimal> totaldescuentobebidasconimpuesto { get; set; }
-        public Nullable<decimal> totaldescuentootrosconimpuesto { get; set; }
-        public Nullable<decimal> totaldescuentoalimentossinimpuesto { get; set; }
-        public Nullable<decimal> totaldescuentobebidassinimpuesto { get; set; }
-        public Nullable<decimal> totaldescuentootrossinimpuesto { get; set; }
-        public Nullable<decimal> totalcortesiassinimpuestos { get; set; }
-        public Nullable<decimal> totalcortesiasconimpuestos { get; set; }
-        public Nullable<decimal> totalcortesiaalimentosconimpuesto { get; set; }
-        public Nullable<decimal> totalcortesiabebidasconimpuesto { get; set; }
-        public Nullable<decimal> totalcortesiaotrosconimpuesto { get; set; }
-        public Nullable<decimal> totalcortesiaalimentossinimpuesto { get; set; }
-        public Nullable<decimal> totalcortesiabebidassinimpuesto { get; set; }
-        public Nullable<decimal> totalcortesiaotrossinimpuesto { get; set; }
-        public Nullable<decimal> totaldescuentoycortesiasinimpuesto { get; set; }
-        public Nullable<decimal> totaldescuentoycortesiaconimpuesto { get; set; }
-        public Nullable<decimal> cargo { get; set; }
-        public Nullable<decimal> totalconcargo { get; set; }
-        public Nullable<decimal> totalconpropinacargo { get; set; }
-        public Nullable<decimal> descuentoimporte { get; set; }
-        public Nullable<decimal> efectivo { get; set; }
-        public Nullable<decimal> tarjeta { get; set; }
-        public Nullable<decimal> vales { get; set; }
-        public Nullable<decimal> otros { get; set; }
-        public Nullable<decimal> propina { get; set; }
-        public Nullable<decimal> propinatarjeta { get; set; }
-        public Nullable<decimal> totalalimentossinimpuestossindescuentos { get; set; }
-        public Nullable<decimal> totalbebidassinimpuestossindescuentos { get; set; }
-        public Nullable<decimal> totalotrossinimpuestossindescuentos { get; set; }
+        public decimal? totalarticulos { get; set; }
+        public decimal? subtotal { get; set; }
+        public decimal? subtotalsinimpuestos { get; set; }
+        public decimal? total { get; set; }
+        public decimal? totalconpropina { get; set; }
+        public decimal? totalsinimpuestos { get; set; }
+        public decimal? totalsindescuentosinimpuesto { get; set; }
+        public decimal? totalimpuesto1 { get; set; }
+        public decimal? totalalimentosconimpuestos { get; set; }
+        public decimal? totalbebidasconimpuestos { get; set; }
+        public decimal? totalotrosconimpuestos { get; set; }
+        public decimal? totalalimentossinimpuestos { get; set; }
+        public decimal? totalbebidassinimpuestos { get; set; }
+        public decimal? totalotrossinimpuestos { get; set; }
+        public decimal? totaldescuentossinimpuestos { get; set; }
+        public decimal? totaldescuentosconimpuestos { get; set; }
+        public decimal? totaldescuentoalimentosconimpuesto { get; set; }
+        public decimal? totaldescuentobebidasconimpuesto { get; set; }
+        public decimal? totaldescuentootrosconimpuesto { get; set; }
+        public decimal? totaldescuentoalimentossinimpuesto { get; set; }
+        public decimal? totaldescuentobebidassinimpuesto { get; set; }
+        public decimal? totaldescuentootrossinimpuesto { get; set; }
+        public decimal? totalcortesiassinimpuestos { get; set; }
+        public decimal? totalcortesiasconimpuestos { get; set; }
+        public decimal? totalcortesiaalimentosconimpuesto { get; set; }
+        public decimal? totalcortesiabebidasconimpuesto { get; set; }
+        public decimal? totalcortesiaotrosconimpuesto { get; set; }
+        public decimal? totalcortesiaalimentossinimpuesto { get; set; }
+        public decimal? totalcortesiabebidassinimpuesto { get; set; }
+        public decimal? totalcortesiaotrossinimpuesto { get; set; }
+        public decimal? totaldescuentoycortesiasinimpuesto { get; set; }
+        public decimal? totaldescuentoycortesiaconimpuesto { get; set; }
+        public decimal? cargo { get; set; }
+        public decimal? totalconcargo { get; set; }
+        public decimal? totalconpropinacargo { get; set; }
+        public decimal? descuentoimporte { get; set; }
+        public decimal? efectivo { get; set; }
+        public decimal? tarjeta { get; set; }
+        public decimal? vales { get; set; }
+        public decimal? otros { get; set; }
+        public decimal? propina { get; set; }
+        public decimal? propinatarjeta { get; set; }
+        public decimal? totalalimentossinimpuestossindescuentos { get; set; }
+        public decimal? totalbebidassinimpuestossindescuentos { get; set; }
+        public decimal? totalotrossinimpuestossindescuentos { get; set; }
         public string campoadicional1 { get; set; }
         public string idreservacion { get; set; }
         public string idcomisionista { get; set; }
-        public Nullable<decimal> importecomision { get; set; }
-        public Nullable<bool> comisionpagada { get; set; }
-        public Nullable<System.DateTime> fechapagocomision { get; set; }
-        public Nullable<decimal> foliopagocomision { get; set; }
-        public Nullable<decimal> tipoventarapida { get; set; }
-        public Nullable<bool> callcenter { get; set; }
-        public Nullable<long> idordencompra { get; set; }
-        public Nullable<decimal> totalsindescuento { get; set; }
-        public Nullable<decimal> totalalimentos { get; set; }
-        public Nullable<decimal> totalbebidas { get; set; }
-        public Nullable<decimal> totalotros { get; set; }
-        public Nullable<decimal> totaldescuentos { get; set; }
-        public Nullable<decimal> totaldescuentoalimentos { get; set; }
-        public Nullable<decimal> totaldescuentobebidas { get; set; }
-        public Nullable<decimal> totaldescuentootros { get; set; }
-        public Nullable<decimal> totalcortesias { get; set; }
-        public Nullable<decimal> totalcortesiaalimentos { get; set; }
-        public Nullable<decimal> totalcortesiabebidas { get; set; }
-        public Nullable<decimal> totalcortesiaotros { get; set; }
-        public Nullable<decimal> totaldescuentoycortesia { get; set; }
-        public Nullable<decimal> totalalimentossindescuentos { get; set; }
-        public Nullable<decimal> totalbebidassindescuentos { get; set; }
-        public Nullable<decimal> totalotrossindescuentos { get; set; }
-        public Nullable<decimal> descuentocriterio { get; set; }
-        public Nullable<decimal> descuentomonedero { get; set; }
+        public decimal? importecomision { get; set; }
+        public bool? comisionpagada { get; set; }
+        public DateTime? fechapagocomision { get; set; }
+        public decimal? foliopagocomision { get; set; }
+        public decimal? tipoventarapida { get; set; }
+        public bool? callcenter { get; set; }
+        public long? idordencompra { get; set; }
+        public decimal? totalsindescuento { get; set; }
+        public decimal? totalalimentos { get; set; }
+        public decimal? totalbebidas { get; set; }
+        public decimal? totalotros { get; set; }
+        public decimal? totaldescuentos { get; set; }
+        public decimal? totaldescuentoalimentos { get; set; }
+        public decimal? totaldescuentobebidas { get; set; }
+        public decimal? totaldescuentootros { get; set; }
+        public decimal? totalcortesias { get; set; }
+        public decimal? totalcortesiaalimentos { get; set; }
+        public decimal? totalcortesiabebidas { get; set; }
+        public decimal? totalcortesiaotros { get; set; }
+        public decimal? totaldescuentoycortesia { get; set; }
+        public decimal? totalalimentossindescuentos { get; set; }
+        public decimal? totalbebidassindescuentos { get; set; }
+        public decimal? totalotrossindescuentos { get; set; }
+        public decimal? descuentocriterio { get; set; }
+        public decimal? descuentomonedero { get; set; }
         public string idmenucomedor { get; set; }
-        public Nullable<decimal> subtotalcondescuento { get; set; }
-        public Nullable<decimal> comisionpax { get; set; }
-        public Nullable<bool> procesadointerfaz { get; set; }
-        public Nullable<bool> domicilioprogramado { get; set; }
-        public Nullable<System.DateTime> fechadomicilioprogramado { get; set; }
-        public Nullable<bool> enviado { get; set; }
+        public decimal? subtotalcondescuento { get; set; }
+        public decimal? comisionpax { get; set; }
+        public bool? procesadointerfaz { get; set; }
+        public bool? domicilioprogramado { get; set; }
+        public DateTime? fechadomicilioprogramado { get; set; }
+        public bool? enviado { get; set; }
         public string ncf { get; set; }
         public string numerocuenta { get; set; }
         public string codigo_unico_af { get; set; }
-        public Nullable<int> estatushub { get; set; }
-        public Nullable<decimal> idfoliohub { get; set; }
-        public Nullable<bool> EnviadoRW { get; set; }
+        public int? estatushub { get; set; }
+        public decimal? idfoliohub { get; set; }
+        public bool? EnviadoRW { get; set; }
         public string usuarioapertura { get; set; }
         public string titulartarjetamonedero { get; set; }
-        public Nullable<decimal> saldoanteriormonedero { get; set; }
+        public decimal? saldoanteriormonedero { get; set; }
         public string autorizacionfolio { get; set; }
-        public Nullable<System.DateTime> fechalimiteemision { get; set; }
+        public DateTime? fechalimiteemision { get; set; }
         public decimal totalimpuestod1 { get; set; }
         public decimal totalimpuestod2 { get; set; }
         public decimal totalimpuestod3 { get; set; }
@@ -393,18 +195,18 @@ namespace mod_add.Datos.Modelos
         public int sistema_envio { get; set; }
         public string idformadepagoDescuento { get; set; }
         public string titulartarjetamonederodescuento { get; set; }
-        public Nullable<long> foliotempcheques { get; set; }
+        public long? foliotempcheques { get; set; }
         public int c_iddispositivo { get; set; }
         public string surveycode { get; set; }
         public string salerestaurantid { get; set; }
-        public Nullable<System.DateTime> timemarktoconfirmed { get; set; }
-        public Nullable<System.DateTime> timemarktodelivery { get; set; }
-        public Nullable<System.DateTime> timemarktodeliveryarrive { get; set; }
+        public DateTime? timemarktoconfirmed { get; set; }
+        public DateTime? timemarktodelivery { get; set; }
+        public DateTime? timemarktodeliveryarrive { get; set; }
         public int esalestatus { get; set; }
         public int statusSR { get; set; }
         public string paymentreference { get; set; }
-        public Nullable<decimal> deliverycharge { get; set; }
-        public Nullable<bool> comandaimpresa { get; set; }
+        public decimal? deliverycharge { get; set; }
+        public bool? comandaimpresa { get; set; }
         public int foodorder { get; set; }
         public decimal cashpaymentwith { get; set; }
         public int intentoEnvioAF { get; set; }
@@ -426,7 +228,7 @@ namespace mod_add.Datos.Modelos
         public string estrateca_DiscountCode { get; set; }
         public string estrateca_DiscountID { get; set; }
         public decimal estrateca_DiscountAmount { get; set; }
-        public Nullable<decimal> desc_imp_original { get; set; }
+        public decimal? desc_imp_original { get; set; }
         public decimal donativo { get; set; }
         public decimal totalcondonativo { get; set; }
         public decimal totalconpropinacargodonativo { get; set; }
@@ -434,12 +236,10 @@ namespace mod_add.Datos.Modelos
         public string appname { get; set; }
         public string paymentproviderid { get; set; }
         public string paymentprovider { get; set; }
-        public Nullable<bool> ChangeStatusSRX { get; set; }
-        //chequesf
+        public bool? ChangeStatusSRX { get; set; }
         public string claveempresav { get; set; }
-        public Nullable<bool> cuentaenuso { get; set; }
-        public Nullable<decimal> modificado { get; set; }
-        //campos faltantes
+        public bool? cuentaenuso { get; set; }
+        public decimal? modificado { get; set; }
         public string campoadicional2 { get; set; }
         public DateTime? DateDownload { get; set; }
         public bool? comandaimpresacancelada { get; set; }

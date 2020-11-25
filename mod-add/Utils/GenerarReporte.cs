@@ -1,4 +1,5 @@
-﻿using DocumentFormat.OpenXml.Office.CustomUI;
+﻿using DocumentFormat.OpenXml.Drawing.Diagrams;
+using DocumentFormat.OpenXml.Office.CustomUI;
 using HandlebarsDotNet;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
@@ -35,6 +36,8 @@ namespace mod_add.Utils
         public string DireccionSucursal { get; set; }
         public string CiudadSucursal { get; set; }
         public string EstadoSucursal { get; set; }
+
+        public bool ImprimirEnArchivo { get; set; }
 
         private readonly SRLibrary.Utils.Print Impresion;
 
@@ -1250,6 +1253,18 @@ namespace mod_add.Utils
 
                 File.Delete(filePathCorte);
                 File.Delete(filePathTarjeta);
+            }
+        }
+
+        public void Folios(ReporteFolios reporte)
+        {
+            try
+            {
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"INICIO-ERROR\n{ex}\nFIN-ERROR");
             }
         }
 

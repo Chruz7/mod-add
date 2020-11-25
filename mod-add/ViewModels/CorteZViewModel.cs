@@ -16,7 +16,7 @@ namespace mod_add.ViewModels
     public class CorteZViewModel : ViewModelBase
     {
         private readonly GenerarReporte generarReporte;
-        private TipoCorte TipoCorte { get; set; }
+        public TipoCorte TipoCorte { get; set; }
         public CorteZViewModel(TipoCorte tipoCorte)
         {
             TipoCorte = tipoCorte;
@@ -828,7 +828,7 @@ namespace mod_add.ViewModels
                     var cheques = cheques_DAO.WhereIn("idturno", idsturno);
 
                     Exportar exportar = new Exportar();
-                    exportar.DetallesCuentas(Reporte.TipoReporte, FechaCorteInicio, FechaCorteCierre, cheques);
+                    exportar.DetallesCuentas(Reporte.TipoReporte, TipoCorte, FechaCorteInicio, FechaCorteCierre, cheques);
 
                     return new Respuesta
                     {

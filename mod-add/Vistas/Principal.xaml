@@ -128,7 +128,8 @@
             Grid.Column="4"
             Margin="2"
             Padding="0"
-            x:Name="AbrirFormReimpresionFolios">
+            x:Name="AbrirFormReimpresionFolios"
+            Click="AbrirFormReimpresionFolios_Click">
             <Grid
                 Height="54">
                 <Grid.RowDefinitions>
