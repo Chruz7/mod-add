@@ -835,7 +835,7 @@ namespace mod_add.ViewModels
                         .Where(x => (x.TipoAccion == TipoAccion.ELIMINAR || (x.TipoAccion == TipoAccion.ACTUALIZAR && x.Cambiado)) && !x.modificador.Value)
                         .Sum(x => x.CantidadAnt);
 
-                    if (!QuitarPropinasManualmente)
+                    if (!QuitarPropinasManualmente || (cheque.propinatarjeta ?? 0) > 0)
                     {
                         cheque.propina = 0;
                         //falta validar lo de las propinas

@@ -1558,62 +1558,47 @@ namespace mod_add.Utils
         public static byte[] AddPageNumbers(byte[] pdf, bool orientacionVertical = true)
         {
             MemoryStream ms = new MemoryStream();
-            // we create a reader for a certain document
             PdfReader reader = new PdfReader(pdf);
-            // we retrieve the total number of pages
-            int n = reader.NumberOfPages;
-            // we retrieve the size of the first page
             Rectangle psize = reader.GetPageSizeWithRotation(1);
-
-            // step 1: creation of a document-object
             Document document = new Document(reader.GetPageSizeWithRotation(1));
-
-            //if (orientacionVertical)
-            //{
-            //    document = new Document(psize, 30, 30, 20, 20);
-            //}
-            //else
-            //{
-            //    document = new Document(psize, 20, 20, 30, 30);
-            //    //document.SetPageSize(PageSize.A4.Rotate());
-            //}
-
-            // step 2: we create a writer that listens to the document
             PdfWriter writer = PdfWriter.GetInstance(document, ms);
-            // step 3: we open the document
 
             document.Open();
-            // step 4: we add content
+
             PdfContentByte cb = writer.DirectContent;
 
-            int p = 0;
-            for (int page = 1; page <= reader.NumberOfPages; page++)
+            int totalPaginas = reader.NumberOfPages;
+
+            for (int pagina = 1; pagina <= totalPaginas; pagina++)
             {
+                
                 document.NewPage();
-                p++;
 
-                PdfImportedPage importedPage = writer.GetImportedPage(reader, page);
-                //cb.AddTemplate(importedPage, 0, 0);
+                PdfImportedPage importedPage = writer.GetImportedPage(reader, pagina);
 
-                int rotation = reader.GetPageRotation(page);
+                int rotation = reader.GetPageRotation(pagina);
 
                 if (rotation == 90 || rotation == 270)
                 {
-                    cb.AddTemplate(importedPage, 0, -1f, 1f, 0, 0, reader.GetPageSizeWithRotation(page).Height);
+                    cb.AddTemplate(importedPage, 0, -1f, 1f, 0, 0, reader.GetPageSizeWithRotation(pagina).Height);
                 }
                 else
                 {
                     cb.AddTemplate(importedPage, 1f, 0, 0, 1f, 0, 0);
                 }
 
-                BaseFont bf = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.CP1252, BaseFont.NOT_EMBEDDED);
-                cb.BeginText();
-                cb.SetFontAndSize(bf, 6);
-                cb.ShowTextAligned(PdfContentByte.ALIGN_LEFT, $"PAG. {p}", psize.Width - (orientacionVertical ? 50 : 40), orientacionVertical ? 20 : 30, 0);
-                cb.EndText();
+                if (pagina < totalPaginas || totalPaginas == 1)
+                {
+                    BaseFont bf = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.CP1252, BaseFont.NOT_EMBEDDED);
+                    cb.BeginText();
+                    cb.SetFontAndSize(bf, 6);
+                    cb.ShowTextAligned(PdfContentByte.ALIGN_LEFT, $"PAG. {pagina}", psize.Width - (orientacionVertical ? 50 : 40), orientacionVertical ? 14 : 24, 0);
+                    cb.EndText();
+                }
             }
-            // step 5: we close the document
+
             document.Close();
+
             return ms.ToArray();
         }
     }
