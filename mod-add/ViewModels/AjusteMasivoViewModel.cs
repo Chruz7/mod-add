@@ -43,6 +43,18 @@ namespace mod_add.ViewModels
             InicializarControles();
         }
 
+        public void AjustarFechaCierre()
+        {
+            if (App.SRConfiguracion.CorteInicio > App.SRConfiguracion.CorteCierre)
+            {
+                FechaCierre = FechaInicio.AddDays(1);
+            }
+            else
+            {
+                FechaCierre = FechaInicio;
+            }
+        }
+
         public TipoRespuesta Guardar()
         {
             Debug.WriteLine("GUARDADO-INICIO");
@@ -1262,15 +1274,29 @@ namespace mod_add.ViewModels
             ChequesPago = new List<ChequePago>();
 
             UltimoMovimiento = 0;
-            FechaCorteInicio = DateTime.Today.AddDays(-1);
-            FechaCorteCierre = DateTime.Today.AddDays(-1);
             Turno = true;
             Periodo = false;
-            FechaInicio = DateTime.Today.AddDays(-1);
-            FechaCierre = DateTime.Today.AddDays(-1);
-            CorteInicio = App.SRConfiguracion.CorteInicio;
-            CorteCierre = App.SRConfiguracion.CorteCierre;
-            HorarioTurno = $"{App.SRConfiguracion.cortezinicio} - {App.SRConfiguracion.cortezfin}";
+
+            if (App.SRConfiguracion.CorteInicio > App.SRConfiguracion.CorteCierre)
+            {
+                FechaInicio = DateTime.Today.AddDays(-1);
+            }
+            else
+            {
+                FechaInicio = DateTime.Today;
+            }
+
+            AjustarFechaCierre();
+            InicializarHorarioTurno();
+
+            
+            FechaCorteInicio = DateTime.Today.AddDays(-1);
+            FechaCorteCierre = DateTime.Today.AddDays(-1);
+            //FechaInicio = DateTime.Today.AddDays(-1);
+            //FechaCierre = DateTime.Today.AddDays(-1);
+            //CorteInicio = App.SRConfiguracion.CorteInicio;
+            //CorteCierre = App.SRConfiguracion.CorteCierre;
+            //HorarioTurno = $"{App.SRConfiguracion.cortezinicio} - {App.SRConfiguracion.cortezfin}";
             Proceso = Procesos.Find(x => x.TipoProceso == TipoProceso.PRODUCTOS);
             ImporteMinimoAjustable = 0m;
             PorcentajeObjetivo = 50;
@@ -1293,27 +1319,45 @@ namespace mod_add.ViewModels
             EfectivoCaja = 0m;
         }
 
+        public void InicializarHorarioTurno()
+        {
+            HoraInicio = DateTime.Today.AddSeconds(App.SRConfiguracion.CorteInicio.TotalSeconds);
+            HoraCierre = DateTime.Today.AddSeconds(App.SRConfiguracion.CorteCierre.TotalSeconds);
+
+            if (Periodo)
+            {
+                HorarioTurno = "";
+            }
+            else if (Turno)
+            {
+                HorarioTurno = $"{App.SRConfiguracion.cortezinicio} - {App.SRConfiguracion.cortezfin}";
+            }
+        }
+
         public Respuesta ObtenerChequesSR()
         {
             using (SoftRestaurantDBContext context = new SoftRestaurantDBContext())
             {
                 try
                 {
-                    if (Turno)
-                    {
-                        FechaCorteInicio = FechaInicio.AddSeconds(CorteInicio.TotalSeconds);
-                        FechaCorteCierre = FechaInicio.AddSeconds(CorteCierre.TotalSeconds);
+                    //if (Turno)
+                    //{
+                    //    FechaCorteInicio = FechaInicio.AddSeconds(CorteInicio.TotalSeconds);
+                    //    FechaCorteCierre = FechaInicio.AddSeconds(CorteCierre.TotalSeconds);
 
-                        if (CorteInicio > CorteCierre)
-                        {
-                            FechaCorteCierre = FechaCorteCierre.AddDays(1);
-                        }
-                    }
-                    else
-                    {
-                        FechaCorteInicio = FechaInicio.AddSeconds(CorteInicio.TotalSeconds);
-                        FechaCorteCierre = FechaCierre.AddSeconds(CorteCierre.TotalSeconds);
-                    }
+                    //    if (CorteInicio > CorteCierre)
+                    //    {
+                    //        FechaCorteCierre = FechaCorteCierre.AddDays(1);
+                    //    }
+                    //}
+                    //else if (Periodo)
+                    //{
+                    //    FechaCorteInicio = FechaInicio.AddSeconds(CorteInicio.TotalSeconds);
+                    //    FechaCorteCierre = FechaCierre.AddSeconds(CorteCierre.TotalSeconds);
+                    //}
+
+                    FechaCorteInicio = FechaInicio.AddSeconds(HoraInicio.TimeOfDay.TotalSeconds);
+                    FechaCorteCierre = FechaCierre.AddSeconds(HoraCierre.TimeOfDay.TotalSeconds);
 
                     if (!Funciones.ValidarMesBusqueda(App.MesesValidos, FechaCorteInicio))
                     {
@@ -1562,8 +1606,8 @@ namespace mod_add.ViewModels
         public decimal UltimoMovimiento { get; set; }
         public DateTime FechaCorteInicio { get; set; }
         public DateTime FechaCorteCierre { get; set; }
-        private TimeSpan CorteInicio { get; set; }
-        private TimeSpan CorteCierre { get; set; }
+        //private TimeSpan CorteInicio { get; set; }
+        //private TimeSpan CorteCierre { get; set; }
 
         private string headerAccion;
         public string HeaderAccion
@@ -1650,6 +1694,28 @@ namespace mod_add.ViewModels
             {
                 _FechaCierre = value;
                 OnPropertyChanged(nameof(FechaCierre));
+            }
+        }
+
+        private DateTime horaInicio;
+        public DateTime HoraInicio
+        {
+            get { return horaInicio; }
+            set
+            {
+                horaInicio = value;
+                OnPropertyChanged(nameof(HoraInicio));
+            }
+        }
+
+        private DateTime horaCierre;
+        public DateTime HoraCierre
+        {
+            get { return horaCierre; }
+            set
+            {
+                horaCierre = value;
+                OnPropertyChanged(nameof(HoraCierre));
             }
         }
 

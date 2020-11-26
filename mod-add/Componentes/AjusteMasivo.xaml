@@ -46,18 +46,17 @@
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="14*"/>
-                        <ColumnDefinition Width="36*"/>
-                        <ColumnDefinition Width="14*"/>
-                        <ColumnDefinition Width="36*"/>
+                        <ColumnDefinition Width="10*"/>
+                        <ColumnDefinition Width="40*"/>
+                        <ColumnDefinition Width="10*"/>
+                        <ColumnDefinition Width="40*"/>
                     </Grid.ColumnDefinitions>
                     
                     <RadioButton
                         Grid.Row="0"
-                        Grid.Column="0"
-                        Grid.ColumnSpan="2"
+                        Grid.Column="1"
                         VerticalAlignment="Center"
-                        HorizontalAlignment="Center"
+                        HorizontalAlignment="Left"
                         Content="Turno"
                         x:Name="Turno"
                         GroupName="TipoBusqueda"
@@ -67,10 +66,9 @@
 
                     <RadioButton
                         Grid.Row="0"
-                        Grid.Column="2"
-                        Grid.ColumnSpan="2"
+                        Grid.Column="3"
                         VerticalAlignment="Center"
-                        HorizontalAlignment="Center"
+                        HorizontalAlignment="Left"
                         Content="Periodo"
                         x:Name="Periodo"
                         GroupName="TipoBusqueda"
@@ -110,7 +108,7 @@
                     <Label
                         Grid.Row="1"
                         Grid.Column="2"
-                        Content="Hasta:"
+                        Content="Al:"
                         x:Name="Lbl_FechaCierre"
                         Target="{Binding ElementName=FechaCierre}"/>
                     <DatePicker
@@ -138,12 +136,28 @@
                         </DatePicker.Resources>
                     </DatePicker>
 
+                    <xctk:TimePicker
+                        Grid.Row="2"
+                        Grid.Column="1"
+                        VerticalAlignment="Center"
+                        Margin="5,0,5,0"
+                        x:Name="HoraInicio"
+                        Value="{Binding HoraInicio}"/>
                     <TextBlock
                         Grid.Row="2"
                         Grid.Column="1"
-                        Grid.ColumnSpan="2"
+                        Grid.ColumnSpan="3"
+                        Margin="5,0,5,0"
                         x:Name="HorarioTurno"
                         Text="{Binding HorarioTurno}"/>
+
+                    <xctk:TimePicker
+                        Grid.Row="6"
+                        Grid.Column="3"
+                        VerticalAlignment="Center"
+                        Margin="5,0,5,0"
+                        x:Name="HoraCierre"
+                        Value="{Binding HoraCierre}"/>
                 </Grid>
             </GroupBox>
         </Grid>

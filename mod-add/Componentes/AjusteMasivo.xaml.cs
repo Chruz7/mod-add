@@ -25,14 +25,25 @@ namespace mod_add.Componentes
             HabilitarControles(false);
             Aplicar.IsEnabled = false;
             Cancelar.IsEnabled = false;
-
-            FechaInicio.DisplayDateEnd = DateTime.Today.AddDays(-1);
-            FechaCierre.DisplayDateEnd = DateTime.Today.AddDays(-1);
+                        
+            //FechaInicio.DisplayDateEnd = DateTime.Today.AddDays(-1);
+            //FechaCierre.DisplayDateEnd = DateTime.Today.AddDays(-1);
 
             //Procesos.IsEnabled = false;
 
             ViewModel = new AjusteMasivoViewModel();
             DataContext = ViewModel;
+
+            //if (ViewModel.Turno)
+            //{
+            //    FechaInicio.DisplayDateEnd = DateTime.Today.AddDays(-1);
+            //}
+            //else if (ViewModel.Periodo)
+            //{
+            //    FechaInicio.DisplayDateEnd = DateTime.Today;
+            //}
+
+            FechaCierre.DisplayDateEnd = DateTime.Today;
         }
 
         private void NuevaBusqueda_Click(object sender, RoutedEventArgs e)
@@ -43,6 +54,8 @@ namespace mod_add.Componentes
 
         private void GenerarVistaPrevia_Click(object sender, RoutedEventArgs e)
         {
+            if (!Validar()) return;
+
             App.HabilitarPrincipal(false);
 
             Respuesta respuesta = new Respuesta
@@ -156,9 +169,14 @@ namespace mod_add.Componentes
 
         private void Turno_Checked(object sender, RoutedEventArgs e)
         {
-            Lbl_FechaCierre.Visibility = Visibility.Hidden;
-            FechaCierre.Visibility = Visibility.Hidden;
+            Lbl_FechaCierre.Visibility = Visibility.Collapsed;
+            FechaCierre.Visibility = Visibility.Collapsed;
+            HoraInicio.Visibility = Visibility.Collapsed;
+            HoraCierre.Visibility = Visibility.Collapsed;
+
             HorarioTurno.Visibility = Visibility.Visible;
+            ViewModel.AjustarFechaCierre();
+            ViewModel.InicializarHorarioTurno();
 
             FechaInicio.DisplayDateEnd = DateTime.Today.AddDays(-1);
         }
@@ -167,11 +185,20 @@ namespace mod_add.Componentes
         {
             Lbl_FechaCierre.Visibility = Visibility.Visible;
             FechaCierre.Visibility = Visibility.Visible;
-            HorarioTurno.Visibility = Visibility.Hidden;
+            HoraInicio.Visibility = Visibility.Visible;
+            HoraCierre.Visibility = Visibility.Visible;
 
-            FechaCierre.DisplayDateStart = ViewModel.FechaInicio;
-            FechaCierre.DisplayDateEnd = DateTime.Today.AddDays(-1);
-            ViewModel.FechaCierre = DateTime.Today.AddDays(-1);
+            HorarioTurno.Visibility = Visibility.Collapsed;
+
+            FechaInicio.DisplayDateEnd = DateTime.Today;
+
+            //Lbl_FechaCierre.Visibility = Visibility.Visible;
+            //FechaCierre.Visibility = Visibility.Visible;
+            //HorarioTurno.Visibility = Visibility.Hidden;
+
+            //FechaCierre.DisplayDateStart = ViewModel.FechaInicio;
+            //FechaCierre.DisplayDateEnd = DateTime.Today.AddDays(-1);
+            //ViewModel.FechaCierre = DateTime.Today.AddDays(-1);
         }
 
         private void HabilitarControles(bool habilitar = true)
@@ -204,12 +231,21 @@ namespace mod_add.Componentes
 
         private void FechaInicio_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (ViewModel.Turno)
+            {
+                ViewModel.AjustarFechaCierre();
+            }
             FechaCierre.DisplayDateStart = ViewModel.FechaInicio;
+            //FechaCierre.DisplayDateStart = ViewModel.FechaInicio;
         }
 
         private void FechaCierre_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
         {
-            FechaInicio.DisplayDateEnd = ViewModel.FechaCierre;
+            if (ViewModel.Periodo)
+            {
+                FechaInicio.DisplayDateEnd = ViewModel.FechaCierre;
+            }
+            //FechaInicio.DisplayDateEnd = ViewModel.FechaCierre;
         }
 
         private void PorcentajeObjetivo_ValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
@@ -238,6 +274,20 @@ namespace mod_add.Componentes
                 DetalleModificacionCheques.Columns[13].Header = "Eliminar";
             else if (proceso.TipoProceso == TipoProceso.PRODUCTOS)
                 DetalleModificacionCheques.Columns[13].Header = "Modificar";
+        }
+
+        public bool Validar()
+        {
+            var corteInicio = ViewModel.FechaInicio.AddSeconds(ViewModel.HoraInicio.TimeOfDay.TotalSeconds);
+            var corteCierre = ViewModel.FechaCierre.AddSeconds(ViewModel.HoraCierre.TimeOfDay.TotalSeconds);
+
+            if (corteInicio > corteCierre)
+            {
+                MessageBox.Show("La fecha de inicio no puede ser mayor a la fecha de cierre", "Fecha inicio", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return false;
+            }
+
+            return true;
         }
     }
 }

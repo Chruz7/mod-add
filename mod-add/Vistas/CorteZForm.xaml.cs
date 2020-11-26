@@ -166,7 +166,7 @@ namespace mod_add.Vistas
             {
                 ViewModel.AjustarFechaCierre();
             }
-            if (TipoCorte == TipoCorte.PERIODO)
+            else if (TipoCorte == TipoCorte.PERIODO)
             {
                 FechaCierre.DisplayDateStart = ViewModel.FechaInicio;
             }
