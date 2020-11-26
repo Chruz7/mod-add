@@ -76,29 +76,73 @@ namespace mod_add.Utils
 
                 string html = @File.ReadAllText(rutaHtml);
                 string css = @File.ReadAllText(rutaCss);
+                string source;
+                string partialSource;
 
                 #region Cheques
-                string source = "{{#CHEQUESREPORTE}}<tr class=\"fila\">{{>CHEQUEREPORTE}}</tr>{{/CHEQUESREPORTE}}";
+                //string source = "{{#CHEQUESREPORTE}}<tr class=\"fila\">{{>CHEQUEREPORTE}}</tr>{{/CHEQUESREPORTE}}";
 
-                string partialSource =
-                    "<td class=\"border-left border-bottom text-bold\">{{Snumcheque}}</td>" +
-                    "<td class=\"border-bottom text-bold\">{{Scierre}}</td>" +
-                    "<td class=\"border-bottom text-bold\">{{Simpresiones}}</td>" +
-                    "<td class=\"border-bottom text-bold\">{{Sreabiertas}}</td>" +
-                    "<td class=\"border-bottom text-bold\">{{Sdescuento}}</td>" +
-                    "<td class=\"border-bottom text-right text-bold\">{{Simporte}}</td>" +
-                    "<td class=\"border-right border-bottom\" colspan=\"4\"></td>";
+                //string partialSource =
+                //    "<td class=\"border-left border-bottom text-bold\">{{Snumcheque}}</td>" +
+                //    "<td class=\"border-bottom text-bold\">{{Scierre}}</td>" +
+                //    "<td class=\"border-bottom text-bold\">{{Simpresiones}}</td>" +
+                //    "<td class=\"border-bottom text-bold\">{{Sreabiertas}}</td>" +
+                //    "<td class=\"border-bottom text-bold\">{{Sdescuento}}</td>" +
+                //    "<td class=\"border-bottom text-right text-bold\">{{Simporte}}</td>" +
+                //    "<td class=\"border-right border-bottom\" colspan=\"4\"></td>";
 
-                Handlebars.RegisterTemplate("CHEQUEREPORTE", partialSource);
+                //Handlebars.RegisterTemplate("CHEQUEREPORTE", partialSource);
 
-                var template1 = Handlebars.Compile(source);
+                //var template1 = Handlebars.Compile(source);
 
-                var data1 = new
+                //var data1 = new
+                //{
+                //    reporte.ChequesReporte
+                //};
+
+                //var chequesReporteTemplate = template1(data1);
+                string chequesReporteTemplate = "";
+
+                foreach (var cheque in reporte.ChequesReporte)
                 {
-                    reporte.ChequesReporte
-                };
+                    chequesReporteTemplate += "<tr>" +
+                        $"<th class=\"border-left border-top border-bottom text-bold\">{cheque.Snumcheque}</th>" +
+                        $"<th class=\"border-bottom border-top text-bold\">{cheque.Scierre}</th>" +
+                        $"<th class=\"border-bottom border-top text-bold\">{cheque.Simpresiones}</th>" +
+                        $"<th class=\"border-bottom border-top text-bold\">{cheque.Sreabiertas}</th>" +
+                        $"<th class=\"border-bottom border-top text-bold text-center\">{cheque.Sdescuento}</th>" +
+                        $"<th class=\"border-bottom border-top text-right text-bold\">{cheque.Simporte}</th>" +
+                        "<th class=\"border-top border-right border-bottom\" colspan=\"5\"></th>" +
+                        "</tr>";
 
-                var chequesReporteTemplate = template1(data1);
+                    chequesReporteTemplate += "<tr>" +
+                        "<th class=\"border-left border-bottom grey-lighten-1\" colspan=\"3\"></th>" +
+                        "<th class=\"border-bottom grey-lighten-1 text-right\" colspan=\"2\">FORMA DE PAGO</th>" +
+                        "<th class=\"border-bottom grey-lighten-1 text-right\">IMPORTE</th>" +
+                        "<th class=\"border-bottom grey-lighten-1 text-right\">PROPINA</th>" +
+                        "<th class=\"border-bottom grey-lighten-1 text-right\">TIPO DE CAMBIO</th>" +
+                        "<th class=\"border-bottom grey-lighten-1\"></th>" +
+                        "<th class=\"border-bottom grey-lighten-1\">REFERENCIA</th>" +
+                        "<th class=\"border-right border-bottom grey-lighten-1\"></th>" +
+                        "</tr>";
+
+                    foreach(var chequepago in cheque.ChequesPagos)
+                    {
+                        chequesReporteTemplate += "<tr class=\"fila\">" +
+                        "<td class=\"info\" colspan=\"3\"></td>" +
+                        $"<td class=\"info text-right\" colspan=\"2\">{chequepago.DescripcionFormaPago}</td>" +
+                        $"<td class=\"info text-right\">{chequepago.Simporte}</td>" +
+                        $"<td class=\"info text-right\">{chequepago.Spropina}</td>" +
+                        $"<td class=\"info text-right\">{chequepago.Stipodecambio}</td>" +
+                        "<td class=\"info\"></td>" +
+                        $"<td class=\"info\">{chequepago.referencia}</td>" +
+                        "<td class=\"info\"></td>" +
+                        "</tr>";
+                    }
+                    chequesReporteTemplate += "<tr class=\"fila\">" +
+                        "<td colspan=\"10\"></td>" +
+                        "</tr>";
+                }
                 #endregion
 
                 #region Pago ventas

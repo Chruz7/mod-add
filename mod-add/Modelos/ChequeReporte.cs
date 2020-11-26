@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Security.Cryptography;
 
 namespace mod_add.Modelos
 {
@@ -211,13 +212,26 @@ namespace mod_add.Modelos
 
         public List<ChequePagoReporte> ChequesPagos { get; set; }
 
+        public bool RedondearAEntero { get; set; }
+
         public string Snumcheque { get { return $"{numcheque}"; } }
         public string Snumcheque2 { get { return $"{numcheque}".PadLeft(8, '0'); } }
         public string Sfolionotadeconsumo { get { return (folionotadeconsumo ?? 0) > 0 ? $"{folionotadeconsumo}" : ""; } }
         public string Scierre { get { return cierre.HasValue ? cierre.Value.ToString("dd/MM/yyyy hh:mm:ss tt", CultureInfo.CreateSpecificCulture("US")) : ""; } }
         public string Simpresiones { get { return (impresiones ?? 0) > 1 ? $"{(int)impresiones}" : ""; } }
         public string Sreabiertas { get { return (reabiertas ?? 0) > 0 ? $"{(int)reabiertas}" : ""; } }
-        public string Sdescuento { get { return  (descuento ?? 0) > 0 ? $"{(double)Mat.Redondear(descuento.Value, 2)} %" : ""; } }
+        //public string Sdescuento { get { return (descuento ?? 0) > 0 ? $"{(double)Mat.Redondear(descuento.Value, 2)} %" : ""; } }
+        public string Sdescuento
+        {
+            get
+            {
+                decimal desc = Mat.Redondear((descuento ?? 0), RedondearAEntero ? 0 : 2);
+
+                if (desc == 0) return "";
+
+                return RedondearAEntero ? $"{(double)desc} %" : (desc < 100 ? $"{desc} %" : $"{desc}");
+            }
+        }
         public string Stotaldescuentoycortesia { get { return (totaldescuentoycortesia ?? 0) > 0 || Totales ? string.Format("{0:C}", totaldescuentoycortesia ?? 0) : ""; } }
         public string Spropina { get { return (propina ?? 0) > 0 || Totales ? string.Format("{0:C}", propina ?? 0) : ""; } }
         public string Simporte { get { return (descuento ?? 0) < 100 || Totales ? string.Format("{0:C}", total ?? 0) : "CORTESIA"; } }
