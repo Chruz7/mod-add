@@ -35,6 +35,15 @@ namespace mod_add.Utils
         public string CiudadSucursal { get; set; }
         public string EstadoSucursal { get; set; }
 
+        public string HdTelefonos { get; set; }
+        public string HdWhatsapp { get; set; }
+        public string FtAgradecimiento { get; set; }
+        public string FtComprobante { get; set; }
+        public string FtCodigoFacturacion { get; set; }
+        public string FtDireccionWebFacturacion { get; set; }
+        public string FtVigenciaFacturacion { get; set; }
+        public string FtVersionSoftRestaurant { get; set; }
+
         public bool ImprimirEnArchivo { get; set; }
 
         public List<Linea> Lineas { get; set; }
@@ -62,6 +71,15 @@ namespace mod_add.Utils
             CiudadSucursal = ConfiguracionLocalServicio.ReadSetting("CIUDAD-SUCURSAL");
             EstadoSucursal = ConfiguracionLocalServicio.ReadSetting("ESTADO-SUCURSAL");
 
+            HdTelefonos = ConfiguracionLocalServicio.ReadSetting("HD-TELEFONOS");
+            HdWhatsapp = ConfiguracionLocalServicio.ReadSetting("HD-WHATSAPP");
+            FtAgradecimiento = ConfiguracionLocalServicio.ReadSetting("FT-AGRADECIMIENTO");
+            FtComprobante = ConfiguracionLocalServicio.ReadSetting("FT-COMPROBANTE");
+            FtCodigoFacturacion = ConfiguracionLocalServicio.ReadSetting("FT-CODIGO-FACTURACION");
+            FtDireccionWebFacturacion = ConfiguracionLocalServicio.ReadSetting("FT-DIRECCION-WEB-FACTURACION");
+            FtVigenciaFacturacion = ConfiguracionLocalServicio.ReadSetting("FT-VIGENCIA-FACTURACION");
+            FtVersionSoftRestaurant = ConfiguracionLocalServicio.ReadSetting("FT-VERSION-SOFTRESTAURANT");
+
             Lineas = new List<Linea>();
 
             Impresion = new SRLibrary.Utils.Print();
@@ -80,27 +98,6 @@ namespace mod_add.Utils
                 string partialSource;
 
                 #region Cheques
-                //string source = "{{#CHEQUESREPORTE}}<tr class=\"fila\">{{>CHEQUEREPORTE}}</tr>{{/CHEQUESREPORTE}}";
-
-                //string partialSource =
-                //    "<td class=\"border-left border-bottom text-bold\">{{Snumcheque}}</td>" +
-                //    "<td class=\"border-bottom text-bold\">{{Scierre}}</td>" +
-                //    "<td class=\"border-bottom text-bold\">{{Simpresiones}}</td>" +
-                //    "<td class=\"border-bottom text-bold\">{{Sreabiertas}}</td>" +
-                //    "<td class=\"border-bottom text-bold\">{{Sdescuento}}</td>" +
-                //    "<td class=\"border-bottom text-right text-bold\">{{Simporte}}</td>" +
-                //    "<td class=\"border-right border-bottom\" colspan=\"4\"></td>";
-
-                //Handlebars.RegisterTemplate("CHEQUEREPORTE", partialSource);
-
-                //var template1 = Handlebars.Compile(source);
-
-                //var data1 = new
-                //{
-                //    reporte.ChequesReporte
-                //};
-
-                //var chequesReporteTemplate = template1(data1);
                 string chequesReporteTemplate = "";
 
                 foreach (var cheque in reporte.ChequesReporte)
@@ -1306,8 +1303,8 @@ namespace mod_add.Utils
                 MultiliniaCentrado($"{DireccionFiscal} {Ciudad} {Estado} {Pais}  CP  {CodigoPostal}", TipoImpresionCuenta.CUENTA);
                 MultiliniaCentrado($"{DireccionFiscal} {Ciudad} {Estado} {Pais} CP {CodigoPostal}", TipoImpresionCuenta.NOTACONSUMO);
                 Multilinia($"SUCURSAL:{DireccionSucursal} {CiudadSucursal} {EstadoSucursal}", TipoImpresionCuenta.CUENTA_NOTACONSUMO, 48);
-                MultiliniaCentrado($"TELEFONOS:(999) 518 0824,  518 0825");
-                MultiliniaCentrado($"WHATSAPP:(999) 642 7325");
+                MultiliniaCentrado(HdTelefonos);
+                MultiliniaCentrado(HdWhatsapp);
                 AgregarLinea(Relleno('='));
                 Extremos($"MESA:{reporte.Cheque.mesa}", $"MESERO:{reporte.Cheque.idmesero}");
                 AgregarLinea(Centrado($"FOLIO:{reporte.Cheque.numcheque}"));
@@ -1349,14 +1346,14 @@ namespace mod_add.Utils
                 importe = string.Format("{0:C}", reporte.Cheque.cambio);
                 AgregarDivision(40, TipoImpresionCuenta.NOTACONSUMO, new Division("", 18), new Division("CAMBIO:", 9), new Division(importe.PadLeft(13)));
                 AgregarLinea(Relleno(' '), TipoImpresionCuenta.CUENTA);
-                AgregarLinea(Centrado("GRACIAS POR SU PREFERENCIA"));
-                AgregarLinea(Centrado("ESTE NO ES UN COMPROBANTE FISCAL"));
-                AgregarLinea($"CODIGO FACT:5VJEVCUUW");
-                AgregarLinea($"FACTURA EN:HTTP://MEFACTURO.MX/LOSMARISCOSDECHICHI");
-                AgregarLinea($"DIAS VIGENCIA:3");
+                AgregarLinea(Centrado(FtAgradecimiento));
+                AgregarLinea(Centrado(FtComprobante));
+                AgregarLinea(FtCodigoFacturacion);
+                AgregarLinea(FtDireccionWebFacturacion);
+                AgregarLinea(FtVigenciaFacturacion);
                 AgregarLinea($"FOLIO:{reporte.Cheque.numcheque}");
                 AgregarLinea(Relleno(' '));
-                AgregarLinea(Centrado("***SOFT RESTAURANT V9.5 PRO***"));
+                AgregarLinea(Centrado(FtVersionSoftRestaurant));
                 AgregarLinea(Relleno(' '));
                 AgregarLinea(Relleno(' '));
 
