@@ -4,10 +4,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace mod_add.Datos.Modelos
 {
-    [Table("Cheques")]
     public class Cheque
     {
-        public int Id { get; set; }
         public TipoAccion TipoAccion { get; set; }
         public TipoPago TipoPago { get; set; }
         public decimal TotalArticulosEliminados { get; set; }

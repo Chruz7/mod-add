@@ -2,6 +2,7 @@
 using mod_add.Datos.Modelos;
 using mod_add.Utils;
 using mod_add.Vistas;
+using SR.Datos;
 using SRLibrary.SR_Context;
 using SRLibrary.SR_DAO;
 using SRLibrary.SR_DTO;
@@ -29,6 +30,7 @@ namespace mod_add
         public static MidpointRounding MidpointRounding { get; set; }
         private static Principal Principal { get; set; }
         public static SR_configuracion SRConfiguracion { get; set; }
+        public static SR_formasdepago SRformadepago { get; set; }
         public static List<SR_productosdetalle> SRProductosDetalle { get; set; }
 
         private void Application_Startup(object sender, StartupEventArgs e)
@@ -169,6 +171,9 @@ namespace mod_add
                 {
                     SR_configuracion_DAO configuracion_DAO = new SR_configuracion_DAO(context);
                     SRConfiguracion = configuracion_DAO.GetAll().FirstOrDefault();
+
+                    SR_formasdepago_DAO formasdepago_DAO = new SR_formasdepago_DAO(context);
+                    SRformadepago = formasdepago_DAO.Find(ClavePagoEfectivo);
                 }
                 catch (Exception ex)
                 {

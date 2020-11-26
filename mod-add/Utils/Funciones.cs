@@ -646,6 +646,8 @@ namespace mod_add.Utils
                 IdFormadePagoAnt = modelo.idformadepago,
                 ImporteAnt = modelo.importe.Value,
                 PropinaAnt = modelo.propina.Value,
+                TipodecambioAnt = modelo.tipodecambio.Value,
+                ReferenciaAnt = modelo.referencia,
 
                 folio = modelo.folio,
                 idformadepago = modelo.idformadepago,

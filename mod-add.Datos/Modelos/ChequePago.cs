@@ -1,17 +1,17 @@
 ﻿using mod_add.Datos.Enums;
-using System.ComponentModel.DataAnnotations.Schema;
+using System.Text;
 
 namespace mod_add.Datos.Modelos
 {
-    [Table("Cheques_Pago")]
     public class ChequePago
     {
-        public int Id { get; set; }
         public TipoAccion TipoAccion { get; set; }
         public long FolioAnt { get; set; }
         public string IdFormadePagoAnt { get; set; }
         public decimal ImporteAnt { get; set; }
         public decimal PropinaAnt { get; set; }
+        public decimal TipodecambioAnt { get; set; }
+        public string ReferenciaAnt { get; set; }
 
         public long folio { get; set; }
         public string idformadepago { get; set; }

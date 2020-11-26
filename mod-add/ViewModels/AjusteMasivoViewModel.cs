@@ -447,8 +447,11 @@ namespace mod_add.ViewModels
                     foreach (var chequePago in chequesPago)
                     {
                         chequePago.TipoAccion = TipoAccion.NINGUNO;
+                        chequePago.idformadepago = chequePago.IdFormadePagoAnt;
                         chequePago.importe = chequePago.ImporteAnt;
                         chequePago.propina = chequePago.PropinaAnt;
+                        chequePago.tipodecambio = chequePago.TipodecambioAnt;
+                        chequePago.referencia = chequePago.ReferenciaAnt;
                     }
                 }
             }
@@ -835,18 +838,18 @@ namespace mod_add.ViewModels
                     if (!QuitarPropinasManualmente)
                     {
                         cheque.propina = 0;
-                        cheque.propinatarjeta = 0;
                         //falta validar lo de las propinas
                     }
+                    cheque.propinatarjeta = 0;
 
                     cheque.totalarticulos = detRestantes.Sum(x => x.cantidad.Value);
                     cheque.subtotal = totalSinImpuestos_Det;
                     cheque.total = totalNuevo;
 
-                    cheque.totalconpropina = cheque.total; // falta validar si la propina se agrega por configuracion
+                    cheque.totalconpropina = cheque.total + cheque.propina; // falta validar si la propina se agrega por configuracion
 
                     cheque.totalconcargo = cheque.total + cheque.cargo;
-                    cheque.totalconpropinacargo = cheque.total + cheque.cargo; // falta validar si la propina se agrega por configuracion
+                    cheque.totalconpropinacargo = cheque.total + cheque.propina + cheque.cargo; // falta validar si la propina se agrega por configuracion
                     cheque.descuentoimporte = Mat.Redondear(totalSinImpuestos_Det * descuento);
 
                     cheque.efectivo = cheque.total;
@@ -917,7 +920,6 @@ namespace mod_add.ViewModels
                     cheque.totaldescuentoalimentos = Mat.Redondear(totalalimentosdescuento * descuento);
                     cheque.totaldescuentobebidas = Mat.Redondear(totalbebidasdescuento * descuento);
                     cheque.totaldescuentootros = Mat.Redondear(totalotrosdescuento * descuento);
-                    // las cortesias se mantienen?
 
                     cheque.totaldescuentoycortesia = cheque.totaldescuentos + cheque.totalcortesias;
                     cheque.totalalimentossindescuentos = totalalimentossindescuento;
@@ -940,15 +942,35 @@ namespace mod_add.ViewModels
                     #endregion
 
                     #region Ajuste del cheque pago
-                    var chequePago = ChequesPago.FirstOrDefault(x => x.folio == cheque.folio);
+                    var chequesPago = ChequesPago.Where(x => x.folio == cheque.folio).ToList();
 
-                    chequePago.importe = cheque.total;
-                    chequePago.idformadepago = App.ClavePagoEfectivo;
+                    bool primero = !chequesPago.Any(x => x.idformadepago == App.SRformadepago.idformadepago);
 
-                    if (cheque.TipoPago == TipoPago.TARJETA)
+                    foreach (var chequePago in chequesPago)
                     {
-                        chequePago.propina = cheque.propina;
+                        if (chequePago.idformadepago == App.SRformadepago.idformadepago || primero)
+                        {
+                            primero = false;
+
+                            chequePago.TipoAccion = TipoAccion.ACTUALIZAR;
+                            chequePago.idformadepago = App.SRformadepago.idformadepago;
+                            chequePago.importe = cheque.total;
+                            chequePago.tipodecambio = App.SRformadepago.tipodecambio;
+                            chequePago.propina = cheque.propina;
+                            chequePago.referencia = "";
+                        }
+                        else
+                        {
+                            chequePago.TipoAccion = TipoAccion.ELIMINAR;
+                        }
                     }
+                    //var chequePago = ChequesPago.FirstOrDefault(x => x.folio == cheque.folio && x.idformadepago == App.SRformadepago.idformadepago);
+                    //chequePago.idformadepago = App.ClavePagoEfectivo;
+
+                    //if (cheque.TipoPago == TipoPago.TARJETA)
+                    //{
+                    //    chequePago.propina = cheque.propina;
+                    //}
                     #endregion
                 }
             }

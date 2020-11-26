@@ -1,13 +1,10 @@
 ﻿using mod_add.Datos.Enums;
 using System;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace mod_add.Datos.Modelos
 {
-    [Table("Turnos")]
     public class Turno
     {
-        public int Id { get; set; }
         public TipoAccion TipoAccion { get; set; }
         public long IdTurnoInternoAnt { get; set; }
         public long IdTurnoAnt { get; set; }
