@@ -1,16 +1,14 @@
-﻿using DocumentFormat.OpenXml.Drawing.Diagrams;
-using DocumentFormat.OpenXml.Office.CustomUI;
-using HandlebarsDotNet;
+﻿using HandlebarsDotNet;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
 using iTextSharp.tool.xml;
 using mod_add.Enums;
 using mod_add.Modelos;
-using SR.Datos;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing.Printing;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 
@@ -39,11 +37,12 @@ namespace mod_add.Utils
 
         public bool ImprimirEnArchivo { get; set; }
 
+        public List<Linea> Lineas { get; set; }
+
         private readonly SRLibrary.Utils.Print Impresion;
 
         public GenerarReporte()
         {
-            Impresion = new SRLibrary.Utils.Print();
             PathEjecuccion = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
             PathResumido = ConfiguracionLocalServicio.ReadSetting("PATH-RESUMIDO");
             PathDetalladoVertical = ConfiguracionLocalServicio.ReadSetting("PATH-DETALLADO-VERTICAL");
@@ -62,6 +61,10 @@ namespace mod_add.Utils
             DireccionSucursal = ConfiguracionLocalServicio.ReadSetting("DIRECCION-SUCURSAL");
             CiudadSucursal = ConfiguracionLocalServicio.ReadSetting("CIUDAD-SUCURSAL");
             EstadoSucursal = ConfiguracionLocalServicio.ReadSetting("ESTADO-SUCURSAL");
+
+            Lineas = new List<Linea>();
+
+            Impresion = new SRLibrary.Utils.Print();
         }
 
         public void DetalladoFormasPagoPDF(ReporteCorte reporte)
@@ -69,7 +72,7 @@ namespace mod_add.Utils
             try
             {
                 var rutaHtml = Path.Combine(PathEjecuccion, "plantillas", "corte-detallado-formas-de-pago.html");
-                var rutaCss = Path.Combine(PathEjecuccion, "plantillas", "estilos.css");
+                var rutaCss = Path.Combine(PathEjecuccion, "plantillas", "estilos-fp.css");
 
                 string html = @File.ReadAllText(rutaHtml);
                 string css = @File.ReadAllText(rutaCss);
@@ -78,22 +81,13 @@ namespace mod_add.Utils
                 string source = "{{#CHEQUESREPORTE}}<tr class=\"fila\">{{>CHEQUEREPORTE}}</tr>{{/CHEQUESREPORTE}}";
 
                 string partialSource =
-                    "<td class=\"info text-center\">{{Snumcheque2}}</td>" +
-                    "<td class=\"info text-center\">{{Sfolionotadeconsumo}}</td>" +
-                    "<td class=\"info text-center\">{{Scierre}}</td>" +
-                    "<td class=\"info text-center\">{{Simpresiones}}</td>" +
-                    "<td class=\"info text-center\">{{Sreabiertas}}</td>" +
-                    "<td class=\"info\">{{mesa}}</td>" +
-                    "<td class=\"info text-center\">{{idtipodescuento}}</td>" +
-                    "<td class=\"info text-center\">{{Sdescuento}}</td>" +
-                    "<td class=\"info text-center\">{{Stotaldescuentoycortesia}}</td>" +
-                    "<td class=\"info text-right\">{{Spropina}}</td>" +
-                    "<td class=\"info text-right\">{{Simporte}}</td>" +
-                    "<td class=\"info text-right\">{{Scargo}}</td>" +
-                    "<td class=\"info text-right\">{{Sefectivo}}</td>" +
-                    "<td class=\"info text-right\">{{Starjeta}}</td>" +
-                    "<td class=\"info text-right\">{{Svales}}</td>" +
-                    "<td class=\"info text-right\">{{Sotros}}</td>";
+                    "<td class=\"border-left border-bottom text-bold\">{{Snumcheque}}</td>" +
+                    "<td class=\"border-bottom text-bold\">{{Scierre}}</td>" +
+                    "<td class=\"border-bottom text-bold\">{{Simpresiones}}</td>" +
+                    "<td class=\"border-bottom text-bold\">{{Sreabiertas}}</td>" +
+                    "<td class=\"border-bottom text-bold\">{{Sdescuento}}</td>" +
+                    "<td class=\"border-bottom text-right text-bold\">{{Simporte}}</td>" +
+                    "<td class=\"border-right border-bottom\" colspan=\"4\"></td>";
 
                 Handlebars.RegisterTemplate("CHEQUEREPORTE", partialSource);
 
@@ -1260,7 +1254,88 @@ namespace mod_add.Utils
         {
             try
             {
+                string importe;
+                AgregarLinea(Relleno(' '));
+                MultiliniaCentrado(NombreComercial);
+                MultiliniaCentrado(RazonSocial);
+                MultiliniaCentrado($"RFC:{RFC}");
+                MultiliniaCentrado($"{DireccionFiscal} {Ciudad} {Estado} {Pais}  CP  {CodigoPostal}", TipoImpresionCuenta.CUENTA);
+                MultiliniaCentrado($"{DireccionFiscal} {Ciudad} {Estado} {Pais} CP {CodigoPostal}", TipoImpresionCuenta.NOTACONSUMO);
+                Multilinia($"SUCURSAL:{DireccionSucursal} {CiudadSucursal} {EstadoSucursal}", TipoImpresionCuenta.CUENTA_NOTACONSUMO, 48);
+                MultiliniaCentrado($"TELEFONOS:(999) 518 0824,  518 0825");
+                MultiliniaCentrado($"WHATSAPP:(999) 642 7325");
+                AgregarLinea(Relleno('='));
+                Extremos($"MESA:{reporte.Cheque.mesa}", $"MESERO:{reporte.Cheque.idmesero}");
+                AgregarLinea(Centrado($"FOLIO:{reporte.Cheque.numcheque}"));
+                string f = reporte.Cheque.cierre.HasValue ? reporte.Cheque.cierre.Value.ToString("dd/MM/yyyy hh:mm:ss tt", CultureInfo.CreateSpecificCulture("US")) : "";
+                AgregarLinea(Centrado($"{f}"));
+                Extremos($"PERSONAS:{reporte.Cheque.nopersonas}", $"ORDEN:{reporte.Cheque.orden}");
+                AgregarLinea(Relleno('='));
+                AgregarLinea(Relleno(' '));
+                AgregarDivision(40, TipoImpresionCuenta.CUENTA_NOTACONSUMO, new Division("CANT.", 5), new Division("DESCRIPCION", 27), new Division("IMPORTE"));
+                foreach (var cheqdet in reporte.CheqDet)
+                {
+                    importe = string.Format("{0:C}", cheqdet.precio);
+                    AgregarDivision(40, TipoImpresionCuenta.CUENTA_NOTACONSUMO, 
+                        new Division($"{(double)(cheqdet.cantidad ?? 0)}", 5), 
+                        new Division(cheqdet.idproducto, 20), 
+                        new Division(importe.PadLeft(15)));
+                }
+                AgregarLinea(Relleno(' '));
+                AgregarLinea(Centrado("VENTA A PUBLICO EN GENERAL"), TipoImpresionCuenta.NOTACONSUMO);
 
+                importe = string.Format("{0:C}", reporte.Cheque.subtotal);
+                AgregarDivision(40, TipoImpresionCuenta.CUENTA_NOTACONSUMO, new Division("", 18), new Division("SUBTOTAL:", 9), new Division(importe.PadLeft(13)));
+
+                importe = string.Format("{0:C}", reporte.Cheque.totalimpuesto1);
+                AgregarDivision(40, TipoImpresionCuenta.CUENTA_NOTACONSUMO, new Division("", 18), new Division("IVA:", 9), new Division(importe.PadLeft(13)));
+
+                importe = string.Format("{0:C}", reporte.Cheque.total);
+                AgregarDivision(40, TipoImpresionCuenta.CUENTA_NOTACONSUMO, new Division("", 18), new Division("TOTAL:", 9), new Division(importe.PadLeft(13)));
+
+                importe = (reporte.Cheque.total ?? 0).NumeroALetras();
+                Multilinia($"SON:{importe}", TipoImpresionCuenta.CUENTA_NOTACONSUMO, 48);
+
+                importe = string.Format("{0:C}", reporte.Cheque.efectivo);
+                AgregarDivision(40, TipoImpresionCuenta.NOTACONSUMO, new Division("", 18), new Division("EF:", 9), new Division(importe.PadLeft(13)));
+
+                importe = string.Format("{0:C}", reporte.Cheque.tarjeta);
+                AgregarDivision(40, TipoImpresionCuenta.NOTACONSUMO, new Division("", 18), new Division("TARJETA:", 9), new Division(importe.PadLeft(13)));
+
+                importe = string.Format("{0:C}", reporte.Cheque.cambio);
+                AgregarDivision(40, TipoImpresionCuenta.NOTACONSUMO, new Division("", 18), new Division("CAMBIO:", 9), new Division(importe.PadLeft(13)));
+                AgregarLinea(Relleno(' '), TipoImpresionCuenta.CUENTA);
+                AgregarLinea(Centrado("GRACIAS POR SU PREFERENCIA"));
+                AgregarLinea(Centrado("ESTE NO ES UN COMPROBANTE FISCAL"));
+                AgregarLinea($"CODIGO FACT:5VJEVCUUW");
+                AgregarLinea($"FACTURA EN:HTTP://MEFACTURO.MX/LOSMARISCOSDECHICHI");
+                AgregarLinea($"DIAS VIGENCIA:3");
+                AgregarLinea($"FOLIO:{reporte.Cheque.numcheque}");
+                AgregarLinea(Relleno(' '));
+                AgregarLinea(Centrado("***SOFT RESTAURANT V9.5 PRO***"));
+                AgregarLinea(Relleno(' '));
+                AgregarLinea(Relleno(' '));
+
+                string filePathCuenta = Path.Combine(PathDetalladoVertical, $"{reporte.Cheque.numcheque}.txt");
+                string filePathCuentaNC = Path.Combine(PathDetalladoVertical, $"{reporte.Cheque.numcheque}nc.txt");
+
+                File.WriteAllLines(filePathCuenta, Lineas
+                    .Where(x => x.TipoImpresionCuenta == TipoImpresionCuenta.CUENTA_NOTACONSUMO || x.TipoImpresionCuenta == TipoImpresionCuenta.CUENTA)
+                    .Select(x => x.Texto).ToArray());
+                File.WriteAllLines(filePathCuentaNC, Lineas
+                    .Where(x => x.TipoImpresionCuenta == TipoImpresionCuenta.CUENTA_NOTACONSUMO || x.TipoImpresionCuenta == TipoImpresionCuenta.NOTACONSUMO)
+                    .Select(x => x.Texto).ToArray());
+
+                if (!ImprimirEnArchivo)
+                {
+                    Impresion.Print_File(filePathCuenta, "", 0, 8, 8);
+                    Impresion.Print_File(filePathCuentaNC, "", 0, 8, 8);
+
+                    File.Delete(filePathCuenta);
+                    File.Delete(filePathCuentaNC);
+                }
+
+                Lineas.Clear();
             }
             catch (Exception ex)
             {
@@ -1288,6 +1363,78 @@ namespace mod_add.Utils
             } while (texto.Length > 0);
 
             return lineas;
+        }
+
+        private void Multilinia(string texto, TipoImpresionCuenta tipoImpresionCuenta, int columnas = 40)
+        {
+            do
+            {
+                if (texto.Length > columnas)
+                {
+                    string parte = texto.Substring(0, columnas);
+                    AgregarLinea(parte, tipoImpresionCuenta);
+                    texto = texto.Replace(parte, "");
+                }
+                else
+                {
+                    AgregarLinea(texto, tipoImpresionCuenta);
+                    texto = "";
+                }
+            } while (texto.Length > 0);
+        }
+
+        private void MultiliniaCentrado(string texto, TipoImpresionCuenta tipoImpresionCuenta = TipoImpresionCuenta.CUENTA_NOTACONSUMO, int columnas = 40)
+        {
+            if (string.IsNullOrWhiteSpace(texto)) return;
+
+            string[] palabras = texto.Split(' ');
+            string result = "";
+            string union;
+
+            for (int i = 0; i < palabras.Length; i++)
+            {
+                if (result == "")
+                {
+                    union = palabras[i];
+                }
+                else
+                {
+                    union = result + " " + palabras[i];
+                }
+
+                if (union.Length < columnas)
+                {
+                    result = union;
+                }
+
+                if (union.Length > columnas || i == (palabras.Length - 1))
+                {
+                    AgregarLinea(Centrado(result), tipoImpresionCuenta);
+                    result = palabras[i];
+                }
+            }
+        }
+
+        public void AgregarLinea(string texto, TipoImpresionCuenta tipoImpresionCuenta = TipoImpresionCuenta.CUENTA_NOTACONSUMO)
+        {
+            Lineas.Add(new Linea
+            {
+                Texto = texto,
+                TipoImpresionCuenta = tipoImpresionCuenta,
+            });
+        }
+        public void Extremos(string textoIzq, string textoDer, TipoImpresionCuenta tipoImpresionCuenta = TipoImpresionCuenta.CUENTA_NOTACONSUMO, int columnas = 40)
+        {
+            int columnasRestantes = columnas - textoIzq.Length;
+
+            if (textoDer.Length >= (columnasRestantes + 1))
+            {
+                AgregarLinea(textoIzq + " " + textoDer, tipoImpresionCuenta);
+            }
+            else
+            {
+                AgregarLinea(textoIzq + textoDer.PadLeft(columnasRestantes, ' '), tipoImpresionCuenta);
+            }
         }
 
         private string Centrado(string texto, int columnas = 40)
@@ -1340,6 +1487,31 @@ namespace mod_add.Utils
             if (texto.Length > columnas) return texto;
 
             return texto;
+        }
+
+        private void AgregarDivision(int columnas = 40, TipoImpresionCuenta tipoImpresionCuenta = TipoImpresionCuenta.CUENTA_NOTACONSUMO, params Division[] divisiones)
+        {
+            string texto = "";
+
+            for (int i = 0; i < divisiones.Length; i++)
+            {
+                var division = divisiones[i];
+
+                if (division.Texto.Length > division.Longitud)
+                {
+                    texto += division.Texto.Substring(0, division.Longitud);
+                }
+                else
+                {
+                    texto += division.Texto.PadRight(division.Longitud, division.CaracterRelleno);
+                }
+            }
+
+            //if (texto.Length > columnas) texto = texto.Substring(0, columnas);
+
+            //if (texto.Length > columnas) return texto;
+
+            AgregarLinea(texto, tipoImpresionCuenta);
         }
 
         public static byte[] AddPageNumbers(byte[] pdf, bool orientacionVertical = true)
@@ -1424,5 +1596,11 @@ namespace mod_add.Utils
         public string Texto { get; set; }
         public int Longitud { get; set; }
         public char CaracterRelleno { get; set; }
+    }
+
+    public class Linea
+    {
+        public string Texto { get; set; }
+        public TipoImpresionCuenta TipoImpresionCuenta { get; set; }
     }
 }

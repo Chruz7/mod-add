@@ -120,6 +120,8 @@ namespace mod_add.ViewModels
         {
             List<string> campos = new List<string>
             {
+                "cd.foliodet",
+                "cd.movimiento",
                 "cd.cantidad",
                 "p.descripcion AS idproducto",
                 "cd.precio",
@@ -229,7 +231,7 @@ namespace mod_add.ViewModels
                 {
                     var chequesImpresion = Cheques.Where(x => ImprimirSoloModificados ? (x.modificado == 1) : true);
 
-                    SR_parametros_DAO parametros_DAO = new SR_parametros_DAO();
+                    SR_parametros_DAO parametros_DAO = new SR_parametros_DAO(context);
                     var parametros = parametros_DAO.GetAll().FirstOrDefault();
 
                     string query;
@@ -272,7 +274,7 @@ namespace mod_add.ViewModels
                         generar.Folios(new ReporteFolios
                         {
                             Cheque = cheque,
-                            CheqDet = cheqdet.Where(x => (x.foliodet ?? 0) == cheque.folio).ToList()
+                            CheqDet = cheqdet.Where(x => (x.foliodet ?? 0) == cheque.folio).OrderBy(x => x.movimiento).ToList()
                         });
                     }
 

@@ -156,6 +156,7 @@
     <Compile Include="Selectores\Reporte.cs" />
     <Compile Include="Selectores\Respuesta.cs" />
     <Compile Include="Utils\ConfiguracionLocalServicio.cs" />
+    <Compile Include="Utils\Conversores.cs" />
     <Compile Include="Utils\Encriptado.cs" />
     <Compile Include="Utils\Exportar.cs" />
     <Compile Include="Utils\Funciones.cs" />
