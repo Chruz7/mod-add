@@ -67,33 +67,37 @@ namespace mod_add.ViewModels
                         SR_turnos_DAO turnos_DAO = new SR_turnos_DAO(context, !App.ConfiguracionSistema.ModificarVentasReales);
 
                         SR_turnos turno = turnos_DAO.Get("idturno", Cheque.idturno).FirstOrDefault();
+                        turno.efectivo += Cheque.efectivo;
+                        turno.efectivo -= EfectivoAnt;
+                        turno.tarjeta -= TarjetaAnt;
+                        turno.vales -= ValesAnt;
+                        turno.credito -= OtrosAnt;
 
-                        var cheque = cheques_DAO.Find(Cheque.folio);
-
-                        if (FormaPago.tipo == (int)TipoPago.EFECTIVO)
-                        {
-                            turno.efectivo += (cheque.efectivo - Cheque.efectivo) * -1;
-                        }
-                        else if (FormaPago.tipo == (int)TipoPago.TARJETA)
-                        {
-                            turno.tarjeta += (cheque.tarjeta - Cheque.tarjeta) * -1;
-                        }
-                        else if (FormaPago.tipo == (int)TipoPago.VALES)
-                        {
-                            turno.vales += (cheque.vales - Cheque.vales) * -1;
-                        }
-                        else if (FormaPago.tipo == (int)TipoPago.OTROS)
-                        {
-                            turno.credito += (cheque.otros - Cheque.otros) * 1;
-                        }
+                        //var cheque = cheques_DAO.Find(Cheque.folio);
+                        //if (FormaPago.tipo == (int)TipoPago.EFECTIVO)
+                        //{
+                        //    turno.efectivo += (cheque.efectivo - Cheque.efectivo) * -1;
+                        //}
+                        //else if (FormaPago.tipo == (int)TipoPago.TARJETA)
+                        //{
+                        //    turno.tarjeta += (cheque.tarjeta - Cheque.tarjeta) * -1;
+                        //}
+                        //else if (FormaPago.tipo == (int)TipoPago.VALES)
+                        //{
+                        //    turno.vales += (cheque.vales - Cheque.vales) * -1;
+                        //}
+                        //else if (FormaPago.tipo == (int)TipoPago.OTROS)
+                        //{
+                        //    turno.credito += (cheque.otros - Cheque.otros) * 1;
+                        //}
 
                         cheques_DAO.Update(Cheque);
 
-                        cheqdet_DAO.Delete(Cheque.folio);
+                        cheqdet_DAO.Delete("folio = @folio", new SqlParameter("folio", Cheque.folio));
                         cheqdet_DAO.Create(DetallesCheque.ToList());
 
                         chequespagos_DAO.Delete("folio = @folio", new SqlParameter("folio", Cheque.folio));
-                        chequespagos_DAO.Create(Chequepago);
+                        chequespagos_DAO.Create(ChequesPago.FirstOrDefault(x => x.idformadepago == App.SRformadepago.idformadepago));
 
                         turnos_DAO.Update(turno);
 
@@ -265,30 +269,34 @@ namespace mod_add.ViewModels
 
             Cheque.subtotal = totalSinImpuestos_Det;
             Cheque.total = Mat.Redondear(totalConImpuestos_Det * descuentoAplicado);
+
+            Cheque.propinatarjeta = 0;
             
-            Cheque.totalconpropina = Cheque.total; // falta validar si la propina se agrega por configuracion
+            Cheque.totalconpropina = Cheque.total + Cheque.propina; // falta validar si la propina se agrega por configuracion
             
             Cheque.totalconcargo = Cheque.total + Cheque.cargo;
-            Cheque.totalconpropinacargo = Cheque.total + Cheque.cargo; // falta validar si la propina se agrega por configuracion
+            Cheque.totalconpropinacargo = Cheque.total + Cheque.propina  + Cheque.cargo; // falta validar si la propina se agrega por configuracion
             Cheque.descuentoimporte = Mat.Redondear(totalSinImpuestos_Det * descuento);
 
-            if (FormaPago.tipo == (int)TipoPago.EFECTIVO)
-            {
-                Cheque.efectivo = Cheque.total;
-            }
-            else if (FormaPago.tipo == (int)TipoPago.TARJETA)
-            {
-                Cheque.tarjeta = Cheque.total;
-                Cheque.propinatarjeta = Cheque.propina;
-            }
-            else if (FormaPago.tipo == (int)TipoPago.VALES)
-            {
-                Cheque.vales = Cheque.total;
-            }
-            else if (FormaPago.tipo == (int)TipoPago.OTROS)
-            {
-                Cheque.otros = Cheque.total;
-            }
+            Cheque.efectivo = Cheque.total;
+
+            //if (FormaPago.tipo == (int)TipoPago.EFECTIVO)
+            //{
+            //    Cheque.efectivo = Cheque.total;
+            //}
+            //else if (FormaPago.tipo == (int)TipoPago.TARJETA)
+            //{
+            //    Cheque.tarjeta = Cheque.total;
+            //    Cheque.propinatarjeta = Cheque.propina;
+            //}
+            //else if (FormaPago.tipo == (int)TipoPago.VALES)
+            //{
+            //    Cheque.vales = Cheque.total;
+            //}
+            //else if (FormaPago.tipo == (int)TipoPago.OTROS)
+            //{
+            //    Cheque.otros = Cheque.total;
+            //}
 
 
             Cheque.totalsindescuento = Mat.Redondear(DetallesCheque.Sum(x => x.ImporteSISD));
@@ -365,12 +373,30 @@ namespace mod_add.ViewModels
             #endregion
 
             #region Ajuste del cheque pago
-            Chequepago.importe = Cheque.total;
+            var chequesPago = ChequesPago.Where(x => x.folio == Cheque.folio).ToList();
 
-            if (FormaPago.tipo == (int)TipoPago.TARJETA)
+            bool primero = !chequesPago.Any(x => x.idformadepago == App.SRformadepago.idformadepago);
+
+            foreach (var chequePago in chequesPago)
             {
-                Chequepago.propina = Cheque.propina;
+                if (chequePago.idformadepago == App.SRformadepago.idformadepago || primero)
+                {
+                    primero = false;
+                    chequePago.idformadepago = App.SRformadepago.idformadepago;
+                    chequePago.importe = Cheque.total;
+                    chequePago.tipodecambio = App.SRformadepago.tipodecambio;
+                    chequePago.propina = Cheque.propina;
+                    chequePago.referencia = "";
+
+                    break;
+                }
             }
+            //Chequepago.importe = Cheque.total;
+
+            //if (FormaPago.tipo == (int)TipoPago.TARJETA)
+            //{
+            //    Chequepago.propina = Cheque.propina;
+            //}
             #endregion
 
             Subtotal = Mat.Redondear(Cheque.subtotal.Value, 2);
@@ -413,9 +439,11 @@ namespace mod_add.ViewModels
                         TipoRespuesta = TipoRespuesta.SIN_REGISTROS
                     };
 
-                    var chequespagos = Cheque.Chequespagos;
+                    //var chequespagos = Cheque.Chequespagos;
+                    ChequesPago = Cheque.Chequespagos;
 
-                    if (chequespagos.Count == 0)
+                    //if (chequespagos.Count == 0)
+                    if (ChequesPago.Count == 0)
                     {
                         return new Respuesta
                         {
@@ -423,10 +451,15 @@ namespace mod_add.ViewModels
                         };
                     }
 
-                    Chequepago = chequespagos[0];
-                    FormaPago = Chequepago.Formasdepago;
+                    EfectivoAnt = (Cheque.efectivo ?? 0);
+                    TarjetaAnt = (Cheque.tarjeta ?? 0);
+                    ValesAnt = (Cheque.vales ?? 0);
+                    OtrosAnt = (Cheque.otros ?? 0);
 
-                    Chequepago.idformadepago = App.ClavePagoEfectivo;
+                    //Chequepago = chequespagos[0];
+                    //FormaPago = Chequepago.Formasdepago;
+
+                    //Chequepago.idformadepago = App.ClavePagoEfectivo;
 
                     //DetallesCheque = new ObservableCollection<SR_cheqdet>(detalles);
                     UltimoCheqDet = detalles.OrderByDescending(x => x.movimiento).FirstOrDefault();
@@ -444,7 +477,7 @@ namespace mod_add.ViewModels
                     return new Respuesta
                     {
                         TipoRespuesta = TipoRespuesta.HECHO,
-                        MultipleFormaPago = chequespagos.Count > 1,
+                        MultipleFormaPago = ChequesPago.Count > 1,
                         Cheqdet = detalles,
                     };
                 }
@@ -545,9 +578,16 @@ namespace mod_add.ViewModels
             }
         }
 
+        public decimal EfectivoAnt { get; set; }
+        public decimal TarjetaAnt { get; set; }
+        public decimal ValesAnt { get; set; }
+        public decimal OtrosAnt { get; set; }
+
+
         private SR_cheques Cheque { get; set; }
-        private SR_formasdepago FormaPago { get; set; }
-        private SR_chequespagos Chequepago { get; set; }
+        //private SR_formasdepago FormaPago { get; set; }
+        //private SR_chequespagos Chequepago { get; set; }
+        private List<SR_chequespagos> ChequesPago { get; set; }
         private SR_cheqdet UltimoCheqDet { get; set; }
 
         private ObservableCollection<SR_cheqdet> _DetallesCheque;
