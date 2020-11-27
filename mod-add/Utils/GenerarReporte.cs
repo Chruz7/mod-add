@@ -90,7 +90,7 @@ namespace mod_add.Utils
             try
             {
                 var rutaHtml = Path.Combine(PathEjecuccion, "plantillas", "corte-detallado-formas-de-pago.html");
-                var rutaCss = Path.Combine(PathEjecuccion, "plantillas", "estilos-fp.css");
+                var rutaCss = Path.Combine(PathEjecuccion, "plantillas", "estilos.css");
 
                 string html = @File.ReadAllText(rutaHtml);
                 string css = @File.ReadAllText(rutaCss);
@@ -103,7 +103,7 @@ namespace mod_add.Utils
                 foreach (var cheque in reporte.ChequesReporte)
                 {
                     chequesReporteTemplate += "<tr>" +
-                        $"<th class=\"border-left border-top border-bottom text-bold\">{cheque.Snumcheque}</th>" +
+                        $"<th class=\"border-left border-top border-bottom text-bold pl-4\">{cheque.Snumcheque}</th>" +
                         $"<th class=\"border-bottom border-top text-bold\">{cheque.Scierre}</th>" +
                         $"<th class=\"border-bottom border-top text-bold\">{cheque.Simpresiones}</th>" +
                         $"<th class=\"border-bottom border-top text-bold\">{cheque.Sreabiertas}</th>" +
@@ -125,7 +125,7 @@ namespace mod_add.Utils
 
                     foreach(var chequepago in cheque.ChequesPagos)
                     {
-                        chequesReporteTemplate += "<tr class=\"fila\">" +
+                        chequesReporteTemplate += "<tr class=\"fila-fp\">" +
                         "<td class=\"info\" colspan=\"3\"></td>" +
                         $"<td class=\"info text-right\" colspan=\"2\">{chequepago.DescripcionFormaPago}</td>" +
                         $"<td class=\"info text-right\">{chequepago.Simporte}</td>" +
@@ -136,7 +136,7 @@ namespace mod_add.Utils
                         "<td class=\"info\"></td>" +
                         "</tr>";
                     }
-                    chequesReporteTemplate += "<tr class=\"fila\">" +
+                    chequesReporteTemplate += "<tr class=\"fila-fp\">" +
                         "<td colspan=\"10\"></td>" +
                         "</tr>";
                 }
@@ -160,7 +160,7 @@ namespace mod_add.Utils
 
                 source = "{{#PAGOS}}<tr class=\"fila\">{{>PAGO}}</tr>{{/PAGOS}}";
                 partialSource =
-                    "<td>{{Descripcion}}</td>" +
+                    "<td class=\"pl-3\">{{Descripcion}}</td>" +
                     "<td>{{SImporte}}</td>";
 
                 Handlebars.RegisterTemplate("PAGO", partialSource);
@@ -193,7 +193,7 @@ namespace mod_add.Utils
 
                 source = "{{#PAGOPROPINAS}}<tr class=\"fila\">{{> PAGOPROPINA}}</tr>{{/PAGOPROPINAS}}";
                 partialSource =
-                    "<td>{{Descripcion}}</td>" +
+                    "<td class=\"pl-3\">{{Descripcion}}</td>" +
                     "<td>{{SPropina}}</td>";
 
                 Handlebars.RegisterTemplate("PAGOPROPINA", partialSource);
@@ -389,15 +389,15 @@ namespace mod_add.Utils
                 string source = "{{#CHEQUESREPORTE}}<tr class=\"fila\">{{>CHEQUEREPORTE}}</tr>{{/CHEQUESREPORTE}}";
 
                 string partialSource =
-                    "<td class=\"info text-center\">{{Snumcheque2}}</td>" +
-                    "<td class=\"info text-center\">{{Sfolionotadeconsumo}}</td>" +
-                    "<td class=\"info text-center\">{{Scierre}}</td>" +
+                    "<td class=\"info\">{{Snumcheque2}}</td>" +
+                    "<td class=\"info\">{{Sfolionotadeconsumo}}</td>" +
+                    "<td class=\"info\">{{Scierre}}</td>" +
                     "<td class=\"info text-center\">{{Simpresiones}}</td>" +
                     "<td class=\"info text-center\">{{Sreabiertas}}</td>" +
                     "<td class=\"info\">{{mesa}}</td>" +
-                    "<td class=\"info text-center\">{{idtipodescuento}}</td>" +
+                    "<td class=\"info\">{{idtipodescuento}}</td>" +
                     "<td class=\"info text-center\">{{Sdescuento}}</td>" +
-                    "<td class=\"info text-center\">{{Stotaldescuentoycortesia}}</td>" +
+                    "<td class=\"info text-right\">{{Stotaldescuentoycortesia}}</td>" +
                     "<td class=\"info text-right\">{{Spropina}}</td>" +
                     "<td class=\"info text-right\">{{Simporte}}</td>" +
                     "<td class=\"info text-right\">{{Scargo}}</td>" +
@@ -436,7 +436,7 @@ namespace mod_add.Utils
 
                 source = "{{#PAGOS}}<tr class=\"fila\">{{>PAGO}}</tr>{{/PAGOS}}";
                 partialSource =
-                    "<td>{{Descripcion}}</td>" +
+                    "<td class=\"pl-3\">{{Descripcion}}</td>" +
                     "<td>{{SImporte}}</td>";
 
                 Handlebars.RegisterTemplate("PAGO", partialSource);
@@ -469,7 +469,7 @@ namespace mod_add.Utils
 
                 source = "{{#PAGOPROPINAS}}<tr class=\"fila\">{{> PAGOPROPINA}}</tr>{{/PAGOPROPINAS}}";
                 partialSource =
-                    "<td>{{Descripcion}}</td>" +
+                    "<td class=\"pl-3\">{{Descripcion}}</td>" +
                     "<td>{{SPropina}}</td>";
 
                 Handlebars.RegisterTemplate("PAGOPROPINA", partialSource);
@@ -492,6 +492,7 @@ namespace mod_add.Utils
                     source = "{{#TURNOS}}<tr class=\"fila\">{{> TURNO}}</tr>{{/TURNOS}}";
                     partialSource =
                         "<td>{{idestacion}}</td>" +
+                        "<td>{{cajero}}</td>" +
                         "<td>{{Sapertura}}</td>" +
                         "<td>{{Scierre}}</td>" +
                         "<td>{{STotal}}</td>" +
@@ -500,7 +501,8 @@ namespace mod_add.Utils
                         "<td>{{Starjeta}}</td>" +
                         "<td>{{Svales}}</td>" +
                         "<td>{{SPropina}}</td>" +
-                        "<td>{{Scredito}}</td>";
+                        "<td>{{Scredito}}</td>" +
+                        "<td>{{Sidturno}}</td>";
 
                     Handlebars.RegisterTemplate("TURNO", partialSource);
 
@@ -775,7 +777,7 @@ namespace mod_add.Utils
 
                 source = "{{#PAGOS}}<tr class=\"fila\">{{>PAGO}}</tr>{{/PAGOS}}";
                 partialSource =
-                    "<td>{{Descripcion}}</td>" +
+                    "<td class=\"pl-3\">{{Descripcion}}</td>" +
                     "<td>{{SImporte}}</td>";
 
                 Handlebars.RegisterTemplate("PAGO", partialSource);
@@ -808,7 +810,7 @@ namespace mod_add.Utils
 
                 source = "{{#PAGOPROPINAS}}<tr class=\"fila\">{{> PAGOPROPINA}}</tr>{{/PAGOPROPINAS}}";
                 partialSource =
-                    "<td>{{Descripcion}}</td>" +
+                    "<td class=\"pl-3\">{{Descripcion}}</td>" +
                     "<td>{{SPropina}}</td>";
 
                 Handlebars.RegisterTemplate("PAGOPROPINA", partialSource);
@@ -872,7 +874,7 @@ namespace mod_add.Utils
 
                 source = "{{#VENTASRAPIDAS}}<tr class=\"fila\">{{> VENTARAPIDA}}</tr>{{/VENTASRAPIDAS}}";
                 partialSource =
-                    "<td>{{SDescripcion}}</td>" +
+                    "<td class=\"pl-3\">{{SDescripcion}}</td>" +
                     "<td class\"text-right\">{{STotal}}</td>";
 
                 Handlebars.RegisterTemplate("VENTARAPIDA", partialSource);

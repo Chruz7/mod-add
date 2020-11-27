@@ -130,7 +130,7 @@ namespace mod_add.ViewModels
                 "c.descuentomonedero",
                 "c.subtotalcondescuento",
                 "td.desc_tipodescuento AS DescripcionTipoDescuento",
-                $"CAST({(Reporte.TipoReporte == TipoReporte.DETALLADO_FORMAS_PAGO ? 1 : 0)} AS bit) AS RedondearAEntero"
+                $"CAST({(Reporte.TipoReporte != TipoReporte.DETALLADO_VERTICAL ? 1 : 0)} AS bit) AS RedondearAEntero"
             };
 
             return string.Join(",", campos);
