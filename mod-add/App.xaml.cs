@@ -9,6 +9,7 @@ using SRLibrary.SR_DTO;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -20,6 +21,14 @@ namespace mod_add
     /// </summary>
     public partial class App : Application
     {
+        public static string PathEjecucion { get; set; }
+        public static string PathBitacoraFiscal { get; set; }
+        public static string PathDetalladoFormasPago { get; set; }
+        public static string PathDetalladoHorizontal { get; set; }
+        public static string PathDetalladoVertical { get; set; }
+        public static string PathReimpresionFolios { get; set; }
+        public static string PathResumido { get; set; }
+
         public static bool Admin { get; set; }
         public static string ClaveEmpresa { get; set; }
         public static string ClavePagoEfectivo { get; set; }
@@ -48,6 +57,27 @@ namespace mod_add
             {
                 try
                 {
+                    PathEjecucion = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+
+                    string pathTemp = Path.Combine(PathEjecucion, "temp");
+                    PathBitacoraFiscal = Path.Combine(pathTemp, "bitacora-fiscal");
+                    PathDetalladoFormasPago = Path.Combine(pathTemp, "detallado-formas-de-pago");
+                    PathDetalladoHorizontal = Path.Combine(pathTemp, "detallado-horizontal");
+                    PathDetalladoVertical = Path.Combine(pathTemp, "detallado-vertical");
+                    PathReimpresionFolios = Path.Combine(pathTemp, "reimpresion-folios");
+                    PathResumido = Path.Combine(pathTemp, "resumido");
+
+                    if (!Directory.Exists(pathTemp))
+                    {
+                        Directory.CreateDirectory(pathTemp);
+                        Directory.CreateDirectory(PathBitacoraFiscal);
+                        Directory.CreateDirectory(PathDetalladoFormasPago);
+                        Directory.CreateDirectory(PathDetalladoHorizontal);
+                        Directory.CreateDirectory(PathDetalladoVertical);
+                        Directory.CreateDirectory(PathReimpresionFolios);
+                        Directory.CreateDirectory(PathResumido);
+                    }
+                    
                     Admin = false;
                     ClaveEmpresa = ConfiguracionLocalServicio.ReadSetting("CLAVE-EMPRESA");
                     ClavePagoEfectivo = ConfiguracionLocalServicio.ReadSetting("CLAVE-PAGO-EFECTIVO");
@@ -124,7 +154,7 @@ namespace mod_add
 
             }).ContinueWith(task =>
             {
-                IrPrincipal();
+                IrPrincipal(); //comentar
                 splash.Close();
 
                 //if (sinErrores)

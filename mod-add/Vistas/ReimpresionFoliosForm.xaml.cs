@@ -2,6 +2,7 @@
 using mod_add.Selectores;
 using mod_add.ViewModels;
 using System;
+using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -77,6 +78,26 @@ namespace mod_add.Vistas
 
         private void Imprimir_Click(object sender, RoutedEventArgs e)
         {
+            if (ViewModel.ImprimirEnArchivo)
+            {
+                using (var fbd = new System.Windows.Forms.FolderBrowserDialog())
+                {
+                    System.Windows.Forms.DialogResult result = fbd.ShowDialog();
+
+                    if (result == System.Windows.Forms.DialogResult.OK)
+                    {
+                        if (!string.IsNullOrWhiteSpace(fbd.SelectedPath) && Directory.Exists(fbd.SelectedPath))
+                        {
+                            ViewModel.DirectorioExportacion = fbd.SelectedPath;
+                        }
+                        else
+                        {
+                            MessageBox.Show("Por favor seleccione un directorio valido", "Directorio", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        }
+                    }
+                }
+            }
+
             Respuesta respuesta = new Respuesta
             {
                 TipoRespuesta = TipoRespuesta.NADA

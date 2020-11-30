@@ -16,11 +16,12 @@ namespace mod_add.Utils
 {
     public class GenerarReporte
     {
-        public string PathEjecuccion { get; set; }
+        public string PathEjecucion { get; set; }
         public string PathResumido { get; set; }
         public string PathDetalladoVertical { get; set; }
         public string PathDetalladoHorizontal { get; set; }
         public string PathDetalladoFormasPago { get; set; }
+        public string PathReimpresionFolios { get; set; }
 
         public string NombreComercial { get; set; }
         public string RazonSocial { get; set; }
@@ -52,11 +53,12 @@ namespace mod_add.Utils
 
         public GenerarReporte()
         {
-            PathEjecuccion = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+            PathEjecucion = App.PathEjecucion;
             PathResumido = ConfiguracionLocalServicio.ReadSetting("PATH-RESUMIDO");
             PathDetalladoVertical = ConfiguracionLocalServicio.ReadSetting("PATH-DETALLADO-VERTICAL");
             PathDetalladoHorizontal = ConfiguracionLocalServicio.ReadSetting("PATH-DETALLADO-HORIZONTAL");
             PathDetalladoFormasPago = ConfiguracionLocalServicio.ReadSetting("PATH-DETALLADO-FORMAS-PAGO");
+            PathReimpresionFolios = App.PathReimpresionFolios;
 
             NombreComercial = ConfiguracionLocalServicio.ReadSetting("NOMBRE-COMERCIAL");
             RazonSocial = ConfiguracionLocalServicio.ReadSetting("RAZON-SOCIAL");
@@ -89,8 +91,8 @@ namespace mod_add.Utils
         {
             try
             {
-                var rutaHtml = Path.Combine(PathEjecuccion, "plantillas", "corte-detallado-formas-de-pago.html");
-                var rutaCss = Path.Combine(PathEjecuccion, "plantillas", "estilos.css");
+                var rutaHtml = Path.Combine(PathEjecucion, "plantillas", "corte-detallado-formas-de-pago.html");
+                var rutaCss = Path.Combine(PathEjecucion, "plantillas", "estilos.css");
 
                 string html = @File.ReadAllText(rutaHtml);
                 string css = @File.ReadAllText(rutaCss);
@@ -362,8 +364,14 @@ namespace mod_add.Utils
                     }
                     else if (reporte.TipoDestino == TipoDestino.IMPRESION)
                     {
-                        //IMPRESION
-                        PrinterSettings printer = new PrinterSettings();
+                        PrinterSettings settings = new PrinterSettings();
+                        PrintDocument PrintDoc = new PrintDocument
+                        {
+                            DocumentName = nombre_archivo,
+                        };
+                        PrintDoc.PrinterSettings.PrinterName = settings.PrinterName;
+
+                        PrintDoc.Print();
 
                         File.Delete(nombre_archivo);
                     }
@@ -379,8 +387,8 @@ namespace mod_add.Utils
         {
             try
             {
-                var rutaHtml = Path.Combine(PathEjecuccion, "plantillas", $"corte-detallado-horizontal({reporte.TipoCorte}).html");
-                var rutaCss = Path.Combine(PathEjecuccion, "plantillas", "estilos.css");
+                var rutaHtml = Path.Combine(PathEjecucion, "plantillas", $"corte-detallado-horizontal({reporte.TipoCorte}).html");
+                var rutaCss = Path.Combine(PathEjecucion, "plantillas", "estilos.css");
 
                 string html = @File.ReadAllText(rutaHtml);
                 string css = @File.ReadAllText(rutaCss);
@@ -707,7 +715,14 @@ namespace mod_add.Utils
                     }
                     else if (reporte.TipoDestino == TipoDestino.IMPRESION)
                     {
-                        //IMPRESION
+                        PrinterSettings settings = new PrinterSettings();
+                        PrintDocument PrintDoc = new PrintDocument
+                        {
+                            DocumentName = nombre_archivo,
+                        };
+                        PrintDoc.PrinterSettings.PrinterName = settings.PrinterName;
+
+                        PrintDoc.Print();
 
                         File.Delete(nombre_archivo);
                     }
@@ -723,8 +738,8 @@ namespace mod_add.Utils
         {
             try
             {
-                var rutaHtml = Path.Combine(PathEjecuccion, "plantillas", $"corte-detallado-vertical({reporte.TipoCorte}).html");
-                var rutaCss = Path.Combine(PathEjecuccion, "plantillas", "estilos.css");
+                var rutaHtml = Path.Combine(PathEjecucion, "plantillas", $"corte-detallado-vertical({reporte.TipoCorte}).html");
+                var rutaCss = Path.Combine(PathEjecucion, "plantillas", "estilos.css");
 
                 string html = @File.ReadAllText(rutaHtml);
                 string css = @File.ReadAllText(rutaCss);
@@ -1021,9 +1036,12 @@ namespace mod_add.Utils
                     }
 
                     pdfDoc.Close();
-                    var nombre_archivo = Path.Combine(PathDetalladoVertical, $"CorteDetVer{reporte.SFolioCorte}.pdf");
+
                     byte[] bytes = AddPageNumbers(memoryStream.ToArray());
                     memoryStream.Close();
+
+                    var nombre_archivo = Path.Combine(PathDetalladoVertical, $"CorteDetVer{reporte.SFolioCorte}.pdf");
+
                     var fs = new FileStream(nombre_archivo, FileMode.Create, FileAccess.Write);
                     fs.Write(bytes, 0, bytes.Length);
                     fs.Close();
@@ -1034,7 +1052,14 @@ namespace mod_add.Utils
                     }
                     else if (reporte.TipoDestino == TipoDestino.IMPRESION)
                     {
-                        //IMPRESION
+                        PrinterSettings settings = new PrinterSettings();
+                        PrintDocument PrintDoc = new PrintDocument
+                        {
+                            DocumentName = nombre_archivo,
+                        };
+                        PrintDoc.PrinterSettings.PrinterName = settings.PrinterName;
+
+                        PrintDoc.Print();
 
                         File.Delete(nombre_archivo);
                     }
@@ -1359,8 +1384,8 @@ namespace mod_add.Utils
                 AgregarLinea(Relleno(' '));
                 AgregarLinea(Relleno(' '));
 
-                string filePathCuenta = Path.Combine(PathDetalladoVertical, $"{reporte.Cheque.numcheque}.txt");
-                string filePathCuentaNC = Path.Combine(PathDetalladoVertical, $"{reporte.Cheque.numcheque}nc.txt");
+                string filePathCuenta = Path.Combine(PathReimpresionFolios, $"{reporte.Cheque.numcheque}.txt");
+                string filePathCuentaNC = Path.Combine(PathReimpresionFolios, $"{reporte.Cheque.numcheque}nc.txt");
 
                 File.WriteAllLines(filePathCuenta, Lineas
                     .Where(x => x.TipoImpresionCuenta == TipoImpresionCuenta.CUENTA_NOTACONSUMO || x.TipoImpresionCuenta == TipoImpresionCuenta.CUENTA)

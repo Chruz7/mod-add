@@ -266,6 +266,7 @@ namespace mod_add.ViewModels
 
                     GenerarReporte generar = new GenerarReporte
                     {
+                        PathReimpresionFolios = DirectorioExportacion,
                         ImprimirEnArchivo = ImprimirEnArchivo
                     };
 
@@ -301,6 +302,7 @@ namespace mod_add.ViewModels
             ImprimirEnArchivo = false;
         }
 
+        public string DirectorioExportacion { get; set; }
 
         private List<ImpresionCuenta> impresionCuentas;
         public List<ImpresionCuenta> ImpresionCuentas
