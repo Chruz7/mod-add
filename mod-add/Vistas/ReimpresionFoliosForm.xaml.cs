@@ -22,6 +22,7 @@ namespace mod_add.Vistas
             FechaCierre.DisplayDateEnd = FechaInicio.DisplayDateEnd;
 
             HabilitarCampos();
+            ImprimirSoloModificados.IsEnabled = false;
 
             ViewModel = new ReimpresionFoliosViewModel();
             DataContext = ViewModel;
@@ -53,11 +54,17 @@ namespace mod_add.Vistas
                 if (respuesta.TipoRespuesta == TipoRespuesta.HECHO)
                 {
                     HabilitarCampos(false);
+
+                    if (ViewModel.BusquedaCuenta.TipoBusquedaCuenta == TipoBusquedaCuenta.FISCAL)
+                    {
+                        ImprimirSoloModificados.IsEnabled = true;
+                    }
+
                     ViewModel.CargarResultados(respuesta);
                 }
                 else if (respuesta.TipoRespuesta == TipoRespuesta.FECHA_INACCESIBLE)
                 {
-                    MessageBox.Show($"No cuenta con la licencia para realizar busquedas en el mes de {respuesta.Mensaje}", "Busqueda", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    MessageBox.Show(respuesta.Mensaje, "Busqueda", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
                 else if (respuesta.TipoRespuesta == TipoRespuesta.SIN_REGISTROS)
                 {
@@ -94,6 +101,10 @@ namespace mod_add.Vistas
                         {
                             MessageBox.Show("Por favor seleccione un directorio valido", "Directorio", MessageBoxButton.OK, MessageBoxImage.Warning);
                         }
+                    }
+                    else
+                    {
+                        return;
                     }
                 }
             }
@@ -180,21 +191,37 @@ namespace mod_add.Vistas
 
             ListarFolios.IsEnabled = habilitar;
             LimpiarLista.IsEnabled = !habilitar;
-            ImprimirSoloModificados.IsEnabled = !habilitar;
+            //ImprimirSoloModificados.IsEnabled = !habilitar;
             ImprimirEnArchivo.IsEnabled = !habilitar;
             Imprimir.IsEnabled = !habilitar;
         }
 
         public bool Validar()
         {
+            string titulo = "";
+            string mensaje = "";
+
             var corteInicio = ViewModel.FechaInicio.AddSeconds(ViewModel.HoraInicio.TimeOfDay.TotalSeconds);
             var corteCierre = ViewModel.FechaCierre.AddSeconds(ViewModel.HoraCierre.TimeOfDay.TotalSeconds);
 
             if (corteInicio > corteCierre)
             {
-                MessageBox.Show("La fecha de inicio no puede ser mayor a la fecha de cierre", "Fecha inicio", MessageBoxButton.OK, MessageBoxImage.Warning);
+                mensaje = "La fecha de inicio no puede ser mayor a la fecha de cierre";
+                titulo = "Fecha inicio";
+
+                MessageBox.Show(mensaje, titulo, MessageBoxButton.OK, MessageBoxImage.Warning);
                 return false;
             }
+
+            if (ViewModel.FolioMin > ViewModel.FolioMax)
+            {
+                mensaje = "El folio mínimo no debe ser mayor al folio máximo";
+                titulo = "Folio mínimo";
+
+                MessageBox.Show(mensaje, titulo, MessageBoxButton.OK, MessageBoxImage.Warning);
+                return false;
+            }
+
 
             return true;
         }
@@ -210,5 +237,21 @@ namespace mod_add.Vistas
             else
                 grid.Children[0].Opacity = 0.5d;
         }
+
+        //private void BusquedaCuentas_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        //{
+        //    if (!(sender is ComboBox comboBox)) return;
+        //    if (!(comboBox.SelectedItem is BusquedaCuenta busquedaCuenta)) return;
+
+        //    if (busquedaCuenta.TipoBusquedaCuenta == TipoBusquedaCuenta.FISCAL)
+        //    {
+        //        ImprimirSoloModificados.IsEnabled = true;
+        //    }
+        //    else if (busquedaCuenta.TipoBusquedaCuenta == TipoBusquedaCuenta.NORMAL)
+        //    {
+        //        ViewModel.ImprimirSoloModificados = false;
+        //        ImprimirSoloModificados.IsEnabled = false;
+        //    }
+        //}
     }
 }

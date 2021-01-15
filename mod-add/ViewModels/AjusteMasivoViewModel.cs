@@ -14,7 +14,6 @@ using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Data.SqlClient;
 using System.Diagnostics;
-using System.Globalization;
 using System.Linq;
 
 namespace mod_add.ViewModels
@@ -55,8 +54,26 @@ namespace mod_add.ViewModels
             }
         }
 
+        public void Backup()
+        {
+            try
+            {
+                SRLibrary.Utils.BackupBD bp = new SRLibrary.Utils.BackupBD();
+                bp.createBackup();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"INICIO-ERROR\n{ex}\nFIN-ERROR");
+            }
+        }
+
         public TipoRespuesta Guardar()
         {
+            if (App.ConfiguracionSistema.ModificarVentasReales)
+            {
+                Backup();
+            }
+
             Debug.WriteLine("GUARDADO-INICIO");
             TipoRespuesta tipoRespuesta = TipoRespuesta.NADA;
 
@@ -110,9 +127,7 @@ namespace mod_add.ViewModels
                         {
                             EliminarRegistrosFiscales(context);
                         }
-
                         #endregion
-
 
                         if (App.ConfiguracionSistema.ModificarVentasReales)
                         {
@@ -419,7 +434,7 @@ namespace mod_add.ViewModels
                         continue;
                     }
 
-                    var chequesDetalle = ChequesDetalle.Where(x => x.foliodet.Value == cheque.folio).ToList();
+                    var chequesDetalle = ChequesDetalle.Where(x => x.foliodet == cheque.folio).ToList();
 
                     foreach (var det in chequesDetalle)
                     {
@@ -468,7 +483,7 @@ namespace mod_add.ViewModels
             foreach (var cheque in cheques)
             {
                 var chequesDetalle = ChequesDetalle.
-                    Where(x => x.foliodet.Value == cheque.folio &&
+                    Where(x => x.foliodet == cheque.folio &&
                          (x.TipoAccion == TipoAccion.MANTENER || x.TipoAccion == TipoAccion.NINGUNO || x.TipoAccion == TipoAccion.ACTUALIZAR))
                     .OrderBy(x => x.movimiento)
                     .ToList();
@@ -586,7 +601,7 @@ namespace mod_add.ViewModels
 
                     cheque.TipoAccion = TipoAccion.ELIMINAR;
 
-                    var chequesDetalle = ChequesDetalle.Where(x => x.foliodet.Value == cheque.folio).ToList();
+                    var chequesDetalle = ChequesDetalle.Where(x => x.foliodet == cheque.folio).ToList();
 
                     foreach (var det in chequesDetalle)
                     {
@@ -630,13 +645,13 @@ namespace mod_add.ViewModels
                 foreach (var turno in turnos)
                 {
                     var cheques = Cheques
-                        .Where(x => x.idturno.Value == turno.idturno.Value)
-                        .OrderBy(x => x.numcheque.Value)
+                        .Where(x => x.idturno == turno.idturno)
+                        .OrderBy(x => x.numcheque)
                         .ToList();
 
                     foreach (var cheque in cheques)
                     {
-                        var chequesDetalle = ChequesDetalle.Where(x => x.foliodet.Value == cheque.folio).ToList();
+                        var chequesDetalle = ChequesDetalle.Where(x => x.foliodet == cheque.folio).ToList();
 
                         foreach (var det in chequesDetalle)
                         {
@@ -699,13 +714,13 @@ namespace mod_add.ViewModels
                 foreach (var turno in turnos)
                 {
                     var cheques = Cheques
-                        .Where(x => x.idturno.Value == turno.idturno.Value)
-                        .OrderBy(x => x.numcheque.Value)
+                        .Where(x => x.idturno == turno.idturno)
+                        .OrderBy(x => x.numcheque)
                         .ToList();
 
                     foreach (var cheque in cheques)
                     {
-                        var chequesDetalle = ChequesDetalle.Where(x => x.foliodet.Value == cheque.folio).ToList();
+                        var chequesDetalle = ChequesDetalle.Where(x => (x.foliodet ?? 0) == cheque.folio).ToList();
 
                         foreach (var det in chequesDetalle)
                         {
@@ -782,15 +797,15 @@ namespace mod_add.ViewModels
                         .Where(x => x.idturno == turno.idturno && (x.TipoAccion == TipoAccion.NINGUNO || x.TipoAccion == TipoAccion.MANTENER || x.TipoAccion == TipoAccion.ACTUALIZAR))
                         .ToList();
 
-                    turno.efectivo = cheques.Sum(x => x.efectivo.Value) + turno.fondo.Value;
-                    turno.tarjeta = cheques.Sum(x => x.tarjeta.Value);
-                    turno.vales = cheques.Sum(x => x.vales.Value);
-                    turno.credito = cheques.Sum(x => x.otros.Value);
+                    turno.efectivo = cheques.Sum(x => x.efectivo ?? 0) + (turno.fondo ?? 0);
+                    turno.tarjeta = cheques.Sum(x => x.tarjeta ?? 0);
+                    turno.vales = cheques.Sum(x => x.vales ?? 0);
+                    turno.credito = cheques.Sum(x => x.otros ?? 0);
 
-                    if (turno.EfectivoAnterior != turno.efectivo.Value ||
-                        turno.TarjetaAnterior != turno.tarjeta.Value ||
-                        turno.ValesAnterior != turno.vales.Value ||
-                        turno.CreditoAnterior != turno.credito.Value)
+                    if (turno.EfectivoAnterior != turno.efectivo ||
+                        turno.TarjetaAnterior != turno.tarjeta ||
+                        turno.ValesAnterior != turno.vales ||
+                        turno.CreditoAnterior != turno.credito)
                     {
                         turno.TipoAccion = TipoAccion.ACTUALIZAR;
                     }
@@ -820,20 +835,20 @@ namespace mod_add.ViewModels
                     //var detCambiados = chequesDetalle.Where(x => x.TipoAccion == TipoAccion.ACTUALIZAR && x.Cambiado).ToList();
                     var detRestantes = chequesDetalle.Where(x => x.TipoAccion == TipoAccion.NINGUNO || x.TipoAccion == TipoAccion.ACTUALIZAR).ToList();
 
-                    decimal totalConImpuestos_Det1 = Mat.Redondear(detRestantes.Sum(x => x.precio.Value * x.cantidad.Value * (100m - x.descuento.Value) / 100m));
+                    decimal totalConImpuestos_Det1 = Mat.Redondear(detRestantes.Sum(x => (x.precio ?? 0) * (x.cantidad ?? 0) * (100m - (x.descuento ?? 0)) / 100m));
                     decimal totalConImpuestos_Det = Mat.Redondear(detRestantes.Sum(x => x.ImporteCICD));
-                    decimal descuentoAplicado = (100m - cheque.descuento.Value) / 100m;
+                    decimal descuentoAplicado = (100m - (cheque.descuento ?? 0)) / 100m;
                     decimal totalNuevo = Mat.Redondear(totalConImpuestos_Det * descuentoAplicado);
 
-                    if (cheque.total.Value == totalNuevo) continue;
+                    if ((cheque.total ?? 0) == totalNuevo) continue;
 
-                    decimal descuento = cheque.descuento.Value / 100m;
+                    decimal descuento = (cheque.descuento ?? 0) / 100m;
                     decimal totalSinImpuestos_Det = Mat.Redondear(detRestantes.Sum(x => x.ImporteSICD));
 
                     cheque.TipoAccion = TipoAccion.ACTUALIZAR;
                     cheque.TotalArticulosEliminados = chequesDetalle
-                        .Where(x => (x.TipoAccion == TipoAccion.ELIMINAR || (x.TipoAccion == TipoAccion.ACTUALIZAR && x.Cambiado)) && !x.modificador.Value)
-                        .Sum(x => x.CantidadAnt);
+                        .Where(x => (x.TipoAccion == TipoAccion.ELIMINAR || (x.TipoAccion == TipoAccion.ACTUALIZAR && x.Cambiado)) && !(x.modificador ?? false))
+                        .Sum(x => x.CantidadAnt ?? 0);
 
                     if (!QuitarPropinasManualmente || (cheque.propinatarjeta ?? 0) > 0)
                     {
@@ -842,7 +857,7 @@ namespace mod_add.ViewModels
                     }
                     cheque.propinatarjeta = 0;
 
-                    cheque.totalarticulos = detRestantes.Sum(x => x.cantidad.Value);
+                    cheque.totalarticulos = detRestantes.Sum(x => (x.cantidad ?? 0));
                     cheque.subtotal = totalSinImpuestos_Det;
                     cheque.total = totalNuevo;
 
@@ -1001,7 +1016,7 @@ namespace mod_add.ViewModels
                 foreach (var cheque in cheques)
                 {
                     var detalles = ChequesDetalle
-                        .Where(x => x.foliodet.Value == cheque.folio && !x.modificador.Value)
+                        .Where(x => (x.foliodet ?? 0) == cheque.folio && !(x.modificador ?? false))
                         .OrderByDescending(x => x.PrecionEnUnidad)
                         .ToList();
 
@@ -1034,12 +1049,12 @@ namespace mod_add.ViewModels
                     }
 
                     decimal cantidadRestanteEnUnidad = detalles
-                        .Where(x => (x.TipoAccion == TipoAccion.ACTUALIZAR || x.TipoAccion == TipoAccion.NINGUNO) && x.descuento.Value != 100m)
-                        .Sum(x => x.cantidad.Value == Math.Truncate(x.cantidad.Value) ? x.cantidad.Value : 1m);
+                        .Where(x => (x.TipoAccion == TipoAccion.ACTUALIZAR || x.TipoAccion == TipoAccion.NINGUNO) && (x.descuento ?? 0) != 100m)
+                        .Sum(x => (x.cantidad ?? 0) == Math.Truncate(x.cantidad ?? 0) ? (x.cantidad ?? 0) : 1m);
 
                     decimal cantidadTotal = detalles
-                        .Where(x => x.TipoAccion == TipoAccion.ACTUALIZAR || x.TipoAccion == TipoAccion.NINGUNO && x.descuento.Value != 100m)
-                        .Sum(x => x.cantidad.Value);
+                        .Where(x => x.TipoAccion == TipoAccion.ACTUALIZAR || x.TipoAccion == TipoAccion.NINGUNO && (x.descuento ?? 0) != 100m)
+                        .Sum(x => x.cantidad ?? 0);
 
                     Debug.WriteLine($"Cantidad restante como unidad entera: {cantidadRestanteEnUnidad}. Cantidad total: {cantidadTotal}");
                     Debug.WriteLine($"Productos minimos por cuenta: {App.ConfiguracionSistema.MinProductosCuenta}");
@@ -1053,7 +1068,7 @@ namespace mod_add.ViewModels
                     bool eliminarTodo = false;
                     string idproductocompuesto = det.idproductocompuesto;
 
-                    if (det.cantidad.Value > 1m && det.cantidad.Value == Math.Truncate(det.cantidad.Value))
+                    if ((det.cantidad ?? 0) > 1m && (det.cantidad ?? 0) == Math.Truncate(det.cantidad ?? 0))
                     {
                         Debug.WriteLine($"Eliminar: {1.00m}");
 
@@ -1120,9 +1135,9 @@ namespace mod_add.ViewModels
 
                 var detalles = ChequesDetalle
                     .Where(x =>
-                        x.foliodet.Value == foliodet &&
+                        (x.foliodet ?? 0) == foliodet &&
                         x.idproductocompuesto.Equals(idproductocompuesto) &&
-                        x.modificador.Value &&
+                        (x.modificador ?? false) &&
                         (x.TipoAccion == TipoAccion.ACTUALIZAR || x.TipoAccion == TipoAccion.NINGUNO))
                     .ToList();
 
@@ -1138,7 +1153,7 @@ namespace mod_add.ViewModels
 
 
 
-                    if (det.cantidad.Value > 1m && det.cantidad.Value == Math.Truncate(det.cantidad.Value) && !eliminarTodo)
+                    if ((det.cantidad ?? 0) > 1m && (det.cantidad ?? 0) == Math.Truncate(det.cantidad ?? 0) && !eliminarTodo)
                     {
                         Debug.WriteLine($"Eliminar: {1.00m}");
 
@@ -1174,8 +1189,8 @@ namespace mod_add.ViewModels
             Debug.WriteLine("INICIO-CAMBIO-PRODUCTOS");
 
             var detalles = ChequesDetalle
-                    .Where(x => !x.modificador.Value && (x.TipoAccion == TipoAccion.ACTUALIZAR || x.TipoAccion == TipoAccion.NINGUNO))
-                    .OrderByDescending(x => x.movimiento.Value).ThenBy(x => x.foliodet)
+                    .Where(x => !(x.modificador ?? false) && (x.TipoAccion == TipoAccion.ACTUALIZAR || x.TipoAccion == TipoAccion.NINGUNO))
+                    .OrderByDescending(x => x.movimiento).ThenBy(x => x.foliodet)
                     .ToList();
 
             foreach (var det in detalles)
@@ -1186,7 +1201,7 @@ namespace mod_add.ViewModels
                     continue;
                 }
 
-                Debug.WriteLine($"Info. - folio: {det.foliodet}, movimiento: {det.movimiento}, producto: {det.idproducto}, precio: {det.precio}, cantidad: {det.cantidad}, descuento: {det.descuento.Value}");
+                Debug.WriteLine($"Info. - folio: {det.foliodet}, movimiento: {det.movimiento}, producto: {det.idproducto}, precio: {det.precio}, cantidad: {det.cantidad}, descuento: {det.descuento}");
 
                 int porcentajeAleatorio = Random.Next(1, 100);
                 int porcentajeAnterior = 0;
@@ -1200,14 +1215,14 @@ namespace mod_add.ViewModels
                     if (porcentajeAleatorio > porcentajeAnterior && porcentajeAleatorio <= porcentajeActual)
                     {
                         var detalleProducto = App.SRProductosDetalle.Find(x => x.idproducto == productoReemplazo.Clave);
-                        decimal precioUnidad = det.precio.Value;
+                        decimal precioUnidad = det.precio ?? 0;
 
-                        if (det.cantidad.Value != Math.Truncate(det.cantidad.Value))
-                            precioUnidad = det.precio.Value * det.cantidad.Value;
+                        if ((det.cantidad ?? 0) != Math.Truncate(det.cantidad ?? 0))
+                            precioUnidad = (det.precio ?? 0) * (det.cantidad ?? 0);
 
                         Debug.WriteLine($"producto reemplazo: {productoReemplazo.Clave}, porcentaje: {productoReemplazo.Porcentaje}, precio: {detalleProducto.precio}, precio por unidad: {precioUnidad}");
 
-                        if (detalleProducto.precio < precioUnidad)
+                        if ((detalleProducto.precio ?? 0) < precioUnidad)
                         {
                             string idproductocompuesto = det.idproductocompuesto;
 
@@ -1259,16 +1274,16 @@ namespace mod_add.ViewModels
 
                 if (Proceso.TipoProceso == TipoProceso.FOLIOS)
                 {
-                    importeNuevo = cheques.Sum(x => x.total.Value);
+                    importeNuevo = cheques.Sum(x => (x.total ?? 0));
                 }
                 else if (Proceso.TipoProceso == TipoProceso.PRODUCTOS)
                 {
                     foreach (var cheque in cheques)
                     {
-                        var chequesDetalle = ChequesDetalle.Where(x => x.foliodet == cheque.folio).ToList();
+                        var chequesDetalle = ChequesDetalle.Where(x => (x.foliodet ?? 0) == cheque.folio).ToList();
 
                         decimal totalConImpuestos_Det = Mat.Redondear(chequesDetalle.Sum(x => x.ImporteCICD));
-                        decimal descuentoAplicado = (100m - cheque.descuento.Value) / 100m;
+                        decimal descuentoAplicado = (100m - (cheque.descuento ?? 0)) / 100m;
                         importeNuevo += Mat.Redondear(totalConImpuestos_Det * descuentoAplicado);
                     }
                 }
@@ -1288,7 +1303,7 @@ namespace mod_add.ViewModels
 
         public void InicializarControles()
         {
-            DetalleModificacionCheques = new ObservableCollection<DetalleAjuste>();
+            DetalleModificacionCheques = new List<DetalleAjuste>();
 
             Turnos = new List<Turno>();
             Cheques = new List<Cheque>();
@@ -1386,7 +1401,7 @@ namespace mod_add.ViewModels
                         return new Respuesta
                         {
                             TipoRespuesta = TipoRespuesta.FECHA_INACCESIBLE,
-                            Mensaje = FechaCorteInicio.ToString("MMMM yyyy", CultureInfo.CreateSpecificCulture("es"))
+                            Mensaje = FechaCorteInicio.ToString("MMMM yyyy", Valores.Espanol)
                         };
                     }
 
@@ -1395,7 +1410,7 @@ namespace mod_add.ViewModels
                         return new Respuesta
                         {
                             TipoRespuesta = TipoRespuesta.FECHA_INACCESIBLE,
-                            Mensaje = FechaCorteCierre.ToString("MMMM yyyy", CultureInfo.CreateSpecificCulture("es"))
+                            Mensaje = FechaCorteCierre.ToString("MMMM yyyy", Valores.Espanol)
                         };
                     }
 
@@ -1406,9 +1421,20 @@ namespace mod_add.ViewModels
 
                     if (App.ConfiguracionSistema.ModificarVentasReales)
                     {
-                        turnos = turnos_DAO.Get($"apertura >= @{nameof(FechaCorteInicio)} AND idempresa=@{nameof(App.ClaveEmpresa)}",
-                            new SqlParameter($"{nameof(FechaCorteInicio)}", FechaCorteInicio),
-                            new SqlParameter($"{nameof(App.ClaveEmpresa)}", App.ClaveEmpresa));
+                        if (Proceso.TipoProceso == TipoProceso.FOLIOS)
+                        {
+                            turnos = turnos_DAO.Get($"apertura >= @{nameof(FechaCorteInicio)} AND idempresa=@{nameof(App.ClaveEmpresa)}",
+                                new SqlParameter($"{nameof(FechaCorteInicio)}", FechaCorteInicio),
+                                new SqlParameter($"{nameof(App.ClaveEmpresa)}", App.ClaveEmpresa));
+                        }
+                        else
+                        {
+                            turnos = turnos_DAO.Get($"apertura BETWEEN @{nameof(FechaCorteInicio)} AND @{nameof(FechaCorteCierre)} AND idempresa=@{nameof(App.ClaveEmpresa)}",
+                                new SqlParameter($"{nameof(FechaCorteInicio)}", FechaCorteInicio),
+                                new SqlParameter($"{nameof(FechaCorteCierre)}", FechaCorteCierre),
+                                new SqlParameter($"{nameof(App.ClaveEmpresa)}", App.ClaveEmpresa));
+                        }
+
                     }
                     else
                     {
@@ -1441,13 +1467,52 @@ namespace mod_add.ViewModels
                         TipoRespuesta = TipoRespuesta.SIN_REGISTROS
                     };
 
-                    var folios = cheques.Select(x => (object)x.folio).ToArray();
+                    var folios = cheques.Select(x => (object)x.folio).ToList();
+                    var folioMin = folios.Min();
 
                     SR_cheqdet_DAO cheqdet_DAO = new SR_cheqdet_DAO(context, false);
-                    var cheqdet = cheqdet_DAO.WhereIn("foliodet", folios);
+                    List<SR_cheqdet> cheqdet = new List<SR_cheqdet>();
+
+                    if (App.ConfiguracionSistema.ModificarVentasReales && Proceso.TipoProceso == TipoProceso.FOLIOS)
+                    {
+                        cheqdet = cheqdet_DAO.Get($"foliodet >= @{nameof(folioMin)}", new SqlParameter($"{nameof(folioMin)}", folioMin));
+                    }
+                    else
+                    {
+                        for (int i = 0; i < 5; i++)
+                        {
+                            var particion = folios.Skip(i * 2000).Take(2000).ToArray();
+                            var part = cheqdet_DAO.WhereIn("foliodet", particion);
+                            cheqdet.AddRange(part);
+
+                            if (folios.Count < ((i+1) * 2000))
+                            {
+                                break;
+                            }
+                        }
+                    }
 
                     SR_chequespagos_DAO chequespagos_DAO = new SR_chequespagos_DAO(context, false);
-                    var chequespagos = chequespagos_DAO.WhereIn("folio", folios);
+                    List<SR_chequespagos> chequespagos = new List<SR_chequespagos>();
+
+                    if (App.ConfiguracionSistema.ModificarVentasReales && Proceso.TipoProceso == TipoProceso.FOLIOS)
+                    {
+                        chequespagos = chequespagos_DAO.Get($"folio >= @{nameof(folioMin)}", new SqlParameter($"{nameof(folioMin)}", folioMin));
+                    }
+                    else
+                    {
+                        for (int i = 0; i < 5; i++)
+                        {
+                            var particion = folios.Skip(i * 2000).Take(2000).ToArray();
+                            var part = chequespagos_DAO.WhereIn("folio", particion);
+                            chequespagos.AddRange(part);
+
+                            if (folios.Count < ((i + 1) * 2000))
+                            {
+                                break;
+                            }
+                        }
+                    }
 
                     SR_formasdepago_DAO formasdepago_DAO = new SR_formasdepago_DAO(context);
                     var formasdepago = formasdepago_DAO.GetAll();
@@ -1506,16 +1571,16 @@ namespace mod_add.ViewModels
                     if (tipoAccion == TipoAccion.NINGUNO)
                     {
                         tipoAccion = (
-                            cheque.total.Value >= ImporteMinimoAjustable &&
+                            (cheque.total ?? 0) >= ImporteMinimoAjustable &&
                                 (
                                     tipoPago == TipoPago.EFECTIVO ||
                                     (IncluirCuentaPagadaTarjeta ? tipoPago == TipoPago.TARJETA : false) ||
                                     (IncluirCuentaPagadaVales ? tipoPago == TipoPago.VALES : false) ||
                                     (IncluirCuentaPagadaOtros ? tipoPago == TipoPago.OTROS : false)
                                 ) &&
-                                (IncluirCuentaFacturada ? true : !cheque.facturado.Value) &&
-                                (IncluirCuentaNotaConsumo ? true : cheque.folionotadeconsumo.Value == 0) &&
-                                (NoIncluirCuentasReimpresas ? cheque.impresiones.Value == 1 : true)
+                                (IncluirCuentaFacturada ? true : !(cheque.facturado ?? false)) &&
+                                (IncluirCuentaNotaConsumo ? true : (cheque.folionotadeconsumo ?? 0) == 0) &&
+                                (NoIncluirCuentasReimpresas ? (cheque.impresiones ?? 0) == 1 : true)
                             ) ? TipoAccion.NINGUNO : TipoAccion.MANTENER;
                     }
 
@@ -1530,16 +1595,16 @@ namespace mod_add.ViewModels
 
                 foreach (var det in respuesta.Cheqdet)
                 {
-                    var cheque = Cheques.Find(x => x.folio == det.foliodet.Value);
+                    var cheque = Cheques.Find(x => x.folio == (det.foliodet ?? 0));
                     TipoClasificacion tipoClasificacion = ObtenerClasificacionProductoSR(det.idproducto);
                     ChequesDetalle.Add(Funciones.ParseChequeDetalle(det, cheque.TipoAccion, tipoClasificacion));
                 }
 
-                UltimoMovimiento = Mat.Redondear(ChequesDetalle.Where(x => x.TipoAccion != TipoAccion.OMITIR).Max(x => x.movimiento.Value));
-                ImporteAnterior = Mat.Redondear(Cheques.Where(x => x.TipoAccion != TipoAccion.OMITIR).Sum(x => x.total.Value));
+                UltimoMovimiento = Mat.Redondear(ChequesDetalle.Where(x => x.TipoAccion != TipoAccion.OMITIR).Max(x => x.movimiento ?? 0));
+                ImporteAnterior = Mat.Redondear(Cheques.Where(x => x.TipoAccion != TipoAccion.OMITIR).Sum(x => x.total ?? 0));
                 ImporteObjetivo = Mat.Redondear(ImporteAnterior * (100m - PorcentajeObjetivo) / 100);
                 NumeroTotalCuentas = Cheques.Count(x => x.TipoAccion != TipoAccion.OMITIR);
-                EfectivoAnterior = Mat.Redondear(Cheques.Where(x => x.TipoAccion != TipoAccion.OMITIR).Sum(x => x.efectivo.Value));
+                EfectivoAnterior = Mat.Redondear(Cheques.Where(x => x.TipoAccion != TipoAccion.OMITIR).Sum(x => x.efectivo ?? 0));
             }
             catch (Exception ex)
             {
@@ -1574,16 +1639,12 @@ namespace mod_add.ViewModels
             try
             {
                 var cheques = Cheques.Where(x => x.TipoAccion != TipoAccion.OMITIR).ToList();
-                var fondoTurnos = Turnos.Where(x => x.TipoAccion == TipoAccion.NINGUNO || x.TipoAccion == TipoAccion.ACTUALIZAR).Sum(x => x.fondo.Value);
+                
 
                 NumeroTotalCuentasModificadas = cheques.Count(x => x.TipoAccion == TipoAccion.ACTUALIZAR || x.TipoAccion == TipoAccion.ELIMINAR);
                 Diferencia = Mat.Redondear(ImporteAnterior - ImporteNuevo, 2);
                 PorcentajeDiferencia = Mat.Redondear(Diferencia / ImporteAnterior * 100m, 1);
-                EfectivoNuevo = Mat.Redondear(cheques
-                    .Where(x => x.TipoAccion == TipoAccion.NINGUNO || x.TipoAccion == TipoAccion.MANTENER || x.TipoAccion == TipoAccion.ACTUALIZAR)
-                    .Sum(x => (x.efectivo ?? 0)), 2);
-
-                EfectivoCaja = Mat.Redondear(EfectivoNuevo + fondoTurnos);
+                               
 
                 foreach (var cheque in cheques)
                 {
@@ -1596,20 +1657,20 @@ namespace mod_add.ViewModels
 
                     DetalleModificacionCheques.Add(new DetalleAjuste
                     {
-                        FolioCuenta = (int)cheque.numcheque.Value,
-                        FolioNotaConsumo = (int)cheque.folionotadeconsumo.Value,
-                        Fecha = cheque.fecha.Value,
-                        Cancelado = cheque.cancelado.Value ? TipoLogico.SI : TipoLogico.NO,
-                        Facturado = cheque.facturado.Value ? TipoLogico.SI : TipoLogico.NO,
-                        Descuento = Mat.Redondear(cheque.descuento.Value, 1),
-                        TotalOriginal = Mat.Redondear(cheque.TotalAnt, 2),
-                        TotalArticulos = Mat.Redondear(cheque.totalarticulos.Value, 2),
+                        FolioCuenta = (int)(cheque.numcheque ?? 0),
+                        FolioNotaConsumo = (int)(cheque.folionotadeconsumo ?? 0),
+                        Fecha = cheque.fecha,
+                        Cancelado = (cheque.cancelado ?? false) ? TipoLogico.SI : TipoLogico.NO,
+                        Facturado = (cheque.facturado ?? false) ? TipoLogico.SI : TipoLogico.NO,
+                        Descuento = Mat.Redondear(cheque.descuento ?? 0, 1),
+                        TotalOriginal = Mat.Redondear(cheque.TotalAnt ?? 0, 2),
+                        TotalArticulos = Mat.Redondear(cheque.totalarticulos ?? 0, 2),
                         ProductosEliminados = Mat.Redondear(cheque.TotalArticulosEliminados, 2),
                         TotalConDescuento = Mat.Redondear(totalconDescuento, 2),
-                        Efectivo = Mat.Redondear(cheque.EfectivoAnt, 2),
-                        Tarjeta = Mat.Redondear(cheque.TarjetaAnt, 2),
-                        Vales = Mat.Redondear(cheque.ValesAnt, 2),
-                        Otros = Mat.Redondear(cheque.OtrosAnt, 2),
+                        Efectivo = Mat.Redondear(cheque.EfectivoAnt ?? 0, 2),
+                        Tarjeta = Mat.Redondear(cheque.TarjetaAnt ?? 0, 2),
+                        Vales = Mat.Redondear(cheque.ValesAnt ?? 0, 2),
+                        Otros = Mat.Redondear(cheque.OtrosAnt ?? 0, 2),
                         RealizarAccion = cheque.TipoAccion == TipoAccion.ACTUALIZAR || cheque.TipoAccion == TipoAccion.ELIMINAR,
                         IsEnable = cheque.TipoAccion == TipoAccion.ACTUALIZAR || cheque.TipoAccion == TipoAccion.ELIMINAR,
                     });
@@ -1619,6 +1680,25 @@ namespace mod_add.ViewModels
             {
                 Debug.WriteLine($"INICIO-ERROR\n{ex}\nFIN-ERROR");
             }
+        }
+
+        public void CalcularEfectivoCaja()
+        {
+            var cheques = Cheques.Where(x => x.TipoAccion != TipoAccion.OMITIR).ToList();
+
+            var numcheques = DetalleModificacionCheques.Where(x => x.RealizarAccion || !x.IsEnable).Select(x => (decimal)x.FolioCuenta).ToList();
+            var idsturnos = cheques.Where(c => numcheques.Contains(c.numcheque ?? 0)).Select(c => (long)(c.idturno ?? 0)).ToList();
+
+            var efectivoNuevo = cheques
+                    .Where(x => (x.TipoAccion == TipoAccion.NINGUNO || x.TipoAccion == TipoAccion.MANTENER || x.TipoAccion == TipoAccion.ACTUALIZAR) && numcheques.Contains(x.numcheque ?? 0))
+                    .Sum(x => x.efectivo ?? 0);
+
+            var fondoTurnos = Turnos
+                .Where(x => (x.TipoAccion == TipoAccion.NINGUNO || x.TipoAccion == TipoAccion.ACTUALIZAR) && idsturnos.Contains(x.idturno ?? 0))
+                .Sum(x => x.fondo ?? 0);
+
+            EfectivoNuevo = Mat.Redondear(efectivoNuevo, 2);
+            EfectivoCaja = Mat.Redondear(EfectivoNuevo + fondoTurnos);
         }
 
         private List<Turno> Turnos { get; set; }
@@ -1664,8 +1744,8 @@ namespace mod_add.ViewModels
             }
         }
 
-        private ObservableCollection<DetalleAjuste> _DetalleModificacionCheques;
-        public ObservableCollection<DetalleAjuste> DetalleModificacionCheques
+        private List<DetalleAjuste> _DetalleModificacionCheques;
+        public List<DetalleAjuste> DetalleModificacionCheques
         {
             get { return _DetalleModificacionCheques; }
             set

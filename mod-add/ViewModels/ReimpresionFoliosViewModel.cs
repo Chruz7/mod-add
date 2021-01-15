@@ -9,7 +9,6 @@ using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Diagnostics;
-using System.Globalization;
 using System.Linq;
 
 namespace mod_add.ViewModels
@@ -99,9 +98,10 @@ namespace mod_add.ViewModels
             {
                 "folio",
                 "CAST(c.numcheque AS Decimal) AS numcheque",
+                "c.fecha",
                 "c.cierre",
                 "c.mesa",
-                "m.nombre AS idmesero",
+                "CAST(ISNULL(m.nombre, '') AS varchar) AS idmesero",
                 "CAST(c.nopersonas AS Decimal) AS nopersonas",
                 "CAST(c.orden AS Decimal) AS orden",
                 "c.subtotal",
@@ -110,8 +110,14 @@ namespace mod_add.ViewModels
                 "c.efectivo",
                 "c.tarjeta",
                 "c.cambio",
-                "c.modificado",
+                "c.codigo_unico_af",
+                
             };
+
+            if (BusquedaCuenta.TipoBusquedaCuenta == TipoBusquedaCuenta.FISCAL)
+            {
+                campos.Add("c.modificado");
+            }
 
             return string.Join(",", campos);
         }
@@ -136,26 +142,7 @@ namespace mod_add.ViewModels
             {
                 try
                 {
-                    DateTime FechaCorteInicio = FechaInicio.AddSeconds(HoraInicio.TimeOfDay.TotalSeconds);
-                    DateTime FechaCorteCierre = FechaCierre.AddSeconds(HoraCierre.TimeOfDay.TotalSeconds);
-
-                    if (!Funciones.ValidarMesBusqueda(App.MesesValidos, FechaCorteInicio))
-                    {
-                        return new Respuesta
-                        {
-                            TipoRespuesta = TipoRespuesta.FECHA_INACCESIBLE,
-                            Mensaje = FechaCorteInicio.ToString("MMMM yyyy", CultureInfo.CreateSpecificCulture("es"))
-                        };
-                    }
-
-                    if (!Funciones.ValidarMesBusqueda(App.MesesValidos, FechaCorteCierre))
-                    {
-                        return new Respuesta
-                        {
-                            TipoRespuesta = TipoRespuesta.FECHA_INACCESIBLE,
-                            Mensaje = FechaCorteCierre.ToString("MMMM yyyy", CultureInfo.CreateSpecificCulture("es"))
-                        };
-                    }
+                    
 
                     SqlParameter parametroInicio = null;
                     SqlParameter parametroFin = null;
@@ -165,6 +152,27 @@ namespace mod_add.ViewModels
 
                     if (BusquedaRegistro.TipoBusquedaRegistro == TipoBusquedaRegistro.FECHA)
                     {
+                        DateTime FechaCorteInicio = FechaInicio.AddSeconds(HoraInicio.TimeOfDay.TotalSeconds);
+                        DateTime FechaCorteCierre = FechaCierre.AddSeconds(HoraCierre.TimeOfDay.TotalSeconds);
+
+                        if (!Funciones.ValidarMesBusqueda(App.MesesValidos, FechaCorteInicio))
+                        {
+                            return new Respuesta
+                            {
+                                TipoRespuesta = TipoRespuesta.FECHA_INACCESIBLE,
+                                Mensaje = $"No cuenta con la licencia para realizar busquedas en el mes de {FechaCorteInicio.ToString("MMMM yyyy", Valores.Espanol)}"
+                            };
+                        }
+
+                        if (!Funciones.ValidarMesBusqueda(App.MesesValidos, FechaCorteCierre))
+                        {
+                            return new Respuesta
+                            {
+                                TipoRespuesta = TipoRespuesta.FECHA_INACCESIBLE,
+                                Mensaje = $"No cuenta con la licencia para realizar busquedas en el mes de {FechaCorteCierre.ToString("MMMM yyyy", Valores.Espanol)}"
+                            };
+                        }
+
                         campo = "fecha";
                         parametroInicio = new SqlParameter("inicio", FechaCorteInicio);
                         parametroFin = new SqlParameter("fin", FechaCorteCierre);
@@ -185,13 +193,35 @@ namespace mod_add.ViewModels
                         tablacheques = "chequesf";
                     }
 
-                    query = $"SELECT {CamposCheques()} FROM {tablacheques} c INNER JOIN meseros m ON c.idmesero = m.idmesero WHERE ({campo} BETWEEN @inicio AND @fin) AND c.idempresa = @{nameof(App.ClaveEmpresa)} ORDER BY c.numcheque";
+                    query = $"SELECT {CamposCheques()} FROM {tablacheques} c LEFT JOIN meseros m ON c.idmesero = m.idmesero WHERE ({campo} BETWEEN @inicio AND @fin) AND c.idempresa = @{nameof(App.ClaveEmpresa)} ORDER BY c.numcheque";
 
                     List<SR_cheques> cheques = context.Database.SqlQuery<SR_cheques>(
                         query, 
                         parametroInicio, 
                         parametroFin,
                         new SqlParameter($"{nameof(App.ClaveEmpresa)}", App.ClaveEmpresa)).ToList();
+
+                    if (BusquedaRegistro.TipoBusquedaRegistro == TipoBusquedaRegistro.FOLIO)
+                    {
+                        bool fueraDeRango = cheques
+                            .Any(c => App.MesesValidos.Any(mv => mv.Year != c.fecha.GetValueOrDefault().Year || mv.Month != c.fecha.GetValueOrDefault().Month));
+
+                        if (fueraDeRango)
+                        {
+                            DateTime fech = cheques.Where(c => !App.MesesValidos
+                            .Any(mv => mv.Year == c.fecha.GetValueOrDefault().Year && mv.Month == c.fecha.GetValueOrDefault().Month))
+                            .OrderBy(mv => mv.fecha.GetValueOrDefault())
+                            .Select(x => x.fecha.GetValueOrDefault())
+                            .FirstOrDefault();
+
+
+                            return new Respuesta
+                            {
+                                TipoRespuesta = TipoRespuesta.FECHA_INACCESIBLE,
+                                Mensaje = $"No cuenta con la licencia para realizar busquedas en el mes de {fech.ToString("MMMM yyyy", Valores.Espanol)}"
+                            };
+                        }
+                    }
 
                     if (cheques.Count == 0)
                     {

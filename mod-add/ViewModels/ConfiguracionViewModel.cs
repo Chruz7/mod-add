@@ -67,6 +67,8 @@ namespace mod_add.ViewModels
         {
             var productos = _productoReemplazoServicio.GetAll().ToList();
 
+            if (!productos.Any()) return;
+
             Producto1 = productos[0];
 
             P1_Reemplazar = Producto1.Reemplazar;

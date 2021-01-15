@@ -163,6 +163,7 @@
     <Compile Include="Utils\Funciones.cs" />
     <Compile Include="Utils\GenerarReporte.cs" />
     <Compile Include="Utils\Mat.cs" />
+    <Compile Include="Utils\Valores.cs" />
     <Compile Include="ViewModels\AjusteMasivoViewModel.cs" />
     <Compile Include="ViewModels\AjusteUnicoViewModel.cs" />
     <Compile Include="ViewModels\AutenticacionViewModel.cs" />

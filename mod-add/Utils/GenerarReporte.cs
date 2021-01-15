@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing.Printing;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 
@@ -1335,7 +1334,7 @@ namespace mod_add.Utils
                 AgregarLinea(Relleno('='));
                 Extremos($"MESA:{reporte.Cheque.mesa}", $"MESERO:{reporte.Cheque.idmesero}");
                 AgregarLinea(Centrado($"FOLIO:{reporte.Cheque.numcheque}"));
-                string f = reporte.Cheque.cierre.HasValue ? reporte.Cheque.cierre.Value.ToString("dd/MM/yyyy hh:mm:ss tt", CultureInfo.CreateSpecificCulture("US")) : "";
+                string f = reporte.Cheque.cierre.HasValue ? reporte.Cheque.cierre.Value.ToString("dd/MM/yyyy hh:mm:ss tt", Valores.Ingles) : "";
                 AgregarLinea(Centrado($"{f}"));
                 Extremos($"PERSONAS:{reporte.Cheque.nopersonas}", $"ORDEN:{reporte.Cheque.orden}");
                 AgregarLinea(Relleno('='));
@@ -1375,7 +1374,7 @@ namespace mod_add.Utils
                 AgregarLinea(Relleno(' '), TipoImpresionCuenta.CUENTA);
                 AgregarLinea(Centrado(FtAgradecimiento));
                 AgregarLinea(Centrado(FtComprobante));
-                AgregarLinea(FtCodigoFacturacion);
+                AgregarLinea($"{FtCodigoFacturacion} {reporte.Cheque.codigo_unico_af}");
                 AgregarLinea(FtDireccionWebFacturacion);
                 AgregarLinea(FtVigenciaFacturacion);
                 AgregarLinea($"FOLIO:{reporte.Cheque.numcheque}");

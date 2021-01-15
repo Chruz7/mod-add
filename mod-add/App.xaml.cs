@@ -47,8 +47,8 @@ namespace mod_add
             Debug.Listeners.Add(new TextWriterTraceListener(".\\debug.log"));
             Debug.AutoFlush = true;
 
-            //bool sinErrores = true;
-            //Autenticacion autenticacion = new Autenticacion();
+            bool sinErrores = true;
+            Autenticacion autenticacion = new Autenticacion();
 
             Splash splash = new Splash();
             splash.Show();
@@ -86,57 +86,57 @@ namespace mod_add
 
                     using (ApplicationDbContext context = new ApplicationDbContext())
                     {
-                        if (context.ConfiguracionSistema.Count() == 0)
-                        {
-                            context.ConfiguracionSistema.Add(new ConfiguracionSistema
-                            {
-                                ModificarVentasReales = false,
-                                MinProductosCuenta = 1,
-                                EliminarProductosSeleccionados = false,
-                                Contrasena = Encriptado.Codificar("Ok123456"),
-                                ContrasenaAdmin = Encriptado.Codificar("Ok123456")
-                            });
+                        //if (context.ConfiguracionSistema.Count() == 0)
+                        //{
+                        //    context.ConfiguracionSistema.Add(new ConfiguracionSistema
+                        //    {
+                        //        ModificarVentasReales = false,
+                        //        MinProductosCuenta = 1,
+                        //        EliminarProductosSeleccionados = false,
+                        //        Contrasena = Encriptado.Codificar("Ok123456"),
+                        //        ContrasenaAdmin = Encriptado.Codificar("Ok123456")
+                        //    });
 
-                            List<ProductoReemplazo> productosReemplazo = new List<ProductoReemplazo>();
+                        //    List<ProductoReemplazo> productosReemplazo = new List<ProductoReemplazo>();
 
-                            for (int i = 0; i < 5; i++)
-                            {
-                                productosReemplazo.Add(new ProductoReemplazo
-                                {
-                                    Reemplazar = false,
-                                    Clave = "",
-                                    Porcentaje = 0
-                                });
-                            }
+                        //    for (int i = 0; i < 5; i++)
+                        //    {
+                        //        productosReemplazo.Add(new ProductoReemplazo
+                        //        {
+                        //            Reemplazar = false,
+                        //            Clave = "",
+                        //            Porcentaje = 0
+                        //        });
+                        //    }
 
-                            context.ProductosReemplazo.AddRange(productosReemplazo);
+                        //    context.ProductosReemplazo.AddRange(productosReemplazo);
 
-                            SRLibrary.Utils.valideSerialKey valideSerialKey = new SRLibrary.Utils.valideSerialKey();
+                        //    SRLibrary.Utils.valideSerialKey valideSerialKey = new SRLibrary.Utils.valideSerialKey();
 
-                            context.RegistroLicencias.Add(new RegistroLicencia
-                            {
-                                Anio = 2020,
-                                Mes = 9,
-                                Licencia = valideSerialKey.getEncryptSerial("2020-09-01")
-                            });
+                        //    context.RegistroLicencias.Add(new RegistroLicencia
+                        //    {
+                        //        Anio = 2020,
+                        //        Mes = 9,
+                        //        Licencia = valideSerialKey.getEncryptSerial("2020-09-01")
+                        //    });
 
-                            context.RegistroLicencias.Add(new RegistroLicencia
-                            {
-                                Anio = 2020,
-                                Mes = 10,
-                                Licencia = valideSerialKey.getEncryptSerial("2020-10-01")
-                            });
+                        //    context.RegistroLicencias.Add(new RegistroLicencia
+                        //    {
+                        //        Anio = 2020,
+                        //        Mes = 10,
+                        //        Licencia = valideSerialKey.getEncryptSerial("2020-10-01")
+                        //    });
 
-                            context.RegistroLicencias.Add(new RegistroLicencia
-                            {
-                                Anio = 2020,
-                                Mes = 11,
-                                Licencia = valideSerialKey.getEncryptSerial("2020-11-01")
-                            });
+                        //    context.RegistroLicencias.Add(new RegistroLicencia
+                        //    {
+                        //        Anio = 2020,
+                        //        Mes = 11,
+                        //        Licencia = valideSerialKey.getEncryptSerial("2020-11-01")
+                        //    });
 
 
-                            context.SaveChanges();
-                        }
+                        //    context.SaveChanges();
+                        //}
 
                         ConfiguracionSistema = context.ConfiguracionSistema.FirstOrDefault();
                         ProductosReemplazo = context.ProductosReemplazo.Where(x => x.Reemplazar).ToList();
@@ -149,18 +149,18 @@ namespace mod_add
                 catch (Exception ex)
                 {
                     Debug.WriteLine($"INICIO-ERROR\n{ex}\nFIN-ERROR");
-                    //sinErrores = false;
+                    sinErrores = false;
                 }
 
             }).ContinueWith(task =>
             {
-                IrPrincipal(); //comentar
+                //IrPrincipal(); //comentar
                 splash.Close();
 
-                //if (sinErrores)
-                //    autenticacion.Show();
-                //else
-                //    autenticacion.Close();
+                if (sinErrores)
+                    autenticacion.Show();
+                else
+                    autenticacion.Close();
             }, System.Threading.CancellationToken.None, TaskContinuationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());
         }
 

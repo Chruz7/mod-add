@@ -7,7 +7,7 @@ namespace mod_add.Datos.Modelos
     {
         public int FolioCuenta { get; set; }
         public int FolioNotaConsumo { get; set; }
-        public DateTime Fecha { get; set; }
+        public DateTime? Fecha { get; set; }
         public TipoLogico Cancelado { get; set; }
         public TipoLogico Facturado { get; set; }
         public decimal Descuento { get; set; }

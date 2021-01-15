@@ -1,7 +1,7 @@
 ﻿using mod_add.Enums;
+using mod_add.Utils;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 
 namespace mod_add.Modelos
@@ -18,19 +18,22 @@ namespace mod_add.Modelos
             Turnos = new List<TurnoReporte>();
             VentasRapidas = new List<VentaRapida>();
             CuentasPorCobrar = new List<CuentaPorCobrar>();
+
+            
         }
+
         public DateTime Fecha { get; set; }
         public string SoloFecha { get { return Fecha.ToString("dd/MM/yyyy"); } }
-        public string SoloHora { get { return Fecha.ToString("hh:mm:ss tt", CultureInfo.CreateSpecificCulture("US")); } }
+        public string SoloHora { get { return Fecha.ToString("hh:mm:ss tt", Valores.Ingles); } }
         public string TituloCorte { get; set; }
         public long FolioCorte { get; set; }
         public string SFolioCorte { get { return FolioCorte > 0 ? $"{FolioCorte}" : "";  } }
         public string SEncabezadoFolio { get { return TipoCorte == TipoCorte.TURNO ? $"FOLIO {TituloCorte}: {FolioCorte}" : ""; } }
         public DateTime FechaCorteInicio { get; set; }
-        public string SFechaCorteInicio { get { return FechaCorteInicio.ToString("dd/MM/yyyy hh:mm:ss tt", CultureInfo.CreateSpecificCulture("US")); } }
+        public string SFechaCorteInicio { get { return FechaCorteInicio.ToString("dd/MM/yyyy hh:mm:ss tt", Valores.Ingles); } }
         public string SSoloFechaCorteInicio { get { return FechaCorteInicio.ToString("dd/MM/yyyy"); } }
         public DateTime FechaCorteCierre { get; set; }
-        public string SFechaCorteCierre { get { return FechaCorteCierre.ToString("dd/MM/yyyy hh:mm:ss tt", CultureInfo.CreateSpecificCulture("US")); } }
+        public string SFechaCorteCierre { get { return FechaCorteCierre.ToString("dd/MM/yyyy hh:mm:ss tt", Valores.Ingles); } }
         public string SSoloFechaCorteCierre { get { return FechaCorteCierre.ToString("dd/MM/yyyy"); } }
         public decimal EfectivoInicial { get; set; }
         public string SEfectivoInicial { get { return ConsiderarFondoInicial ? string.Format("{0:C}", EfectivoInicial) : ""; } }

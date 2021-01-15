@@ -370,7 +370,7 @@
                 Name="DetalleModificacionCheques"
                 ItemsSource="{Binding DetalleModificacionCheques}"
                 Style="{DynamicResource DataGridStyle3}">
-                    <DataGrid.RowStyle>
+                <DataGrid.RowStyle>
                         <Style TargetType="{x:Type DataGridRow}">
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding RealizarAccion}" Value="True" >
@@ -382,7 +382,7 @@
                             </Style.Triggers>
                         </Style>
                     </DataGrid.RowStyle>
-                    <DataGrid.Columns>
+                <DataGrid.Columns>
                     <DataGridTextColumn
                         IsReadOnly="True"
                         ElementStyle="{DynamicResource CenterCell}"
@@ -448,10 +448,20 @@
                         ElementStyle="{DynamicResource RightCell}"
                         Header="Otros"
                         Binding="{Binding Otros}"/>
-                    <DataGridCheckBoxColumn
-                        Header="Accion"
-                        Binding="{Binding RealizarAccion}">
-                    </DataGridCheckBoxColumn>
+                    <!--<DataGridCheckBoxColumn
+                        Header="Acción"
+                        Binding="{Binding RealizarAccion}"/>-->
+                    <DataGridTemplateColumn
+                        Header="Acción">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <CheckBox 
+                                    IsChecked="{Binding Path=RealizarAccion, UpdateSourceTrigger=PropertyChanged}"
+                                    Checked="RealizarAccion_CheckChanged"
+                                    Unchecked="RealizarAccion_CheckChanged"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
                 </DataGrid.Columns>
             </DataGrid>
         </Grid>

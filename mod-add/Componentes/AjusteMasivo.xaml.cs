@@ -1,9 +1,11 @@
 ﻿using mod_add.Datos.Enums;
+using mod_add.Datos.Modelos;
 using mod_add.Enums;
 using mod_add.Selectores;
 using mod_add.ViewModels;
 using mod_add.Vistas;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -162,7 +164,8 @@ namespace mod_add.Componentes
         private void Cancelar_Click(object sender, RoutedEventArgs e)
         {
             ViewModel.InicializarControles();
-            GenerarVistaPrevia.IsEnabled = true;
+            NuevaBusqueda.IsEnabled = true;
+            GenerarVistaPrevia.IsEnabled =false;
             Aplicar.IsEnabled = false;
             Cancelar.IsEnabled = false;
         }
@@ -288,6 +291,14 @@ namespace mod_add.Componentes
             }
 
             return true;
+        }
+
+        private void RealizarAccion_CheckChanged(object sender, RoutedEventArgs e)
+        {
+            if (!(sender is CheckBox checkBox)) return;
+            if (checkBox == null) return;
+
+            ViewModel.CalcularEfectivoCaja();
         }
     }
 }

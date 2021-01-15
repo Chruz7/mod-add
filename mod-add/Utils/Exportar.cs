@@ -30,7 +30,7 @@ namespace mod_add.Utils
             if (bitacora.Count == 0) return TipoRespuesta.SIN_REGISTROS;
             DateTime fecha = DateTime.Now;
             string fechaString = fecha.ToString("yyyyMMddHHmmss");
-            string pathArchivo = Path.Combine("PathBitacora", $"bitacora-{fechaString}.xlsx");
+            string pathArchivo = Path.Combine(PathBitacora, $"bitacora-{fechaString}.xlsx");
 
             try
             {
@@ -429,7 +429,8 @@ namespace mod_add.Utils
                     SLDoc.SetCellValue(ifila, 140, cheque.campoadicional2);
                     SetDateTime(ifila, 141, cheque.DateDownload, styleDateTime);
                     SetDateTime(ifila, 142, cheque.empaquetado, styleDateTime);
-                    SLDoc.SetCellValue(ifila, 143, (cheque.status_domicilio ?? 0));
+                    //SLDoc.SetCellValue(ifila, 143, (cheque.status_domicilio ?? 0));
+                    SLDoc.SetCellValue(ifila, 143, (cheque.status_domicilio));
                     SetDateTime(ifila, 144, cheque.asignacion, styleDateTime);
                     SetBoolean(ifila, 145, cheque.enviopagado);
                     SLDoc.SetCellValue(ifila, 146, cheque.sl_cupon_descuento);
@@ -455,11 +456,11 @@ namespace mod_add.Utils
                 else if (tipoReporte == TipoReporte.DETALLADO_HORIZONTAL)
                     path = PathDetalladoHorizontal;
 
-                string pathArchivo = Path.Combine(PathDetalladoVertical, $"corte_de_cajax_{textoFecha}.xlsx");
+                string pathArchivo = Path.Combine(path, $"corte_de_cajax_{textoFecha}.xlsx");
 
-                SLDoc.SaveAs(path);
+                SLDoc.SaveAs(pathArchivo);
 
-                Process.Start(path);
+                Process.Start(pathArchivo);
             }
             catch (Exception ex)
             {

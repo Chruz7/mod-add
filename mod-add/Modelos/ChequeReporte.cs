@@ -1,8 +1,6 @@
 ﻿using mod_add.Utils;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
-using System.Security.Cryptography;
 
 namespace mod_add.Modelos
 {
@@ -217,7 +215,7 @@ namespace mod_add.Modelos
         public string Snumcheque { get { return $"{numcheque}"; } }
         public string Snumcheque2 { get { return $"{numcheque}".PadLeft(8, '0'); } }
         public string Sfolionotadeconsumo { get { return (folionotadeconsumo ?? 0) > 0 ? $"{folionotadeconsumo}" : ""; } }
-        public string Scierre { get { return cierre.HasValue ? cierre.Value.ToString("dd/MM/yyyy hh:mm:ss tt", CultureInfo.CreateSpecificCulture("US")) : ""; } }
+        public string Scierre { get { return cierre.HasValue ? cierre.Value.ToString("dd/MM/yyyy hh:mm:ss tt", Valores.Ingles) : ""; } }
         public string Simpresiones { get { return (impresiones ?? 0) > 1 ? $"{(int)impresiones}" : ""; } }
         public string Sreabiertas { get { return (reabiertas ?? 0) > 0 ? $"{(int)reabiertas}" : ""; } }
         //public string Sdescuento { get { return (descuento ?? 0) > 0 ? $"{(double)Mat.Redondear(descuento.Value, 2)} %" : ""; } }

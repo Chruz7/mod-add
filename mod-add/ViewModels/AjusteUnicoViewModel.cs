@@ -12,7 +12,6 @@ using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Data.SqlClient;
 using System.Diagnostics;
-using System.Globalization;
 using System.Linq;
 
 namespace mod_add.ViewModels
@@ -53,8 +52,26 @@ namespace mod_add.ViewModels
             DetallesCheque = new ObservableCollection<SR_cheqdet>();
         }
 
+        public void Backup()
+        {
+            try
+            {
+                SRLibrary.Utils.BackupBD bp = new SRLibrary.Utils.BackupBD();
+                bp.createBackup();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"INICIO-ERROR\n{ex}\nFIN-ERROR");
+            }
+        }
+
         public TipoRespuesta Guardar()
         {
+            if (App.ConfiguracionSistema.ModificarVentasReales)
+            {
+                Backup();
+            }
+
             using (SoftRestaurantDBContext context = new SoftRestaurantDBContext())
             {
                 using (DbContextTransaction transaction = context.Database.BeginTransaction())
@@ -93,7 +110,7 @@ namespace mod_add.ViewModels
 
                         cheques_DAO.Update(Cheque);
 
-                        cheqdet_DAO.Delete("folio = @folio", new SqlParameter("folio", Cheque.folio));
+                        cheqdet_DAO.Delete("foliodet = @foliodet", new SqlParameter("foliodet", Cheque.folio));
                         cheqdet_DAO.Create(DetallesCheque.ToList());
 
                         chequespagos_DAO.Delete("folio = @folio", new SqlParameter("folio", Cheque.folio));
@@ -260,10 +277,10 @@ namespace mod_add.ViewModels
             //Cheque.nopersonas = Personas;
             //Cheque.propina = Propina;
             //Cheque.descuento = Descuento;
-            Cheque.totalarticulos = DetallesCheque.Sum(x => x.cantidad.Value);
+            Cheque.totalarticulos = DetallesCheque.Sum(x => x.cantidad ?? 0);
 
-            decimal descuentoAplicado = (100m - Cheque.descuento.Value) / 100m;
-            decimal descuento = Cheque.descuento.Value / 100m;
+            decimal descuentoAplicado = (100m - (Cheque.descuento ?? 0)) / 100m;
+            decimal descuento = (Cheque.descuento ?? 0) / 100m;
             decimal totalSinImpuestos_Det = Mat.Redondear(DetallesCheque.Sum(x => x.ImporteSICD));
             decimal totalConImpuestos_Det = Mat.Redondear(DetallesCheque.Sum(x => x.ImporteCICD));
 
@@ -423,7 +440,7 @@ namespace mod_add.ViewModels
                         return new Respuesta
                         {
                             TipoRespuesta = TipoRespuesta.FECHA_INACCESIBLE,
-                            Mensaje = Cheque.fecha.Value.ToString("MMMM yyyy", CultureInfo.CreateSpecificCulture("es"))
+                            Mensaje = Cheque.fecha.Value.ToString("MMMM yyyy", Valores.Espanol)
                         };
                     }
 
@@ -432,7 +449,9 @@ namespace mod_add.ViewModels
                         TipoRespuesta = TipoRespuesta.CHEQUE_CANCELADO
                     };
 
-                    var detalles = Cheque.Detalles.OrderBy(x => x.movimiento).ToList();
+                    SR_cheqdet_DAO cheqdet_DAO = new SR_cheqdet_DAO(context, !App.ConfiguracionSistema.ModificarVentasReales);
+
+                    var detalles = cheqdet_DAO.Get("foliodet", Cheque.folio).OrderBy(x => x.movimiento).ToList();
 
                     if (detalles.Count == 0) return new Respuesta
                     {
@@ -440,7 +459,8 @@ namespace mod_add.ViewModels
                     };
 
                     //var chequespagos = Cheque.Chequespagos;
-                    ChequesPago = Cheque.Chequespagos;
+                    SR_chequespagos_DAO chequespagos_DAO = new SR_chequespagos_DAO(context, !App.ConfiguracionSistema.ModificarVentasReales);
+                    ChequesPago = chequespagos_DAO.Get("folio", Cheque.folio);
 
                     //if (chequespagos.Count == 0)
                     if (ChequesPago.Count == 0)
@@ -464,13 +484,13 @@ namespace mod_add.ViewModels
                     //DetallesCheque = new ObservableCollection<SR_cheqdet>(detalles);
                     UltimoCheqDet = detalles.OrderByDescending(x => x.movimiento).FirstOrDefault();
 
-                    if (Cheque.fecha.HasValue) Fecha = Cheque.fecha.Value;
-                    Personas = (int)Cheque.nopersonas;
+                    if (Cheque.fecha.HasValue) Fecha = Cheque.fecha.GetValueOrDefault();
+                    Personas = (int)(Cheque.nopersonas ?? 0);
                     ClaveCliente = Cheque.idcliente;
-                    Descuento = (decimal)(float)Cheque.descuento.Value;
-                    Propina = Mat.Redondear(Cheque.propina.Value, 2);
-                    Subtotal = Mat.Redondear(Cheque.subtotal.Value);
-                    Total = Mat.Redondear(Cheque.total.Value);
+                    Descuento = (decimal)(float)(Cheque.descuento ?? 0);
+                    Propina = Mat.Redondear(Cheque.propina ?? 0, 2);
+                    Subtotal = Mat.Redondear(Cheque.subtotal ?? 0);
+                    Total = Mat.Redondear(Cheque.total ?? 0);
 
                     ObtenerClienteSR();
 
@@ -494,6 +514,7 @@ namespace mod_add.ViewModels
 
         public void CargarResultados(Respuesta respuesta)
         {
+            DetallesCheque.Clear();
             try
             {
                 foreach (var modelo in respuesta.Cheqdet)

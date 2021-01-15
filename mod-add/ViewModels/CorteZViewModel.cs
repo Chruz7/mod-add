@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Diagnostics;
-using System.Globalization;
 using System.Linq;
 
 namespace mod_add.ViewModels
@@ -185,7 +184,7 @@ namespace mod_add.ViewModels
                         return new Respuesta
                         {
                             TipoRespuesta = TipoRespuesta.FECHA_INACCESIBLE,
-                            Mensaje = FechaCorteInicio.ToString("MMMM yyyy", CultureInfo.CreateSpecificCulture("es"))
+                            Mensaje = FechaCorteInicio.ToString("MMMM yyyy", Valores.Espanol)
                         };
                     }
 
@@ -194,7 +193,7 @@ namespace mod_add.ViewModels
                         return new Respuesta
                         {
                             TipoRespuesta = TipoRespuesta.FECHA_INACCESIBLE,
-                            Mensaje = FechaCorteCierre.ToString("MMMM yyyy", CultureInfo.CreateSpecificCulture("es"))
+                            Mensaje = FechaCorteCierre.ToString("MMMM yyyy", Valores.Espanol)
                         };
                     }
 
@@ -511,7 +510,7 @@ namespace mod_add.ViewModels
                     int anio = FechaCorteInicio.Year;
                     int mes = FechaCorteInicio.Month;
 
-                    query = $"select sum(total) as total " +
+                    query = $"select ISNULL(SUM(total), 0) as total " +
                         $"from {chequesT} " +
                         $"where month(fecha)=@{nameof(mes)} " +
                         $"and year(fecha)=@{nameof(anio)} " +
@@ -542,7 +541,7 @@ namespace mod_add.ViewModels
                         parametrosSql[i + 1] = new SqlParameter(nombreParametro, valores[i]);
                     }
 
-                    query = $"SELECT ISNULL(SUM(TOTAL), 0) AS TOTAL FROM facturas WHERE idturno in ({string.Join(",", nombresParametros)}) AND CAST(cancelada as int)=0 and idempresa=@{nameof(App.ClaveEmpresa)}";
+                    query = $"SELECT ISNULL(SUM(total), 0) AS total FROM facturas WHERE idturno in ({string.Join(",", nombresParametros)}) AND CAST(cancelada as int)=0 and idempresa=@{nameof(App.ClaveEmpresa)}";
 
                     decimal ventaFacturada = context.Database.SqlQuery<decimal>(query, parametrosSql).Single();
 
@@ -789,7 +788,7 @@ namespace mod_add.ViewModels
                         return new Respuesta
                         {
                             TipoRespuesta = TipoRespuesta.FECHA_INACCESIBLE,
-                            Mensaje = FechaCorteInicio.ToString("MMMM yyyy", CultureInfo.CreateSpecificCulture("es"))
+                            Mensaje = FechaCorteInicio.ToString("MMMM yyyy", Valores.Espanol)
                         };
                     }
 
@@ -798,7 +797,7 @@ namespace mod_add.ViewModels
                         return new Respuesta
                         {
                             TipoRespuesta = TipoRespuesta.FECHA_INACCESIBLE,
-                            Mensaje = FechaCorteCierre.ToString("MMMM yyyy", CultureInfo.CreateSpecificCulture("es"))
+                            Mensaje = FechaCorteCierre.ToString("MMMM yyyy", Valores.Espanol)
                         };
                     }
 
