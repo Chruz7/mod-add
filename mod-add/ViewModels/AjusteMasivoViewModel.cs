@@ -10,7 +10,6 @@ using SRLibrary.SR_DAO;
 using SRLibrary.SR_DTO;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Data.SqlClient;
 using System.Diagnostics;
@@ -1475,7 +1474,7 @@ namespace mod_add.ViewModels
 
                     if (App.ConfiguracionSistema.ModificarVentasReales && Proceso.TipoProceso == TipoProceso.FOLIOS)
                     {
-                        cheqdet = cheqdet_DAO.Get($"foliodet >= @{nameof(folioMin)}", new SqlParameter($"{nameof(folioMin)}", folioMin));
+                        cheqdet = cheqdet_DAO.Get("foliodet", ">=", folioMin);
                     }
                     else
                     {
@@ -1497,7 +1496,7 @@ namespace mod_add.ViewModels
 
                     if (App.ConfiguracionSistema.ModificarVentasReales && Proceso.TipoProceso == TipoProceso.FOLIOS)
                     {
-                        chequespagos = chequespagos_DAO.Get($"folio >= @{nameof(folioMin)}", new SqlParameter($"{nameof(folioMin)}", folioMin));
+                        chequespagos = chequespagos_DAO.Get("folio", ">=", folioMin);
                     }
                     else
                     {
@@ -1684,21 +1683,29 @@ namespace mod_add.ViewModels
 
         public void CalcularEfectivoCaja()
         {
-            var cheques = Cheques.Where(x => x.TipoAccion != TipoAccion.OMITIR).ToList();
+            //var cheques = Cheques.Where(x => x.TipoAccion != TipoAccion.OMITIR).ToList();
 
-            var numcheques = DetalleModificacionCheques.Where(x => x.RealizarAccion || !x.IsEnable).Select(x => (decimal)x.FolioCuenta).ToList();
-            var idsturnos = cheques.Where(c => numcheques.Contains(c.numcheque ?? 0)).Select(c => (long)(c.idturno ?? 0)).ToList();
+            //var numcheques = DetalleModificacionCheques.Where(x => x.RealizarAccion || !x.IsEnable).Select(x => (decimal)x.FolioCuenta).ToList();
+            //var idsturnos = cheques.Where(c => numcheques.Contains(c.numcheque ?? 0)).Select(c => (long)(c.idturno ?? 0)).ToList();
+            decimal efectivoNuevo = 0;
 
-            var efectivoNuevo = cheques
-                    .Where(x => (x.TipoAccion == TipoAccion.NINGUNO || x.TipoAccion == TipoAccion.MANTENER || x.TipoAccion == TipoAccion.ACTUALIZAR) && numcheques.Contains(x.numcheque ?? 0))
-                    .Sum(x => x.efectivo ?? 0);
+            if (Proceso.TipoProceso == TipoProceso.PRODUCTOS)
+            {
+                efectivoNuevo = DetalleModificacionCheques
+                        .Where(x => x.RealizarAccion)
+                        .Sum(x => x.TotalConDescuento);
+            }
+
+            decimal efectivoAnt = DetalleModificacionCheques
+                    .Where(x => !x.RealizarAccion)
+                    .Sum(x => x.Efectivo);
 
             var fondoTurnos = Turnos
-                .Where(x => (x.TipoAccion == TipoAccion.NINGUNO || x.TipoAccion == TipoAccion.ACTUALIZAR) && idsturnos.Contains(x.idturno ?? 0))
+                .Where(x => (x.TipoAccion == TipoAccion.NINGUNO || x.TipoAccion == TipoAccion.ACTUALIZAR))
                 .Sum(x => x.fondo ?? 0);
 
-            EfectivoNuevo = Mat.Redondear(efectivoNuevo, 2);
-            EfectivoCaja = Mat.Redondear(EfectivoNuevo + fondoTurnos);
+            EfectivoNuevo = Mat.Redondear(efectivoNuevo + efectivoAnt, 2);
+            EfectivoCaja = Mat.Redondear(efectivoNuevo + efectivoAnt + fondoTurnos);
         }
 
         private List<Turno> Turnos { get; set; }
