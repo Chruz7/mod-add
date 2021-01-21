@@ -1309,7 +1309,7 @@ namespace mod_add.ViewModels
             ChequesDetalle = new List<ChequeDetalle>();
             ChequesPago = new List<ChequePago>();
 
-            UltimoMovimiento = 0;
+            //UltimoMovimiento = 0;
             Turno = true;
             Periodo = false;
 
@@ -1376,6 +1376,23 @@ namespace mod_add.ViewModels
             {
                 try
                 {
+                    DetalleModificacionCheques = new List<DetalleAjuste>();
+
+                    Turnos = new List<Turno>();
+                    Cheques = new List<Cheque>();
+                    ChequesDetalle = new List<ChequeDetalle>();
+                    ChequesPago = new List<ChequePago>();
+
+                    NumeroTotalCuentas = 0;
+                    NumeroTotalCuentasModificadas = 0;
+                    ImporteAnterior = 0m;
+                    ImporteNuevo = 0m;
+                    Diferencia = 0m;
+                    PorcentajeDiferencia = 0m;
+                    EfectivoAnterior = 0m;
+                    EfectivoNuevo = 0m;
+                    EfectivoCaja = 0m;
+
                     //if (Turno)
                     //{
                     //    FechaCorteInicio = FechaInicio.AddSeconds(CorteInicio.TotalSeconds);
@@ -1599,7 +1616,7 @@ namespace mod_add.ViewModels
                     ChequesDetalle.Add(Funciones.ParseChequeDetalle(det, cheque.TipoAccion, tipoClasificacion));
                 }
 
-                UltimoMovimiento = Mat.Redondear(ChequesDetalle.Where(x => x.TipoAccion != TipoAccion.OMITIR).Max(x => x.movimiento ?? 0));
+                //UltimoMovimiento = Mat.Redondear(ChequesDetalle.Where(x => x.TipoAccion != TipoAccion.OMITIR).Max(x => x.movimiento ?? 0));
                 ImporteAnterior = Mat.Redondear(Cheques.Where(x => x.TipoAccion != TipoAccion.OMITIR).Sum(x => x.total ?? 0));
                 ImporteObjetivo = Mat.Redondear(ImporteAnterior * (100m - PorcentajeObjetivo) / 100);
                 NumeroTotalCuentas = Cheques.Count(x => x.TipoAccion != TipoAccion.OMITIR);
@@ -1712,7 +1729,7 @@ namespace mod_add.ViewModels
         private List<Cheque> Cheques { get; set; }
         private List<ChequeDetalle> ChequesDetalle { get; set; }
         private List<ChequePago> ChequesPago { get; set; }
-        public decimal UltimoMovimiento { get; set; }
+        //public decimal UltimoMovimiento { get; set; }
         public DateTime FechaCorteInicio { get; set; }
         public DateTime FechaCorteCierre { get; set; }
         //private TimeSpan CorteInicio { get; set; }

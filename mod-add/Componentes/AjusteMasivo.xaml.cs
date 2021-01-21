@@ -51,7 +51,7 @@ namespace mod_add.Componentes
         private void NuevaBusqueda_Click(object sender, RoutedEventArgs e)
         {
             HabilitarControles();
-            ViewModel.InicializarControles();
+            //ViewModel.InicializarControles();
         }
 
         private void GenerarVistaPrevia_Click(object sender, RoutedEventArgs e)
@@ -105,7 +105,7 @@ namespace mod_add.Componentes
                     ViewModel.CargarResultados();
                     DetalleModificacionCheques.Items.Refresh();
                     HabilitarControles(false);
-                    NuevaBusqueda.IsEnabled = false;
+                    //NuevaBusqueda.IsEnabled = false;
                     Aplicar.IsEnabled = true;
                     Cancelar.IsEnabled = true;
                 }
@@ -164,7 +164,7 @@ namespace mod_add.Componentes
         private void Cancelar_Click(object sender, RoutedEventArgs e)
         {
             ViewModel.InicializarControles();
-            NuevaBusqueda.IsEnabled = true;
+            //NuevaBusqueda.IsEnabled = true;
             GenerarVistaPrevia.IsEnabled =false;
             Aplicar.IsEnabled = false;
             Cancelar.IsEnabled = false;
