@@ -92,15 +92,8 @@ namespace mod_add.ViewModels
                     try
                     {
                         string query;
-                        //List<string> nombresParametros = new List<string>();
-                        //object[] parametros;
-                        //object[] valores;
                         string tablaCheques;
                         string tablaTurnos;
-                        //long folio;
-                        //decimal numcheque;
-                        //long idturnointerno;
-                        //long idturno;
 
                         SR_cheques_DAO cheques_DAO = new SR_cheques_DAO(context, !App.ConfiguracionSistema.ModificarVentasReales);
                         SR_cheqdet_DAO cheqdet_DAO = new SR_cheqdet_DAO(context, !App.ConfiguracionSistema.ModificarVentasReales);
@@ -121,56 +114,44 @@ namespace mod_add.ViewModels
                         if (App.ConfiguracionSistema.ModificarVentasReales)
                         {
                             EliminarRegistrosReales(context);
-                        }
-                        else
-                        {
-                            EliminarRegistrosFiscales(context);
-                        }
-                        #endregion
-
-                        if (App.ConfiguracionSistema.ModificarVentasReales)
-                        {
                             tablaCheques = "cheques";
                             tablaTurnos = "turnos";
                         }
                         else
                         {
+                            EliminarRegistrosFiscales(context);
                             tablaCheques = "chequesf";
                             tablaTurnos = "turnosf";
                         }
 
-                        query = $"SELECT CAST(ISNULL(MAX(idturnointerno), 0) AS bigint) AS idturnointerno FROM {tablaTurnos}";
-                        long idturnointerno = context.Database.SqlQuery<long>(query).Single();
-
-                        query = $"SELECT CAST(ISNULL(MAX(idturno), 0) AS bigint) AS idturno FROM {tablaTurnos}";
-                        long idturno = context.Database.SqlQuery<long>(query).Single();
-
-                        query = $"SELECT CAST(ISNULL(MAX(folio), 0) AS bigint) AS folio FROM {tablaCheques}";
-                        long folio = context.Database.SqlQuery<long>(query).Single();
-
-                        query = $"DBCC CHECKIDENT ({tablaCheques}, RESEED, @{nameof(folio)})";
-                        context.Database.ExecuteSqlCommand(query, new SqlParameter($"{nameof(folio)}", folio));
-
-                        query = $"DBCC CHECKIDENT ({tablaTurnos}, RESEED, @{nameof(idturnointerno)})";
-                        context.Database.ExecuteSqlCommand(query, new SqlParameter($"{nameof(idturnointerno)}", idturnointerno));
-
-                        //idturnointerno = idturnointerno > 0 ? idturnointerno + 1 : 0;
-                        idturno++;
-                        folio = folio > 0 ? folio + 1 : 0;
-
-                        if (App.ConfiguracionSistema.ModificarVentasReales && Proceso.TipoProceso == TipoProceso.FOLIOS)
+                        if (Proceso.TipoProceso == TipoProceso.FOLIOS)
                         {
+                            query = $"SELECT CAST(ISNULL(MAX(idturnointerno), 0) AS bigint) AS idturnointerno FROM {tablaTurnos}";
+                            long idturnointerno = context.Database.SqlQuery<long>(query).Single();
+
+                            query = $"SELECT CAST(ISNULL(MAX(idturno), 0) AS bigint) AS idturno FROM {tablaTurnos}";
+                            long idturno = context.Database.SqlQuery<long>(query).Single();
+
+                            query = $"SELECT CAST(ISNULL(MAX(folio), -1) AS bigint) AS folio FROM {tablaCheques}";
+                            long folio = context.Database.SqlQuery<long>(query).Single();
+
+                            query = $"DBCC CHECKIDENT ({tablaCheques}, RESEED, @{nameof(folio)})";
+                            context.Database.ExecuteSqlCommand(query, new SqlParameter($"{nameof(folio)}", folio));
+
+                            query = $"DBCC CHECKIDENT ({tablaTurnos}, RESEED, @{nameof(idturnointerno)})";
+                            context.Database.ExecuteSqlCommand(query, new SqlParameter($"{nameof(idturnointerno)}", idturnointerno));
+
                             query = $"SELECT CAST(ISNULL(MAX(numcheque), 0) AS numeric(8,0)) AS numcheque FROM {tablaCheques}";
                             decimal numcheque = context.Database.SqlQuery<decimal>(query).Single();
 
+                            idturno++;
+                            folio = folio > 0 ? folio + 1 : 0;
                             numcheque++;
 
                             EnumerarFolios(idturno, folio, numcheque);
                         }
-                        else
-                        {
-                            EnumerarFolios(idturno, folio);
-                        }
+
+                        #endregion
 
                         #region Creacion y actualizacion de registros
                         Debug.WriteLine("Recreando turnos");
@@ -231,6 +212,15 @@ namespace mod_add.ViewModels
 
                         transaction.Commit();
                         tipoRespuesta = TipoRespuesta.HECHO;
+
+                        Debug.WriteLine("INICIO-REGISTRO-AFECTACIONES");
+                        Debug.WriteLine($"INICIO: {FechaCorteInicio}");
+                        Debug.WriteLine($"CIERRE: {FechaCorteCierre}");
+                        Debug.WriteLine($"TIPO PROCESO: {Proceso.TipoProceso}");
+                        Debug.WriteLine($"VENTAS REALES: {App.ConfiguracionSistema.ModificarVentasReales}");
+                        Debug.WriteLine($"TURNOS DEL PROCESO - idturnointerno: {string.Join(", ", Turnos.Select(x => x.IdTurnoInternoAnt))}");
+                        Debug.WriteLine($"CHEQUES DEL PROCESO: {string.Join(", ", Cheques.Select(x => x.FolioAnt))}");
+                        Debug.WriteLine("FIN-REGISTRO-AFECTACIONES");
                         Debug.WriteLine("Fin de la transaccion");
                     }
                     catch (Exception ex)
@@ -266,7 +256,6 @@ namespace mod_add.ViewModels
 
             nombresParametros.Clear();
             valores = result.OrderBy(x => x).Select(x => (object)x).ToArray();
-            Debug.WriteLine($"Folios a eliminar {string.Join(",", valores)}");
             parametrosSql = new object[valores.Length + 1];
             parametrosSql[0] = new SqlParameter($"{nameof(App.ClaveEmpresa)}", App.ClaveEmpresa);
 
@@ -286,31 +275,33 @@ namespace mod_add.ViewModels
             query = $"DELETE FROM cheqdetf WHERE foliodet IN ({string.Join(",", nombresParametros)})";
             context.Database.ExecuteSqlCommand(query, parametrosSql);
 
-            query = $"DELETE FROM chequesf WHERE folio IN ({string.Join(",", nombresParametros)}) AND idempresa=@{nameof(App.ClaveEmpresa)}";
-            context.Database.ExecuteSqlCommand(query, parametrosSql);
-
-            query = $"SELECT CAST(ISNULL(idturno, 0) AS bigint) AS idturno FROM turnosf WHERE apertura BETWEEN @{nameof(FechaCorteInicio)} AND @{nameof(FechaCorteCierre)} AND idempresa=@{nameof(App.ClaveEmpresa)}";
-            result = context.Database.SqlQuery<long>(query,
-                new SqlParameter($"{nameof(FechaCorteInicio)}", FechaCorteInicio),
-                new SqlParameter($"{nameof(FechaCorteCierre)}", FechaCorteCierre),
-                new SqlParameter($"{nameof(App.ClaveEmpresa)}", App.ClaveEmpresa))
-            .ToList();
-
-            nombresParametros.Clear();
-            valores = result.OrderBy(x => x).Select(x => (object)x).ToArray();
-            Debug.WriteLine($"Turnos a eliminar {string.Join(",", valores)}");
-            parametrosSql = new object[valores.Length + 1];
-            parametrosSql[0] = new SqlParameter($"{nameof(App.ClaveEmpresa)}", App.ClaveEmpresa);
-
-            for (int i = 0; i < valores.Length; i++)
+            if (Proceso.TipoProceso == TipoProceso.FOLIOS)
             {
-                string nombreParametro = $"p{i + 1}";
-                nombresParametros.Add($"@{nombreParametro}");
-                parametrosSql[i + 1] = new SqlParameter(nombreParametro, valores[i]);
-            }
+                query = $"DELETE FROM chequesf WHERE folio IN ({string.Join(",", nombresParametros)}) AND idempresa=@{nameof(App.ClaveEmpresa)}";
+                context.Database.ExecuteSqlCommand(query, parametrosSql);
 
-            query = $"DELETE FROM turnosf WHERE idturno IN ({string.Join(",", nombresParametros)}) AND idempresa=@{nameof(App.ClaveEmpresa)}";
-            context.Database.ExecuteSqlCommand(query, parametrosSql);
+                query = $"SELECT CAST(ISNULL(idturno, 0) AS bigint) AS idturno FROM turnosf WHERE apertura BETWEEN @{nameof(FechaCorteInicio)} AND @{nameof(FechaCorteCierre)} AND idempresa=@{nameof(App.ClaveEmpresa)}";
+                result = context.Database.SqlQuery<long>(query,
+                    new SqlParameter($"{nameof(FechaCorteInicio)}", FechaCorteInicio),
+                    new SqlParameter($"{nameof(FechaCorteCierre)}", FechaCorteCierre),
+                    new SqlParameter($"{nameof(App.ClaveEmpresa)}", App.ClaveEmpresa))
+                .ToList();
+
+                nombresParametros.Clear();
+                valores = result.OrderBy(x => x).Select(x => (object)x).ToArray();
+                parametrosSql = new object[valores.Length + 1];
+                parametrosSql[0] = new SqlParameter($"{nameof(App.ClaveEmpresa)}", App.ClaveEmpresa);
+
+                for (int i = 0; i < valores.Length; i++)
+                {
+                    string nombreParametro = $"p{i + 1}";
+                    nombresParametros.Add($"@{nombreParametro}");
+                    parametrosSql[i + 1] = new SqlParameter(nombreParametro, valores[i]);
+                }
+
+                query = $"DELETE FROM turnosf WHERE idturno IN ({string.Join(",", nombresParametros)}) AND idempresa=@{nameof(App.ClaveEmpresa)}";
+                context.Database.ExecuteSqlCommand(query, parametrosSql);
+            }
         }
 
         public void EliminarRegistrosReales(SoftRestaurantDBContext context)
@@ -322,7 +313,6 @@ namespace mod_add.ViewModels
 
             nombresParametros.Clear();
             valores = Cheques.OrderBy(x => x.folio).Select(x => (object)x.folio).ToArray();
-            Debug.WriteLine($"Folios a eliminar {string.Join(",", valores)}");
             parametrosSql = new object[valores.Length + 1];
             parametrosSql[0] = new SqlParameter($"{nameof(App.ClaveEmpresa)}", App.ClaveEmpresa);
 
@@ -339,24 +329,27 @@ namespace mod_add.ViewModels
             query = $"DELETE FROM cheqdet WHERE foliodet IN ({string.Join(",", nombresParametros)})";
             context.Database.ExecuteSqlCommand(query, parametrosSql);
 
-            query = $"DELETE FROM cheques WHERE folio IN ({string.Join(",", nombresParametros)}) AND idempresa=@{nameof(App.ClaveEmpresa)}";
-            context.Database.ExecuteSqlCommand(query, parametrosSql);
 
-            nombresParametros.Clear();
-            valores = Turnos.OrderBy(x => x.idturno).Select(x => (object)x.idturno).ToArray();
-            Debug.WriteLine($"Turnos a eliminar {string.Join(",", valores)}");
-            parametrosSql = new object[valores.Length + 1];
-            parametrosSql[0] = new SqlParameter($"{nameof(App.ClaveEmpresa)}", App.ClaveEmpresa);
-
-            for (int i = 0; i < valores.Length; i++)
+            if (Proceso.TipoProceso == TipoProceso.FOLIOS)
             {
-                string nombreParametro = $"p{i + 1}";
-                nombresParametros.Add($"@{nombreParametro}");
-                parametrosSql[i + 1] = new SqlParameter(nombreParametro, valores[i]);
-            }
+                query = $"DELETE FROM cheques WHERE folio IN ({string.Join(",", nombresParametros)}) AND idempresa=@{nameof(App.ClaveEmpresa)}";
+                context.Database.ExecuteSqlCommand(query, parametrosSql);
 
-            query = $"DELETE FROM turnos WHERE idturno IN ({string.Join(",", nombresParametros)}) AND idempresa=@{nameof(App.ClaveEmpresa)}";
-            context.Database.ExecuteSqlCommand(query, parametrosSql);
+                nombresParametros.Clear();
+                valores = Turnos.OrderBy(x => x.idturno).Select(x => (object)x.idturno).ToArray();
+                parametrosSql = new object[valores.Length + 1];
+                parametrosSql[0] = new SqlParameter($"{nameof(App.ClaveEmpresa)}", App.ClaveEmpresa);
+
+                for (int i = 0; i < valores.Length; i++)
+                {
+                    string nombreParametro = $"p{i + 1}";
+                    nombresParametros.Add($"@{nombreParametro}");
+                    parametrosSql[i + 1] = new SqlParameter(nombreParametro, valores[i]);
+                }
+
+                query = $"DELETE FROM turnos WHERE idturno IN ({string.Join(",", nombresParametros)}) AND idempresa=@{nameof(App.ClaveEmpresa)}";
+                context.Database.ExecuteSqlCommand(query, parametrosSql);
+            }
         }
 
         public void InvertirCambiosDesmarcados()
@@ -499,32 +492,62 @@ namespace mod_add.ViewModels
 
         public void RecrearTurnosSR(SR_turnos_DAO turnos_DAO)
         {
-            var turnos = Turnos
-                .Where(x => x.TipoAccion != TipoAccion.ELIMINAR && (App.ConfiguracionSistema.ModificarVentasReales ? true : (x.TipoAccion != TipoAccion.OMITIR)))
-                .ToList();
 
-            foreach (var turno in turnos)
+            if (Proceso.TipoProceso == TipoProceso.FOLIOS)
             {
-                turnos_DAO.Create(Funciones.ParseSR_turnos(turno));
+                var turnos = Turnos
+                    .Where(x => x.TipoAccion != TipoAccion.ELIMINAR)
+                    .ToList();
+
+                foreach (var turno in turnos)
+                {
+                    turnos_DAO.Create(Funciones.ParseSR_turnos(turno));
+                }
+            }
+            else
+            {
+                var turnos = Turnos
+                    .Where(x => x.TipoAccion == TipoAccion.ACTUALIZAR)
+                    .ToList();
+
+                foreach (var turno in turnos)
+                {
+                    turnos_DAO.Update(Funciones.ParseSR_turnos(turno));
+                }
             }
         }
 
         public void RecrearChequesSR(SR_cheques_DAO cheques_DAO)
         {
-            var cheques = Cheques
-                .Where(x => x.TipoAccion != TipoAccion.ELIMINAR && (App.ConfiguracionSistema.ModificarVentasReales ? true : (x.TipoAccion != TipoAccion.OMITIR)))
-                .ToList();
 
-            foreach (var cheque in cheques)
+            if (Proceso.TipoProceso == TipoProceso.FOLIOS)
             {
-                cheques_DAO.Create(Funciones.ParseSR_cheques(cheque));
+                var cheques = Cheques
+                    .Where(x => x.TipoAccion != TipoAccion.ELIMINAR)
+                    .ToList();
+
+                foreach (var cheque in cheques)
+                {
+                    cheques_DAO.Create(Funciones.ParseSR_cheques(cheque));
+                }
+            }
+            else
+            {
+                var cheques = Cheques
+                    .Where(x => x.TipoAccion == TipoAccion.ACTUALIZAR)
+                    .ToList();
+
+                foreach (var cheque in cheques)
+                {
+                    cheques_DAO.Update(Funciones.ParseSR_cheques(cheque));
+                }
             }
         }
 
         public void RecrearChequesDetalleSR(SR_cheqdet_DAO cheqdet_DAO)
         {
             var chequesDetalle = ChequesDetalle
-                .Where(x => x.TipoAccion != TipoAccion.ELIMINAR && (App.ConfiguracionSistema.ModificarVentasReales ? true : (x.TipoAccion != TipoAccion.OMITIR)))
+                .Where(x => x.TipoAccion != TipoAccion.ELIMINAR)
                 .ToList();
 
             foreach (var chequeDetalle in chequesDetalle)
@@ -536,7 +559,7 @@ namespace mod_add.ViewModels
         public void RecrearChequesDetalleEliminadosSR(SR_cheqdetfeliminados_DAO cheqdetfeliminados_DAO)
         {
             var chequesDetalle = ChequesDetalle
-                .Where(x => x.TipoAccion == TipoAccion.ELIMINAR && (App.ConfiguracionSistema.ModificarVentasReales ? true : (x.TipoAccion != TipoAccion.OMITIR)))
+                .Where(x => x.TipoAccion == TipoAccion.ELIMINAR)
                 .ToList();
 
             foreach(var chequeDetalle in chequesDetalle)
@@ -555,7 +578,7 @@ namespace mod_add.ViewModels
         public void RecrearChequesPagoSR(SR_chequespagos_DAO chequespagos_DAO)
         {
             var chequesPago = ChequesPago
-                .Where(x => x.TipoAccion != TipoAccion.ELIMINAR && (App.ConfiguracionSistema.ModificarVentasReales ? true : (x.TipoAccion != TipoAccion.OMITIR)))
+                .Where(x => x.TipoAccion != TipoAccion.ELIMINAR)
                 .ToList();
 
             foreach(var chequePago in chequesPago)
