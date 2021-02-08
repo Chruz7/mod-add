@@ -8,7 +8,8 @@
         Title="Principal"
         WindowStartupLocation="CenterScreen"
         Height="500"
-        Width="920" Closing="Window_Closing">
+        Width="920"
+        Closing="Window_Closing">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="60"/>

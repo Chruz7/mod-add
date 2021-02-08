@@ -132,7 +132,7 @@ namespace mod_add.ViewModels
                             query = $"SELECT CAST(ISNULL(MAX(idturno), 0) AS bigint) AS idturno FROM {tablaTurnos}";
                             long idturno = context.Database.SqlQuery<long>(query).Single();
 
-                            query = $"SELECT CAST(ISNULL(MAX(folio), -1) AS bigint) AS folio FROM {tablaCheques}";
+                            query = $"SELECT CAST(ISNULL(MAX(folio), 0) AS bigint) AS folio FROM {tablaCheques}";
                             long folio = context.Database.SqlQuery<long>(query).Single();
 
                             query = $"DBCC CHECKIDENT ({tablaCheques}, RESEED, @{nameof(folio)})";
@@ -145,7 +145,7 @@ namespace mod_add.ViewModels
                             decimal numcheque = context.Database.SqlQuery<decimal>(query).Single();
 
                             idturno++;
-                            folio = folio > 0 ? folio + 1 : 0;
+                            folio++;
                             numcheque++;
 
                             EnumerarFolios(idturno, folio, numcheque);
@@ -275,33 +275,30 @@ namespace mod_add.ViewModels
             query = $"DELETE FROM cheqdetf WHERE foliodet IN ({string.Join(",", nombresParametros)})";
             context.Database.ExecuteSqlCommand(query, parametrosSql);
 
-            if (Proceso.TipoProceso == TipoProceso.FOLIOS)
+            query = $"DELETE FROM chequesf WHERE folio IN ({string.Join(",", nombresParametros)}) AND idempresa=@{nameof(App.ClaveEmpresa)}";
+            context.Database.ExecuteSqlCommand(query, parametrosSql);
+
+            query = $"SELECT CAST(ISNULL(idturno, 0) AS bigint) AS idturno FROM turnosf WHERE apertura BETWEEN @{nameof(FechaCorteInicio)} AND @{nameof(FechaCorteCierre)} AND idempresa=@{nameof(App.ClaveEmpresa)}";
+            result = context.Database.SqlQuery<long>(query,
+                new SqlParameter($"{nameof(FechaCorteInicio)}", FechaCorteInicio),
+                new SqlParameter($"{nameof(FechaCorteCierre)}", FechaCorteCierre),
+                new SqlParameter($"{nameof(App.ClaveEmpresa)}", App.ClaveEmpresa))
+            .ToList();
+
+            nombresParametros.Clear();
+            valores = result.OrderBy(x => x).Select(x => (object)x).ToArray();
+            parametrosSql = new object[valores.Length + 1];
+            parametrosSql[0] = new SqlParameter($"{nameof(App.ClaveEmpresa)}", App.ClaveEmpresa);
+
+            for (int i = 0; i < valores.Length; i++)
             {
-                query = $"DELETE FROM chequesf WHERE folio IN ({string.Join(",", nombresParametros)}) AND idempresa=@{nameof(App.ClaveEmpresa)}";
-                context.Database.ExecuteSqlCommand(query, parametrosSql);
-
-                query = $"SELECT CAST(ISNULL(idturno, 0) AS bigint) AS idturno FROM turnosf WHERE apertura BETWEEN @{nameof(FechaCorteInicio)} AND @{nameof(FechaCorteCierre)} AND idempresa=@{nameof(App.ClaveEmpresa)}";
-                result = context.Database.SqlQuery<long>(query,
-                    new SqlParameter($"{nameof(FechaCorteInicio)}", FechaCorteInicio),
-                    new SqlParameter($"{nameof(FechaCorteCierre)}", FechaCorteCierre),
-                    new SqlParameter($"{nameof(App.ClaveEmpresa)}", App.ClaveEmpresa))
-                .ToList();
-
-                nombresParametros.Clear();
-                valores = result.OrderBy(x => x).Select(x => (object)x).ToArray();
-                parametrosSql = new object[valores.Length + 1];
-                parametrosSql[0] = new SqlParameter($"{nameof(App.ClaveEmpresa)}", App.ClaveEmpresa);
-
-                for (int i = 0; i < valores.Length; i++)
-                {
-                    string nombreParametro = $"p{i + 1}";
-                    nombresParametros.Add($"@{nombreParametro}");
-                    parametrosSql[i + 1] = new SqlParameter(nombreParametro, valores[i]);
-                }
-
-                query = $"DELETE FROM turnosf WHERE idturno IN ({string.Join(",", nombresParametros)}) AND idempresa=@{nameof(App.ClaveEmpresa)}";
-                context.Database.ExecuteSqlCommand(query, parametrosSql);
+                string nombreParametro = $"p{i + 1}";
+                nombresParametros.Add($"@{nombreParametro}");
+                parametrosSql[i + 1] = new SqlParameter(nombreParametro, valores[i]);
             }
+
+            query = $"DELETE FROM turnosf WHERE idturno IN ({string.Join(",", nombresParametros)}) AND idempresa=@{nameof(App.ClaveEmpresa)}";
+            context.Database.ExecuteSqlCommand(query, parametrosSql);
         }
 
         public void EliminarRegistrosReales(SoftRestaurantDBContext context)
@@ -506,13 +503,28 @@ namespace mod_add.ViewModels
             }
             else
             {
-                var turnos = Turnos
-                    .Where(x => x.TipoAccion == TipoAccion.ACTUALIZAR)
-                    .ToList();
 
-                foreach (var turno in turnos)
+                if (App.ConfiguracionSistema.ModificarVentasReales)
                 {
-                    turnos_DAO.Update(Funciones.ParseSR_turnos(turno));
+                    var turnos = Turnos
+                        .Where(x => x.TipoAccion == TipoAccion.ACTUALIZAR)
+                        .ToList();
+
+                    foreach (var turno in turnos)
+                    {
+                        turnos_DAO.Update(Funciones.ParseSR_turnos(turno));
+                    }
+                }
+                else
+                {
+                    var turnos = Turnos
+                        .Where(x => x.TipoAccion == TipoAccion.ACTUALIZAR || x.TipoAccion == TipoAccion.NINGUNO)
+                        .ToList();
+
+                    foreach (var turno in turnos)
+                    {
+                        turnos_DAO.Create(Funciones.ParseSR_turnos(turno));
+                    }
                 }
             }
         }
@@ -533,27 +545,58 @@ namespace mod_add.ViewModels
             }
             else
             {
-                var cheques = Cheques
+                if (App.ConfiguracionSistema.ModificarVentasReales)
+                {
+                    var cheques = Cheques
                     .Where(x => x.TipoAccion == TipoAccion.ACTUALIZAR)
                     .ToList();
 
-                foreach (var cheque in cheques)
-                {
-                    cheques_DAO.Update(Funciones.ParseSR_cheques(cheque));
+                    foreach (var cheque in cheques)
+                    {
+                        cheques_DAO.Update(Funciones.ParseSR_cheques(cheque));
+                    }
                 }
+                else
+                {
+                    var cheques = Cheques
+                    .Where(x => x.TipoAccion == TipoAccion.ACTUALIZAR || x.TipoAccion == TipoAccion.NINGUNO)
+                    .ToList();
+
+                    foreach (var cheque in cheques)
+                    {
+                        cheques_DAO.Create(Funciones.ParseSR_cheques(cheque));
+                    }
+                }
+                
             }
         }
 
         public void RecrearChequesDetalleSR(SR_cheqdet_DAO cheqdet_DAO)
         {
-            var chequesDetalle = ChequesDetalle
+
+            if (App.ConfiguracionSistema.ModificarVentasReales)
+            {
+                var chequesDetalle = ChequesDetalle
                 .Where(x => x.TipoAccion != TipoAccion.ELIMINAR)
                 .ToList();
 
-            foreach (var chequeDetalle in chequesDetalle)
-            {
-                cheqdet_DAO.Create(Funciones.ParseSR_cheqdet(chequeDetalle));
+                foreach (var chequeDetalle in chequesDetalle)
+                {
+                    cheqdet_DAO.Create(Funciones.ParseSR_cheqdet(chequeDetalle));
+                }
             }
+            else
+            {
+                var chequesDetalle = ChequesDetalle
+                .Where(x => x.TipoAccion == TipoAccion.ACTUALIZAR || x.TipoAccion == TipoAccion.NINGUNO)
+                .ToList();
+
+                foreach (var chequeDetalle in chequesDetalle)
+                {
+                    cheqdet_DAO.Create(Funciones.ParseSR_cheqdet(chequeDetalle));
+                }
+            }
+            
         }
 
         public void RecrearChequesDetalleEliminadosSR(SR_cheqdetfeliminados_DAO cheqdetfeliminados_DAO)
@@ -577,13 +620,27 @@ namespace mod_add.ViewModels
 
         public void RecrearChequesPagoSR(SR_chequespagos_DAO chequespagos_DAO)
         {
-            var chequesPago = ChequesPago
-                .Where(x => x.TipoAccion != TipoAccion.ELIMINAR)
-                .ToList();
-
-            foreach(var chequePago in chequesPago)
+            if (App.ConfiguracionSistema.ModificarVentasReales)
             {
-                chequespagos_DAO.Create(Funciones.ParseSR_chequespagos(chequePago));
+                var chequesPago = ChequesPago
+                    .Where(x => x.TipoAccion != TipoAccion.ELIMINAR)
+                    .ToList();
+
+                foreach(var chequePago in chequesPago)
+                {
+                    chequespagos_DAO.Create(Funciones.ParseSR_chequespagos(chequePago));
+                }
+            }
+            else
+            {
+                var chequesPago = ChequesPago
+                    .Where(x => x.TipoAccion == TipoAccion.ACTUALIZAR || x.TipoAccion == TipoAccion.NINGUNO)
+                    .ToList();
+
+                foreach (var chequePago in chequesPago)
+                {
+                    chequespagos_DAO.Create(Funciones.ParseSR_chequespagos(chequePago));
+                }
             }
         }
 
@@ -1039,7 +1096,7 @@ namespace mod_add.ViewModels
                 {
                     var detalles = ChequesDetalle
                         .Where(x => (x.foliodet ?? 0) == cheque.folio && !(x.modificador ?? false))
-                        .OrderByDescending(x => x.PrecionEnUnidad)
+                        .OrderByDescending(x => x.PrecionEnUnidad).ThenByDescending(x => x.movimiento)
                         .ToList();
 
                     if (index >= detalles.Count)
@@ -1208,6 +1265,12 @@ namespace mod_add.ViewModels
                 return;
             }
 
+            foreach (var productoReemplazo in App.ProductosReemplazo)
+            {
+                var detalleProducto = App.SRProductosDetalle.Find(x => x.idproducto == productoReemplazo.Clave);
+                productoReemplazo.OmitirPorActuzalizacion = ChequesDetalle.Any(x => x.idproducto == x.idproducto && x.precio != detalleProducto.precio);
+            }
+
             Debug.WriteLine("INICIO-CAMBIO-PRODUCTOS");
 
             var detalles = ChequesDetalle
@@ -1230,7 +1293,9 @@ namespace mod_add.ViewModels
                 int porcentajeActual = 0;
                 Debug.WriteLine($"Porcentaje aleatorio: {porcentajeAleatorio}");
 
-                foreach (var productoReemplazo in App.ProductosReemplazo)
+                var productosReemplazo = App.ProductosReemplazo.Where(x => !x.OmitirPorActuzalizacion);
+
+                foreach (var productoReemplazo in productosReemplazo)
                 {
                     porcentajeActual += productoReemplazo.Porcentaje;
 
@@ -1244,7 +1309,7 @@ namespace mod_add.ViewModels
 
                         Debug.WriteLine($"producto reemplazo: {productoReemplazo.Clave}, porcentaje: {productoReemplazo.Porcentaje}, precio: {detalleProducto.precio}, precio por unidad: {precioUnidad}");
 
-                        if ((detalleProducto.precio ?? 0) < precioUnidad)
+                        if (!det.idproducto.Equals(detalleProducto.idproducto) && (detalleProducto.precio ?? 0) < precioUnidad)
                         {
                             string idproductocompuesto = det.idproductocompuesto;
 

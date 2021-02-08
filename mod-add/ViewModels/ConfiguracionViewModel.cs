@@ -471,7 +471,7 @@ namespace mod_add.ViewModels
             set
             {
                 _P4_Clave = value;
-                OnPropertyChanged(nameof(P3_Clave));
+                OnPropertyChanged(nameof(P4_Clave));
             }
         }
 

@@ -9,5 +9,7 @@ namespace mod_add.Datos.Modelos
         public bool Reemplazar { get; set; }
         public string Clave { get; set; }
         public int Porcentaje { get; set; }
+        [NotMapped]
+        public bool OmitirPorActuzalizacion { get; set; }
     }
 }
